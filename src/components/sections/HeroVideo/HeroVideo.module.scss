@@ -2,7 +2,9 @@
 
 $primary: #0056b3;
 
-// 🟢 Повертаємо relative, GSAP сам зробить pin
+// ==========================================
+// ОСНОВНІ КОНТЕЙНЕРИ
+// ==========================================
 .heroSection {
   position: relative;
   width: 100%;
@@ -11,7 +13,7 @@ $primary: #0056b3;
   background-color: #000;
   overflow: hidden;
 
-  // 🔥 Це каже мобільному браузеру: "Залиш вертикальний скрол з інерцією за собою, не віддавай його скриптам"
+  // 🔥 Дозволяє нативні свайпи для тач-екранів
   touch-action: pan-y;
 }
 
@@ -19,6 +21,7 @@ $primary: #0056b3;
   position: relative;
   width: 100vw;
   height: 100vh;
+  height: 100svh;
   overflow: hidden;
 }
 
@@ -38,6 +41,21 @@ $primary: #0056b3;
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
   z-index: 1;
+  display: block; // За замовчуванням показуємо (Десктоп)
+}
+
+// 🔥 НОВЕ: Стилі для мобільного відео
+.mobileVideo {
+  display: none; // За замовчуванням ховаємо (Десктоп)
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .canvasOverlay {
@@ -192,13 +210,11 @@ $primary: #0056b3;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 
-  // Базова плавна транзиція для повернення у вихідний стан
   transition:
     transform 0.3s ease,
     background-color 0.3s ease,
     box-shadow 0.3s ease;
 
-  // 🔥 1. ДЕСКТОП: hover спрацьовує ТІЛЬКИ на пристроях з мишкою
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       background-color: color.adjust($primary, $lightness: -8%);
@@ -207,14 +223,11 @@ $primary: #0056b3;
     }
   }
 
-  // 🔥 2. МОБАЙЛ + ДЕСКТОП: Універсальний клік
   &:active {
     background-color: color.adjust($primary, $lightness: -12%);
-    // Кнопка фізично "вдавлюється" всередину (scale), що ідеально відчувається під пальцем
     transform: scale(0.96) translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 
-    // Миттєва реакція на натискання (без довгого виїжджання)
     transition:
       transform 0.05s cubic-bezier(0.4, 0, 0.2, 1),
       background-color 0.1s ease;
@@ -238,15 +251,22 @@ $primary: #0056b3;
   gap: 16px;
   text-align: left;
   min-width: 280px;
+
+  // Прибираємо сірий квадрат при тапі на iOS
+  -webkit-tap-highlight-color: transparent;
+
   transition:
     transform 0.3s ease,
     background 0.3s ease,
     border-color 0.3s ease;
 
-  &:hover {
-    transform: translateY(-4px);
-    background: rgba(15, 23, 42, 0.95);
-    border-color: rgba(255, 255, 255, 0.3);
+  // 🔥 Цей ефект тепер працюватиме ТІЛЬКИ на десктопі з мишкою
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-4px);
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
   }
 
   .cardIcon {
@@ -287,10 +307,11 @@ $primary: #0056b3;
 // СПЕЙСЕР (БУФЕР ДЛЯ ПРОКРУТКИ ВІДЕО)
 // ==========================================
 .delaySpacer {
-  height: 200vh; // 🔥 Дорівнює тривалості відео. Секція About чекатиме внизу рівно стільки.
+  height: 200vh;
   width: 100%;
   pointer-events: none;
   visibility: hidden;
+  display: block; // За замовчуванням показуємо
 }
 
 // ==========================================
@@ -311,6 +332,26 @@ $primary: #0056b3;
 }
 
 @media (max-width: 768px) {
+  // 🔥 НОВЕ: Перемикач Canvas -> Video для мобайла
+  .canvas {
+    display: none; // Ховаємо Canvas
+  }
+
+  .delaySpacer {
+    display: none; // Ховаємо спейсер, бо скролити 200vh більше не треба
+  }
+
+  .mobileVideo {
+    display: block; // Показуємо звичайне фонове відео
+  }
+
+  // Знімаємо жорстку фіксацію екрану, щоб дозволити нативний скрол
+  .heroSection,
+  .pinArea {
+    height: 100svh;
+    overflow: hidden; // Контент секції залишиться на 1 екран
+  }
+
   .logoContainer {
     flex-direction: column;
     gap: 16px;

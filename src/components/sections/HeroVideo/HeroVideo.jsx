@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -18,6 +18,7 @@ export default function HeroVideo() {
   const logoRef = useRef(null);
   const contentRef = useRef(null);
   const overlayRef = useRef(null);
+  const videoRef = useRef(null); // 🟢 Додано реф для відео
 
   const frameCount = 158;
   const imagesRef = useRef([]);
@@ -32,9 +33,6 @@ export default function HeroVideo() {
       });
       const animationState = { frame: 0 };
 
-      // ==========================================
-      // ЛОГІКА CANVAS ТА ЗВУЖЕННЯ/РОЗШИРЕННЯ
-      // ==========================================
       const calculateMetrics = () => {
         const img = imagesRef.current[0];
         if (!img) return;
@@ -95,10 +93,8 @@ export default function HeroVideo() {
 
       const preloadOtherFrames = async () => {
         const batchSize = 5;
-
         for (let i = 1; i < frameCount; i += batchSize) {
           const batch = [];
-
           for (let j = 0; j < batchSize && i + j < frameCount; j++) {
             const index = i + j;
             batch.push(
@@ -117,27 +113,8 @@ export default function HeroVideo() {
         }
       };
 
-      preloadFirstFrame()
-        .then(() => {
-          calculateMetrics();
-          render();
-          preloadOtherFrames();
-        })
-        .catch(console.error);
-
-      let resizeTimer;
-      const handleResize = () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          calculateMetrics();
-          render();
-        }, 150);
-      };
-
-      window.addEventListener("resize", handleResize);
-
       // ==========================================
-      // --- GSAP АНІМАЦІЇ ПОЯВИ (БЕЗ КАРТОК) ---
+      // --- GSAP АНІМАЦІЇ ПОЯВИ (Спільні для всіх) ---
       // ==========================================
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
@@ -157,7 +134,6 @@ export default function HeroVideo() {
 
         const tlStart = gsap.timeline({ delay: 0.2 });
 
-        // Фаза 1: Поява Лого
         tlStart
           .fromTo(
             icon,
@@ -208,7 +184,6 @@ export default function HeroVideo() {
             0.6,
           );
 
-        // Фаза 2: Зникнення Лого
         tlStart.to(
           [icon, text, line, slogan],
           {
@@ -222,7 +197,6 @@ export default function HeroVideo() {
           "+=0.3",
         );
 
-        // Фаза 3: Поява Контенту (ТІЛЬКИ текст і кнопка)
         tlStart
           .fromTo(
             contentTitle,
@@ -263,7 +237,7 @@ export default function HeroVideo() {
       }
 
       // ==========================================
-      // 🔥 ЛОГІКА СКРОЛУ ЧЕРЕЗ MATCHMEDIA
+      // 🔥 ЛОГІКА СКРОЛУ ТА РЕНДЕРУ ЗАЛЕЖНО ВІД ПРИСТРОЮ
       // ==========================================
       let mm = gsap.matchMedia();
 
@@ -273,78 +247,110 @@ export default function HeroVideo() {
           isDesktop: "(min-width: 769px)",
         },
         (context) => {
-          let { isMobile } = context.conditions;
+          let { isMobile, isDesktop } = context.conditions;
 
-          // 🔴 ПРИБИРАЄМО ScrollTrigger.normalizeScroll(true);
-          // Він робив скрол жорстким, віддаємо фізику скролу назад браузеру.
+          if (isDesktop) {
+            // ДЕСКТОП: Завантажуємо кадри, малюємо Canvas, вмикаємо ScrollTrigger
+            preloadFirstFrame()
+              .then(() => {
+                calculateMetrics();
+                render();
+                preloadOtherFrames();
+              })
+              .catch(console.error);
 
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: heroRef.current,
-              start: "top top",
-              end: isMobile ? "+=200%" : "+=300%",
-              // 🔥 СЕКРЕТ ІНЕРЦІЇ АНІМАЦІЇ:
-              // 2.5 секунди "шлейфу" для мобілки (ідеальне ковзання відео), і 0.5 для десктопа (щоб мишка реагувала миттєво)
-              scrub: isMobile ? 2.5 : 0.5,
-              pin: true,
-              pinSpacing: false,
-            },
-          });
+            window.addEventListener("resize", calculateMetrics);
 
-          // 1. ВІДЕО: Грає рівно 2 екрани
-          tl.to(
-            animationState,
-            {
-              frame: frameCount - 1,
-              ease: "none",
-              duration: 2,
-              onUpdate: render,
-            },
-            0,
-          );
+            const tl = gsap.timeline({
+              scrollTrigger: {
+                trigger: heroRef.current,
+                start: "top top",
+                end: "+=300%",
+                scrub: 0.5,
+                pin: true,
+                pinSpacing: false,
+              },
+            });
 
-          if (contentRef.current) {
-            // 2. ПОЯВА КАРТОК
-            const contentCards =
-              contentRef.current.querySelectorAll(".animCardWrapper");
+            tl.to(
+              animationState,
+              {
+                frame: frameCount - 1,
+                ease: "none",
+                duration: 2,
+                onUpdate: render,
+              },
+              0,
+            );
+
+            if (contentRef.current) {
+              const contentCards =
+                contentRef.current.querySelectorAll(".animCardWrapper");
+              tl.fromTo(
+                contentCards,
+                { y: 50, opacity: 0 },
+                {
+                  y: 0,
+                  opacity: 1,
+                  duration: 0.6,
+                  stagger: 0.15,
+                  ease: "power3.out",
+                  force3D: true,
+                },
+                0.1,
+              );
+              tl.to(
+                contentRef.current,
+                { y: -50, opacity: 0, duration: 0.3 },
+                1.7,
+              );
+            }
 
             tl.fromTo(
-              contentCards,
-              { y: 50, opacity: 0 },
-              {
-                y: 0,
-                opacity: 1,
-                duration: 0.6,
-                stagger: 0.15,
-                ease: "power3.out",
-                force3D: true,
-              },
-              0.1,
+              overlayRef.current,
+              { opacity: 0 },
+              { opacity: 0.8, duration: 1, ease: "none" },
+              2,
             );
 
-            // 3. ЗНИКНЕННЯ ВСЬОГО КОНТЕНТУ
-            tl.to(
-              contentRef.current,
-              { y: -30, opacity: 0, duration: 0.3 },
-              isMobile ? 1.5 : 1.7,
-            );
+            return () => window.removeEventListener("resize", calculateMetrics);
           }
 
-          // 4. ЗАТЕМНЕННЯ І НАЇЗД
-          tl.fromTo(
-            overlayRef.current,
-            { opacity: 0 },
-            { opacity: 0.8, duration: 1, ease: "none" },
-            2,
-          );
+          if (isMobile) {
+            // МОБІЛКА:
+
+            // 🟢 1. ФІКС ОВЕРЛЕЮ: Робимо його напівпрозорим одразу (інакше це просто чорний екран)
+            gsap.set(overlayRef.current, { opacity: 0.6 });
+
+            // 🟢 2. ФІКС АВТОПЛЕЮ: Примусово запускаємо відео для iOS та деяких Android
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              videoRef.current
+                .play()
+                .catch((err) => console.log("Autoplay blocked", err));
+            }
+
+            // Поява карток
+            if (contentRef.current) {
+              const contentCards =
+                contentRef.current.querySelectorAll(".animCardWrapper");
+
+              gsap.fromTo(
+                contentCards,
+                { y: 50, opacity: 0 },
+                {
+                  y: 0,
+                  opacity: 1,
+                  duration: 0.6,
+                  stagger: 0.15,
+                  ease: "power3.out",
+                  delay: 1.5, // Затримка 1.5с (оптимально для мобайлу)
+                },
+              );
+            }
+          }
         },
       );
-
-      return () => {
-        clearTimeout(resizeTimer);
-        window.removeEventListener("resize", handleResize);
-        // mm.revert() викликається автоматично завдяки useGSAP
-      };
     },
     { scope: heroRef },
   );
@@ -352,11 +358,27 @@ export default function HeroVideo() {
   return (
     <div className={styles.heroSection} ref={heroRef}>
       <div className={styles.pinArea}>
+        {/* Canvas для десктопа */}
         <canvas ref={canvasRef} className={styles.canvas} />
+
+        {/* 🟢 Відео для мобайла: Додано ref={videoRef} */}
+        <video
+          ref={videoRef}
+          className={styles.mobileVideo}
+          src="/hero-mobile.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+
         <div ref={overlayRef} className={styles.canvasOverlay} />
         <HeroLogo ref={logoRef} />
         <HeroContent ref={contentRef} />
       </div>
+
+      {/* Спейсер потрібен тільки на десктопі для прокрутки Canvas */}
+      <div className={styles.delaySpacer} />
     </div>
   );
 }
