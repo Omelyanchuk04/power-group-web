@@ -1,62 +1,56 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import styles from "./About.module.scss";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
 export default function About() {
   const sectionRef = useRef(null);
-  const headerRef = useRef(null);
 
-  const offerHeaderRef = useRef(null);
-  const targetGridRef = useRef(null);
-  const imageCardsRef = useRef([]);
-
-  const transitionTextRef = useRef(null);
-
-  const statsHeaderRef = useRef(null);
-  const statsGridRef = useRef(null);
-  const statsRef = useRef([]);
-
-  const parallaxWrappersRef = useRef([]);
-
-  useEffect(() => {
-    let ctx = gsap.context(() => {
+  useGSAP(
+    () => {
       // 1. ГОЛОВНИЙ ЗАГОЛОВОК
       gsap.fromTo(
-        headerRef.current,
+        `.${styles.sectionHeader}`,
         { opacity: 0, y: 50 },
         {
           opacity: 1,
           y: 0,
           duration: 1,
           ease: "power3.out",
-          scrollTrigger: { trigger: sectionRef.current, start: "top 60%" },
+          scrollTrigger: {
+            trigger: `.${styles.sectionHeader}`,
+            start: "top 80%",
+          },
         },
       );
 
       // 2. ЗАГОЛОВОК "ЩО МИ ПРОПОНУЄМО"
       gsap.fromTo(
-        offerHeaderRef.current,
+        `.${styles.offerHeader}`,
         { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
           duration: 0.8,
           ease: "power3.out",
-          scrollTrigger: { trigger: offerHeaderRef.current, start: "top 75%" },
+          scrollTrigger: {
+            trigger: `.${styles.offerHeader}`,
+            start: "top 80%",
+          },
         },
       );
 
       // 3. КАРТКИ АУДИТОРІЙ (B2C / B2B)
       gsap.fromTo(
-        imageCardsRef.current,
+        `.${styles.targetCard}`,
         { opacity: 0, scale: 0.95, y: 50 },
         {
           opacity: 1,
@@ -65,13 +59,13 @@ export default function About() {
           stagger: 0.15,
           duration: 0.8,
           ease: "power3.out",
-          scrollTrigger: { trigger: targetGridRef.current, start: "top 70%" },
+          scrollTrigger: { trigger: `.${styles.targetGrid}`, start: "top 70%" },
         },
       );
 
       // 4. ТЕКСТ-ПЕРЕХІД (Заява)
       gsap.fromTo(
-        transitionTextRef.current,
+        `.${styles.transitionBlock}`,
         { opacity: 0, y: 40 },
         {
           opacity: 1,
@@ -79,7 +73,7 @@ export default function About() {
           duration: 1,
           ease: "power3.out",
           scrollTrigger: {
-            trigger: transitionTextRef.current,
+            trigger: `.${styles.transitionBlock}`,
             start: "top 80%",
           },
         },
@@ -87,20 +81,23 @@ export default function About() {
 
       // 5. ПІДЗАГОЛОВОК СТАТИСТИКИ
       gsap.fromTo(
-        statsHeaderRef.current,
+        `.${styles.statsHeader}`,
         { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
           duration: 0.8,
           ease: "power3.out",
-          scrollTrigger: { trigger: statsGridRef.current, start: "top 85%" },
+          scrollTrigger: {
+            trigger: `.${styles.statsHeader}`,
+            start: "top 85%",
+          },
         },
       );
 
-      // 6. КАРТКИ СТАТИСТИКИ (Цифри) - Ідеально плавні
+      // 6. КАРТКИ СТАТИСТИКИ (Цифри)
       gsap.fromTo(
-        statsRef.current,
+        ".animStatWrapper",
         { opacity: 0, scale: 0.95, y: 40 },
         {
           opacity: 1,
@@ -108,34 +105,34 @@ export default function About() {
           y: 0,
           stagger: 0.15,
           duration: 0.8,
-          ease: "power3.out", // М'яке гальмування без ривків
-          scrollTrigger: { trigger: statsGridRef.current, start: "top 80%" },
+          ease: "power3.out",
+          scrollTrigger: { trigger: `.${styles.statsGrid}`, start: "top 80%" },
         },
       );
 
-      // Паралакс фонів
-      parallaxWrappersRef.current.forEach((wrapper) => {
-        if (wrapper) {
-          gsap.fromTo(
-            wrapper,
-            { yPercent: -20 },
-            {
-              yPercent: 20,
-              ease: "none",
-              scrollTrigger: {
-                trigger: wrapper.parentNode,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
+      // 7. ПАРАЛАКС ФОНІВ В КАРТКАХ
+      const parallaxWrappers = gsap.utils.toArray(
+        `.${styles.imgParallaxWrapper}`,
+      );
+      parallaxWrappers.forEach((wrapper) => {
+        gsap.fromTo(
+          wrapper,
+          { yPercent: -15 },
+          {
+            yPercent: 15,
+            ease: "none",
+            scrollTrigger: {
+              trigger: wrapper.parentNode,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
             },
-          );
-        }
+          },
+        );
       });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+    },
+    { scope: sectionRef },
+  );
 
   return (
     <section className={styles.lightSection} ref={sectionRef}>
@@ -145,7 +142,7 @@ export default function About() {
 
       <div className={styles.container}>
         {/* ================= БЛОК 1: ІНТРО ================= */}
-        <div className={styles.sectionHeader} ref={headerRef}>
+        <div className={styles.sectionHeader}>
           <span className={styles.badge}>Про компанію</span>
           <h2>Створюємо вашу енергетичну стабільність</h2>
           <p>
@@ -155,9 +152,9 @@ export default function About() {
           </p>
         </div>
 
-        {/* ================= БЛОК 2: ЩО МИ ПРОПОНУЄМО (Картки) ================= */}
+        {/* ================= БЛОК 2: ЩО МИ ПРОПОНУЄМО ================= */}
         <div className={styles.offerWrapper}>
-          <div className={styles.offerHeader} ref={offerHeaderRef}>
+          <div className={styles.offerHeader}>
             <h3>Що ми пропонуємо</h3>
             <p>
               Комплексні рішення для забезпечення енергонезалежності як
@@ -165,15 +162,9 @@ export default function About() {
             </p>
           </div>
 
-          <div className={styles.targetGrid} ref={targetGridRef}>
-            <div
-              className={styles.targetCard}
-              ref={(el) => (imageCardsRef.current[0] = el)}
-            >
-              <div
-                className={styles.imgParallaxWrapper}
-                ref={(el) => (parallaxWrappersRef.current[0] = el)}
-              >
+          <div className={styles.targetGrid}>
+            <div className={styles.targetCard}>
+              <div className={styles.imgParallaxWrapper}>
                 <NextImage
                   src="/images/about-b2c.jpg"
                   alt="Приватні будинки"
@@ -203,14 +194,8 @@ export default function About() {
               </div>
             </div>
 
-            <div
-              className={styles.targetCard}
-              ref={(el) => (imageCardsRef.current[1] = el)}
-            >
-              <div
-                className={styles.imgParallaxWrapper}
-                ref={(el) => (parallaxWrappersRef.current[1] = el)}
-              >
+            <div className={styles.targetCard}>
+              <div className={styles.imgParallaxWrapper}>
                 <NextImage
                   src="/images/about-b2b.jpg"
                   alt="Підприємства"
@@ -251,7 +236,7 @@ export default function About() {
         </div>
 
         {/* ================= БЛОК 2.5: ТЕКСТ-ПЕРЕХІД ================= */}
-        <div className={styles.transitionBlock} ref={transitionTextRef}>
+        <div className={styles.transitionBlock}>
           <h3>Надійність на кожному етапі</h3>
           <p>
             Від розробки проєкту до введення об'єкта в експлуатацію — ми беремо
@@ -263,14 +248,13 @@ export default function About() {
 
         {/* ================= БЛОК 3: НАШІ ДОСЯГНЕННЯ ================= */}
         <div className={styles.statsWrapper}>
-          <div className={styles.statsHeader} ref={statsHeaderRef}>
+          <div className={styles.statsHeader}>
             <h3>Факти, що говорять самі за себе</h3>
             <div className={styles.headerLine}></div>
           </div>
 
-          <div className={styles.statsGrid} ref={statsGridRef}>
-            {/* 🔥 МАГІЯ ТУТ: Додано невидимі обгортки (div) спеціально для GSAP */}
-            <div ref={(el) => (statsRef.current[0] = el)}>
+          <div className={styles.statsGrid}>
+            <div className="animStatWrapper">
               <div className={styles.statCard}>
                 <NextImage
                   src="/images/experiense-card.jpg"
@@ -290,7 +274,7 @@ export default function About() {
               </div>
             </div>
 
-            <div ref={(el) => (statsRef.current[1] = el)}>
+            <div className="animStatWrapper">
               <div className={styles.statCard}>
                 <NextImage
                   src="/images/projects-card.jpg"
@@ -310,7 +294,7 @@ export default function About() {
               </div>
             </div>
 
-            <div ref={(el) => (statsRef.current[2] = el)}>
+            <div className="animStatWrapper">
               <div className={styles.statCard}>
                 <NextImage
                   src="/images/employees-card.jpg"
@@ -330,7 +314,7 @@ export default function About() {
               </div>
             </div>
 
-            <div ref={(el) => (statsRef.current[3] = el)}>
+            <div className="animStatWrapper">
               <div className={styles.statCard}>
                 <NextImage
                   src="/images/power-card.jpg"

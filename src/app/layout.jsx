@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.scss";
 import Header from "@/components/layout/Header"; // Підключаємо нашу шапку
+import Footer from "@/components/layout/Footer"; // Підключаємо наш футер
 
 // Налаштування шрифтів
 const geistSans = Geist({
@@ -35,6 +36,7 @@ export default function RootLayout({ children }) {
 
         {/* Обгортаємо весь контент і робимо відступ на висоту шапки (80px) */}
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

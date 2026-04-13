@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import HeroLogo from "./HeroLogo";
 import HeroContent from "./HeroContent";
 import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
 export default function HeroVideo() {
@@ -16,62 +17,107 @@ export default function HeroVideo() {
   const canvasRef = useRef(null);
   const logoRef = useRef(null);
   const contentRef = useRef(null);
+  const overlayRef = useRef(null);
 
   const frameCount = 158;
   const imagesRef = useRef([]);
+  const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d", { alpha: false });
-    const animationState = { frame: 0 };
+  useGSAP(
+    () => {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d", {
+        alpha: false,
+        desynchronized: true,
+      });
+      const animationState = { frame: 0 };
 
-    const render = () => {
-      const safeFrameIndex = Math.max(
-        0,
-        Math.min(frameCount - 1, Math.floor(animationState.frame)),
-      );
-      const img = imagesRef.current[safeFrameIndex];
-      if (!img || !img.complete) return;
+      const calculateMetrics = () => {
+        const img = imagesRef.current[0];
+        if (!img) return;
 
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      const canvasAspect = canvas.width / canvas.height;
-      const imgAspect = img.width / img.height;
-      let drawWidth, drawHeight, offsetX, offsetY;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-      if (canvasAspect > imgAspect) {
-        drawWidth = canvas.width;
-        drawHeight = canvas.width / imgAspect;
-        offsetX = 0;
-        offsetY = (canvas.height - drawHeight) / 2;
-      } else {
-        drawWidth = canvas.height * imgAspect;
-        drawHeight = canvas.height;
-        offsetX = (canvas.width - drawWidth) / 2;
-        offsetY = 0;
-      }
-      context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-    };
+        const canvasAspect = canvas.width / canvas.height;
+        const imgAspect = img.width / img.height;
 
-    for (let i = 0; i < frameCount; i++) {
-      const img = new Image();
-      img.decoding = "async";
-      img.onload = () => {
-        if (i === 0) render();
+        if (canvasAspect > imgAspect) {
+          renderMetrics.current.width = canvas.width;
+          renderMetrics.current.height = canvas.width / imgAspect;
+          renderMetrics.current.x = 0;
+          renderMetrics.current.y =
+            (canvas.height - renderMetrics.current.height) / 2;
+        } else {
+          renderMetrics.current.width = canvas.height * imgAspect;
+          renderMetrics.current.height = canvas.height;
+          renderMetrics.current.x =
+            (canvas.width - renderMetrics.current.width) / 2;
+          renderMetrics.current.y = 0;
+        }
       };
-      img.src = `/frames/frame-${(i + 1).toString().padStart(3, "0")}.jpg`;
-      imagesRef.current.push(img);
-    }
 
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      render();
-    };
+      const render = () => {
+        const safeFrameIndex = Math.max(
+          0,
+          Math.min(frameCount - 1, Math.floor(animationState.frame)),
+        );
+        const img = imagesRef.current[safeFrameIndex];
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
+        if (!img || !img.complete || renderMetrics.current.width === 0) return;
 
-    let ctx = gsap.context(() => {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(
+          img,
+          renderMetrics.current.x,
+          renderMetrics.current.y,
+          renderMetrics.current.width,
+          renderMetrics.current.height,
+        );
+      };
+
+      const preloadFirstFrame = () => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => {
+            imagesRef.current[0] = img;
+            resolve(img);
+          };
+          img.onerror = reject;
+          img.src = `/frames/frame-001.jpg`;
+        });
+      };
+
+      const preloadOtherFrames = () => {
+        for (let i = 1; i < frameCount; i++) {
+          const img = new Image();
+          img.decoding = "async";
+          img.src = `/frames/frame-${(i + 1).toString().padStart(3, "0")}.jpg`;
+          imagesRef.current.push(img);
+        }
+      };
+
+      preloadFirstFrame()
+        .then(() => {
+          calculateMetrics();
+          render();
+          preloadOtherFrames();
+        })
+        .catch(console.error);
+
+      let resizeTimer;
+      const handleResize = () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          calculateMetrics();
+          render();
+        }, 150);
+      };
+
+      window.addEventListener("resize", handleResize);
+
+      // --- GSAP АНІМАЦІЇ ПОЯВИ ---
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
         const text = logoRef.current.querySelector(`.${styles.animText}`);
@@ -84,29 +130,15 @@ export default function HeroVideo() {
         const contentSubtitle = contentRef.current.querySelector(
           `.${styles.animSubtitle}`,
         );
-
-        // 🔥 ВИПРАВЛЕНО: Тепер шукаємо наші нові обгортки!
         const contentCards =
           contentRef.current.querySelectorAll(`.animCardWrapper`);
-
         const contentButtonWrapper = contentRef.current.querySelector(
           `.${styles.animButtonWrapper}`,
         );
 
         const tlStart = gsap.timeline({ delay: 0.2 });
 
-        tlStart.fromTo(
-          canvas,
-          { filter: "brightness(1) blur(0px)" },
-          {
-            filter: "brightness(0.7) blur(0px)",
-            duration: 1.2,
-            ease: "power2.inOut",
-          },
-          0,
-        );
-
-        // ФАЗА 1: Поява ЛОГО
+        // Фаза 1: Поява Лого
         tlStart
           .fromTo(
             icon,
@@ -141,7 +173,6 @@ export default function HeroVideo() {
               duration: 0.6,
               ease: "power2.out",
               force3D: true,
-              autoRound: false,
             },
             0.4,
           )
@@ -154,12 +185,11 @@ export default function HeroVideo() {
               duration: 0.6,
               ease: "power2.out",
               force3D: true,
-              autoRound: false,
             },
             0.6,
           );
 
-        // ФАЗА 2: Зникнення ЛОГО
+        // Фаза 2: Зникнення Лого
         tlStart.to(
           [icon, text, line, slogan],
           {
@@ -173,7 +203,7 @@ export default function HeroVideo() {
           "+=0.3",
         );
 
-        // ФАЗА 3: Поява ГОЛОВНОГО КОНТЕНТУ
+        // Фаза 3: Поява Контенту
         tlStart
           .fromTo(
             contentTitle,
@@ -184,7 +214,6 @@ export default function HeroVideo() {
               duration: 0.6,
               ease: "power3.out",
               force3D: true,
-              autoRound: false,
             },
             "-=0.1",
           )
@@ -197,12 +226,11 @@ export default function HeroVideo() {
               duration: 0.6,
               ease: "power3.out",
               force3D: true,
-              autoRound: false,
             },
             "-=0.4",
           )
           .fromTo(
-            contentCards, // Анімуються обгортки карток
+            contentCards,
             { y: 20, opacity: 0 },
             {
               y: 0,
@@ -211,12 +239,11 @@ export default function HeroVideo() {
               stagger: 0.1,
               ease: "power3.out",
               force3D: true,
-              autoRound: false,
             },
             "-=0.4",
           )
           .fromTo(
-            contentButtonWrapper, // Анімується обгортка кнопки
+            contentButtonWrapper,
             { y: 20, opacity: 0 },
             {
               y: 0,
@@ -224,65 +251,67 @@ export default function HeroVideo() {
               duration: 0.5,
               ease: "power3.out",
               force3D: true,
-              autoRound: false,
             },
             "-=0.4",
           );
       }
 
-      // АНІМАЦІЯ СКРОЛУ
+      // ==========================================
+      // 🔥 ЛОГІКА СКРОЛУ (БЕЗ ДОВГОГО ОЧІКУВАННЯ)
+      // ==========================================
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: heroRef.current,
           start: "top top",
-          end: "+=200%",
+          end: "+=300%", // ЗАГАЛЬНИЙ шлях фіксації: 3 екрани
           scrub: 0.5,
           pin: true,
-          pinSpacing: false,
+          pinSpacing: false, // Дозволяємо About наїхати
         },
       });
 
-      tl.to({}, { duration: 1 });
+      // 1. ВІДЕО: Грає тільки першу третину скролу (0 -> 0.5)
       tl.to(
         animationState,
         {
           frame: frameCount - 1,
           ease: "none",
-          duration: 0.9,
+          duration: 2,
           onUpdate: render,
         },
         0,
       );
 
+      // 2. ТЕКСТ: Ховається рівно під кінець відео (час 1.7 -> 2.0)
       if (contentRef.current) {
-        tl.to(contentRef.current, { y: -100, opacity: 0, duration: 0.3 }, 0);
+        tl.to(contentRef.current, { y: -50, opacity: 0, duration: 0.3 }, 1.7);
       }
 
+      // 3. ЗАТЕМНЕННЯ І НАЇЗД: Стартує РІВНО тоді, коли відео зупинилось (час 2 -> 3)
       tl.fromTo(
-        canvas,
-        { filter: "brightness(0.55) blur(0px)" },
-        { filter: "brightness(1) blur(0px)", duration: 0.4 },
-        0,
+        overlayRef.current,
+        { opacity: 0 },
+        { opacity: 0.8, duration: 1, ease: "none" },
+        2, // Починається чітко на відмітці '2'
       );
-    });
 
-    return () => {
-      ctx.revert();
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+      return () => {
+        clearTimeout(resizeTimer);
+        window.removeEventListener("resize", handleResize);
+      };
+    },
+    { scope: heroRef },
+  );
 
   return (
-    <>
-      <div className={styles.heroSection} ref={heroRef}>
-        <div className={styles.pinArea}>
-          <canvas ref={canvasRef} className={styles.canvas} />
-          <HeroLogo ref={logoRef} />
-          <HeroContent ref={contentRef} />
-        </div>
+    // ❌ ПРИБРАНО delaySpacer знизу, він тільки все ламав
+    <div className={styles.heroSection} ref={heroRef}>
+      <div className={styles.pinArea}>
+        <canvas ref={canvasRef} className={styles.canvas} />
+        <div ref={overlayRef} className={styles.canvasOverlay} />
+        <HeroLogo ref={logoRef} />
+        <HeroContent ref={contentRef} />
       </div>
-
-      <div className={styles.delaySpacer}></div>
-    </>
+    </div>
   );
 }

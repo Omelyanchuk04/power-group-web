@@ -6,7 +6,7 @@ import styles from "./HeroVideo.module.scss";
 const HeroContent = forwardRef((props, ref) => {
   return (
     <div className={styles.contentWrapper} ref={ref}>
-      {/* 1. ЦЕНТРАЛЬНИЙ БЛОК (Фокус уваги) */}
+      {/* 1. ЦЕНТРАЛЬНИЙ БЛОК */}
       <div className={styles.mainContent}>
         <h1 className={styles.animTitle}>
           Електромонтажні роботи <br />
@@ -17,13 +17,16 @@ const HeroContent = forwardRef((props, ref) => {
           цивільній та промисловій сфері.
         </p>
         <div className={styles.animButtonWrapper}>
-          <button className={styles.animButton}>Отримати консультацію</button>
+          <button className={styles.animButton} type="button">
+            {" "}
+            {/* Додав type="button" для безпеки форм */}
+            Отримати консультацію
+          </button>
         </div>
       </div>
 
-      {/* 2. БЛОК ПЕРЕВАГ (Glassmorphism картки знизу) */}
+      {/* 2. БЛОК ПЕРЕВАГ */}
       <div className={styles.featuresRow}>
-        {/* 🔥 Картка 1: Комплексні рішення */}
         <div className="animCardWrapper">
           <div className={styles.featureCard}>
             <div className={styles.cardIcon}>
@@ -45,7 +48,6 @@ const HeroContent = forwardRef((props, ref) => {
           </div>
         </div>
 
-        {/* 🔥 Картка 2: Масштабність (приватні/промислові) */}
         <div className="animCardWrapper">
           <div className={styles.featureCard}>
             <div className={styles.cardIcon}>
@@ -68,7 +70,6 @@ const HeroContent = forwardRef((props, ref) => {
           </div>
         </div>
 
-        {/* 🔥 Картка 3: Надійність та персонал */}
         <div className="animCardWrapper">
           <div className={styles.featureCard}>
             <div className={styles.cardIcon}>
