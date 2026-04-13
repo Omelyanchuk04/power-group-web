@@ -275,17 +275,17 @@ export default function HeroVideo() {
         (context) => {
           let { isMobile } = context.conditions;
 
-          // Нормалізація скролу тільки для мобільних
-          if (isMobile) {
-            ScrollTrigger.normalizeScroll(true);
-          }
+          // 🔴 ПРИБИРАЄМО ScrollTrigger.normalizeScroll(true);
+          // Він робив скрол жорстким, віддаємо фізику скролу назад браузеру.
 
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: heroRef.current,
               start: "top top",
-              end: isMobile ? "+=180%" : "+=300%",
-              scrub: isMobile ? 1 : 0.5,
+              end: isMobile ? "+=200%" : "+=300%",
+              // 🔥 СЕКРЕТ ІНЕРЦІЇ АНІМАЦІЇ:
+              // 2.5 секунди "шлейфу" для мобілки (ідеальне ковзання відео), і 0.5 для десктопа (щоб мишка реагувала миттєво)
+              scrub: isMobile ? 2.5 : 0.5,
               pin: true,
               pinSpacing: false,
             },

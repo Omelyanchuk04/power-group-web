@@ -7,8 +7,12 @@ $primary: #0056b3;
   position: relative;
   width: 100%;
   height: 100vh;
+  height: 100svh;
   background-color: #000;
   overflow: hidden;
+
+  // 🔥 Це каже мобільному браузеру: "Залиш вертикальний скрол з інерцією за собою, не віддавай його скриптам"
+  touch-action: pan-y;
 }
 
 .pinArea {
