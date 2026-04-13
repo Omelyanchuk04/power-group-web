@@ -32,6 +32,9 @@ export default function HeroVideo() {
       });
       const animationState = { frame: 0 };
 
+      // ==========================================
+      // ЛОГІКА CANVAS ТА ЗВУЖЕННЯ/РОЗШИРЕННЯ
+      // ==========================================
       const calculateMetrics = () => {
         const img = imagesRef.current[0];
         if (!img) return;
@@ -80,7 +83,7 @@ export default function HeroVideo() {
         return new Promise((resolve, reject) => {
           const img = new Image();
           img.decoding = "async";
-          img.fetchPriority = "high"; // 🔥 Браузер кине всі сили на цю картинку
+          img.fetchPriority = "high";
           img.onload = () => {
             imagesRef.current[0] = img;
             resolve(img);
@@ -91,7 +94,7 @@ export default function HeroVideo() {
       };
 
       const preloadOtherFrames = async () => {
-        const batchSize = 5; // Вантажимо по 5 картинок за раз, щоб не "повісити" мережу
+        const batchSize = 5;
 
         for (let i = 1; i < frameCount; i += batchSize) {
           const batch = [];
@@ -102,18 +105,14 @@ export default function HeroVideo() {
               new Promise((resolve) => {
                 const img = new Image();
                 img.decoding = "async";
-                img.fetchPriority = "low"; // 🔥 Інші кадри вантажимо у фоновому режимі
+                img.fetchPriority = "low";
                 img.onload = resolve;
-                img.onerror = resolve; // Якщо картинка бита - просто йдемо далі
+                img.onerror = resolve;
                 img.src = `/frames/frame-${(index + 1).toString().padStart(3, "0")}.jpg`;
-
-                // Кладемо картинку чітко на її індекс, щоб не збився порядок
                 imagesRef.current[index] = img;
               }),
             );
           }
-
-          // Чекаємо, поки завантажаться поточні 5 картинок, перш ніж просити наступні
           await Promise.all(batch);
         }
       };
@@ -137,7 +136,9 @@ export default function HeroVideo() {
 
       window.addEventListener("resize", handleResize);
 
-      // --- GSAP АНІМАЦІЇ ПОЯВИ ---
+      // ==========================================
+      // --- GSAP АНІМАЦІЇ ПОЯВИ (БЕЗ КАРТОК) ---
+      // ==========================================
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
         const text = logoRef.current.querySelector(`.${styles.animText}`);
@@ -150,8 +151,6 @@ export default function HeroVideo() {
         const contentSubtitle = contentRef.current.querySelector(
           `.${styles.animSubtitle}`,
         );
-        const contentCards =
-          contentRef.current.querySelectorAll(`.animCardWrapper`);
         const contentButtonWrapper = contentRef.current.querySelector(
           `.${styles.animButtonWrapper}`,
         );
@@ -223,7 +222,7 @@ export default function HeroVideo() {
           "+=0.3",
         );
 
-        // Фаза 3: Поява Контенту
+        // Фаза 3: Поява Контенту (ТІЛЬКИ текст і кнопка)
         tlStart
           .fromTo(
             contentTitle,
@@ -250,19 +249,6 @@ export default function HeroVideo() {
             "-=0.4",
           )
           .fromTo(
-            contentCards,
-            { y: 20, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.5,
-              stagger: 0.1,
-              ease: "power3.out",
-              force3D: true,
-            },
-            "-=0.4",
-          )
-          .fromTo(
             contentButtonWrapper,
             { y: 20, opacity: 0 },
             {
@@ -277,54 +263,93 @@ export default function HeroVideo() {
       }
 
       // ==========================================
-      // 🔥 ЛОГІКА СКРОЛУ (БЕЗ ДОВГОГО ОЧІКУВАННЯ)
+      // 🔥 ЛОГІКА СКРОЛУ ЧЕРЕЗ MATCHMEDIA
       // ==========================================
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: "top top",
-          end: "+=300%", // ЗАГАЛЬНИЙ шлях фіксації: 3 екрани
-          scrub: 0.5,
-          pin: true,
-          pinSpacing: false, // Дозволяємо About наїхати
-        },
-      });
+      let mm = gsap.matchMedia();
 
-      // 1. ВІДЕО: Грає тільки першу третину скролу (0 -> 0.5)
-      tl.to(
-        animationState,
+      mm.add(
         {
-          frame: frameCount - 1,
-          ease: "none",
-          duration: 2,
-          onUpdate: render,
+          isMobile: "(max-width: 768px)",
+          isDesktop: "(min-width: 769px)",
         },
-        0,
-      );
+        (context) => {
+          let { isMobile } = context.conditions;
 
-      // 2. ТЕКСТ: Ховається рівно під кінець відео (час 1.7 -> 2.0)
-      if (contentRef.current) {
-        tl.to(contentRef.current, { y: -50, opacity: 0, duration: 0.3 }, 1.7);
-      }
+          // Нормалізація скролу тільки для мобільних
+          if (isMobile) {
+            ScrollTrigger.normalizeScroll(true);
+          }
 
-      // 3. ЗАТЕМНЕННЯ І НАЇЗД: Стартує РІВНО тоді, коли відео зупинилось (час 2 -> 3)
-      tl.fromTo(
-        overlayRef.current,
-        { opacity: 0 },
-        { opacity: 0.8, duration: 1, ease: "none" },
-        2, // Починається чітко на відмітці '2'
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: heroRef.current,
+              start: "top top",
+              end: isMobile ? "+=180%" : "+=300%",
+              scrub: isMobile ? 1 : 0.5,
+              pin: true,
+              pinSpacing: false,
+            },
+          });
+
+          // 1. ВІДЕО: Грає рівно 2 екрани
+          tl.to(
+            animationState,
+            {
+              frame: frameCount - 1,
+              ease: "none",
+              duration: 2,
+              onUpdate: render,
+            },
+            0,
+          );
+
+          if (contentRef.current) {
+            // 2. ПОЯВА КАРТОК
+            const contentCards =
+              contentRef.current.querySelectorAll(".animCardWrapper");
+
+            tl.fromTo(
+              contentCards,
+              { y: 50, opacity: 0 },
+              {
+                y: 0,
+                opacity: 1,
+                duration: 0.6,
+                stagger: 0.15,
+                ease: "power3.out",
+                force3D: true,
+              },
+              0.1,
+            );
+
+            // 3. ЗНИКНЕННЯ ВСЬОГО КОНТЕНТУ
+            tl.to(
+              contentRef.current,
+              { y: -30, opacity: 0, duration: 0.3 },
+              isMobile ? 1.5 : 1.7,
+            );
+          }
+
+          // 4. ЗАТЕМНЕННЯ І НАЇЗД
+          tl.fromTo(
+            overlayRef.current,
+            { opacity: 0 },
+            { opacity: 0.8, duration: 1, ease: "none" },
+            2,
+          );
+        },
       );
 
       return () => {
         clearTimeout(resizeTimer);
         window.removeEventListener("resize", handleResize);
+        // mm.revert() викликається автоматично завдяки useGSAP
       };
     },
     { scope: heroRef },
   );
 
   return (
-    // ❌ ПРИБРАНО delaySpacer знизу, він тільки все ламав
     <div className={styles.heroSection} ref={heroRef}>
       <div className={styles.pinArea}>
         <canvas ref={canvasRef} className={styles.canvas} />
