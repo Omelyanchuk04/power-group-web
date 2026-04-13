@@ -1,0 +1,42 @@
+<svg viewBox="0 0 1000 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="jacket" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#475569" />
+      <stop offset="20%" stop-color="#334155" />
+      <stop offset="80%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <linearGradient id="insulation" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="15%" stop-color="#ffffff" />
+      <stop offset="85%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+
+    <linearGradient id="copper" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8c5222" />
+      <stop offset="20%" stop-color="#e6a673" />
+      <stop offset="50%" stop-color="#ffc89e" />
+      <stop offset="80%" stop-color="#d48244" />
+      <stop offset="100%" stop-color="#5e3514" />
+    </linearGradient>
+
+    <filter id="insetShadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="40" rx="8" fill="url(#jacket)" />
+  
+  <rect x="0" y="6" width="1000" height="28" rx="4" fill="url(#insulation)" />
+  
+  <rect x="0" y="12" width="1000" height="16" rx="2" fill="url(#copper)" filter="url(#insetShadow)" />
+
+  <g stroke="#a66329" stroke-width="0.5" opacity="0.6">
+    <line x1="0" y1="15" x2="1000" y2="15" />
+    <line x1="0" y1="18" x2="1000" y2="18" />
+    <line x1="0" y1="21" x2="1000" y2="21" />
+    <line x1="0" y1="24" x2="1000" y2="24" />
+  </g>
+</svg>

@@ -1,0 +1,494 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$light-bg: #f5f5f5;
+$text-dark: #0a2540;
+$text-gray: #52637a;
+$border-color: #e2e8f0;
+$white: #ffffff;
+
+.projectsSection {
+  background-color: $light-bg;
+  padding: 100px 0;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+
+  &::before,
+  &::after,
+  .blob3,
+  .blob4,
+  .blob5 {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.8;
+  }
+  &::before {
+    width: 35vw;
+    height: 35vw;
+    background: rgba(0, 86, 179, 0.25);
+    filter: blur(80px);
+    top: -5%;
+    left: -5%;
+    animation: floatBlob1 20s infinite alternate ease-in-out;
+  }
+  &::after {
+    width: 30vw;
+    height: 40vw;
+    background: rgba(0, 163, 255, 0.2);
+    filter: blur(75px);
+    bottom: 10%;
+    right: -5%;
+    animation: floatBlob2 25s infinite alternate ease-in-out;
+  }
+}
+
+.blob3 {
+  width: 25vw;
+  height: 25vw;
+  background: rgba(255, 170, 0, 0.15);
+  filter: blur(70px);
+  top: 40%;
+  left: 20%;
+  animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
+}
+.blob4 {
+  width: 40vw;
+  height: 30vw;
+  background: rgba(0, 212, 255, 0.15);
+  filter: blur(85px);
+  top: 20%;
+  right: 15%;
+  animation: floatBlob4 28s infinite alternate ease-in-out;
+}
+.blob5 {
+  width: 20vw;
+  height: 30vw;
+  background: rgba(0, 86, 179, 0.2);
+  filter: blur(65px);
+  bottom: -5%;
+  left: 10%;
+  animation: floatBlob5 22s infinite alternate-reverse ease-in-out;
+}
+
+@keyframes floatBlob1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(15vw, 10vh) scale(1.1);
+  }
+  100% {
+    transform: translate(-5vw, 20vh) scale(0.9);
+  }
+}
+@keyframes floatBlob2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-20vw, -15vh) scale(0.9);
+  }
+  100% {
+    transform: translate(-5vw, -5vh) scale(1.1);
+  }
+}
+@keyframes floatBlob3 {
+  0% {
+    transform: translate(0, 0) scale(0.9);
+  }
+  50% {
+    transform: translate(-10vw, 25vh) scale(1.2);
+  }
+  100% {
+    transform: translate(15vw, -15vh) scale(1);
+  }
+}
+@keyframes floatBlob4 {
+  0% {
+    transform: translate(0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate(-25vw, 15vh) scale(0.85);
+  }
+  100% {
+    transform: translate(-10vw, -10vh) scale(1.05);
+  }
+}
+@keyframes floatBlob5 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(10vw, -20vh) scale(1.2);
+  }
+  100% {
+    transform: translate(25vw, 5vh) scale(0.9);
+  }
+}
+
+.container {
+  max-width: 100%;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+}
+
+// 🔥 ОНОВЛЕНИЙ БЛОК HEADER 🔥
+.header {
+  padding: 0 5vw;
+  margin-bottom: 50px;
+  position: relative;
+  display: flex;
+  justify-content: center; /* Центруємо весь блок .headerLeft відносно екрана */
+  align-items: center;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центруємо елементи всередині блоку (бейдж буде над заголовком) */
+  text-align: center; /* Вирівнюємо текст по центру */
+  width: 100%;
+}
+
+.badge {
+  /* Тут ми прибираємо align-self, оскільки батьківський .headerLeft вже має align-items: center */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 86, 179, 0.1);
+  color: $primary;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 20px;
+  border-radius: 100px;
+  margin-bottom: 24px;
+}
+.title {
+  font-size: 56px;
+  font-weight: 800;
+  color: $text-dark;
+  letter-spacing: -2px;
+  margin: 0 0 10px 0;
+  align-self: self-start;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: $text-gray;
+  margin: 0;
+  font-weight: 500;
+  align-self: self-start;
+}
+
+.headerRight {
+  position: absolute; // "Відриваємо" блок з кнопками від потоку
+  right: 5vw; // Притискаємо до правого краю (відступ такий самий, як padding у .header)
+  top: 50%;
+  transform: translateY(
+    -50%
+  ); // Відцентровуємо ідеально по вертикалі відносно заголовка
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.viewAllBtn {
+  display: flex;
+  align-items: center;
+  padding: 14px 28px;
+  border: 1px solid rgba(0, 86, 179, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: $primary;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: $primary;
+    color: $white;
+    border-color: $primary;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+}
+
+.controlBtn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 86, 179, 0.2);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: $primary;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: $primary;
+    color: $white;
+    border-color: $primary;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.sliderContainer {
+  width: 100vw;
+  overflow: hidden;
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.sliderTrack {
+  display: flex;
+  gap: 40px;
+  padding: 20px 5vw 40px 5vw;
+  width: max-content;
+}
+
+.projectCardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  user-select: none;
+}
+
+.yearLabel {
+  font-size: 32px;
+  font-weight: 800;
+  color: $primary;
+  margin-left: 20px;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+// 🔥 КЛАС ДЛЯ ПРИХОВУВАННЯ РОКУ (але зберігає відступ)
+.hiddenYear {
+  opacity: 0;
+}
+
+.projectCard {
+  display: flex;
+  width: 580px;
+  height: 340px;
+
+  background: #ebebeb99;
+  border: 1px solid #ffffff;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.4s ease;
+
+  &:hover {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.imagePanel {
+  flex: 0 0 45%;
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent 60%, #ebebeb99 100%);
+    z-index: 2;
+  }
+}
+.image {
+  object-fit: cover;
+}
+
+.infoPanel {
+  flex: 0 0 55%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.location {
+  color: $primary;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+.cardTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: $text-dark;
+  line-height: 1.2;
+  margin: 0;
+}
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.05);
+  margin: 20px 0;
+}
+.powerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.powerLabel {
+  color: $text-gray;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.powerValue {
+  color: $text-dark;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.detailBtn {
+  align-self: flex-start;
+  padding: 10px 24px;
+  background-color: $primary;
+  color: $white;
+  border: none;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: color.adjust(#0056b3, $lightness: -8%);
+  }
+}
+
+.progressContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background-color: rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+.progressBar {
+  width: 100%;
+  height: 100%;
+  background-color: $primary;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+// АДАПТИВНІСТЬ
+@media (max-width: 1024px) {
+  .projectCard {
+    width: 500px;
+    height: 320px;
+  }
+  .title {
+    font-size: 42px;
+  }
+  .cardTitle {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .projectsSection {
+    padding: 80px 0;
+  }
+
+  .header {
+    padding: 0 20px;
+    margin-bottom: 30px;
+    flex-direction: column; // На мобільному блоки стають один під одним
+    align-items: center; // Центруємо все по горизонталі
+    gap: 24px;
+  }
+
+  .headerRight {
+    position: static; // Знімаємо абсолютне позиціонування на телефоні
+    transform: none;
+    width: 100%;
+    justify-content: center; // Кнопки теж по центру
+    gap: 15px;
+  }
+
+  .headerLeft {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Вирівнює бейдж та всі елементи по лівому краю */
+    text-align: left; /* Вирівнює текст по лівому краю */
+    max-width: 800px;
+  }
+
+  .viewAllBtn {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .sliderTrack {
+    gap: 20px;
+    padding: 10px 20px 30px 20px;
+  }
+
+  .projectCard {
+    width: 85vw;
+    flex-direction: column;
+    height: auto;
+  }
+  .imagePanel {
+    flex: none;
+    height: 250px;
+    width: 100%;
+    &::after {
+      background: linear-gradient(to bottom, transparent 60%, #ebebeb99 100%);
+    }
+  }
+  .infoPanel {
+    flex: none;
+    width: 100%;
+    padding: 20px;
+  }
+}

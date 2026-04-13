@@ -1,0 +1,180 @@
+//@use "sass:color";
+
+$primary: #0056b3;
+
+.heroSection {
+  position: relative;
+
+  width: 100%;
+
+  height: 100vh;
+
+  background-color: #000;
+}
+
+.pinArea {
+  position: relative;
+
+  width: 100vw;
+
+  height: 100vh;
+
+  overflow: hidden;
+}
+
+.canvas {
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+
+  // 🔥 Safari Fix: замість will-change (який перевантажує пам'ять),
+
+  // використовуємо безпечний 3D-хак для плавності
+
+  -webkit-backface-visibility: hidden;
+
+  backface-visibility: hidden;
+
+  transform: translate3d(0, 0, 0);
+}
+
+// ==========================================
+
+// ЛОГОТИП
+
+// ==========================================
+
+.logoStep {
+  position: absolute;
+
+  top: 50%;
+
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  width: 90%;
+}
+
+.logoContainer {
+  display: flex;
+
+  align-items: center;
+
+  gap: 30px;
+}
+
+.logoRightColumn {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-start;
+}
+
+.animIcon,
+.animText,
+.animLine,
+.animSlogan {
+  opacity: 0;
+
+  // 🔥 Це зробить анімацію лінії (та інших елементів) в Safari ідеально гладкою
+
+  -webkit-backface-visibility: hidden;
+
+  backface-visibility: hidden;
+
+  transform: translate3d(0, 0, 0);
+}
+
+.animIcon img {
+  width: 140px;
+
+  height: auto;
+
+  display: block;
+}
+
+.animText img {
+  width: 440px;
+
+  height: auto;
+
+  display: block;
+
+  margin-bottom: 8px;
+}
+
+.animLine {
+  width: 100%;
+
+  height: 3px;
+
+  background-color: $primary;
+
+  border-radius: 2px;
+
+  margin-bottom: 12px;
+
+  transform-origin: center;
+}
+
+.animSlogan {
+  font-size: 22px;
+
+  font-weight: 500;
+
+  color: #fff;
+
+  letter-spacing: 1.5px;
+
+  text-transform: uppercase;
+
+  margin: 0;
+
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+// ==========================================
+
+// АДАПТИВ
+
+// ==========================================
+
+@media (max-width: 768px) {
+  .logoContainer {
+    flex-direction: column;
+
+    gap: 16px;
+  }
+
+  .logoRightColumn {
+    align-items: center;
+  }
+
+  .animLine {
+    max-width: 280px;
+  }
+
+  .animIcon img {
+    width: 100px;
+  }
+
+  .animText img {
+    width: 300px;
+  }
+
+  .animSlogan {
+    font-size: 14px;
+
+    text-align: center;
+  }
+}

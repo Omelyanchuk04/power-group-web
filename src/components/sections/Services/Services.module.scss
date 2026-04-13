@@ -1,0 +1,473 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$light-bg: #f5f5f5;
+$white: #ffffff;
+
+// 🔥 Замінили скучний сіро-чорний на дорогий глибокий темно-синій (Deep Navy)
+$text-dark: #0a2540;
+
+// 🔥 Трохи охолодили сірий колір, щоб він теж пасував до синьої гами
+$text-gray: #52637a;
+
+$border-color: #e2e8f0;
+
+// ==========================================
+// ГОЛОВНИЙ КОНТЕЙНЕР (Світлий фон)
+// ==========================================
+.servicesSection {
+  position: relative;
+  background-color: #f9f9f9; // Світлий преміальний фон
+  height: 100vh;
+  overflow: hidden;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  // 🔥 СИНЯ ПЛЯМА
+  &::before {
+    content: "";
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 70vw;
+    height: 70vw;
+    background: radial-gradient(
+      circle,
+      rgba(0, 86, 179, 0.12) 0%,
+      transparent 60%
+    );
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+    animation: floatGlow 15s infinite alternate ease-in-out;
+  }
+
+  // 🔥 ЖОВТА ПЛЯМА
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -20%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(
+      circle,
+      rgba(255, 204, 0, 0.15) 0%,
+      transparent 60%
+    );
+    filter: blur(120px);
+    z-index: 0;
+    pointer-events: none;
+    animation: floatGlowReverse 12s infinite alternate ease-in-out;
+  }
+}
+
+@keyframes floatGlow {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(5%, 10%) scale(1.1);
+  }
+}
+
+@keyframes floatGlowReverse {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-5%, -10%) scale(1.2);
+  }
+}
+
+// ==========================================
+// ШАПКА
+// ==========================================
+.staticHeader {
+  position: absolute;
+  top: 150px; // ПІДНЯТО ВИЩЕ, щоб не налізало на картки
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(0, 86, 179, 0.1);
+  color: #0056b3;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 100px;
+  margin-top: 12px;
+  border: 1px solid rgba(0, 86, 179, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.title {
+  //   font-size: 44px;
+  //   font-weight: 800;
+  //   margin: 0;
+  //   letter-spacing: -1px;
+  //   //color: #0f172a;
+  //   background: linear-gradient(135deg, #0a2540 0%, #0056b3 60%, #00d4ff 100%);
+
+  font-size: 42px;
+  font-weight: 800;
+  margin: 8px 0 20px 0;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  // 🔥 Градієнтний текст (від темно-синього до яскраво-блакитного)
+  background: linear-gradient(
+    135deg,
+    $text-dark 0%,
+    $primary 60%,
+    #00d4ff 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; // Фолбек для старих браузерів
+
+  // Легка тінь для тексту, щоб він краще читався, якщо на нього наїде яскрава пляма
+  filter: drop-shadow(0 4px 10px rgba(0, 86, 179, 0.15));
+}
+
+// ==========================================
+// ГОРИЗОНТАЛЬНИЙ ТРЕК І КАРТКИ
+// ==========================================
+.horizontalTrack {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: max-content;
+  will-change: transform;
+  z-index: 5;
+  margin-top: 60px; // ОПУЩЕНО ВНИЗ (забирає картки від заголовка)
+}
+
+.spacer,
+.spacerEnd {
+  width: calc(50vw - 394px);
+  height: 100%;
+  flex-shrink: 0;
+}
+.servicePanel {
+  width: 740px;
+  height: 580px;
+  margin: 0 24px;
+  flex-shrink: 0;
+}
+
+.cardInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+  overflow: hidden;
+
+  // 🔥 ТІНЬ ДЛЯ КАРТОК
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.1),
+    0 5px 15px rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transform: scale(0.85);
+  opacity: 0.6;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow:
+      0 20px 45px rgba(0, 0, 0, 0.15),
+      0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.bgImage {
+  object-fit: cover;
+}
+
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(2, 6, 16, 0.95) 0%,
+    rgba(2, 6, 16, 0.4) 50%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
+.cardContent {
+  position: relative;
+  z-index: 2;
+  padding: 48px;
+  color: #ffffff;
+}
+.cardNumber {
+  font-family: monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: #4da3ff;
+  margin-bottom: 16px;
+}
+.cardTitle {
+  font-size: 38px;
+  font-weight: 800;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  color: #ffffff;
+}
+.cardDesc {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 600px;
+}
+
+// ==========================================
+// КНОПКИ ТА ПРОГРЕС
+// ==========================================
+.navControls {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 10;
+}
+
+.navBtn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #0f172a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+
+  svg {
+    width: 28px;
+    height: 28px;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    background: $primary;
+    border-color: $primary;
+    color: #ffffff;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 86, 179, 0.3);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// 🔥 ОНОВЛЕНИЙ ІНДИКАТОР ПРОГРЕСУ НА ВСЮ ШИРИНУ
+.progressContainer {
+  position: absolute;
+  bottom: 30px;
+  left: 0; // Починається від лівого краю
+  width: 100%; // На всю ширину
+  padding: 0 40px; // Відступи по краях
+  z-index: 10;
+  box-sizing: border-box; // Щоб padding не збільшував 100% ширини
+}
+
+.progressBar {
+  width: 100%;
+  height: 5px; // Тонший, як дріт
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  position: relative;
+}
+
+.progressBarFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background-color: $primary;
+  border-radius: 2px;
+  // Ефект "струму", що тече по дроту
+  box-shadow: 0 0 8px rgba(0, 86, 179, 0.6);
+}
+
+// ЗНАЧОК ЕНЕРГІЇ НА КІНЦІ ПОВЗУНКА
+.progressIcon {
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px; // Трохи більший для виразності
+  height: 40px;
+  background: #ffffff;
+  border: 2px solid $primary;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow:
+    0 0 12px rgba(255, 204, 0, 0.6),
+    0 2px 8px rgba(0, 86, 179, 0.3); // Світіння
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: #ffcc00;
+  }
+}
+
+// ==========================================
+// АДАПТИВНІСТЬ
+// ==========================================
+@media (max-width: 1440px), (max-height: 900px) {
+  .staticHeader {
+    top: 80px;
+  }
+  .horizontalTrack {
+    margin-top: 60px;
+  }
+  .title {
+    font-size: 38px;
+  }
+  .servicePanel {
+    width: 640px;
+    height: 460px;
+    margin: 0 20px;
+  }
+  .spacer,
+  .spacerEnd {
+    width: calc(50vw - 340px);
+  }
+  .cardContent {
+    padding: 32px;
+  }
+  .cardTitle {
+    font-size: 32px;
+  }
+  .cardDesc {
+    font-size: 16px;
+  }
+  .navControls {
+    bottom: 50px;
+  }
+  .progressContainer {
+    bottom: 20px;
+    padding: 0 30px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .staticHeader {
+    top: 90px;
+  }
+  .title {
+    font-size: 34px;
+  }
+  .servicePanel {
+    width: 440px;
+    height: 420px;
+    margin: 0 16px;
+  }
+  .spacer,
+  .spacerEnd {
+    width: calc(50vw - 236px);
+  }
+  .cardTitle {
+    font-size: 28px;
+  }
+  .navControls {
+    bottom: 50px;
+  }
+  .progressContainer {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .staticHeader {
+    top: 80px;
+  }
+  .horizontalTrack {
+    margin-top: 40px;
+  }
+  .title {
+    font-size: 28px;
+  }
+  .servicePanel {
+    width: 300px;
+    height: 400px;
+    margin: 0 12px;
+  }
+  .spacer,
+  .spacerEnd {
+    width: calc(50vw - 162px);
+  }
+  .cardContent {
+    padding: 24px;
+  }
+  .cardTitle {
+    font-size: 24px;
+  }
+  .cardNumber {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  .navControls {
+    bottom: 40px;
+    gap: 12px;
+  }
+  .navBtn {
+    width: 50px;
+    height: 50px;
+  }
+  .progressContainer {
+    bottom: 15px;
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 24px;
+  }
+  .servicePanel {
+    width: 260px;
+    height: 380px;
+    margin: 0 8px;
+  }
+  .spacer,
+  .spacerEnd {
+    width: calc(50vw - 138px);
+  }
+  .cardContent {
+    padding: 20px;
+  }
+  .cardTitle {
+    font-size: 20px;
+  }
+}

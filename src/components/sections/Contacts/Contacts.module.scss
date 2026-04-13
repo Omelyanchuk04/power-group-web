@@ -1,0 +1,378 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$dodgerblue: #1e90ff;
+$dark: #0a2540;
+$gray: #52637a;
+
+// Кольори для соціальних мереж
+$telegram-color: #0088cc;
+$viber-color: #7360f2;
+
+.contactTrigger {
+  position: relative;
+  z-index: 20;
+  margin-top: -200px;
+}
+
+.parallaxWrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  background-color: #010409;
+  background-image: url("/images/background-img.jpg");
+  background-size: cover;
+  background-position: center;
+
+  border-radius: 40px 40px 0 0;
+  padding: 140px 0 100px 0;
+
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.backgroundOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(3, 7, 18, 0.85);
+  z-index: 1;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  z-index: 5;
+}
+
+.centeredBadge {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.badge {
+  padding: 8px 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  color: $dodgerblue;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.splitLayout {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.infoSide {
+  flex: 1;
+  padding-right: 20px;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  letter-spacing: -1.5px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #94a3b8;
+  margin-bottom: 40px;
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.miniIcon {
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $dodgerblue;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.textWrapper {
+  display: flex;
+  flex-direction: column;
+  .caption {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    margin-bottom: 3px;
+  }
+  p,
+  a {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    line-height: 1.2;
+    transition: 0.3s;
+  }
+  a:hover {
+    color: $dodgerblue;
+  }
+}
+
+.phoneStack {
+  display: flex;
+  gap: 15px;
+}
+
+// 🔥 ОНОВЛЕНІ КНОПКИ МЕСЕНДЖЕРІВ
+.messengers {
+  margin-top: 40px;
+  display: flex;
+  gap: 12px;
+  a {
+    padding: 14px 30px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    color: white; // Білий текст
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: none; // Прибрали рамку
+
+    &:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.15); // Кнопка стає трохи світлішою при наведенні
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); // Тінь для ефекту підняття
+    }
+  }
+
+  // Задаємо солідні кольори для кожної кнопки
+  .tg {
+    background-color: $telegram-color;
+  }
+  .viber {
+    background-color: $viber-color;
+  }
+}
+
+.formSide {
+  flex: 0 0 500px;
+  z-index: 10;
+}
+
+.glassWrapper {
+  position: relative;
+}
+
+// 🔥 ОНОВЛЕНА ФОРМА (Стиль карток Process)
+.modernForm {
+  // Використовуємо той самий фон і розмиття, що й у картках секції Process
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+
+  padding: 50px;
+  border-radius: 30px; // Трохи зменшив заокруглення для відповідності карткам
+
+  // Рамки, як у карток
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-bottom-color: rgba(255, 255, 255, 0.4);
+  border-right-color: rgba(255, 255, 255, 0.4);
+
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    // Трохи сильніша тінь, щоб виділятися на темному фоні
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+
+  font-family: inherit;
+
+  .formTitle {
+    font-size: 28px;
+    font-weight: 800;
+    color: $dark; // Темний текст для заголовка на світлому фоні
+    margin-bottom: 40px;
+    letter-spacing: -1px;
+  }
+}
+
+.inputWrapper {
+  position: relative;
+  margin-bottom: 30px;
+
+  input,
+  textarea {
+    width: 100%;
+    background: transparent !important;
+    border: none;
+    padding: 10px 0;
+    font-size: 16px;
+    color: $dark; // Темний текст для вводу
+    font-family: inherit;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15); // Темніша лінія для світлого фону
+    transition: 0.4s ease;
+
+    outline: none !important;
+    box-shadow: none !important;
+    resize: none;
+
+    // Автозаповнення адаптовано під світлий фон
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+      -webkit-text-fill-color: $dark !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    &:focus ~ label,
+    &:not(:placeholder-shown) ~ label {
+      top: -18px;
+      font-size: 11px;
+      color: $dodgerblue; // Синій колір для активного лейблу
+      font-weight: 700;
+    }
+
+    &:focus ~ .line {
+      width: 100%;
+      background: $dodgerblue;
+    }
+  }
+
+  label {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    font-size: 16px;
+    color: $gray; // Сірий колір для неактивного лейблу
+    pointer-events: none;
+    transition: 0.3s ease;
+  }
+
+  .line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: transparent;
+    transition: 0.6s ease;
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.actionBtn {
+  width: 100%;
+  padding: 18px 35px;
+  border: none;
+  border-radius: 100px;
+  background: $dodgerblue;
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #187bcd;
+    transform: translateY(-2px);
+    svg {
+      transform: translateX(5px);
+    }
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    transition: 0.4s;
+  }
+}
+
+@media (max-width: 1024px) {
+  .splitLayout {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+  .contactTrigger {
+    margin-top: 0;
+  }
+  .parallaxWrapper {
+    padding: 100px 0 80px 0;
+  }
+  .infoSide {
+    text-align: center;
+    align-items: center;
+    padding: 0;
+  }
+  .contactList {
+    align-items: center;
+  }
+  .contactRow {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .textWrapper {
+    align-items: center;
+  }
+  .phoneStack {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .messengers {
+    justify-content: center;
+  }
+  .formSide {
+    width: 100%;
+    flex: none;
+    max-width: 550px;
+    margin: 0 auto;
+  }
+}
