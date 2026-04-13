@@ -80,6 +80,7 @@ export default function HeroVideo() {
         return new Promise((resolve, reject) => {
           const img = new Image();
           img.decoding = "async";
+          img.fetchPriority = "high"; // 🔥 Браузер кине всі сили на цю картинку
           img.onload = () => {
             imagesRef.current[0] = img;
             resolve(img);
@@ -89,12 +90,31 @@ export default function HeroVideo() {
         });
       };
 
-      const preloadOtherFrames = () => {
-        for (let i = 1; i < frameCount; i++) {
-          const img = new Image();
-          img.decoding = "async";
-          img.src = `/frames/frame-${(i + 1).toString().padStart(3, "0")}.jpg`;
-          imagesRef.current.push(img);
+      const preloadOtherFrames = async () => {
+        const batchSize = 5; // Вантажимо по 5 картинок за раз, щоб не "повісити" мережу
+
+        for (let i = 1; i < frameCount; i += batchSize) {
+          const batch = [];
+
+          for (let j = 0; j < batchSize && i + j < frameCount; j++) {
+            const index = i + j;
+            batch.push(
+              new Promise((resolve) => {
+                const img = new Image();
+                img.decoding = "async";
+                img.fetchPriority = "low"; // 🔥 Інші кадри вантажимо у фоновому режимі
+                img.onload = resolve;
+                img.onerror = resolve; // Якщо картинка бита - просто йдемо далі
+                img.src = `/frames/frame-${(index + 1).toString().padStart(3, "0")}.jpg`;
+
+                // Кладемо картинку чітко на її індекс, щоб не збився порядок
+                imagesRef.current[index] = img;
+              }),
+            );
+          }
+
+          // Чекаємо, поки завантажаться поточні 5 картинок, перш ніж просити наступні
+          await Promise.all(batch);
         }
       };
 
