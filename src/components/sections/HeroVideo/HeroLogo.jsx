@@ -1,31 +1,23 @@
 "use client";
 
 import { forwardRef } from "react";
-import NextImage from "next/image";
 import styles from "./HeroVideo.module.scss";
 
 const HeroLogo = forwardRef((props, ref) => {
   return (
     <section className={styles.logoStep} ref={ref}>
       <div className={styles.logoContainer}>
+        {/* ЛІВА ЧАСТИНА: ІКОНКА */}
         <div className={styles.animIcon}>
-          <NextImage
-            src="/logo-icon.svg"
-            alt="Icon"
-            width={160}
-            height={160}
-            priority
-          />
+          {/* 🔥 ШЛЯХ БЕЗ ПАПКИ images! */}
+          <img src="/Logo-icon.svg" alt="Icon" width={160} height={160} />
         </div>
+
+        {/* ПРАВА ЧАСТИНА: ТЕКСТ + СЛОГАН */}
         <div className={styles.logoRightColumn}>
           <div className={styles.animText}>
-            <NextImage
-              src="/logo-text.svg"
-              alt="Text"
-              width={480}
-              height={80}
-              priority
-            />
+            {/* 🔥 ШЛЯХ БЕЗ ПАПКИ images! */}
+            <img src="/Logo-text.svg" alt="Text" width={480} height={80} />
           </div>
           <div className={styles.animLine}></div>
           <p className={styles.animSlogan}>Ваша енергетична стабільність</p>

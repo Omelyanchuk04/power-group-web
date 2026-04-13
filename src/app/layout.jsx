@@ -22,9 +22,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    // Змінюємо мову на українську
-    <html lang="uk" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>
+    // 🔥 ДОДАНО suppressHydrationWarning сюди
+    <html
+      lang="uk"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
+      {/* 🔥 І ДОДАНО suppressHydrationWarning сюди */}
+      <body suppressHydrationWarning>
         {/* Додаємо наш Header, щоб він був на кожній сторінці */}
         <Header />
 
