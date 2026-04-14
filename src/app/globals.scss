@@ -6,16 +6,26 @@
 
 html,
 body {
-  height: auto !important;
+  width: 100%;
+  height: auto !important; /* 🔥 Знімаємо будь-які обмеження висоти */
   min-height: 100% !important;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+  color: #333333;
+
+  /* 🔥 ЯДЕРНИЙ ФІКС: Примусова інерція скролу для iOS */
   overflow: visible !important;
+  -webkit-overflow-scrolling: touch !important;
 }
 
+/* Звертаємося до єдиного <main>, який лежить у layout.js */
 main {
   width: 100%;
-  /* 🔥 ЗАКОМЕНТУЙ ЦЕ НА ХВИЛИНУ */
-  /* overflow-x: clip; */
-  /* overflow-x: hidden; */
+  height: auto !important;
+  overflow: visible !important;
+  max-width: 100vw;
+  /* 🔥 Ховаємо горизонтальний скрол безпечно, без втрати інерції */
+  overflow-x: clip;
 }
 
 a {

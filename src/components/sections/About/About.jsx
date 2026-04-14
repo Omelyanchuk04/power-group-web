@@ -38,128 +38,128 @@ export default function About() {
     return () => observer.disconnect();
   }, []);
 
-  // useGSAP(
-  //   () => {
-  //     // Трекаємо спрацювання ScrollTrigger
-  //     ScrollTrigger.create({
-  //       trigger: sectionRef.current,
-  //       start: "top bottom",
-  //       onEnter: () =>
-  //         console.log("🔥 [TRIGGER] About: onEnter (верх торкнувся низу)"),
-  //       onLeaveBack: () =>
-  //         console.log("⬅️ [TRIGGER] About: onLeaveBack (повернулися нагору)"),
-  //     });
+  useGSAP(
+    () => {
+      // Трекаємо спрацювання ScrollTrigger
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        onEnter: () =>
+          console.log("🔥 [TRIGGER] About: onEnter (верх торкнувся низу)"),
+        onLeaveBack: () =>
+          console.log("⬅️ [TRIGGER] About: onLeaveBack (повернулися нагору)"),
+      });
 
-  //     gsap.fromTo(
-  //       `.${styles.sectionHeader}`,
-  //       { opacity: 0, y: 50 },
-  //       {
-  //         opacity: 1,
-  //         y: 0,
-  //         duration: 1,
-  //         ease: "power3.out",
-  //         scrollTrigger: {
-  //           trigger: `.${styles.sectionHeader}`,
-  //           start: "top 85%",
-  //         },
-  //       },
-  //     );
+      gsap.fromTo(
+        `.${styles.sectionHeader}`,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: `.${styles.sectionHeader}`,
+            start: "top 85%",
+          },
+        },
+      );
 
-  //     gsap.fromTo(
-  //       `.${styles.offerHeader}`,
-  //       { opacity: 0, y: 30 },
-  //       {
-  //         opacity: 1,
-  //         y: 0,
-  //         duration: 0.8,
-  //         ease: "power3.out",
-  //         scrollTrigger: {
-  //           trigger: `.${styles.offerHeader}`,
-  //           start: "top 85%",
-  //         },
-  //       },
-  //     );
+      gsap.fromTo(
+        `.${styles.offerHeader}`,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: `.${styles.offerHeader}`,
+            start: "top 85%",
+          },
+        },
+      );
 
-  //     gsap.fromTo(
-  //       `.${styles.targetCard}`,
-  //       { opacity: 0, scale: 0.95, y: 50 },
-  //       {
-  //         opacity: 1,
-  //         scale: 1,
-  //         y: 0,
-  //         stagger: 0.15,
-  //         duration: 0.8,
-  //         ease: "power3.out",
-  //         scrollTrigger: { trigger: `.${styles.targetGrid}`, start: "top 80%" },
-  //       },
-  //     );
+      gsap.fromTo(
+        `.${styles.targetCard}`,
+        { opacity: 0, scale: 0.95, y: 50 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: { trigger: `.${styles.targetGrid}`, start: "top 80%" },
+        },
+      );
 
-  //     gsap.fromTo(
-  //       `.${styles.transitionBlock}`,
-  //       { opacity: 0, y: 40 },
-  //       {
-  //         opacity: 1,
-  //         y: 0,
-  //         duration: 1,
-  //         ease: "power3.out",
-  //         scrollTrigger: {
-  //           trigger: `.${styles.transitionBlock}`,
-  //           start: "top 85%",
-  //         },
-  //       },
-  //     );
+      gsap.fromTo(
+        `.${styles.transitionBlock}`,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: `.${styles.transitionBlock}`,
+            start: "top 85%",
+          },
+        },
+      );
 
-  //     gsap.fromTo(
-  //       `.${styles.statsHeader}`,
-  //       { opacity: 0, y: 30 },
-  //       {
-  //         opacity: 1,
-  //         y: 0,
-  //         duration: 0.8,
-  //         ease: "power3.out",
-  //         scrollTrigger: {
-  //           trigger: `.${styles.statsHeader}`,
-  //           start: "top 85%",
-  //         },
-  //       },
-  //     );
+      gsap.fromTo(
+        `.${styles.statsHeader}`,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: `.${styles.statsHeader}`,
+            start: "top 85%",
+          },
+        },
+      );
 
-  //     gsap.fromTo(
-  //       ".animStatWrapper",
-  //       { opacity: 0, scale: 0.95, y: 40 },
-  //       {
-  //         opacity: 1,
-  //         scale: 1,
-  //         y: 0,
-  //         stagger: 0.15,
-  //         duration: 0.8,
-  //         ease: "power3.out",
-  //         scrollTrigger: { trigger: `.${styles.statsGrid}`, start: "top 80%" },
-  //       },
-  //     );
+      gsap.fromTo(
+        ".animStatWrapper",
+        { opacity: 0, scale: 0.95, y: 40 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: { trigger: `.${styles.statsGrid}`, start: "top 80%" },
+        },
+      );
 
-  //     const parallaxWrappers = gsap.utils.toArray(
-  //       `.${styles.imgParallaxWrapper}`,
-  //     );
-  //     parallaxWrappers.forEach((wrapper) => {
-  //       gsap.fromTo(
-  //         wrapper,
-  //         { yPercent: -10 },
-  //         {
-  //           yPercent: 10,
-  //           ease: "none",
-  //           scrollTrigger: {
-  //             trigger: wrapper.parentNode,
-  //             start: "top bottom",
-  //             end: "bottom top",
-  //             scrub: true,
-  //           },
-  //         },
-  //       );
-  //     });
-  //   },
-  //   { scope: sectionRef },
-  // );
+      const parallaxWrappers = gsap.utils.toArray(
+        `.${styles.imgParallaxWrapper}`,
+      );
+      parallaxWrappers.forEach((wrapper) => {
+        gsap.fromTo(
+          wrapper,
+          { yPercent: -10 },
+          {
+            yPercent: 10,
+            ease: "none",
+            scrollTrigger: {
+              trigger: wrapper.parentNode,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          },
+        );
+      });
+    },
+    { scope: sectionRef },
+  );
 
   return (
     <section className={styles.lightSection} ref={sectionRef}>

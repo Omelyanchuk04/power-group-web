@@ -1,9 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.scss";
-import Header from "@/components/layout/Header"; // Підключаємо нашу шапку
-import Footer from "@/components/layout/Footer"; // Підключаємо наш футер
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
-// Налаштування шрифтів
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -14,7 +13,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Налаштування SEO для ВІН ПАУЕР ГРУП
 export const metadata = {
   title: "ВІН ПАУЕР ГРУП | Ваша енергетична стабільність",
   description:
@@ -23,18 +21,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    // 🔥 ДОДАНО suppressHydrationWarning сюди
     <html
       lang="uk"
       className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
-      {/* 🔥 І ДОДАНО suppressHydrationWarning сюди */}
       <body suppressHydrationWarning>
-        {/* Додаємо наш Header, щоб він був на кожній сторінці */}
         <Header />
-
-        {/* Обгортаємо весь контент і робимо відступ на висоту шапки (80px) */}
+        {/* 🔥 ЄДИНИЙ <main> на всьому сайті */}
         <main>{children}</main>
         <Footer />
       </body>
