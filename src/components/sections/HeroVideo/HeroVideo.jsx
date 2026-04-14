@@ -20,7 +20,7 @@ export default function HeroVideo() {
   const overlayRef = useRef(null);
   const videoRef = useRef(null);
 
-  const frameCount = 158;
+  const frameCount = 152;
   const imagesRef = useRef([]);
   const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
 
