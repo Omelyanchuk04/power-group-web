@@ -6,17 +6,18 @@
 
 html,
 body {
-  width: 100%;
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  background-color: #ffffff;
-  color: #333333;
-  /* 🔥 ЖОДНИХ overflow: hidden чи clip ТУТ! */
-  -webkit-overflow-scrolling: touch; /* Хак для примусової інерції на iOS */
+  /* 🔥 ЯДЕРНИЙ ФІКС: Змушуємо скролити саме вікно, а не контейнер */
+  height: auto !important;
+  min-height: 100% !important;
+  overflow: visible !important; /* Ніяких hidden на мобайлі для body! */
+  -webkit-overflow-scrolling: touch !important;
 }
 
-/* Ховаємо горизонтальний скрол ТІЛЬКИ на єдиному main з layout.js */
 main {
-  width: 100%;
+  height: auto !important;
+  overflow: visible !important; /* Якщо тут був clip чи hidden - він міг вбивати інерцію */
+  /* Щоб не було горизонтального скролу, замість overflow краще просто не давати блокам вилазити: */
+  max-width: 100vw;
   overflow-x: clip;
 }
 
