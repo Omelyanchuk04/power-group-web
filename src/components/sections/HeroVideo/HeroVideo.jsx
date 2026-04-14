@@ -309,11 +309,9 @@ export default function HeroVideo() {
       // 2. МОБАЙЛ (Повна ізоляція від ScrollTrigger)
       mm.add("(max-width: 1024px)", () => {
         console.log(
-          "📱 [MEDIA] Увімкнуто мобільний режим HeroVideo - БЕЗ GSAP ScrollTrigger",
+          "📱 [MEDIA] Мобільний режим - ЕФЕКТ НАЇЗДУ (pinSpacing: false)",
         );
 
-        // 🔥 ОЧИЩАЄМО ЗАЛИШКИ ДЕСКТОПУ (вбиваємо pin-spacer, який розтягував сторінку)
-        gsap.set(heroRef.current, { clearProps: "all" });
         gsap.set(overlayRef.current, { opacity: 0.6 });
 
         if (videoRef.current) {
@@ -335,10 +333,19 @@ export default function HeroVideo() {
               duration: 0.6,
               stagger: 0.15,
               ease: "power3.out",
-              delay: 1.5,
+              delay: 0.5,
             },
           );
         }
+
+        // 🔥 ДОДАЄМО ПІН ДЛЯ ЕФЕКТУ НАЇЗДУ
+        ScrollTrigger.create({
+          trigger: heroRef.current,
+          start: "top top",
+          end: "+=100%", // Тримаємо пін, поки користувач скролить висоту одного екрану
+          pin: true,
+          pinSpacing: false, // 🔥 НАЙГОЛОВНІШЕ! Не створює пустоти, дозволяє About наїхати зверху
+        });
       });
     },
     { scope: heroRef },
