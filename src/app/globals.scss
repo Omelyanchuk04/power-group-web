@@ -7,17 +7,17 @@
 html,
 body {
   width: 100%;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   background-color: #ffffff;
   color: #333333;
-  /* ТУТ ПУСТО! Ніяких overflow. Це гарантує нативну інерцію. */
+  /* 🔥 ЖОДНИХ overflow: hidden чи clip ТУТ! */
+  -webkit-overflow-scrolling: touch; /* Хак для примусової інерції на iOS */
 }
 
-/* Ховаємо горизонтальний скрол ТІЛЬКИ на обгортці */
-#__next,
+/* Ховаємо горизонтальний скрол ТІЛЬКИ на єдиному main з layout.js */
 main {
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 a {

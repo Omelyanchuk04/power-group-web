@@ -7,13 +7,15 @@ import Contacts from "@/components/sections/Contacts/Contacts";
 
 export default function Home() {
   return (
-    <main>
+    // 🔥 Замінили <main> на порожній фрагмент,
+    // бо <main> вже є у твоєму layout.js
+    <>
       <HeroVideo />
       <About />
       <Services />
       <Projects />
       <Process />
       {/* <Contacts /> */}
-    </main>
+    </>
   );
 }
