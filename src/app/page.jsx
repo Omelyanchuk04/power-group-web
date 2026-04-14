@@ -44,9 +44,9 @@ export default function Home() {
     <>
       <HeroVideo />
       <About />
-      <Services />
+      {/* <Services />
       <Projects />
-      <Process />
+      <Process /> */}
     </>
   );
 }
