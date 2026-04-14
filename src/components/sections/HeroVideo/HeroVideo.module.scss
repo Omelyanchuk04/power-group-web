@@ -11,10 +11,7 @@ $primary: #0056b3;
   height: 100vh;
   height: 100svh;
   background-color: #000;
-  overflow: hidden;
-
-  // 🔥 Дозволяє нативні свайпи для тач-екранів
-  touch-action: pan-y;
+  // 🔥 ВИДАЛЕНО touch-action: pan-y; - віддаємо контроль нативній інерції браузера
 }
 
 .pinArea {
@@ -35,7 +32,6 @@ $primary: #0056b3;
   width: 100%;
   height: 100%;
   opacity: 0.6;
-
   object-fit: cover;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -44,7 +40,6 @@ $primary: #0056b3;
   display: block; // За замовчуванням показуємо (Десктоп)
 }
 
-// 🔥 НОВЕ: Стилі для мобільного відео
 .mobileVideo {
   display: none; // За замовчуванням ховаємо (Десктоп)
   position: absolute;
@@ -64,14 +59,13 @@ $primary: #0056b3;
   left: 0;
   width: 100%;
   height: 100%;
-
   background-color: #000000;
   pointer-events: none;
   z-index: 2;
 }
 
 // ==========================================
-// ЛОГОТИП (Перша фаза)
+// ЛОГОТИП
 // ==========================================
 .logoStep {
   position: absolute;
@@ -91,13 +85,11 @@ $primary: #0056b3;
   align-items: center;
   gap: 30px;
 }
-
 .logoRightColumn {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
-
 .animIcon,
 .animText,
 .animLine,
@@ -106,20 +98,17 @@ $primary: #0056b3;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 }
-
 .animIcon img {
   width: 140px;
   height: auto;
   display: block;
 }
-
 .animText img {
   width: 440px;
   height: auto;
   display: block;
   margin-bottom: 8px;
 }
-
 .animLine {
   width: 100%;
   height: 3px;
@@ -128,7 +117,6 @@ $primary: #0056b3;
   margin-bottom: 12px;
   transform-origin: center;
 }
-
 .animSlogan {
   font-size: 22px;
   font-weight: 500;
@@ -141,7 +129,7 @@ $primary: #0056b3;
 }
 
 // ==========================================
-// ГОЛОВНИЙ КОНТЕНТ (Друга фаза)
+// ГОЛОВНИЙ КОНТЕНТ
 // ==========================================
 .contentWrapper {
   position: absolute;
@@ -172,7 +160,6 @@ $primary: #0056b3;
   line-height: 1.1;
   letter-spacing: -1.5px;
   margin: 0 0 20px 0;
-
   .textHighlight {
     color: transparent;
     background: linear-gradient(to right, #ffffff, #a3cfff);
@@ -189,7 +176,6 @@ $primary: #0056b3;
   margin: 0 auto 36px auto;
   line-height: 1.6;
 }
-
 .animButtonWrapper {
   display: flex;
   justify-content: center;
@@ -209,7 +195,6 @@ $primary: #0056b3;
   border-radius: 100px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-
   transition:
     transform 0.3s ease,
     background-color 0.3s ease,
@@ -227,7 +212,6 @@ $primary: #0056b3;
     background-color: color.adjust($primary, $lightness: -12%);
     transform: scale(0.96) translateY(0);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-
     transition:
       transform 0.05s cubic-bezier(0.4, 0, 0.2, 1),
       background-color 0.1s ease;
@@ -251,16 +235,13 @@ $primary: #0056b3;
   gap: 16px;
   text-align: left;
   min-width: 280px;
-
-  // Прибираємо сірий квадрат при тапі на iOS
   -webkit-tap-highlight-color: transparent;
-
   transition:
     transform 0.3s ease,
     background 0.3s ease,
     border-color 0.3s ease;
 
-  // 🔥 Цей ефект тепер працюватиме ТІЛЬКИ на десктопі з мишкою
+  // 🔥 Цей ефект працюватиме ТІЛЬКИ на десктопі з мишкою
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       transform: translateY(-4px);
@@ -280,7 +261,6 @@ $primary: #0056b3;
     align-items: center;
     flex-shrink: 0;
     border: 1px solid rgba(77, 163, 255, 0.2);
-
     svg {
       width: 24px;
       height: 24px;
@@ -304,14 +284,14 @@ $primary: #0056b3;
 }
 
 // ==========================================
-// СПЕЙСЕР (БУФЕР ДЛЯ ПРОКРУТКИ ВІДЕО)
+// СПЕЙСЕР
 // ==========================================
 .delaySpacer {
   height: 200vh;
   width: 100%;
   pointer-events: none;
   visibility: hidden;
-  display: block; // За замовчуванням показуємо
+  display: block; // За замовчуванням показуємо (Десктоп)
 }
 
 // ==========================================
@@ -332,24 +312,30 @@ $primary: #0056b3;
 }
 
 @media (max-width: 768px) {
-  // 🔥 НОВЕ: Перемикач Canvas -> Video для мобайла
-  .canvas {
-    display: none; // Ховаємо Canvas
+  // 🟢 ГОЛОВНЕ: Знімаємо будь-яке блокування контенту для мобільного скролу
+  .heroSection {
+    height: auto; // Секція не фіксується жорстко
+    min-height: 100svh;
+    overflow: hidden; // Ховаємо краї відео
   }
 
-  .delaySpacer {
-    display: none; // Ховаємо спейсер, бо скролити 200vh більше не треба
+  .pinArea {
+    position: relative;
+    height: 100svh; // Висота рівно 1 екран телефону
+    overflow: hidden;
   }
+
+  .canvas {
+    display: none;
+  }
+  .delaySpacer {
+    display: none;
+  } // Ховаємо спейсер, на мобайлі немає скрол-піну!
 
   .mobileVideo {
-    display: block; // Показуємо звичайне фонове відео
-  }
-
-  // Знімаємо жорстку фіксацію екрану, щоб дозволити нативний скрол
-  .heroSection,
-  .pinArea {
-    height: 100svh;
-    overflow: hidden; // Контент секції залишиться на 1 екран
+    display: block; // Показуємо відео
+    min-width: 100%;
+    min-height: 100%;
   }
 
   .logoContainer {
@@ -372,7 +358,6 @@ $primary: #0056b3;
     font-size: 14px;
     text-align: center;
   }
-
   .mainContent {
     margin-top: -20px;
   }
@@ -384,7 +369,6 @@ $primary: #0056b3;
     font-size: 16px;
     margin-bottom: 30px;
   }
-
   .featuresRow {
     flex-direction: column;
     width: 100%;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -18,7 +18,7 @@ export default function HeroVideo() {
   const logoRef = useRef(null);
   const contentRef = useRef(null);
   const overlayRef = useRef(null);
-  const videoRef = useRef(null); // 🟢 Додано реф для відео
+  const videoRef = useRef(null);
 
   const frameCount = 158;
   const imagesRef = useRef([]);
@@ -26,8 +26,9 @@ export default function HeroVideo() {
 
   useGSAP(
     () => {
+      // Функції Canvas (працюватимуть тільки на десктопі)
       const canvas = canvasRef.current;
-      const context = canvas.getContext("2d", {
+      const context = canvas?.getContext("2d", {
         alpha: false,
         desynchronized: true,
       });
@@ -35,14 +36,11 @@ export default function HeroVideo() {
 
       const calculateMetrics = () => {
         const img = imagesRef.current[0];
-        if (!img) return;
-
+        if (!img || !canvas) return;
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
         const canvasAspect = canvas.width / canvas.height;
         const imgAspect = img.width / img.height;
-
         if (canvasAspect > imgAspect) {
           renderMetrics.current.width = canvas.width;
           renderMetrics.current.height = canvas.width / imgAspect;
@@ -64,9 +62,14 @@ export default function HeroVideo() {
           Math.min(frameCount - 1, Math.floor(animationState.frame)),
         );
         const img = imagesRef.current[safeFrameIndex];
-
-        if (!img || !img.complete || renderMetrics.current.width === 0) return;
-
+        if (
+          !img ||
+          !img.complete ||
+          renderMetrics.current.width === 0 ||
+          !context ||
+          !canvas
+        )
+          return;
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(
           img,
@@ -113,15 +116,12 @@ export default function HeroVideo() {
         }
       };
 
-      // ==========================================
-      // --- GSAP АНІМАЦІЇ ПОЯВИ (Спільні для всіх) ---
-      // ==========================================
+      // --- СПІЛЬНА АНІМАЦІЯ ПОЯВИ (Лого та Текст) ---
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
         const text = logoRef.current.querySelector(`.${styles.animText}`);
         const line = logoRef.current.querySelector(`.${styles.animLine}`);
         const slogan = logoRef.current.querySelector(`.${styles.animSlogan}`);
-
         const contentTitle = contentRef.current.querySelector(
           `.${styles.animTitle}`,
         );
@@ -182,22 +182,19 @@ export default function HeroVideo() {
               force3D: true,
             },
             0.6,
-          );
-
-        tlStart.to(
-          [icon, text, line, slogan],
-          {
-            y: -20,
-            opacity: 0,
-            duration: 0.3,
-            stagger: 0.05,
-            ease: "power2.in",
-            force3D: true,
-          },
-          "+=0.3",
-        );
-
-        tlStart
+          )
+          .to(
+            [icon, text, line, slogan],
+            {
+              y: -20,
+              opacity: 0,
+              duration: 0.3,
+              stagger: 0.05,
+              ease: "power2.in",
+              force3D: true,
+            },
+            "+=0.3",
+          )
           .fromTo(
             contentTitle,
             { y: 20, opacity: 0 },
@@ -237,7 +234,7 @@ export default function HeroVideo() {
       }
 
       // ==========================================
-      // 🔥 ЛОГІКА СКРОЛУ ТА РЕНДЕРУ ЗАЛЕЖНО ВІД ПРИСТРОЮ
+      // 🔥 MATCHMEDIA: ПОВНІСТЮ РОЗДІЛЯЄМО ЛОГІКУ ДЛЯ ІДЕАЛЬНОГО СКРОЛУ
       // ==========================================
       let mm = gsap.matchMedia();
 
@@ -250,7 +247,7 @@ export default function HeroVideo() {
           let { isMobile, isDesktop } = context.conditions;
 
           if (isDesktop) {
-            // ДЕСКТОП: Завантажуємо кадри, малюємо Canvas, вмикаємо ScrollTrigger
+            // ДЕСКТОП: ScrollTrigger та Canvas залишаються як були
             preloadFirstFrame()
               .then(() => {
                 calculateMetrics();
@@ -317,24 +314,22 @@ export default function HeroVideo() {
           }
 
           if (isMobile) {
-            // МОБІЛКА:
-
-            // 🟢 1. ФІКС ОВЕРЛЕЮ: Робимо його напівпрозорим одразу (інакше це просто чорний екран)
+            // 🟢 МОБІЛКА: НИЯКОГО СКРОЛ-ТРИГЕРА!
+            // Робимо оверлей статично напівпрозорим
             gsap.set(overlayRef.current, { opacity: 0.6 });
 
-            // 🟢 2. ФІКС АВТОПЛЕЮ: Примусово запускаємо відео для iOS та деяких Android
+            // Примусовий старт відео (фікс iOS)
             if (videoRef.current) {
               videoRef.current.muted = true;
               videoRef.current
                 .play()
-                .catch((err) => console.log("Autoplay blocked", err));
+                .catch((e) => console.log("Auto-play blocked", e));
             }
 
-            // Поява карток
+            // Анімуємо картки просто за часом (контент сам випливає після головного тексту)
             if (contentRef.current) {
               const contentCards =
                 contentRef.current.querySelectorAll(".animCardWrapper");
-
               gsap.fromTo(
                 contentCards,
                 { y: 50, opacity: 0 },
@@ -344,7 +339,7 @@ export default function HeroVideo() {
                   duration: 0.6,
                   stagger: 0.15,
                   ease: "power3.out",
-                  delay: 1.5, // Затримка 1.5с (оптимально для мобайлу)
+                  delay: 1.5,
                 },
               );
             }
@@ -361,11 +356,13 @@ export default function HeroVideo() {
         {/* Canvas для десктопа */}
         <canvas ref={canvasRef} className={styles.canvas} />
 
-        {/* 🟢 Відео для мобайла: Додано ref={videoRef} */}
+        {/* 🟢 Відео для мобайла. 
+            Додано poster (миттєве завантаження першого кадру як у Tesla). */}
         <video
           ref={videoRef}
           className={styles.mobileVideo}
           src="/hero-mobile.mp4"
+          poster="/frames/frame-001.jpg"
           autoPlay
           loop
           muted
@@ -377,7 +374,7 @@ export default function HeroVideo() {
         <HeroContent ref={contentRef} />
       </div>
 
-      {/* Спейсер потрібен тільки на десктопі для прокрутки Canvas */}
+      {/* Спейсер (існує тільки на десктопі завдяки CSS) */}
       <div className={styles.delaySpacer} />
     </div>
   );
