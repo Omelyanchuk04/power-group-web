@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import HeroVideo from "@/components/sections/HeroVideo/HeroVideo";
 import About from "@/components/sections/About/About";
+import Services from "@/components/sections/Services/Services";
 
 export default function Home() {
   // 🚨 ЖУЧОК ДЛЯ ПОШУКУ СКРОЛУ
@@ -20,6 +21,7 @@ export default function Home() {
     <>
       <HeroVideo />
       <About />
+      <Services />
     </>
   );
 }
