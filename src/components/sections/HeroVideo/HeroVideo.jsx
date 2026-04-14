@@ -26,7 +26,9 @@ export default function HeroVideo() {
 
   useGSAP(
     () => {
-      // Функції Canvas (працюватимуть тільки на десктопі)
+      // ==========================================
+      // ФУНКЦІЇ ДЛЯ CANVAS (ДЕСКТОП)
+      // ==========================================
       const canvas = canvasRef.current;
       const context = canvas?.getContext("2d", {
         alpha: false,
@@ -116,7 +118,9 @@ export default function HeroVideo() {
         }
       };
 
-      // --- СПІЛЬНА АНІМАЦІЯ ПОЯВИ (Лого та Текст) ---
+      // ==========================================
+      // АНІМАЦІЯ ПОЯВИ ТЕКСТУ (СПІЛЬНА)
+      // ==========================================
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
         const text = logoRef.current.querySelector(`.${styles.animText}`);
@@ -234,20 +238,21 @@ export default function HeroVideo() {
       }
 
       // ==========================================
-      // 🔥 MATCHMEDIA: ПОВНІСТЮ РОЗДІЛЯЄМО ЛОГІКУ ДЛЯ ІДЕАЛЬНОГО СКРОЛУ
+      // 🔥 ЛОГІКА РОЗДІЛЕННЯ (ДЕСКТОП vs МОБАЙЛ/ПЛАНШЕТ)
       // ==========================================
       let mm = gsap.matchMedia();
 
       mm.add(
         {
-          isMobile: "(max-width: 768px)",
-          isDesktop: "(min-width: 769px)",
+          // Розширюємо мобільну зону до 1024px, щоб охопити всі тач-пристрої та планшети
+          isMobile: "(max-width: 1024px)",
+          isDesktop: "(min-width: 1025px)",
         },
         (context) => {
           let { isMobile, isDesktop } = context.conditions;
 
           if (isDesktop) {
-            // ДЕСКТОП: ScrollTrigger та Canvas залишаються як були
+            // ---> ДЕСКТОП: Працює ScrollTrigger
             preloadFirstFrame()
               .then(() => {
                 calculateMetrics();
@@ -255,7 +260,6 @@ export default function HeroVideo() {
                 preloadOtherFrames();
               })
               .catch(console.error);
-
             window.addEventListener("resize", calculateMetrics);
 
             const tl = gsap.timeline({
@@ -302,7 +306,6 @@ export default function HeroVideo() {
                 1.7,
               );
             }
-
             tl.fromTo(
               overlayRef.current,
               { opacity: 0 },
@@ -314,11 +317,9 @@ export default function HeroVideo() {
           }
 
           if (isMobile) {
-            // 🟢 МОБІЛКА: НИЯКОГО СКРОЛ-ТРИГЕРА!
-            // Робимо оверлей статично напівпрозорим
+            // ---> МОБІЛКА/ПЛАНШЕТ: Ніякого ScrollTrigger взагалі!
             gsap.set(overlayRef.current, { opacity: 0.6 });
 
-            // Примусовий старт відео (фікс iOS)
             if (videoRef.current) {
               videoRef.current.muted = true;
               videoRef.current
@@ -326,7 +327,6 @@ export default function HeroVideo() {
                 .catch((e) => console.log("Auto-play blocked", e));
             }
 
-            // Анімуємо картки просто за часом (контент сам випливає після головного тексту)
             if (contentRef.current) {
               const contentCards =
                 contentRef.current.querySelectorAll(".animCardWrapper");
@@ -353,11 +353,8 @@ export default function HeroVideo() {
   return (
     <div className={styles.heroSection} ref={heroRef}>
       <div className={styles.pinArea}>
-        {/* Canvas для десктопа */}
         <canvas ref={canvasRef} className={styles.canvas} />
 
-        {/* 🟢 Відео для мобайла. 
-            Додано poster (миттєве завантаження першого кадру як у Tesla). */}
         <video
           ref={videoRef}
           className={styles.mobileVideo}
@@ -374,7 +371,6 @@ export default function HeroVideo() {
         <HeroContent ref={contentRef} />
       </div>
 
-      {/* Спейсер (існує тільки на десктопі завдяки CSS) */}
       <div className={styles.delaySpacer} />
     </div>
   );
