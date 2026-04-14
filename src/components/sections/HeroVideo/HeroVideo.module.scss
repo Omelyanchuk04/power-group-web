@@ -321,7 +321,13 @@ $primary: #0056b3;
   }
 
   .delaySpacer {
-    display: none !important;
+    display: block !important;
+    width: 100%;
+    /* 100svh означає, що користувач має проскролити рівно 1 висоту екрану, 
+      щоб секція About почала виїжджати. 
+      Можеш зробити 50svh (швидше з'явиться) або 150svh (довша пауза). 
+    */
+    height: 100svh !important;
   }
 
   /* 🔥 ГОЛОВНА ЗМІНА: Вмикаємо Canvas для малювання кадрів */
