@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import HeroVideo from "@/components/sections/HeroVideo/HeroVideo";
 import About from "@/components/sections/About/About";
 import Services from "@/components/sections/Services/Services";
-import Process from "@/components/sections/Process/Process";
-
+import Projects from "@/components/sections/Projects/Projects";
 export default function Home() {
   // 🚨 ЖУЧОК ДЛЯ ПОШУКУ СКРОЛУ
   useEffect(() => {
@@ -23,7 +22,7 @@ export default function Home() {
       <HeroVideo />
       <About />
       <Services />
-      <Process />
+      <Projects />
     </>
   );
 }
