@@ -7,18 +7,18 @@
 html,
 body {
   max-width: 100vw;
-  /* 🔴 ВИДАЛЕНО: overflow-x: hidden; (Саме він вбивав інерцію на iOS/Android) */
   font-family: Arial, Helvetica, sans-serif;
   background-color: #ffffff;
   color: #333333;
+  /* Переносимо overflow сюди для кращої сумісності з iOS Safari */
+  overflow-x: hidden;
+
+  /* 🔥 ВИДАЛЕНО overscroll-behavior-y: none; та touch-action
+     Саме вони блокували інерцію скролу на мобайлі і викликали "залипання" */
 }
 
-/* 🟢 АЛЬТЕРНАТИВА: Якщо якийсь контент вилазить за межі екрана по ширині, 
-   ховаємо його на рівні головного контейнера сторінки, а не на body! */
-#__next, /* (Якщо ти використовуєш старий Pages Router у Next.js) */
+#__next,
 main {
-  /* (Якщо використовуєш App Router або просто тег <main>) */
-  overflow-x: hidden;
   width: 100%;
 }
 

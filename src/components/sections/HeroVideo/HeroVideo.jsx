@@ -10,8 +10,16 @@ import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
-  // Про всяк випадок жорстко вимикаємо будь-які нормалізації від попередніх спроб
   ScrollTrigger.normalizeScroll(false);
+
+  // 🔥 М'ЯКИЙ ФІКС ТІЛЬКИ ДЛЯ МОБАЙЛУ
+  // Вимикаємо 'resize' з подій оновлення ScrollTrigger.
+  // Тепер при хованні адресного рядка в Safari скрол не буде гальмувати.
+  if (window.matchMedia("(max-width: 1024px)").matches) {
+    ScrollTrigger.config({
+      autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+    });
+  }
 }
 
 export default function HeroVideo() {
@@ -28,6 +36,7 @@ export default function HeroVideo() {
 
   useGSAP(
     () => {
+      // Функції для Canvas (Тільки Десктоп)
       const canvas = canvasRef.current;
       const context = canvas?.getContext("2d", {
         alpha: false,
@@ -117,7 +126,7 @@ export default function HeroVideo() {
         }
       };
 
-      // --- АНІМАЦІЯ ПОЯВИ ТЕКСТУ ---
+      // --- СПІЛЬНА АНІМАЦІЯ ПОЯВИ ТЕКСТУ ---
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
         const text = logoRef.current.querySelector(`.${styles.animText}`);
@@ -234,115 +243,97 @@ export default function HeroVideo() {
           );
       }
 
-      // ==========================================
-      // 🔥 АБСОЛЮТНИЙ ЗАХИСТ ВІД GSAP НА МОБАЙЛІ
-      // ==========================================
       let mm = gsap.matchMedia();
 
-      mm.add(
-        {
-          // ДЕСКТОП: Тільки якщо ширина > 1024 І Є МИШКА
-          isDesktop: "(min-width: 1025px) and (pointer: fine)",
-          // МОБАЙЛ: Якщо ширина < 1024 АБО ЦЕ ТАЧ-СКРІН (pointer: coarse)
-          isMobile: "(max-width: 1024px), (pointer: coarse)",
-        },
-        (context) => {
-          let { isDesktop, isMobile } = context.conditions;
+      // 1. ТІЛЬКИ ДЕСКТОП (Екрани ширші за 1024px)
+      mm.add("(min-width: 1025px)", () => {
+        preloadFirstFrame()
+          .then(() => {
+            calculateMetrics();
+            render();
+            preloadOtherFrames();
+          })
+          .catch(console.error);
+        window.addEventListener("resize", calculateMetrics);
 
-          if (isDesktop) {
-            preloadFirstFrame()
-              .then(() => {
-                calculateMetrics();
-                render();
-                preloadOtherFrames();
-              })
-              .catch(console.error);
-            window.addEventListener("resize", calculateMetrics);
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "+=300%",
+            scrub: 0.5,
+            pin: true,
+            pinSpacing: false,
+          },
+        });
 
-            const tl = gsap.timeline({
-              scrollTrigger: {
-                trigger: heroRef.current,
-                start: "top top",
-                end: "+=300%",
-                scrub: 0.5,
-                pin: true,
-                pinSpacing: false,
-              },
-            });
+        tl.to(
+          animationState,
+          {
+            frame: frameCount - 1,
+            ease: "none",
+            duration: 2,
+            onUpdate: render,
+          },
+          0,
+        );
 
-            tl.to(
-              animationState,
-              {
-                frame: frameCount - 1,
-                ease: "none",
-                duration: 2,
-                onUpdate: render,
-              },
-              0,
-            );
+        if (contentRef.current) {
+          const contentCards =
+            contentRef.current.querySelectorAll(".animCardWrapper");
+          tl.fromTo(
+            contentCards,
+            { y: 50, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              stagger: 0.15,
+              ease: "power3.out",
+              force3D: true,
+            },
+            0.1,
+          );
+          tl.to(contentRef.current, { y: -50, opacity: 0, duration: 0.3 }, 1.7);
+        }
+        tl.fromTo(
+          overlayRef.current,
+          { opacity: 0 },
+          { opacity: 0.8, duration: 1, ease: "none" },
+          2,
+        );
 
-            if (contentRef.current) {
-              const contentCards =
-                contentRef.current.querySelectorAll(".animCardWrapper");
-              tl.fromTo(
-                contentCards,
-                { y: 50, opacity: 0 },
-                {
-                  y: 0,
-                  opacity: 1,
-                  duration: 0.6,
-                  stagger: 0.15,
-                  ease: "power3.out",
-                  force3D: true,
-                },
-                0.1,
-              );
-              tl.to(
-                contentRef.current,
-                { y: -50, opacity: 0, duration: 0.3 },
-                1.7,
-              );
-            }
-            tl.fromTo(
-              overlayRef.current,
-              { opacity: 0 },
-              { opacity: 0.8, duration: 1, ease: "none" },
-              2,
-            );
+        return () => window.removeEventListener("resize", calculateMetrics);
+      });
 
-            return () => window.removeEventListener("resize", calculateMetrics);
-          }
+      // 2. ТІЛЬКИ МОБАЙЛ / ПЛАНШЕТ (Екрани 1024px і менше)
+      mm.add("(max-width: 1024px)", () => {
+        gsap.set(overlayRef.current, { opacity: 0.6 });
 
-          if (isMobile) {
-            // ЖОДНИХ scrollTrigger!
-            gsap.set(overlayRef.current, { opacity: 0.6 });
+        if (videoRef.current) {
+          videoRef.current.muted = true;
+          videoRef.current
+            .play()
+            .catch((err) => console.log("Autoplay blocked", err));
+        }
 
-            if (videoRef.current) {
-              videoRef.current.muted = true;
-              videoRef.current
-                .play()
-                .catch((e) => console.log("Auto-play blocked", e));
-            }
-
-            if (contentRef.current) {
-              const contentCards =
-                contentRef.current.querySelectorAll(".animCardWrapper");
-              gsap.fromTo(
-                contentCards,
-                { y: 50, opacity: 0 },
-                {
-                  y: 0,
-                  opacity: 1,
-                  duration: 0.6,
-                  stagger: 0.15,
-                  ease: "power3.out",
-                  delay: 1.5,
-                },
-              );
-            }
-          }
-        },
-      );
+        if (contentRef.current) {
+          const contentCards =
+            contentRef.current.querySelectorAll(".animCardWrapper");
+          gsap.fromTo(
+            contentCards,
+            { y: 50, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              stagger: 0.15,
+              ease: "power3.out",
+              delay: 1.5,
+            },
+          );
+        }
+      });
     },
     { scope: heroRef },
   );

@@ -9,6 +9,13 @@ import styles from "./About.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+  // 🔥 М'ЯКИЙ ФІКС ТІЛЬКИ ДЛЯ МОБАЙЛУ
+  if (window.matchMedia("(max-width: 1024px)").matches) {
+    ScrollTrigger.config({
+      autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+    });
+  }
 }
 
 export default function About() {
@@ -16,7 +23,6 @@ export default function About() {
 
   useGSAP(
     () => {
-      // 1. ГОЛОВНИЙ ЗАГОЛОВОК
       gsap.fromTo(
         `.${styles.sectionHeader}`,
         { opacity: 0, y: 50 },
@@ -32,7 +38,6 @@ export default function About() {
         },
       );
 
-      // 2. ЗАГОЛОВОК "ЩО МИ ПРОПОНУЄМО"
       gsap.fromTo(
         `.${styles.offerHeader}`,
         { opacity: 0, y: 30 },
@@ -48,7 +53,6 @@ export default function About() {
         },
       );
 
-      // 3. КАРТКИ АУДИТОРІЙ (B2C / B2B)
       gsap.fromTo(
         `.${styles.targetCard}`,
         { opacity: 0, scale: 0.95, y: 50 },
@@ -63,7 +67,6 @@ export default function About() {
         },
       );
 
-      // 4. ТЕКСТ-ПЕРЕХІД (Заява)
       gsap.fromTo(
         `.${styles.transitionBlock}`,
         { opacity: 0, y: 40 },
@@ -79,7 +82,6 @@ export default function About() {
         },
       );
 
-      // 5. ПІДЗАГОЛОВОК СТАТИСТИКИ
       gsap.fromTo(
         `.${styles.statsHeader}`,
         { opacity: 0, y: 30 },
@@ -95,7 +97,6 @@ export default function About() {
         },
       );
 
-      // 6. КАРТКИ СТАТИСТИКИ (Цифри)
       gsap.fromTo(
         ".animStatWrapper",
         { opacity: 0, scale: 0.95, y: 40 },
@@ -110,7 +111,6 @@ export default function About() {
         },
       );
 
-      // 7. ПАРАЛАКС ФОНІВ В КАРТКАХ
       const parallaxWrappers = gsap.utils.toArray(
         `.${styles.imgParallaxWrapper}`,
       );
@@ -141,7 +141,6 @@ export default function About() {
       <div className={styles.blob5}></div>
 
       <div className={styles.container}>
-        {/* ================= БЛОК 1: ІНТРО ================= */}
         <div className={styles.sectionHeader}>
           <span className={styles.badge}>Про компанію</span>
           <h2>Створюємо вашу енергетичну стабільність</h2>
@@ -152,7 +151,6 @@ export default function About() {
           </p>
         </div>
 
-        {/* ================= БЛОК 2: ЩО МИ ПРОПОНУЄМО ================= */}
         <div className={styles.offerWrapper}>
           <div className={styles.offerHeader}>
             <h3>Що ми пропонуємо</h3>
@@ -235,7 +233,6 @@ export default function About() {
           </div>
         </div>
 
-        {/* ================= БЛОК 2.5: ТЕКСТ-ПЕРЕХІД ================= */}
         <div className={styles.transitionBlock}>
           <h3>Надійність на кожному етапі</h3>
           <p>
@@ -246,7 +243,6 @@ export default function About() {
           </p>
         </div>
 
-        {/* ================= БЛОК 3: НАШІ ДОСЯГНЕННЯ ================= */}
         <div className={styles.statsWrapper}>
           <div className={styles.statsHeader}>
             <h3>Факти, що говорять самі за себе</h3>

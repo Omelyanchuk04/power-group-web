@@ -294,39 +294,42 @@ $primary: #0056b3;
 // ==========================================
 // 🔥 АДАПТИВНІСТЬ ТА ФІКС СКРОЛУ
 // ==========================================
-@media (max-width: 1024px), (pointer: coarse) {
+// ==========================================
+// 🔥 АДАПТИВНІСТЬ ТА ФІКС СКРОЛУ (БЕЗ pointer: coarse)
+// ==========================================
+@media (max-width: 1024px) {
   .heroSection {
     height: auto !important;
     min-height: 100svh;
     display: block;
-    overflow: visible; // Знімаємо будь-які обмеження
+    overflow: visible !important;
   }
 
   .pinArea {
     position: relative;
-    height: auto !important; // ДОЗВОЛЯЄМО РОСТИ ВНИЗ ЗА КАРТКАМИ!
+    height: auto !important;
     min-height: 100svh;
-    overflow: hidden; // Ховає відео, що вилазить, але не блокує скрол
+    overflow: hidden;
   }
 
   .contentWrapper {
-    position: relative !important; // Змінюємо з absolute на relative!
+    position: relative !important; // Дозволяє контенту фізично розсувати секцію
     height: auto !important;
     min-height: 100svh;
-    padding: 120px 20px 60px; // Відступи, щоб контенту було комфортно
-    justify-content: flex-start; // Вирівнюємо контент зверху вниз
+    padding: 120px 20px 60px;
+    justify-content: flex-start;
   }
 
-  .canvas {
-    display: none;
-  }
+  // 🔥 ЦЕ НАЙГОЛОВНІШИЙ ФІКС: Вбиваємо десктопний відступ, який блокував скрол
   .delaySpacer {
-    display: none;
+    display: none !important;
+  }
+  .canvas {
+    display: none !important;
   }
 
   .mobileVideo {
-    display: block;
-    // Завдяки цьому відео покриє всю нову висоту секції, навіть якщо вона більша за 1 екран
+    display: block !important;
     min-width: 100%;
     min-height: 100%;
   }
@@ -335,7 +338,20 @@ $primary: #0056b3;
     min-height: 100%;
   }
 
-  // Решта стилів для мобільного
+  .animTitle {
+    font-size: 48px;
+  }
+  .featuresRow {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  .featureCard {
+    min-width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
   .logoContainer {
     flex-direction: column;
     gap: 16px;
