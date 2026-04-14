@@ -10,16 +10,20 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background-color: #ffffff;
   color: #333333;
-  /* Переносимо overflow сюди для кращої сумісності з iOS Safari */
-  overflow-x: hidden;
 
-  /* 🔥 ВИДАЛЕНО overscroll-behavior-y: none; та touch-action
-     Саме вони блокували інерцію скролу на мобайлі і викликали "залипання" */
+  /* 🔥 ФІКС ІНЕРЦІЇ: Використовуємо clip замість hidden. 
+     Він обрізає контент, що вилазить за краї, АЛЕ не ламає нативний інерційний скрол на iOS. */
+  overflow-x: clip;
+
+  /* Про всяк випадок примусово вмикаємо інерцію для iOS (старий, але надійний хак) */
+  -webkit-overflow-scrolling: touch;
 }
 
+/* 🟢 Обгортка сторінки */
 #__next,
 main {
   width: 100%;
+  overflow-x: clip;
 }
 
 a {
