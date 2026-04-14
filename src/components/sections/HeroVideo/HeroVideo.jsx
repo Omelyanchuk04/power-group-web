@@ -266,7 +266,7 @@ export default function HeroVideo() {
             end: "+=300%",
             scrub: 0.5,
             pin: true,
-            pinSpacing: true, // Залишаємо стандартну поведінку для десктопу
+            pinSpacing: false, // Залишаємо стандартну поведінку для десктопу
           },
         });
         tl.to(
