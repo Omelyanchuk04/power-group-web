@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -9,7 +9,6 @@ import HeroContent from "./HeroContent";
 import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
-  // ТІЛЬКИ реєстрація, ніяких хаків і втручань у скрол!
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
@@ -25,9 +24,65 @@ export default function HeroVideo() {
   const imagesRef = useRef([]);
   const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
 
+  // ==========================================
+  // 🚨 СУПЕР-ЛОГЕР (Відстежуємо ВСЕ)
+  // ==========================================
+  useEffect(() => {
+    console.log(
+      "🟢 [INIT] HeroVideo змонтовано. Висота body:",
+      document.body.scrollHeight,
+    );
+
+    // 1. Відстежуємо фізичний скрол
+    const handleScroll = () => {
+      console.log(
+        `🌀 [SCROLL] Позиція: ${window.scrollY.toFixed(0)}px | Висота сторінки: ${document.body.scrollHeight}px`,
+      );
+    };
+
+    // 2. Відстежуємо дотики (чи не скасовує їх браузер)
+    const handleTouchStart = (e) =>
+      console.log("👆 [TOUCH START] Палець торкнувся екрану", e.target);
+    const handleTouchMove = () => console.log("〰️ [TOUCH MOVE] Скролимо...");
+    const handleTouchEnd = () => console.log("👇 [TOUCH END] Палець відірвано");
+    const handleTouchCancel = (e) =>
+      console.error("❌ [TOUCH CANCEL] БРАУЗЕР ЖОРСТКО СКАСУВАВ ДОТИК!", e);
+
+    // 3. Відстежуємо ресайз екрану
+    const handleResize = () =>
+      console.warn(
+        `📐 [RESIZE] Екран змінив розмір: ${window.innerWidth}x${window.innerHeight}`,
+      );
+
+    // 4. Ловимо паніку GSAP
+    const onRefreshInit = () =>
+      console.warn("⚠️ [GSAP] ScrollTrigger почав перерахунок!");
+    const onRefresh = () =>
+      console.log("✅ [GSAP] ScrollTrigger закінчив перерахунок.");
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd);
+    window.addEventListener("touchcancel", handleTouchCancel);
+    window.addEventListener("resize", handleResize);
+    ScrollTrigger.addEventListener("refreshInit", onRefreshInit);
+    ScrollTrigger.addEventListener("refresh", onRefresh);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchCancel);
+      window.removeEventListener("resize", handleResize);
+      ScrollTrigger.removeEventListener("refreshInit", onRefreshInit);
+      ScrollTrigger.removeEventListener("refresh", onRefresh);
+    };
+  }, []);
+
   useGSAP(
     () => {
-      // Функції для Canvas (Тільки Десктоп)
       const canvas = canvasRef.current;
       const context = canvas?.getContext("2d", {
         alpha: false,
@@ -82,7 +137,7 @@ export default function HeroVideo() {
       };
 
       const preloadFirstFrame = () => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
           const img = new Image();
           img.decoding = "async";
           img.fetchPriority = "high";
@@ -90,7 +145,7 @@ export default function HeroVideo() {
             imagesRef.current[0] = img;
             resolve(img);
           };
-          img.onerror = reject;
+          img.onerror = resolve;
           img.src = `/frames/frame-001.jpg`;
         });
       };
@@ -117,7 +172,6 @@ export default function HeroVideo() {
         }
       };
 
-      // --- СПІЛЬНА АНІМАЦІЯ ПОЯВИ ТЕКСТУ ---
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
         const text = logoRef.current.querySelector(`.${styles.animText}`);
@@ -134,54 +188,29 @@ export default function HeroVideo() {
         );
 
         const tlStart = gsap.timeline({ delay: 0.2 });
-
         tlStart
           .fromTo(
             icon,
             { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              ease: "power3.out",
-              force3D: true,
-            },
+            { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
             0,
           )
           .fromTo(
             text,
             { y: 30, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              ease: "power3.out",
-              force3D: true,
-            },
+            { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
             0.1,
           )
           .fromTo(
             line,
             { scaleX: 0, opacity: 0 },
-            {
-              scaleX: 1,
-              opacity: 1,
-              duration: 0.6,
-              ease: "power2.out",
-              force3D: true,
-            },
+            { scaleX: 1, opacity: 1, duration: 0.6, ease: "power2.out" },
             0.4,
           )
           .fromTo(
             slogan,
             { y: 15, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              ease: "power2.out",
-              force3D: true,
-            },
+            { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
             0.6,
           )
           .to(
@@ -192,60 +221,43 @@ export default function HeroVideo() {
               duration: 0.3,
               stagger: 0.05,
               ease: "power2.in",
-              force3D: true,
             },
             "+=0.3",
           )
           .fromTo(
             contentTitle,
             { y: 20, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              ease: "power3.out",
-              force3D: true,
-            },
+            { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
             "-=0.1",
           )
           .fromTo(
             contentSubtitle,
             { y: 20, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              ease: "power3.out",
-              force3D: true,
-            },
+            { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
             "-=0.4",
           )
           .fromTo(
             contentButtonWrapper,
             { y: 20, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.5,
-              ease: "power3.out",
-              force3D: true,
-            },
+            { y: 0, opacity: 1, duration: 0.5, ease: "power3.out" },
             "-=0.4",
           );
       }
 
       let mm = gsap.matchMedia();
 
-      // 1. ТІЛЬКИ ДЕСКТОП
+      // 1. ДЕСКТОП
       mm.add("(min-width: 1025px)", () => {
-        preloadFirstFrame()
-          .then(() => {
-            calculateMetrics();
-            render();
-            preloadOtherFrames();
-          })
-          .catch(console.error);
-        window.addEventListener("resize", calculateMetrics);
+        preloadFirstFrame().then(() => {
+          calculateMetrics();
+          render();
+          preloadOtherFrames();
+        });
+        const handleResize = () => {
+          calculateMetrics();
+          render();
+        };
+        window.addEventListener("resize", handleResize);
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -254,10 +266,9 @@ export default function HeroVideo() {
             end: "+=300%",
             scrub: 0.5,
             pin: true,
-            pinSpacing: false,
+            pinSpacing: true, // Залишаємо стандартну поведінку для десктопу
           },
         });
-
         tl.to(
           animationState,
           {
@@ -281,7 +292,6 @@ export default function HeroVideo() {
               duration: 0.6,
               stagger: 0.15,
               ease: "power3.out",
-              force3D: true,
             },
             0.1,
           );
@@ -293,12 +303,17 @@ export default function HeroVideo() {
           { opacity: 0.8, duration: 1, ease: "none" },
           2,
         );
-
-        return () => window.removeEventListener("resize", calculateMetrics);
+        return () => window.removeEventListener("resize", handleResize);
       });
 
-      // 2. ТІЛЬКИ МОБАЙЛ / ПЛАНШЕТ
+      // 2. МОБАЙЛ (Повна ізоляція від ScrollTrigger)
       mm.add("(max-width: 1024px)", () => {
+        console.log(
+          "📱 [MEDIA] Увімкнуто мобільний режим HeroVideo - БЕЗ GSAP ScrollTrigger",
+        );
+
+        // 🔥 ОЧИЩАЄМО ЗАЛИШКИ ДЕСКТОПУ (вбиваємо pin-spacer, який розтягував сторінку)
+        gsap.set(heroRef.current, { clearProps: "all" });
         gsap.set(overlayRef.current, { opacity: 0.6 });
 
         if (videoRef.current) {
@@ -333,7 +348,6 @@ export default function HeroVideo() {
     <div className={styles.heroSection} ref={heroRef}>
       <div className={styles.pinArea}>
         <canvas ref={canvasRef} className={styles.canvas} />
-
         <video
           ref={videoRef}
           className={styles.mobileVideo}
@@ -344,12 +358,10 @@ export default function HeroVideo() {
           muted
           playsInline
         />
-
         <div ref={overlayRef} className={styles.canvasOverlay} />
         <HeroLogo ref={logoRef} />
         <HeroContent ref={contentRef} />
       </div>
-
       <div className={styles.delaySpacer} />
     </div>
   );

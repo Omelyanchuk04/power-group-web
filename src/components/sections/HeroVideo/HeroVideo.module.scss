@@ -300,30 +300,27 @@ $primary: #0056b3;
 @media (max-width: 1024px) {
   .heroSection {
     height: auto !important;
-    min-height: 100svh;
+    min-height: max-content !important; /* 🔥 ЗМУШУЄ БРАУЗЕР БАЧИТИ ВСЮ ВИСОТУ */
     display: block;
     overflow: visible !important;
   }
 
   .pinArea {
-    position: relative;
+    position: relative !important;
     height: auto !important;
-    min-height: 100svh;
-    overflow: hidden;
+    min-height: max-content !important; /* 🔥 ТЕ САМЕ ТУТ */
+    overflow: visible !important;
   }
 
   .contentWrapper {
-    position: relative !important; // Дозволяє контенту фізично розсувати секцію
+    position: relative !important;
     height: auto !important;
     min-height: 100svh;
     padding: 120px 20px 60px;
     justify-content: flex-start;
   }
 
-  // 🔥 ЦЕ НАЙГОЛОВНІШИЙ ФІКС: Вбиваємо десктопний відступ, який блокував скрол
-  .delaySpacer {
-    display: none !important;
-  }
+  .delaySpacer,
   .canvas {
     display: none !important;
   }
@@ -331,21 +328,23 @@ $primary: #0056b3;
   .mobileVideo {
     display: block !important;
     min-width: 100%;
-    min-height: 100%;
+    height: 100% !important;
   }
 
   .canvasOverlay {
-    min-height: 100%;
+    height: 100% !important;
   }
 
   .animTitle {
     font-size: 48px;
   }
+
   .featuresRow {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 50px;
   }
+
   .featureCard {
     min-width: 240px;
   }

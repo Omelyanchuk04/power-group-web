@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -8,15 +8,48 @@ import { useGSAP } from "@gsap/react";
 import styles from "./About.module.scss";
 
 if (typeof window !== "undefined") {
-  // ТІЛЬКИ реєстрація плагінів
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
 export default function About() {
   const sectionRef = useRef(null);
 
+  // ==========================================
+  // 🚨 ЛОГЕР ПОЯВИ СЕКЦІЇ
+  // ==========================================
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    // Слідкуємо, коли секція "Про компанію" торкається екрану
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            console.log(
+              `🎯 [OBSERVER] Секція About з'явилася на екрані! Видимість: ${(entry.intersectionRatio * 100).toFixed(0)}%`,
+            );
+          }
+        });
+      },
+      { threshold: [0, 0.1, 0.5] },
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   useGSAP(
     () => {
+      // Трекаємо спрацювання ScrollTrigger
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        onEnter: () =>
+          console.log("🔥 [TRIGGER] About: onEnter (верх торкнувся низу)"),
+        onLeaveBack: () =>
+          console.log("⬅️ [TRIGGER] About: onLeaveBack (повернулися нагору)"),
+      });
+
       gsap.fromTo(
         `.${styles.sectionHeader}`,
         { opacity: 0, y: 50 },
@@ -27,7 +60,7 @@ export default function About() {
           ease: "power3.out",
           scrollTrigger: {
             trigger: `.${styles.sectionHeader}`,
-            start: "top 80%",
+            start: "top 85%",
           },
         },
       );
@@ -42,7 +75,7 @@ export default function About() {
           ease: "power3.out",
           scrollTrigger: {
             trigger: `.${styles.offerHeader}`,
-            start: "top 80%",
+            start: "top 85%",
           },
         },
       );
@@ -57,7 +90,7 @@ export default function About() {
           stagger: 0.15,
           duration: 0.8,
           ease: "power3.out",
-          scrollTrigger: { trigger: `.${styles.targetGrid}`, start: "top 70%" },
+          scrollTrigger: { trigger: `.${styles.targetGrid}`, start: "top 80%" },
         },
       );
 
@@ -71,7 +104,7 @@ export default function About() {
           ease: "power3.out",
           scrollTrigger: {
             trigger: `.${styles.transitionBlock}`,
-            start: "top 80%",
+            start: "top 85%",
           },
         },
       );
@@ -111,9 +144,9 @@ export default function About() {
       parallaxWrappers.forEach((wrapper) => {
         gsap.fromTo(
           wrapper,
-          { yPercent: -15 },
+          { yPercent: -10 },
           {
-            yPercent: 15,
+            yPercent: 10,
             ease: "none",
             scrollTrigger: {
               trigger: wrapper.parentNode,
@@ -161,6 +194,8 @@ export default function About() {
                   src="/images/about-b2c.jpg"
                   alt="Приватні будинки"
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
                   className={styles.bgImage}
                 />
               </div>
@@ -192,6 +227,8 @@ export default function About() {
                   src="/images/about-b2b.jpg"
                   alt="Підприємства"
                   fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
                   className={styles.bgImage}
                 />
               </div>
@@ -250,6 +287,8 @@ export default function About() {
                   src="/images/experiense-card.jpg"
                   alt="Досвід"
                   fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  priority
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>
@@ -270,6 +309,8 @@ export default function About() {
                   src="/images/projects-card.jpg"
                   alt="Проєкти"
                   fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  priority
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>
@@ -290,6 +331,8 @@ export default function About() {
                   src="/images/employees-card.jpg"
                   alt="Спеціалісти"
                   fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  priority
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>
@@ -310,6 +353,8 @@ export default function About() {
                   src="/images/power-card.jpg"
                   alt="Потужність"
                   fill
+                  sizes="(max-width: 768px) 100vw, 25vw"
+                  priority
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>

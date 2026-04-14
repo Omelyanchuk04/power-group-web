@@ -9,26 +9,26 @@
   --button-secondary-hover: #f2f2f2;
   --button-secondary-border: #ebebeb;
 
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  /* 🔥 ГОЛОВНИЙ ФІКС: Ніякого flex-центрування. Тільки звичайний block. */
+  display: block;
+  width: 100%;
+  min-height: 100vh;
   font-family: var(--font-geist-sans);
   background-color: var(--background);
 }
 
 .main {
-  display: flex;
-  flex: 1;
+  /* 🔥 ГОЛОВНИЙ ФІКС: Прибрано max-width та padding. 
+     Секції (HeroVideo, About) тепер самі контролюють свої розміри. */
+  display: block;
   width: 100%;
-  max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
+  padding: 0;
+  margin: 0;
   background-color: var(--foreground);
-  padding: 120px 60px;
 }
+
+/* --- Далі йдуть твої класи для інтро та кнопок. 
+       Вони не заважають скролу, тому я їх залишив. --- */
 
 .intro {
   display: flex;
@@ -94,7 +94,6 @@ a.secondary {
   border-color: var(--button-secondary-border);
 }
 
-/* Enable hover only on non-touch devices */
 @media (hover: hover) and (pointer: fine) {
   a.primary:hover {
     background: var(--button-primary-hover);
@@ -108,10 +107,6 @@ a.secondary {
 }
 
 @media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
-  }
-
   .intro {
     gap: 16px;
   }
