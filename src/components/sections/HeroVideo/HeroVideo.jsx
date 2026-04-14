@@ -33,28 +33,23 @@ export default function HeroVideo() {
       document.body.scrollHeight,
     );
 
-    // 1. Відстежуємо фізичний скрол
     const handleScroll = () => {
       console.log(
         `🌀 [SCROLL] Позиція: ${window.scrollY.toFixed(0)}px | Висота сторінки: ${document.body.scrollHeight}px`,
       );
     };
 
-    // 2. Відстежуємо дотики (чи не скасовує їх браузер)
     const handleTouchStart = (e) =>
       console.log("👆 [TOUCH START] Палець торкнувся екрану", e.target);
     const handleTouchMove = () => console.log("〰️ [TOUCH MOVE] Скролимо...");
     const handleTouchEnd = () => console.log("👇 [TOUCH END] Палець відірвано");
     const handleTouchCancel = (e) =>
       console.error("❌ [TOUCH CANCEL] БРАУЗЕР ЖОРСТКО СКАСУВАВ ДОТИК!", e);
-
-    // 3. Відстежуємо ресайз екрану
     const handleResize = () =>
       console.warn(
         `📐 [RESIZE] Екран змінив розмір: ${window.innerWidth}x${window.innerHeight}`,
       );
 
-    // 4. Ловимо паніку GSAP
     const onRefreshInit = () =>
       console.warn("⚠️ [GSAP] ScrollTrigger почав перерахунок!");
     const onRefresh = () =>
@@ -244,31 +239,25 @@ export default function HeroVideo() {
           );
       }
 
-      let mm = gsap.matchMedia();
-
-      // 1. ДЕСКТОП
-      mm.add("(min-width: 1025px)", () => {
+      // --- СПІЛЬНА ФУНКЦІЯ ДЛЯ СЕКВЕНЦІЇ ---
+      const initSequence = (scrollEnd) => {
         preloadFirstFrame().then(() => {
           calculateMetrics();
           render();
           preloadOtherFrames();
         });
-        const handleResize = () => {
-          calculateMetrics();
-          render();
-        };
-        window.addEventListener("resize", handleResize);
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: heroRef.current,
             start: "top top",
-            end: "+=300%",
+            end: scrollEnd,
             scrub: 0.5,
             pin: true,
-            pinSpacing: false, // Залишаємо стандартну поведінку для десктопу
+            pinSpacing: false, // 🔥 Дозволяє ефект НАЇЗДУ другої секції
           },
         });
+
         tl.to(
           animationState,
           {
@@ -297,55 +286,51 @@ export default function HeroVideo() {
           );
           tl.to(contentRef.current, { y: -50, opacity: 0, duration: 0.3 }, 1.7);
         }
+
         tl.fromTo(
           overlayRef.current,
           { opacity: 0 },
           { opacity: 0.8, duration: 1, ease: "none" },
           2,
         );
+
+        return tl;
+      };
+
+      let mm = gsap.matchMedia();
+
+      // 1. ДЕСКТОП
+      mm.add("(min-width: 1025px)", () => {
+        initSequence("+=300%");
+
+        const handleResize = () => {
+          calculateMetrics();
+          render();
+        };
+        window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
       });
 
-      // 2. МОБАЙЛ (Повна ізоляція від ScrollTrigger)
+      // 2. МОБАЙЛ (Секвенція + Наїзд)
       mm.add("(max-width: 1024px)", () => {
-        console.log(
-          "📱 [MEDIA] Мобільний режим - ЕФЕКТ НАЇЗДУ (pinSpacing: false)",
-        );
+        console.log("📱 [MEDIA] Мобільний режим - СЕКВЕНЦІЯ КАНВАС + НАЇЗД");
 
-        gsap.set(overlayRef.current, { opacity: 0.6 });
+        gsap.set(heroRef.current, { clearProps: "all" }); // Чистимо можливі глюки
 
+        // Запускаємо секвенцію. +=200% означає, що треба проскролити 2 висоти екрану, щоб анімація завершилась
+        initSequence("+=200%");
+
+        // Зупиняємо відео, бо тепер працює Canvas
         if (videoRef.current) {
-          videoRef.current.muted = true;
-          videoRef.current
-            .play()
-            .catch((err) => console.log("Autoplay blocked", err));
+          videoRef.current.pause();
         }
 
-        if (contentRef.current) {
-          const contentCards =
-            contentRef.current.querySelectorAll(".animCardWrapper");
-          gsap.fromTo(
-            contentCards,
-            { y: 50, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.6,
-              stagger: 0.15,
-              ease: "power3.out",
-              delay: 0.5,
-            },
-          );
-        }
-
-        // 🔥 ДОДАЄМО ПІН ДЛЯ ЕФЕКТУ НАЇЗДУ
-        ScrollTrigger.create({
-          trigger: heroRef.current,
-          start: "top top",
-          end: "+=100%", // Тримаємо пін, поки користувач скролить висоту одного екрану
-          pin: true,
-          pinSpacing: false, // 🔥 НАЙГОЛОВНІШЕ! Не створює пустоти, дозволяє About наїхати зверху
-        });
+        const handleResize = () => {
+          calculateMetrics();
+          render();
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
       });
     },
     { scope: heroRef },
@@ -354,13 +339,14 @@ export default function HeroVideo() {
   return (
     <div className={styles.heroSection} ref={heroRef}>
       <div className={styles.pinArea}>
+        {/* Canvas тепер працює і на мобайлі (зміни CSS!) */}
         <canvas ref={canvasRef} className={styles.canvas} />
+
         <video
           ref={videoRef}
           className={styles.mobileVideo}
           src="/hero-mobile.mp4"
           poster="/frames/frame-001.jpg"
-          autoPlay
           loop
           muted
           playsInline
