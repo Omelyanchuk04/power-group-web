@@ -8,14 +8,8 @@ import { useGSAP } from "@gsap/react";
 import styles from "./About.module.scss";
 
 if (typeof window !== "undefined") {
+  // ТІЛЬКИ реєстрація плагінів
   gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-  // 🔥 М'ЯКИЙ ФІКС ТІЛЬКИ ДЛЯ МОБАЙЛУ
-  if (window.matchMedia("(max-width: 1024px)").matches) {
-    ScrollTrigger.config({
-      autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
-    });
-  }
 }
 
 export default function About() {

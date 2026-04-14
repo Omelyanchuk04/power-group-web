@@ -9,16 +9,8 @@ import HeroContent from "./HeroContent";
 import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
+  // ТІЛЬКИ реєстрація, ніяких хаків і втручань у скрол!
   gsap.registerPlugin(ScrollTrigger, useGSAP);
-
-  // 🔥 М'ЯКИЙ ФІКС ТІЛЬКИ ДЛЯ МОБАЙЛУ
-  // Вимикаємо 'resize' з подій оновлення ScrollTrigger.
-  // Тепер при хованні адресного рядка в Safari скрол не буде гальмувати.
-  if (window.matchMedia("(max-width: 1024px)").matches) {
-    ScrollTrigger.config({
-      autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
-    });
-  }
 }
 
 export default function HeroVideo() {
@@ -244,7 +236,7 @@ export default function HeroVideo() {
 
       let mm = gsap.matchMedia();
 
-      // 1. ТІЛЬКИ ДЕСКТОП (Екрани ширші за 1024px)
+      // 1. ТІЛЬКИ ДЕСКТОП
       mm.add("(min-width: 1025px)", () => {
         preloadFirstFrame()
           .then(() => {
@@ -305,7 +297,7 @@ export default function HeroVideo() {
         return () => window.removeEventListener("resize", calculateMetrics);
       });
 
-      // 2. ТІЛЬКИ МОБАЙЛ / ПЛАНШЕТ (Екрани 1024px і менше)
+      // 2. ТІЛЬКИ МОБАЙЛ / ПЛАНШЕТ
       mm.add("(max-width: 1024px)", () => {
         gsap.set(overlayRef.current, { opacity: 0.6 });
 
