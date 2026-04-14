@@ -10,6 +10,8 @@ import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+  // Про всяк випадок жорстко вимикаємо будь-які нормалізації від попередніх спроб
+  ScrollTrigger.normalizeScroll(false);
 }
 
 export default function HeroVideo() {
@@ -26,9 +28,6 @@ export default function HeroVideo() {
 
   useGSAP(
     () => {
-      // ==========================================
-      // ФУНКЦІЇ ДЛЯ CANVAS (ДЕСКТОП)
-      // ==========================================
       const canvas = canvasRef.current;
       const context = canvas?.getContext("2d", {
         alpha: false,
@@ -118,9 +117,7 @@ export default function HeroVideo() {
         }
       };
 
-      // ==========================================
-      // АНІМАЦІЯ ПОЯВИ ТЕКСТУ (СПІЛЬНА)
-      // ==========================================
+      // --- АНІМАЦІЯ ПОЯВИ ТЕКСТУ ---
       if (logoRef.current && contentRef.current) {
         const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
         const text = logoRef.current.querySelector(`.${styles.animText}`);
@@ -238,21 +235,21 @@ export default function HeroVideo() {
       }
 
       // ==========================================
-      // 🔥 ЛОГІКА РОЗДІЛЕННЯ (ДЕСКТОП vs МОБАЙЛ/ПЛАНШЕТ)
+      // 🔥 АБСОЛЮТНИЙ ЗАХИСТ ВІД GSAP НА МОБАЙЛІ
       // ==========================================
       let mm = gsap.matchMedia();
 
       mm.add(
         {
-          // Розширюємо мобільну зону до 1024px, щоб охопити всі тач-пристрої та планшети
-          isMobile: "(max-width: 1024px)",
-          isDesktop: "(min-width: 1025px)",
+          // ДЕСКТОП: Тільки якщо ширина > 1024 І Є МИШКА
+          isDesktop: "(min-width: 1025px) and (pointer: fine)",
+          // МОБАЙЛ: Якщо ширина < 1024 АБО ЦЕ ТАЧ-СКРІН (pointer: coarse)
+          isMobile: "(max-width: 1024px), (pointer: coarse)",
         },
         (context) => {
-          let { isMobile, isDesktop } = context.conditions;
+          let { isDesktop, isMobile } = context.conditions;
 
           if (isDesktop) {
-            // ---> ДЕСКТОП: Працює ScrollTrigger
             preloadFirstFrame()
               .then(() => {
                 calculateMetrics();
@@ -317,7 +314,7 @@ export default function HeroVideo() {
           }
 
           if (isMobile) {
-            // ---> МОБІЛКА/ПЛАНШЕТ: Ніякого ScrollTrigger взагалі!
+            // ЖОДНИХ scrollTrigger!
             gsap.set(overlayRef.current, { opacity: 0.6 });
 
             if (videoRef.current) {

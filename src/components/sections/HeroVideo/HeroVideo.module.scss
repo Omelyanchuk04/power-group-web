@@ -11,15 +11,14 @@ $primary: #0056b3;
   height: 100vh;
   height: 100svh;
   background-color: #000;
-  // Тут НІКОЛИ не повинно бути overflow: hidden для мобілки!
 }
 
 .pinArea {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   height: 100svh;
-  overflow: hidden; // Ховає лише відео, що вилазить за межі 1 екрану
+  overflow: hidden;
 }
 
 // ==========================================
@@ -132,7 +131,7 @@ $primary: #0056b3;
 // ГОЛОВНИЙ КОНТЕНТ
 // ==========================================
 .contentWrapper {
-  position: absolute;
+  position: absolute; // На десктопі абсолютне позиціонування
   top: 0;
   left: 0;
   width: 100%;
@@ -293,20 +292,29 @@ $primary: #0056b3;
 }
 
 // ==========================================
-// АДАПТИВНІСТЬ (БРЕЙКПОІНТ ЗБІЛЬШЕНО ДО 1024px)
+// 🔥 АДАПТИВНІСТЬ ТА ФІКС СКРОЛУ
 // ==========================================
-@media (max-width: 1024px) {
-  // 🔥 Повністю відпускаємо секцію на волю
+@media (max-width: 1024px), (pointer: coarse) {
   .heroSection {
-    height: auto;
+    height: auto !important;
     min-height: 100svh;
-    overflow: visible; // Дозволяємо контенту скролитися вільно
+    display: block;
+    overflow: visible; // Знімаємо будь-які обмеження
   }
 
   .pinArea {
     position: relative;
-    height: 100svh;
-    overflow: hidden;
+    height: auto !important; // ДОЗВОЛЯЄМО РОСТИ ВНИЗ ЗА КАРТКАМИ!
+    min-height: 100svh;
+    overflow: hidden; // Ховає відео, що вилазить, але не блокує скрол
+  }
+
+  .contentWrapper {
+    position: relative !important; // Змінюємо з absolute на relative!
+    height: auto !important;
+    min-height: 100svh;
+    padding: 120px 20px 60px; // Відступи, щоб контенту було комфортно
+    justify-content: flex-start; // Вирівнюємо контент зверху вниз
   }
 
   .canvas {
@@ -314,26 +322,20 @@ $primary: #0056b3;
   }
   .delaySpacer {
     display: none;
-  } // Ховаємо прірву в 200vh!
+  }
 
   .mobileVideo {
     display: block;
+    // Завдяки цьому відео покриє всю нову висоту секції, навіть якщо вона більша за 1 екран
+    min-width: 100%;
+    min-height: 100%;
   }
 
-  .animTitle {
-    font-size: 48px;
+  .canvasOverlay {
+    min-height: 100%;
   }
-  .featuresRow {
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 50px;
-  }
-  .featureCard {
-    min-width: 240px;
-  }
-}
 
-@media (max-width: 768px) {
+  // Решта стилів для мобільного
   .logoContainer {
     flex-direction: column;
     gap: 16px;
@@ -355,7 +357,7 @@ $primary: #0056b3;
     text-align: center;
   }
   .mainContent {
-    margin-top: -20px;
+    margin-top: 20px;
   }
   .animTitle {
     font-size: 36px;
@@ -381,6 +383,6 @@ $primary: #0056b3;
     font-size: 28px;
   }
   .contentWrapper {
-    padding: 0 16px;
+    padding: 100px 16px 40px;
   }
 }
