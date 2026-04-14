@@ -4,23 +4,22 @@
   margin: 0;
 }
 
-/* 🔥 ПОВНІСТЮ очищаємо html та body від будь-яких блокувань. 
-   Ніяких overflow, ніяких overscroll-behavior. Дозволяємо системі дихати. */
 html,
 body {
   width: 100%;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #ffffff;
   color: #333333;
+
+  /* ЄДИНИЙ правильний і безпечний спосіб сховати горизонтальний 
+     скрол на мобайлі без втрати вертикальної інерції */
+  overflow-x: clip;
 }
 
-/* 🟢 Ховаємо горизонтальний скрол ТІЛЬКИ на обгортці додатку.
-   Це захистить від хитання вліво-вправо, але не вб'є інерцію. */
 #__next,
 main {
   width: 100%;
-  overflow-x: hidden;
-  position: relative;
+  /* Видалили всі overflow звідси! Вони тут - зло для мобайлу. */
 }
 
 a {

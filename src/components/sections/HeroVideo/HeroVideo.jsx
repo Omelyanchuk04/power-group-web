@@ -10,7 +10,6 @@ import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
-  ScrollTrigger.normalizeScroll(false);
 
   // 🔥 М'ЯКИЙ ФІКС ТІЛЬКИ ДЛЯ МОБАЙЛУ
   // Вимикаємо 'resize' з подій оновлення ScrollTrigger.
