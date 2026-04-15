@@ -24,56 +24,9 @@ export default function HeroVideo() {
   const imagesRef = useRef([]);
   const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
 
-  // ==========================================
-  // 🚨 СУПЕР-ЛОГЕР (Відстежуємо ВСЕ)
-  // ==========================================
   useEffect(() => {
-    console.log(
-      "🟢 [INIT] HeroVideo змонтовано. Висота body:",
-      document.body.scrollHeight,
-    );
-
-    const handleScroll = () => {
-      console.log(
-        `🌀 [SCROLL] Позиція: ${window.scrollY.toFixed(0)}px | Висота сторінки: ${document.body.scrollHeight}px`,
-      );
-    };
-
-    const handleTouchStart = (e) =>
-      console.log("👆 [TOUCH START] Палець торкнувся екрану", e.target);
-    const handleTouchMove = () => console.log("〰️ [TOUCH MOVE] Скролимо...");
-    const handleTouchEnd = () => console.log("👇 [TOUCH END] Палець відірвано");
-    const handleTouchCancel = (e) =>
-      console.error("❌ [TOUCH CANCEL] БРАУЗЕР ЖОРСТКО СКАСУВАВ ДОТИК!", e);
-    const handleResize = () =>
-      console.warn(
-        `📐 [RESIZE] Екран змінив розмір: ${window.innerWidth}x${window.innerHeight}`,
-      );
-
-    const onRefreshInit = () =>
-      console.warn("⚠️ [GSAP] ScrollTrigger почав перерахунок!");
-    const onRefresh = () =>
-      console.log("✅ [GSAP] ScrollTrigger закінчив перерахунок.");
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd);
-    window.addEventListener("touchcancel", handleTouchCancel);
-    window.addEventListener("resize", handleResize);
-    ScrollTrigger.addEventListener("refreshInit", onRefreshInit);
-    ScrollTrigger.addEventListener("refresh", onRefresh);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleTouchEnd);
-      window.removeEventListener("touchcancel", handleTouchCancel);
-      window.removeEventListener("resize", handleResize);
-      ScrollTrigger.removeEventListener("refreshInit", onRefreshInit);
-      ScrollTrigger.removeEventListener("refresh", onRefresh);
-    };
+    // Логери можна залишити або прибрати, коли все буде ідеально
+    console.log("🟢 [INIT] HeroVideo змонтовано.");
   }, []);
 
   useGSAP(
@@ -108,11 +61,28 @@ export default function HeroVideo() {
       };
 
       const render = () => {
-        const safeFrameIndex = Math.max(
+        const targetFrame = Math.max(
           0,
           Math.min(frameCount - 1, Math.floor(animationState.frame)),
         );
-        const img = imagesRef.current[safeFrameIndex];
+        let img = imagesRef.current[targetFrame];
+
+        // 🔥 ФІКС 1: Розумний фолбек. Шукаємо найближчий завантажений кадр,
+        // якщо цільовий ще не готовий або вивантажений з пам'яті.
+        if (!img || !img.complete || img.naturalWidth === 0) {
+          for (let i = targetFrame; i >= 0; i--) {
+            if (
+              imagesRef.current[i] &&
+              imagesRef.current[i].complete &&
+              imagesRef.current[i].naturalWidth > 0
+            ) {
+              img = imagesRef.current[i];
+              break;
+            }
+          }
+        }
+
+        // Якщо кадру взагалі немає, просто перериваємось, але НЕ стираємо Canvas
         if (
           !img ||
           !img.complete ||
@@ -121,6 +91,7 @@ export default function HeroVideo() {
           !canvas
         )
           return;
+
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(
           img,
@@ -134,7 +105,7 @@ export default function HeroVideo() {
       const preloadFirstFrame = () => {
         return new Promise((resolve) => {
           const img = new Image();
-          img.decoding = "async";
+          // Прибрали img.decoding = "async", щоб перший кадр був миттєвим
           img.fetchPriority = "high";
           img.onload = () => {
             imagesRef.current[0] = img;
@@ -146,7 +117,8 @@ export default function HeroVideo() {
       };
 
       const preloadOtherFrames = async () => {
-        const batchSize = 5;
+        // 🔥 ФІКС 2: Збільшили розмір пачки, бо файли тепер маленькі (6 МБ сумарно)
+        const batchSize = 10;
         for (let i = 1; i < frameCount; i += batchSize) {
           const batch = [];
           for (let j = 0; j < batchSize && i + j < frameCount; j++) {
@@ -154,10 +126,11 @@ export default function HeroVideo() {
             batch.push(
               new Promise((resolve) => {
                 const img = new Image();
-                img.decoding = "async";
+                // 🔥 ФІКС 2: Прибрали img.decoding = "async"
+                // Тепер браузер не буде відкладати розпаковку картинки
                 img.fetchPriority = "low";
                 img.onload = resolve;
-                img.onerror = resolve;
+                img.onerror = resolve; // Продовжуємо навіть якщо 1 файл помилковий
                 img.src = `/frames/frame-${(index + 1).toString().padStart(3, "0")}.jpg`;
                 imagesRef.current[index] = img;
               }),
@@ -244,6 +217,7 @@ export default function HeroVideo() {
         preloadFirstFrame().then(() => {
           calculateMetrics();
           render();
+          // Запускаємо завантаження інших кадрів після першого
           preloadOtherFrames();
         });
 
@@ -252,9 +226,9 @@ export default function HeroVideo() {
             trigger: heroRef.current,
             start: "top top",
             end: scrollEnd,
-            scrub: 0.5,
+            scrub: 0.5, // 0.5 робить скрол плавнішим, якщо він здається різким - зміни на 1 або 1.5
             pin: true,
-            pinSpacing: false, // 🔥 Дозволяє ефект НАЇЗДУ другої секції
+            pinSpacing: false, // Ефект НАЇЗДУ другої секції
           },
         });
 
@@ -311,16 +285,12 @@ export default function HeroVideo() {
         return () => window.removeEventListener("resize", handleResize);
       });
 
-      // 2. МОБАЙЛ (Секвенція + Наїзд)
+      // 2. МОБАЙЛ
       mm.add("(max-width: 1024px)", () => {
-        console.log("📱 [MEDIA] Мобільний режим - СЕКВЕНЦІЯ КАНВАС + НАЇЗД");
+        gsap.set(heroRef.current, { clearProps: "all" });
 
-        gsap.set(heroRef.current, { clearProps: "all" }); // Чистимо можливі глюки
-
-        // Запускаємо секвенцію. +=200% означає, що треба проскролити 2 висоти екрану, щоб анімація завершилась
         initSequence("+=200%");
 
-        // Зупиняємо відео, бо тепер працює Canvas
         if (videoRef.current) {
           videoRef.current.pause();
         }
@@ -339,7 +309,6 @@ export default function HeroVideo() {
   return (
     <div className={styles.heroSection} ref={heroRef}>
       <div className={styles.pinArea}>
-        {/* Canvas тепер працює і на мобайлі (зміни CSS!) */}
         <canvas ref={canvasRef} className={styles.canvas} />
 
         <video

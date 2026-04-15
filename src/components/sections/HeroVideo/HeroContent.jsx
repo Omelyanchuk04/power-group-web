@@ -26,7 +26,7 @@ const HeroContent = forwardRef((props, ref) => {
       </div>
 
       {/* 2. БЛОК ПЕРЕВАГ */}
-      <div className={styles.featuresRow}>
+      {/* <div className={styles.featuresRow}>
         <div className="animCardWrapper">
           <div className={styles.featureCard}>
             <div className={styles.cardIcon}>
@@ -90,7 +90,7 @@ const HeroContent = forwardRef((props, ref) => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 });
