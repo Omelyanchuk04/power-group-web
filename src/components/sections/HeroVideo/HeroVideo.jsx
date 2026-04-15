@@ -18,16 +18,10 @@ export default function HeroVideo() {
   const logoRef = useRef(null);
   const contentRef = useRef(null);
   const overlayRef = useRef(null);
-  const videoRef = useRef(null);
 
   const frameCount = 152;
   const imagesRef = useRef([]);
   const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
-
-  useEffect(() => {
-    // Логери можна залишити або прибрати, коли все буде ідеально
-    console.log("🟢 [INIT] HeroVideo змонтовано.");
-  }, []);
 
   useGSAP(
     () => {
@@ -41,10 +35,15 @@ export default function HeroVideo() {
       const calculateMetrics = () => {
         const img = imagesRef.current[0];
         if (!img || !canvas) return;
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+
+        // Беремо точний розмір стабільного контейнера, щоб уникнути ривків
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+
         const canvasAspect = canvas.width / canvas.height;
         const imgAspect = img.width / img.height;
+
         if (canvasAspect > imgAspect) {
           renderMetrics.current.width = canvas.width;
           renderMetrics.current.height = canvas.width / imgAspect;
@@ -67,8 +66,7 @@ export default function HeroVideo() {
         );
         let img = imagesRef.current[targetFrame];
 
-        // 🔥 ФІКС 1: Розумний фолбек. Шукаємо найближчий завантажений кадр,
-        // якщо цільовий ще не готовий або вивантажений з пам'яті.
+        // Розумний фолбек для плавності
         if (!img || !img.complete || img.naturalWidth === 0) {
           for (let i = targetFrame; i >= 0; i--) {
             if (
@@ -82,7 +80,6 @@ export default function HeroVideo() {
           }
         }
 
-        // Якщо кадру взагалі немає, просто перериваємось, але НЕ стираємо Canvas
         if (
           !img ||
           !img.complete ||
@@ -102,14 +99,11 @@ export default function HeroVideo() {
         );
       };
 
-      // 1. Оновлене завантаження ПЕРШОГО кадру
       const preloadFirstFrame = () => {
         return new Promise((resolve) => {
           const img = new Image();
           img.fetchPriority = "high";
           img.src = `/frames/frame-001.jpg`;
-
-          // 🔥 СЕКРЕТ 1: Декодуємо кадр у фоні перед малюванням
           img
             .decode()
             .then(() => {
@@ -117,14 +111,12 @@ export default function HeroVideo() {
               resolve(img);
             })
             .catch(() => {
-              // Фолбек, якщо decode не спрацював (наприклад, старий браузер)
               imagesRef.current[0] = img;
               resolve(img);
             });
         });
       };
 
-      // 2. Оновлене завантаження ІНШИХ кадрів
       const preloadOtherFrames = async () => {
         const batchSize = 10;
         for (let i = 1; i < frameCount; i += batchSize) {
@@ -136,9 +128,6 @@ export default function HeroVideo() {
                 const img = new Image();
                 img.fetchPriority = "low";
                 img.src = `/frames/frame-${(index + 1).toString().padStart(3, "0")}.jpg`;
-
-                // 🔥 СЕКРЕТ 2: Фонове декодування всієї пачки!
-                // Тепер, коли ти доскролиш до кадру, він ВЖЕ розпакований в RAM
                 img
                   .decode()
                   .then(() => {
@@ -147,7 +136,7 @@ export default function HeroVideo() {
                   })
                   .catch(() => {
                     imagesRef.current[index] = img;
-                    resolve(); // Пропускаємо помилкові кадри без зупинки
+                    resolve();
                   });
               }),
             );
@@ -228,7 +217,6 @@ export default function HeroVideo() {
           );
       }
 
-      // --- СПІЛЬНА ФУНКЦІЯ ДЛЯ СЕКВЕНЦІЇ ---
       const initSequence = (scrollEnd) => {
         preloadFirstFrame().then(() => {
           calculateMetrics();
@@ -238,11 +226,15 @@ export default function HeroVideo() {
 
         const tl = gsap.timeline({
           scrollTrigger: {
+            // 🔥 Трекаємо всю високу секцію (разом зі спейсером)
             trigger: heroRef.current,
             start: "top top",
             end: scrollEnd,
             scrub: 0.5,
-            pin: true,
+
+            // 🔥 АЛЕ ПІНИМО тільки візуальний контент. Це створює затримку!
+            pin: "." + styles.pinArea,
+
             pinSpacing: false,
           },
         });
@@ -276,10 +268,11 @@ export default function HeroVideo() {
           tl.to(contentRef.current, { y: -50, opacity: 0, duration: 0.3 }, 1.7);
         }
 
+        // Легке затемнення, щоб контент About краще читався при наїзді
         tl.fromTo(
           overlayRef.current,
           { opacity: 0 },
-          { opacity: 0.8, duration: 1, ease: "none" },
+          { opacity: 0.2, duration: 1, ease: "none" },
           2,
         );
 
@@ -287,8 +280,6 @@ export default function HeroVideo() {
       };
 
       let mm = gsap.matchMedia();
-
-      // 🔥 Створюємо розумний ресайз для обох платформ
       let lastWidth = window.innerWidth;
       const handleResize = () => {
         if (window.innerWidth !== lastWidth) {
@@ -298,23 +289,15 @@ export default function HeroVideo() {
         }
       };
 
-      // 1. ДЕСКТОП
       mm.add("(min-width: 1025px)", () => {
-        initSequence("+=300%");
+        initSequence("+=250%");
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
       });
 
-      // 2. МОБАЙЛ
       mm.add("(max-width: 1024px)", () => {
         gsap.set(heroRef.current, { clearProps: "all" });
-
         initSequence("+=200%");
-
-        if (videoRef.current) {
-          videoRef.current.pause();
-        }
-
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
       });
@@ -323,23 +306,17 @@ export default function HeroVideo() {
   );
 
   return (
+    // 🔥 Головний контейнер обгортає І контент І спейсер
     <div className={styles.heroSection} ref={heroRef}>
+      {/* Цей блок прибивається цвяхами до верху (pin) */}
       <div className={styles.pinArea}>
         <canvas ref={canvasRef} className={styles.canvas} />
-
-        <video
-          ref={videoRef}
-          className={styles.mobileVideo}
-          src="/hero-mobile.mp4"
-          poster="/frames/frame-001.jpg"
-          loop
-          muted
-          playsInline
-        />
         <div ref={overlayRef} className={styles.canvasOverlay} />
         <HeroLogo ref={logoRef} />
         <HeroContent ref={contentRef} />
       </div>
+
+      {/* Цей блок скролиться "під" контентом, створюючи затримку перед наступною секцією */}
       <div className={styles.delaySpacer} />
     </div>
   );

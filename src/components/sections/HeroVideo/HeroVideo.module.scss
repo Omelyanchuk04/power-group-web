@@ -8,17 +8,21 @@ $primary: #0056b3;
 .heroSection {
   position: relative;
   width: 100%;
-  height: 100vh;
-  height: 100svh;
+  /* 🔥 Секція автоматично розтягується, щоб вмістити наш буфер (спейсер) */
+  height: auto !important;
+  min-height: 100vh;
   background-color: #000;
+  overflow: visible !important;
 }
 
 .pinArea {
   position: relative;
-  width: 100vw;
+  width: 100%;
+  /* 🔥 Жорстко фіксуємо тільки зону з контентом. 100lvh рятує від ривків у Safari */
   height: 100vh;
-  height: 100svh;
+  height: 100lvh;
   overflow: hidden;
+  z-index: 2;
 }
 
 // ==========================================
@@ -37,19 +41,6 @@ $primary: #0056b3;
   transform: translate3d(0, 0, 0);
   z-index: 1;
   display: block;
-}
-
-.mobileVideo {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.6;
-  z-index: 1;
-  pointer-events: none;
 }
 
 .canvasOverlay {
@@ -124,14 +115,13 @@ $primary: #0056b3;
   text-transform: uppercase;
   margin: 0;
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  -webkit-font-smoothing: antialiased;
 }
 
 // ==========================================
 // ГОЛОВНИЙ КОНТЕНТ
 // ==========================================
 .contentWrapper {
-  position: absolute; // На десктопі абсолютне позиціонування
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
@@ -194,27 +184,6 @@ $primary: #0056b3;
   border-radius: 100px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition:
-    transform 0.3s ease,
-    background-color 0.3s ease,
-    box-shadow 0.3s ease;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      background-color: color.adjust($primary, $lightness: -8%);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    }
-  }
-
-  &:active {
-    background-color: color.adjust($primary, $lightness: -12%);
-    transform: scale(0.96) translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-    transition:
-      transform 0.05s cubic-bezier(0.4, 0, 0.2, 1),
-      background-color 0.1s ease;
-  }
 }
 
 .featuresRow {
@@ -234,20 +203,6 @@ $primary: #0056b3;
   gap: 16px;
   text-align: left;
   min-width: 280px;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    transform 0.3s ease,
-    background 0.3s ease,
-    border-color 0.3s ease;
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      transform: translateY(-4px);
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-  }
-
   .cardIcon {
     width: 48px;
     height: 48px;
@@ -270,7 +225,6 @@ $primary: #0056b3;
       font-size: 16px;
       font-weight: 600;
       color: #ffffff;
-      letter-spacing: -0.3px;
     }
     p {
       margin: 0;
@@ -281,72 +235,37 @@ $primary: #0056b3;
 }
 
 // ==========================================
-// СПЕЙСЕР
+// СПЕЙСЕР (БУФЕР ДЛЯ СКРОЛУ)
 // ==========================================
 .delaySpacer {
-  height: 200vh;
+  display: block;
   width: 100%;
+  /* 🔥 Визначає, наскільки довго ми скролимо "вхолосту", перш ніж наїде About */
+  height: 150vh;
   pointer-events: none;
   visibility: hidden;
-  display: block;
 }
 
 // ==========================================
-// 🔥 АДАПТИВНІСТЬ ТА ФІКС СКРОЛУ
-// ==========================================
-// ==========================================
-// 🔥 АДАПТИВНІСТЬ ТА ФІКС СКРОЛУ (БЕЗ pointer: coarse)
+// АДАПТИВНІСТЬ
 // ==========================================
 @media (max-width: 1024px) {
   .heroSection {
-    height: 100vh !important; /* Фолбек для старих браузерів */
-    height: 100lvh !important; /* Сучасний стандарт */
-    display: block;
-    overflow: hidden !important;
+    height: auto !important;
   }
 
   .pinArea {
-    position: relative !important;
     height: 100vh !important;
     height: 100lvh !important;
-    width: 100%;
-    overflow: hidden !important;
-  }
-
-  /* 🔥 Canvas завжди на весь екран, навіть під панеллю браузера */
-  .canvas {
-    display: block !important;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100% !important;
-    height: 100% !important;
-  }
-  .contentWrapper {
-    position: relative !important;
-    height: auto !important;
-    min-height: 100svh;
-    padding: 120px 20px 60px;
-    justify-content: flex-start;
   }
 
   .delaySpacer {
-    display: block !important;
-    width: 100%;
-    /* 100svh означає, що користувач має проскролити рівно 1 висоту екрану, 
-      щоб секція About почала виїжджати. 
-      Можеш зробити 50svh (швидше з'явиться) або 150svh (довша пауза). 
-    */
-    height: 100svh !important;
+    height: 150svh !important;
   }
 
-  /* 🔥 ГОЛОВНА ЗМІНА: Вимикаємо мобільне відео */
-  .mobileVideo {
-    display: none !important;
-  }
-
-  .canvasOverlay {
-    height: 100% !important;
+  .contentWrapper {
+    justify-content: flex-start;
+    padding: 120px 20px 60px;
   }
 
   .animTitle {
@@ -390,7 +309,6 @@ $primary: #0056b3;
   }
   .animTitle {
     font-size: 36px;
-    letter-spacing: -1px;
   }
   .animSubtitle {
     font-size: 16px;
