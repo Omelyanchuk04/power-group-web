@@ -102,22 +102,30 @@ export default function HeroVideo() {
         );
       };
 
+      // 1. Оновлене завантаження ПЕРШОГО кадру
       const preloadFirstFrame = () => {
         return new Promise((resolve) => {
           const img = new Image();
-          // Прибрали img.decoding = "async", щоб перший кадр був миттєвим
           img.fetchPriority = "high";
-          img.onload = () => {
-            imagesRef.current[0] = img;
-            resolve(img);
-          };
-          img.onerror = resolve;
           img.src = `/frames/frame-001.jpg`;
+
+          // 🔥 СЕКРЕТ 1: Декодуємо кадр у фоні перед малюванням
+          img
+            .decode()
+            .then(() => {
+              imagesRef.current[0] = img;
+              resolve(img);
+            })
+            .catch(() => {
+              // Фолбек, якщо decode не спрацював (наприклад, старий браузер)
+              imagesRef.current[0] = img;
+              resolve(img);
+            });
         });
       };
 
+      // 2. Оновлене завантаження ІНШИХ кадрів
       const preloadOtherFrames = async () => {
-        // 🔥 ФІКС 2: Збільшили розмір пачки, бо файли тепер маленькі (6 МБ сумарно)
         const batchSize = 10;
         for (let i = 1; i < frameCount; i += batchSize) {
           const batch = [];
@@ -126,13 +134,21 @@ export default function HeroVideo() {
             batch.push(
               new Promise((resolve) => {
                 const img = new Image();
-                // 🔥 ФІКС 2: Прибрали img.decoding = "async"
-                // Тепер браузер не буде відкладати розпаковку картинки
                 img.fetchPriority = "low";
-                img.onload = resolve;
-                img.onerror = resolve; // Продовжуємо навіть якщо 1 файл помилковий
                 img.src = `/frames/frame-${(index + 1).toString().padStart(3, "0")}.jpg`;
-                imagesRef.current[index] = img;
+
+                // 🔥 СЕКРЕТ 2: Фонове декодування всієї пачки!
+                // Тепер, коли ти доскролиш до кадру, він ВЖЕ розпакований в RAM
+                img
+                  .decode()
+                  .then(() => {
+                    imagesRef.current[index] = img;
+                    resolve();
+                  })
+                  .catch(() => {
+                    imagesRef.current[index] = img;
+                    resolve(); // Пропускаємо помилкові кадри без зупинки
+                  });
               }),
             );
           }

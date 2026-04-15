@@ -26,9 +26,21 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/* 🔥 ЗМУШУЄМО БРАУЗЕР КРАСТИ ПЕРШІ КАДРИ ОДРАЗУ */}
+        <link
+          rel="preload"
+          href="/frames/frame-001.jpg"
+          as="image"
+          fetchPriority="high"
+        />
+        <link rel="preload" href="/frames/frame-002.jpg" as="image" />
+        <link rel="preload" href="/frames/frame-003.jpg" as="image" />
+        <link rel="preload" href="/frames/frame-004.jpg" as="image" />
+        <link rel="preload" href="/frames/frame-005.jpg" as="image" />
+      </head>
       <body suppressHydrationWarning>
         <Header />
-        {/* 🔥 ЄДИНИЙ <main> на всьому сайті */}
         <main>{children}</main>
         <Footer />
       </body>
