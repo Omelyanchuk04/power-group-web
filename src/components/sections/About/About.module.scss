@@ -1,31 +1,42 @@
 @use "sass:color";
 
 $primary: #0056b3;
+
 $light-bg: #f5f5f5;
+
 $white: #ffffff;
+
 $text-dark: #0a2540;
+
 $text-gray: #52637a;
+
 $border-color: #e2e8f0;
 
 // ==========================================
+
 // ФОН СЕКЦІЇ ТА АНІМОВАНІ ПЛЯМИ
+
 // ==========================================
+
 .lightSection {
   background-color: $light-bg;
+
   padding: 70px 20px 100px;
+
   position: relative;
+
   z-index: 10;
 
-  // 🔥 ДЕСКТОП: Тримаємо відступ 200vh, щоб Canvas-відео мало час програтися
-  margin-top: 200vh;
+  // 🔥 ГОЛОВНИЙ ФІКС: Ми повністю видалили margin-top: 200vh;
 
-  // 🔥 МОБАЙЛ ТА ПЛАНШЕТ: Відступ 0! Відео відіграє як статичний блок, тому дірок не треба.
-  @media (max-width: 1024px) {
-    margin-top: 0;
-  }
+  // Тепер секція ідеально наїжджає на темний Canvas без прозорих дірок і квадратних кутів,
+
+  // адже всю затримку бере на себе delaySpacer з першої секції!
 
   border-radius: 40px 40px 0 0;
+
   box-shadow: 0 -15px 25px rgba(0, 0, 0, 0.15);
+
   overflow: hidden;
 
   &::before,
@@ -34,93 +45,137 @@ $border-color: #e2e8f0;
   .blob4,
   .blob5 {
     content: "";
+
     position: absolute;
+
     border-radius: 50%;
+
     z-index: -1;
+
     pointer-events: none;
+
     opacity: 0.8;
+
     will-change: transform;
+
     transform: translate3d(0, 0, 0);
+
     -webkit-transform: translate3d(0, 0, 0);
   }
 
   // ОПТИМІЗОВАНІ ПЛЯМИ
+
   &::before {
     width: 60vw;
+
     height: 60vw;
+
     background: radial-gradient(
       circle,
       rgba(0, 86, 179, 0.25) 0%,
+
       rgba(0, 86, 179, 0) 70%
     );
+
     top: -15%;
+
     left: -15%;
+
     animation: floatBlob1 20s infinite alternate ease-in-out;
   }
 
   &::after {
     width: 50vw;
+
     height: 60vw;
+
     background: radial-gradient(
       circle,
       rgba(0, 163, 255, 0.2) 0%,
+
       rgba(0, 163, 255, 0) 70%
     );
+
     bottom: 5%;
+
     right: -10%;
+
     animation: floatBlob2 25s infinite alternate ease-in-out;
   }
 }
 
 .blob3 {
   width: 40vw;
+
   height: 40vw;
+
   background: radial-gradient(
     circle,
     rgba(255, 170, 0, 0.15) 0%,
+
     rgba(255, 170, 0, 0) 70%
   );
+
   top: 30%;
+
   left: 10%;
+
   animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
 }
 
 .blob4 {
   width: 60vw;
+
   height: 50vw;
+
   background: radial-gradient(
     circle,
     rgba(0, 212, 255, 0.15) 0%,
+
     rgba(0, 212, 255, 0) 70%
   );
+
   top: 10%;
+
   right: 5%;
+
   animation: floatBlob4 28s infinite alternate ease-in-out;
 }
 
 .blob5 {
   width: 40vw;
+
   height: 50vw;
+
   background: radial-gradient(
     circle,
     rgba(0, 86, 179, 0.2) 0%,
+
     rgba(0, 86, 179, 0) 70%
   );
+
   bottom: -15%;
+
   left: 0%;
+
   animation: floatBlob5 22s infinite alternate-reverse ease-in-out;
 }
 
 // ==========================================
+
 // КЛЮЧОВІ КАДРИ ДЛЯ РУХУ ПЛЯМ
+
 // ==========================================
+
 @keyframes floatBlob1 {
   0% {
     transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
   }
+
   50% {
     transform: translate3d(15vw, 10vh, 0) scale(1.1) rotate(45deg);
   }
+
   100% {
     transform: translate3d(-5vw, 20vh, 0) scale(0.9) rotate(90deg);
   }
@@ -130,9 +185,11 @@ $border-color: #e2e8f0;
   0% {
     transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
   }
+
   50% {
     transform: translate3d(-20vw, -15vh, 0) scale(0.9) rotate(-45deg);
   }
+
   100% {
     transform: translate3d(-5vw, -5vh, 0) scale(1.1) rotate(-90deg);
   }
@@ -142,9 +199,11 @@ $border-color: #e2e8f0;
   0% {
     transform: translate3d(0, 0, 0) scale(0.9) rotate(0deg);
   }
+
   50% {
     transform: translate3d(-10vw, 25vh, 0) scale(1.2) rotate(45deg);
   }
+
   100% {
     transform: translate3d(15vw, -15vh, 0) scale(1) rotate(90deg);
   }
@@ -154,9 +213,11 @@ $border-color: #e2e8f0;
   0% {
     transform: translate3d(0, 0, 0) scale(1.1);
   }
+
   50% {
     transform: translate3d(-25vw, 15vh, 0) scale(0.85);
   }
+
   100% {
     transform: translate3d(-10vw, -10vh, 0) scale(1.05);
   }
@@ -166,66 +227,100 @@ $border-color: #e2e8f0;
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
+
   50% {
     transform: translate3d(10vw, -20vh, 0) scale(1.2);
   }
+
   100% {
     transform: translate3d(25vw, 5vh, 0) scale(0.9);
   }
 }
 
 // ==========================================
+
 // КОНТЕНТ
+
 // ==========================================
+
 .container {
   max-width: 1200px;
+
   margin: 0 auto;
 }
 
 .sectionHeader {
   text-align: center;
+
   max-width: 800px;
+
   margin: 0 auto 60px;
 
   .badge {
     display: inline-block;
+
     background-color: rgba(0, 86, 179, 0.1);
+
     color: $primary;
+
     font-size: 14px;
+
     font-weight: 700;
+
     text-transform: uppercase;
+
     letter-spacing: 1px;
+
     padding: 8px 20px;
+
     border-radius: 100px;
+
     margin-bottom: 24px;
   }
 
   h2 {
     font-size: 42px;
+
     font-weight: 800;
+
     margin: 0 0 20px 0;
+
     line-height: 1.2;
+
     letter-spacing: -1px;
+
     background: linear-gradient(
       135deg,
       $text-dark 0%,
+
       $primary 60%,
+
       #00d4ff 100%
     );
+
     -webkit-background-clip: text;
+
     -webkit-text-fill-color: transparent;
+
     background-clip: text;
+
     color: transparent;
+
     filter: drop-shadow(0 4px 10px rgba(0, 86, 179, 0.15));
   }
 
   p {
     font-size: 18px;
+
     color: $text-gray;
+
     line-height: 1.6;
+
     margin: 0;
+
     strong {
       color: $text-dark;
+
       font-weight: 600;
     }
   }
@@ -237,102 +332,161 @@ $border-color: #e2e8f0;
 
 .offerHeader {
   margin-bottom: 40px;
+
   max-width: 600px;
+
   h3 {
     font-size: 32px;
+
     font-weight: 800;
+
     color: $text-dark;
+
     margin: 0 0 16px 0;
+
     letter-spacing: -0.5px;
   }
+
   p {
     font-size: 16px;
+
     color: $text-gray;
+
     line-height: 1.6;
+
     margin: 0;
   }
 }
 
 .targetGrid {
   display: grid;
+
   grid-template-columns: 1fr 1fr;
+
   gap: 30px;
 }
 
 .targetCard {
   position: relative;
+
   border-radius: 32px;
+
   overflow: hidden;
+
   height: 380px;
+
   display: flex;
+
   align-items: flex-end;
+
   padding: 36px;
+
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
   cursor: pointer;
+
   border: 1px solid rgba(255, 255, 255, 0.6);
 
   .imgParallaxWrapper {
     position: absolute;
+
     top: -20%;
+
     left: 0;
+
     width: 100%;
+
     height: 140%;
+
     z-index: 0;
   }
 
   .bgImage {
     object-fit: cover;
+
     transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .cardOverlay {
     position: absolute;
+
     inset: 0;
+
     z-index: 1;
+
     background: linear-gradient(
       to bottom,
+
       rgba(15, 23, 42, 0.1) 0%,
+
       rgba(15, 23, 42, 0.9) 100%
     );
+
     &::after {
       content: "";
+
       position: absolute;
+
       inset: 0;
+
       background: linear-gradient(
         to bottom,
+
         rgba(15, 23, 42, 0.2) 0%,
+
         rgba(15, 23, 42, 0.95) 100%
       );
+
       opacity: 0;
+
       transition: opacity 0.4s ease;
     }
   }
 
   .cardContent {
     position: relative;
+
     z-index: 2;
+
     display: flex;
+
     align-items: flex-end;
+
     gap: 24px;
+
     width: 100%;
   }
 
   .targetIcon {
     width: 60px;
+
     height: 60px;
+
     background: rgba(255, 255, 255, 0.15);
+
     backdrop-filter: blur(10px);
+
     -webkit-backdrop-filter: blur(10px);
+
     color: $white;
+
     border-radius: 16px;
+
     display: flex;
+
     justify-content: center;
+
     align-items: center;
+
     flex-shrink: 0;
+
     border: 1px solid rgba(255, 255, 255, 0.3);
+
     transition: all 0.4s ease;
+
     svg {
       width: 30px;
+
       height: 30px;
     }
   }
@@ -340,29 +494,41 @@ $border-color: #e2e8f0;
   .targetText {
     h4 {
       margin: 0 0 6px 0;
+
       font-size: 28px;
+
       font-weight: 700;
+
       color: $white;
+
       letter-spacing: -0.5px;
     }
+
     p {
       margin: 0;
+
       font-size: 16px;
+
       color: rgba(255, 255, 255, 0.85);
     }
   }
 
   &:hover {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+
     .bgImage {
       transform: scale(1.08);
     }
+
     .cardOverlay::after {
       opacity: 1;
     }
+
     .targetIcon {
       background: $primary;
+
       border-color: $primary;
+
       transform: scale(1.05) rotate(5deg);
     }
   }
@@ -370,30 +536,47 @@ $border-color: #e2e8f0;
 
 .transitionBlock {
   max-width: 800px;
+
   margin: 0 auto 80px;
+
   text-align: center;
+
   padding: 0 20px;
+
   h3 {
     font-size: 28px;
+
     font-weight: 700;
+
     color: $text-dark;
+
     margin: 0 0 16px 0;
+
     letter-spacing: -0.5px;
   }
+
   p {
     font-size: 18px;
+
     color: $text-gray;
+
     line-height: 1.6;
+
     margin: 0;
   }
 }
 
 .statsWrapper {
   background: rgba(235, 235, 235, 0.6);
+
   backdrop-filter: blur(20px);
+
   -webkit-backdrop-filter: blur(20px);
+
   border-radius: 40px;
+
   padding: 50px;
+
   box-shadow:
     0 25px 50px rgba(0, 86, 179, 0.08),
     0 10px 15px rgba(0, 0, 0, 0.03),
@@ -403,101 +586,156 @@ $border-color: #e2e8f0;
 
 .statsHeader {
   display: flex;
+
   align-items: center;
+
   gap: 20px;
+
   margin-bottom: 40px;
+
   h3 {
     font-size: 24px;
+
     font-weight: 700;
+
     color: $text-dark;
+
     margin: 0;
+
     white-space: nowrap;
   }
+
   .headerLine {
     height: 1px;
+
     background: $border-color;
+
     flex-grow: 1;
   }
 }
 
 .statsGrid {
   display: grid;
+
   grid-template-columns: repeat(4, 1fr);
+
   gap: 20px;
 }
 
 .statCard {
   position: relative;
+
   border-radius: 24px;
+
   padding: 30px 24px;
+
   overflow: hidden;
+
   height: 320px;
+
   display: flex;
+
   flex-direction: column;
+
   justify-content: flex-end;
+
   text-align: left;
+
   transition: transform 0.4s ease;
+
   cursor: default;
 
   .statBgImage {
     object-fit: cover;
+
     z-index: 0;
+
     transition: transform 0.8s ease;
   }
 
   .statOverlay {
     position: absolute;
+
     inset: 0;
+
     z-index: 1;
+
     background: linear-gradient(
       to bottom,
+
       rgba(15, 23, 42, 0.1) 0%,
+
       rgba(15, 23, 42, 0.85) 100%
     );
+
     &::after {
       content: "";
+
       position: absolute;
+
       inset: 0;
+
       background: linear-gradient(
         to bottom,
+
         rgba(15, 23, 42, 0.2) 0%,
+
         rgba(15, 23, 42, 0.95) 100%
       );
+
       opacity: 0;
+
       transition: opacity 0.4s ease;
     }
   }
 
   .statContent {
     position: relative;
+
     z-index: 2;
   }
+
   .statNum {
     font-size: 56px;
+
     font-weight: 800;
+
     color: $white;
+
     line-height: 1;
+
     margin-bottom: 8px;
+
     letter-spacing: -2px;
+
     transition: color 0.3s ease;
   }
+
   .statLabel {
     font-size: 14px;
+
     font-weight: 600;
+
     color: rgba(255, 255, 255, 0.7);
+
     text-transform: uppercase;
+
     letter-spacing: 1.5px;
+
     line-height: 1.4;
   }
 
   &:hover {
     transform: translateY(-8px);
+
     .statBgImage {
       transform: scale(1.1);
     }
+
     .statOverlay::after {
       opacity: 1;
     }
+
     .statNum {
       color: lighten($primary, 25%);
     }
@@ -505,73 +743,100 @@ $border-color: #e2e8f0;
 }
 
 // ==========================================
-// АДАПТИВНІСТЬ (СИНХРОНІЗОВАНО З HERO)
+
+// АДАПТИВНІСТЬ
+
 // ==========================================
+
 @media (max-width: 1024px) {
   .sectionHeader h2 {
     font-size: 34px;
   }
+
   .targetGrid {
     grid-template-columns: 1fr;
+
     gap: 24px;
   }
+
   .targetCard {
     height: 320px;
   }
+
   .transitionBlock {
     margin-bottom: 60px;
   }
+
   .statsWrapper {
     padding: 40px 30px;
   }
+
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
+
     gap: 24px;
   }
+
   .statCard {
     height: 260px;
   }
 }
 
 @media (max-width: 768px) {
-  // Ніяких margin-top тут більше не потрібно!
   .logoContainer {
     flex-direction: column;
+
     gap: 16px;
   }
+
   .logoRightColumn {
     align-items: center;
   }
+
   .animLine {
     max-width: 280px;
   }
+
   .animIcon img {
     width: 100px;
   }
+
   .animText img {
     width: 300px;
   }
+
   .animSlogan {
     font-size: 14px;
+
     text-align: center;
   }
+
   .mainContent {
     margin-top: -20px;
   }
+
   .animTitle {
     font-size: 36px;
+
     letter-spacing: -1px;
   }
+
   .animSubtitle {
     font-size: 16px;
+
     margin-bottom: 30px;
   }
+
   .featuresRow {
     flex-direction: column;
+
     width: 100%;
+
     max-width: 350px;
+
     margin-top: 40px;
   }
+
   .featureCard {
     width: 100%;
   }
@@ -581,51 +846,71 @@ $border-color: #e2e8f0;
   .lightSection {
     padding: 80px 20px;
   }
+
   .sectionHeader {
     margin-bottom: 50px;
+
     h2 {
       font-size: 28px;
     }
   }
+
   .offerHeader h3 {
     font-size: 24px;
   }
+
   .targetCard {
     height: 280px;
+
     padding: 24px;
+
     .cardContent {
       flex-direction: column;
+
       align-items: flex-start;
+
       gap: 16px;
     }
+
     .targetText h4 {
       font-size: 22px;
     }
   }
+
   .transitionBlock {
     margin-bottom: 50px;
+
     h3 {
       font-size: 22px;
     }
+
     p {
       font-size: 16px;
     }
   }
+
   .statsWrapper {
     padding: 30px 20px;
+
     border-radius: 32px;
   }
+
   .statsHeader h3 {
     font-size: 20px;
   }
+
   .statsGrid {
     grid-template-columns: 1fr;
+
     gap: 16px;
   }
+
   .statCard {
     height: 200px;
+
     padding: 24px;
   }
+
   .statNum {
     font-size: 48px;
   }

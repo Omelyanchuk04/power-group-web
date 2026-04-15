@@ -3,268 +3,422 @@
 $primary: #0056b3;
 
 // ==========================================
+
 // ОСНОВНІ КОНТЕЙНЕРИ
+
 // ==========================================
+
 .heroSection {
   position: relative;
-  width: 100%;
-  /* 🔥 Секція автоматично розтягується, щоб вмістити наш буфер (спейсер) */
-  height: auto !important;
-  min-height: 100vh;
-  background-color: #000;
-  overflow: visible !important;
-}
 
-.pinArea {
-  position: relative;
   width: 100%;
-  /* 🔥 Жорстко фіксуємо тільки зону з контентом. 100lvh рятує від ривків у Safari */
-  height: 100vh;
-  height: 100lvh;
+
+  /* 🔥 ЖОРСТКИЙ ФІКС ДЛЯ GSAP + SAFARI:
+
+Ніяких lvh чи dvh. Тільки 100vh!
+
+З твоїм мета-тегом це покриє 100% екрана, але головне -
+
+ця висота НЕ ЗМІНЮЄТЬСЯ при скролі, тому GSAP перестане малювати дірки. */
+
+  height: 100vh !important;
+
+  /* Фон тепер прозорий, чорних плям знизу чи зверху фізично не може бути */
+
+  background-color: transparent !important;
+
   overflow: hidden;
-  z-index: 2;
 }
 
 // ==========================================
+
 // ФОН ТА ОВЕРЛЕЙ
+
 // ==========================================
+
 .canvas {
   position: absolute;
+
   top: 0;
+
   left: 0;
+
   width: 100%;
+
   height: 100%;
-  opacity: 0.6;
+
+  /* 🔥 ПОВЕРТАЄМО ЯСКРАВІСТЬ І КОЛІР:
+
+Відео тепер повністю непрозоре (1). Нічого не вицвітає. */
+
+  opacity: 1;
+
   object-fit: cover;
+
   -webkit-backface-visibility: hidden;
+
   backface-visibility: hidden;
+
   transform: translate3d(0, 0, 0);
+
   z-index: 1;
+
   display: block;
 }
 
 .canvasOverlay {
   position: absolute;
+
   top: 0;
+
   left: 0;
+
   width: 100%;
+
   height: 100%;
-  background-color: #000000;
+
+  /* 🔥 ЗАТЕМНЕННЯ: Замість чорного фону сайту, ми кладемо
+
+чорне напівпрозоре скло ПОВЕРХ відео. Воно дасть той самий
+
+крутий глибокий ефект для тексту! (можеш міняти 0.5 на 0.6 чи 0.4) */
+
+  background-color: rgba(0, 0, 0, 0.5);
+
   pointer-events: none;
+
   z-index: 2;
 }
 
 // ==========================================
+
 // ЛОГОТИП
+
 // ==========================================
+
 .logoStep {
   position: absolute;
+
   top: 50%;
+
   left: 50%;
+
   transform: translate(-50%, -50%);
+
   display: flex;
+
   flex-direction: column;
+
   justify-content: center;
+
   align-items: center;
+
   width: 90%;
+
   z-index: 3;
 }
 
 .logoContainer {
   display: flex;
+
   align-items: center;
+
   gap: 30px;
 }
+
 .logoRightColumn {
   display: flex;
+
   flex-direction: column;
+
   align-items: flex-start;
 }
+
 .animIcon,
 .animText,
 .animLine,
 .animSlogan {
   opacity: 0;
+
   -webkit-backface-visibility: hidden;
+
   backface-visibility: hidden;
 }
+
 .animIcon img {
   width: 140px;
+
   height: auto;
+
   display: block;
 }
+
 .animText img {
   width: 440px;
+
   height: auto;
+
   display: block;
+
   margin-bottom: 8px;
 }
+
 .animLine {
   width: 100%;
+
   height: 3px;
+
   background-color: $primary;
+
   border-radius: 2px;
+
   margin-bottom: 12px;
+
   transform-origin: center;
 }
+
 .animSlogan {
   font-size: 22px;
+
   font-weight: 500;
+
   color: #fff;
+
   letter-spacing: 1.5px;
+
   text-transform: uppercase;
+
   margin: 0;
+
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 // ==========================================
+
 // ГОЛОВНИЙ КОНТЕНТ
+
 // ==========================================
+
 .contentWrapper {
   position: absolute;
+
   top: 0;
+
   left: 0;
+
   width: 100%;
+
   height: 100%;
+
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
+
   justify-content: center;
+
   z-index: 4;
+
   padding: 0 20px;
+
   pointer-events: none;
 }
 
 .mainContent {
   text-align: center;
+
   max-width: 900px;
+
   margin-top: 0;
+
   pointer-events: auto;
 }
 
 .animTitle {
   font-size: 58px;
+
   font-weight: 800;
+
   color: #ffffff;
+
   line-height: 1.1;
+
   letter-spacing: -1.5px;
+
   margin: 0 0 20px 0;
+
   .textHighlight {
     color: transparent;
+
     background: linear-gradient(to right, #ffffff, #a3cfff);
+
     -webkit-background-clip: text;
+
     background-clip: text;
   }
 }
 
 .animSubtitle {
   font-size: 18px;
+
   font-weight: 400;
+
   color: rgba(255, 255, 255, 0.85);
+
   max-width: 600px;
+
   margin: 0 auto 36px auto;
+
   line-height: 1.6;
 }
+
 .animButtonWrapper {
   display: flex;
+
   justify-content: center;
+
   overflow: visible;
+
   padding-bottom: 20px;
 }
 
 .animButton {
   background-color: $primary;
+
   color: #ffffff;
+
   border: none;
+
   padding: 18px 42px;
+
   font-size: 14px;
+
   font-weight: 700;
+
   text-transform: uppercase;
+
   letter-spacing: 1.5px;
+
   border-radius: 100px;
+
   cursor: pointer;
+
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .featuresRow {
   display: flex;
+
   gap: 20px;
+
   margin-top: 60px;
+
   pointer-events: auto;
 }
 
 .featureCard {
   background: rgba(15, 25, 45, 0.85);
+
   border: 1px solid rgba(255, 255, 255, 0.15);
+
   border-radius: 24px;
+
   padding: 16px 24px;
+
   display: flex;
+
   align-items: center;
+
   gap: 16px;
+
   text-align: left;
+
   min-width: 280px;
+
   .cardIcon {
     width: 48px;
+
     height: 48px;
+
     background: rgba(0, 86, 179, 0.3);
+
     color: #4da3ff;
+
     border-radius: 16px;
+
     display: flex;
+
     justify-content: center;
+
     align-items: center;
+
     flex-shrink: 0;
+
     border: 1px solid rgba(77, 163, 255, 0.2);
+
     svg {
       width: 24px;
+
       height: 24px;
     }
   }
+
   .cardText {
     h4 {
       margin: 0 0 4px 0;
+
       font-size: 16px;
+
       font-weight: 600;
+
       color: #ffffff;
     }
+
     p {
       margin: 0;
+
       font-size: 13px;
+
       color: rgba(255, 255, 255, 0.6);
     }
   }
 }
 
 // ==========================================
-// СПЕЙСЕР (БУФЕР ДЛЯ СКРОЛУ)
+
+// СПЕЙСЕР (ПОВЕРТАЄМО ПАУЗУ!)
+
 // ==========================================
+
 .delaySpacer {
   display: block;
+
   width: 100%;
-  /* 🔥 Визначає, наскільки довго ми скролимо "вхолосту", перш ніж наїде About */
+
+  /* 🔥 Цей блок відштовхує About вниз, щоб відео встигло пограти */
+
   height: 150vh;
+
   pointer-events: none;
+
   visibility: hidden;
 }
 
 // ==========================================
+
 // АДАПТИВНІСТЬ
+
 // ==========================================
+
 @media (max-width: 1024px) {
-  .heroSection {
-    height: auto !important;
-  }
-
-  .pinArea {
-    height: 100vh !important;
-    height: 100lvh !important;
-  }
-
   .delaySpacer {
     height: 150svh !important;
   }
 
   .contentWrapper {
     justify-content: flex-start;
+
     padding: 120px 20px 60px;
   }
 
@@ -274,7 +428,9 @@ $primary: #0056b3;
 
   .featuresRow {
     flex-wrap: wrap;
+
     justify-content: center;
+
     margin-top: 50px;
   }
 
@@ -286,40 +442,56 @@ $primary: #0056b3;
 @media (max-width: 768px) {
   .logoContainer {
     flex-direction: column;
+
     gap: 16px;
   }
+
   .logoRightColumn {
     align-items: center;
   }
+
   .animLine {
     max-width: 280px;
   }
+
   .animIcon img {
     width: 100px;
   }
+
   .animText img {
     width: 300px;
   }
+
   .animSlogan {
     font-size: 14px;
+
     text-align: center;
   }
+
   .mainContent {
     margin-top: 20px;
   }
+
   .animTitle {
     font-size: 36px;
   }
+
   .animSubtitle {
     font-size: 16px;
+
     margin-bottom: 30px;
   }
+
   .featuresRow {
     flex-direction: column;
+
     width: 100%;
+
     max-width: 350px;
+
     margin-top: 40px;
   }
+
   .featureCard {
     width: 100%;
   }
@@ -329,6 +501,7 @@ $primary: #0056b3;
   .animTitle {
     font-size: 28px;
   }
+
   .contentWrapper {
     padding: 100px 16px 40px;
   }
