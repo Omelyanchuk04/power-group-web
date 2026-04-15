@@ -233,7 +233,6 @@ export default function HeroVideo() {
         preloadFirstFrame().then(() => {
           calculateMetrics();
           render();
-          // Запускаємо завантаження інших кадрів після першого
           preloadOtherFrames();
         });
 
@@ -242,9 +241,9 @@ export default function HeroVideo() {
             trigger: heroRef.current,
             start: "top top",
             end: scrollEnd,
-            scrub: 0.5, // 0.5 робить скрол плавнішим, якщо він здається різким - зміни на 1 або 1.5
+            scrub: 0.5,
             pin: true,
-            pinSpacing: false, // Ефект НАЇЗДУ другої секції
+            pinSpacing: false,
           },
         });
 
@@ -289,14 +288,19 @@ export default function HeroVideo() {
 
       let mm = gsap.matchMedia();
 
+      // 🔥 Створюємо розумний ресайз для обох платформ
+      let lastWidth = window.innerWidth;
+      const handleResize = () => {
+        if (window.innerWidth !== lastWidth) {
+          lastWidth = window.innerWidth;
+          calculateMetrics();
+          render();
+        }
+      };
+
       // 1. ДЕСКТОП
       mm.add("(min-width: 1025px)", () => {
         initSequence("+=300%");
-
-        const handleResize = () => {
-          calculateMetrics();
-          render();
-        };
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
       });
@@ -311,10 +315,6 @@ export default function HeroVideo() {
           videoRef.current.pause();
         }
 
-        const handleResize = () => {
-          calculateMetrics();
-          render();
-        };
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
       });
