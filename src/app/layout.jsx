@@ -19,13 +19,13 @@ export const metadata = {
     "Електромонтажні роботи, сонячні станції та системи резервного живлення під ключ.",
 };
 
-// 🔥 ДОДАЙ ЦЕЙ БЛОК:
+// 🔥 1. ДОДАЄМО ПРАВИЛЬНИЙ ЕКСПОРТ ДЛЯ NEXT.JS (Це розтягне Safari)
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  viewportFit: "cover", // Це розтягує сайт на весь екран в Safari
-  themeColor: "#000000", // Робить системні панелі темними
+  viewportFit: "cover",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({ children }) {
@@ -36,14 +36,7 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-        {/* 🔥 ГАРАНТОВАНИЙ ФІКС ДЛЯ SAFARI ТА БЕЗПЕЧНИХ ЗОН */}
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-        />
-        <meta name="theme-color" content="#000000" />
-
-        {/* 🔥 ЗМУШУЄМО БРАУЗЕР КРАСТИ ПЕРШІ КАДРИ ОДРАЗУ */}
+        {/* 🔥 ВАЖЛИВО: НІЯКИХ <meta name="viewport"> ТУТ БУТИ НЕ ПОВИННО! */}
         <link
           rel="preload"
           href="/frames/frame-001.jpg"
@@ -51,7 +44,9 @@ export default function RootLayout({ children }) {
           fetchPriority="high"
         />
         <link rel="preload" href="/frames/frame-002.jpg" as="image" />
-        {/* ... твої інші лінки ... */}
+        <link rel="preload" href="/frames/frame-003.jpg" as="image" />
+        <link rel="preload" href="/frames/frame-004.jpg" as="image" />
+        <link rel="preload" href="/frames/frame-005.jpg" as="image" />
       </head>
       <body suppressHydrationWarning>
         <Header />
