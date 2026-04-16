@@ -19,13 +19,14 @@ export const metadata = {
     "Електромонтажні роботи, сонячні станції та системи резервного живлення під ключ.",
 };
 
-// 🔥 ОБОВ'ЯЗКОВО ПЕРЕВІР, ЧИ Є ЦЕЙ ЕКСПОРТ (саме він вбиває сейф-зони Safari):
+// 🔥 САМЕ ЦЕЙ БЛОК РОБИТЬ МАГІЮ "ВЕСЬ ЕКРАН"
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  viewportFit: "cover", // Ось ця магія розтягує контент під камеру
-  themeColor: "#ffffff",
+  userScalable: false, // Забороняємо зум, щоб сайт поводився як додаток
+  viewportFit: "cover", // ЗАЛАЗИТИ ПІД ЧОЛКУ І ПІД ПАНЕЛІ
+  themeColor: "#000000", // Фарбує статус-бар (де годинник і батарея) в колір відео
 };
 
 export default function RootLayout({ children }) {
@@ -36,7 +37,9 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-        {/* 🔥 ВАЖЛИВО: НІЯКИХ <meta name="viewport"> ТУТ БУТИ НЕ ПОВИННО! */}
+        {/* ❌ ТУТ НЕ ПОВИННО БУТИ <meta name="viewport" ... /> */}
+        {/* ❌ ТУТ НЕ ПОВИННО БУТИ <meta name="theme-color" ... /> */}
+
         <link
           rel="preload"
           href="/frames/frame-001.jpg"
