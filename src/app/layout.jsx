@@ -17,19 +17,14 @@ export const metadata = {
   title: "ВІН ПАУЕР ГРУП | Ваша енергетична стабільність",
   description:
     "Електромонтажні роботи, сонячні станції та системи резервного живлення під ключ.",
-  // 🔥 ФОЛБЕК ДЛЯ СТАРИХ ВЕРСІЙ NEXT.JS
-  viewport:
-    "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
-  themeColor: "#000000",
+  /* 🔥 ВИДАЛЕНО themeColor ТА СТАРИЙ viewport ЗВІДСИ, БО ВОНИ ЗРОБИЛИ ЧОРНУ СМУГУ */
 };
 
-// 🔥 ФОЛБЕК ДЛЯ НОВИХ ВЕРСІЙ NEXT.JS (14+)
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  viewportFit: "cover",
-  themeColor: "#000000",
+  viewportFit: "cover", // Магія, що пускає сайт під камеру
 };
 
 export default function RootLayout({ children }) {
@@ -40,19 +35,15 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-        {/* 🔥 ГАРАНТОВАНИЙ МЕТА-ТЕГ (Ігноруємо правила Next.js і вставляємо напряму) */}
+        {/* 🔥 ГАРАНТОВАНИЙ МЕТА-ТЕГ ДЛЯ SAFARI */}
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
           suppressHydrationWarning
         />
 
-        {/* 🔥 ЗМУШУЄМО SAFARI РОБИТИ ПАНЕЛІ ПРОЗОРИМИ/ТЕМНИМИ */}
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
+        {/* 🔥 ВИДАЛЕНО ТЕГИ APPLE (apple-mobile-web-app-capable), 
+            БО ВОНИ ЛАМАЛИ ВІДОБРАЖЕННЯ В ЗВИЧАЙНОМУ БРАУЗЕРІ */}
 
         <link
           rel="preload"
