@@ -11,6 +11,7 @@ import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+  // Залишаємо цю настройку, вона корисна
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
@@ -45,7 +46,7 @@ export default function HeroVideo() {
       const contentCards =
         contentRef.current.querySelectorAll(".animCardWrapper");
 
-      // ЕТАЛОННА АНІМАЦІЯ (працює скрізь)
+      // ЕТАЛОННА АНІМАЦІЯ (поява контенту)
       const entranceTl = gsap.timeline({ paused: true, delay: 0.2 });
       entranceTl
         .fromTo(
@@ -117,7 +118,7 @@ export default function HeroVideo() {
       let mm = gsap.matchMedia();
 
       // ==========================================
-      // ДЕСКТОП (Canvas + секвенція)
+      // ДЕСКТОП (Canvas + секвенція з пінінгом)
       // ==========================================
       mm.add("(min-width: 1025px)", () => {
         const canvas = canvasRef.current;
@@ -278,45 +279,41 @@ export default function HeroVideo() {
           }
         };
         window.addEventListener("resize", handleResize);
-
         return () => window.removeEventListener("resize", handleResize);
       });
 
       // ==========================================
-      // МОБАЙЛ (Статика + Parallax + Ефект Наїзду)
+      // МОБАЙЛ (Без пінінгу! Тільки CSS Sticky + ScrollTrigger для ефектів)
       // ==========================================
       mm.add("(max-width: 1024px)", () => {
+        // Знімаємо всі старі стилі
         gsap.set([heroRef.current, canvasRef.current, contentRef.current], {
           clearProps: "all",
         });
 
         entranceTl.play();
 
-        // ЕФЕКТ НАЇЗДУ (Overlap)
+        // 🔥 МИ ПОВНІСТЮ ВИДАЛИЛИ pin: true
+        // Оскільки секція вже "прилипла" до верху завдяки CSS (position: sticky),
+        // ми просто відстежуємо скрол сторінки, щоб анімувати затемнення.
         ScrollTrigger.create({
-          trigger: heroRef.current,
+          trigger: document.body,
           start: "top top",
-          end: "+=100%",
-          pin: true,
-          pinSpacing: false, // Наступна секція наїде зверху
+          end: () => `+=${window.innerHeight}`, // Ефект триватиме, поки ми не проскролимо 1 екран
+          scrub: true,
           onUpdate: (self) => {
+            // Затемнення оверлею
             if (overlayRef.current) {
               gsap.set(overlayRef.current, {
                 opacity: 0.2 + self.progress * 0.5,
               });
             }
-          },
-        });
-
-        // ПАРАЛАКС ФОНУ
-        gsap.to(heroRef.current, {
-          backgroundPosition: "50% 80%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroRef.current,
-            start: "top top",
-            end: "+=100%",
-            scrub: true,
+            // Рух фону (паралакс)
+            if (heroRef.current) {
+              gsap.set(heroRef.current, {
+                backgroundPosition: `50% ${50 + self.progress * 30}%`,
+              });
+            }
           },
         });
 

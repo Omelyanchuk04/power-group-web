@@ -10,17 +10,15 @@ $primary: #0056b3;
   position: relative;
   width: 100%;
 
-  /* 🔥 ФІКС ДЛЯ ПОВНОГО ЕКРАНА:
-     Використовуємо lvh. Це примусово розтягує блок на весь фізичний екран, 
-     ігноруючи системні панелі Safari. Ніяких чорних смуг більше не буде. */
+  /* Десктопна висота */
   height: 100vh;
-  height: 100lvh;
 
+  /* Чорний фон для страховки */
   background-color: #000000 !important;
   overflow: hidden;
   z-index: 1;
 
-  /* Налаштування фону */
+  /* Налаштування фону (працюватимуть на мобайлі) */
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -57,7 +55,6 @@ $primary: #0056b3;
   left: 0;
   width: 100%;
   height: 100%;
-  /* Затемнення для тексту */
   background-color: rgba(0, 0, 0, 0.5);
   pointer-events: none;
   z-index: 2;
@@ -273,7 +270,6 @@ $primary: #0056b3;
   pointer-events: none;
   visibility: hidden;
 
-  /* ХОВАЄМО НА МОБІЛЬНОМУ */
   @media (max-width: 1024px) {
     display: none !important;
   }
@@ -284,9 +280,18 @@ $primary: #0056b3;
 // ==========================================
 
 @media (max-width: 1024px) {
-  /* ФОН ДЛЯ МОБІЛЬНОГО */
+  /* 🔥 МАГІЯ ТУТ: Чистий CSS Sticky замість GSAP */
   .heroSection {
     background-image: url("/frames/frame-001.jpg");
+
+    /* Прилипає до верху екрана */
+    position: sticky !important;
+    top: 0;
+
+    /* dvh вільно дихає з панелями Safari, GSAP більше його не блокує */
+    height: 100dvh !important;
+
+    z-index: 1; /* Тримаємо на нижньому рівні, щоб About наїхав зверху */
   }
 
   .contentWrapper {
