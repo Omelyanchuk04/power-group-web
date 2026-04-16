@@ -36,6 +36,13 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
+        {/* 🔥 ГАРАНТОВАНИЙ ФІКС ДЛЯ SAFARI ТА БЕЗПЕЧНИХ ЗОН */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+        />
+        <meta name="theme-color" content="#000000" />
+
         {/* 🔥 ЗМУШУЄМО БРАУЗЕР КРАСТИ ПЕРШІ КАДРИ ОДРАЗУ */}
         <link
           rel="preload"
@@ -44,9 +51,7 @@ export default function RootLayout({ children }) {
           fetchPriority="high"
         />
         <link rel="preload" href="/frames/frame-002.jpg" as="image" />
-        <link rel="preload" href="/frames/frame-003.jpg" as="image" />
-        <link rel="preload" href="/frames/frame-004.jpg" as="image" />
-        <link rel="preload" href="/frames/frame-005.jpg" as="image" />
+        {/* ... твої інші лінки ... */}
       </head>
       <body suppressHydrationWarning>
         <Header />
