@@ -10,12 +10,15 @@ $primary: #0056b3;
   position: relative;
   width: 100%;
 
-  /* Базовий 100vh для десктопу. Далі JS встановить жорсткі пікселі */
+  /* Базовий 100vh. JS встановить жорсткі пікселі */
   height: 100vh;
-  background-color: #000000 !important;
-  overflow: hidden;
 
-  /* 🔥 НАЛАШТУВАННЯ ФОНУ ДЛЯ МОБАЙЛУ (Parallax) */
+  /* 🔥 Повернули білий фон (або прозорий, якщо сторінка біла) */
+  background-color: var(--background, #ffffff) !important;
+  overflow: hidden;
+  z-index: 1;
+
+  /* НАЛАШТУВАННЯ ФОНУ ДЛЯ МОБАЙЛУ (Parallax) */
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -40,7 +43,7 @@ $primary: #0056b3;
   z-index: 1;
   display: block;
 
-  /* 🔥 ХОВАЄМО CANVAS НА МОБІЛЬНОМУ (замість нього буде фон) */
+  /* ХОВАЄМО CANVAS НА МОБІЛЬНОМУ */
   @media (max-width: 1024px) {
     display: none !important;
   }
@@ -52,7 +55,7 @@ $primary: #0056b3;
   left: 0;
   width: 100%;
   height: 100%;
-  /* Затемнення працюватиме і для Canvas (десктоп), і для картинки (мобайл) */
+  /* Затемнення для тексту */
   background-color: rgba(0, 0, 0, 0.5);
   pointer-events: none;
   z-index: 2;
@@ -144,7 +147,6 @@ $primary: #0056b3;
   justify-content: center;
   z-index: 4;
 
-  /* ФІКС БЕЗПЕЧНИХ ЗОН (Safari) */
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
@@ -259,7 +261,7 @@ $primary: #0056b3;
 }
 
 // ==========================================
-// СПЕЙСЕР (ПОВЕРТАЄМО ПАУЗУ!)
+// СПЕЙСЕР (ПАУЗА)
 // ==========================================
 
 .delaySpacer {
@@ -269,7 +271,7 @@ $primary: #0056b3;
   pointer-events: none;
   visibility: hidden;
 
-  /* 🔥 ХОВАЄМО СПЕЙСЕР НА МОБІЛЬНОМУ (екран не фіксується, пауза не потрібна) */
+  /* ХОВАЄМО НА МОБІЛЬНОМУ */
   @media (max-width: 1024px) {
     display: none !important;
   }
@@ -280,10 +282,9 @@ $primary: #0056b3;
 // ==========================================
 
 @media (max-width: 1024px) {
-  /* 🔥 СТАВИМО ФОН ТА ДИНАМІЧНУ ВИСОТУ ДЛЯ МОБІЛЬНОГО */
+  /* ФОН ДЛЯ МОБІЛЬНОГО */
   .heroSection {
     background-image: url("/frames/frame-001.jpg");
-    height: 100dvh !important; /* dvh адаптується під панелі браузера */
   }
 
   .contentWrapper {

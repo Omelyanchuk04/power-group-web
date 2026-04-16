@@ -11,7 +11,6 @@ import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
-  // Залишаємо цю опцію, вона корисна для запобігання зайвих перерахунків
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
@@ -26,9 +25,30 @@ export default function HeroVideo() {
   const imagesRef = useRef([]);
   const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
 
+  // ЗАМОРОЖУЄМО ВИСОТУ (Фікс ривків Chrome)
+  useEffect(() => {
+    const setFixedVH = () => {
+      if (heroRef.current) {
+        heroRef.current.style.height = `${window.innerHeight}px`;
+      }
+    };
+
+    setFixedVH();
+
+    let currentWidth = window.innerWidth;
+    const resizeObserver = () => {
+      if (window.innerWidth !== currentWidth) {
+        currentWidth = window.innerWidth;
+        setFixedVH();
+      }
+    };
+
+    window.addEventListener("resize", resizeObserver);
+    return () => window.removeEventListener("resize", resizeObserver);
+  }, []);
+
   useGSAP(
     () => {
-      // 1. ОГОЛОШУЄМО ЗМІННІ КОНТЕНТУ ДЛЯ ОБОХ ВЕРСІЙ (щоб не дублювати код)
       if (!logoRef.current || !contentRef.current) return;
 
       const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
@@ -47,8 +67,7 @@ export default function HeroVideo() {
       const contentCards =
         contentRef.current.querySelectorAll(".animCardWrapper");
 
-      // 2. СТВОРЮЄМО ЕТАЛОННУ АНІМАЦІЮ ПОЯВИ КОНТЕНТУ (вона працюватиме скрізь)
-      // Створюємо заготовку timeline, але не запускаємо її (paused: true)
+      // ЕТАЛОННА АНІМАЦІЯ (працює скрізь)
       const entranceTl = gsap.timeline({ paused: true, delay: 0.2 });
       entranceTl
         .fromTo(
@@ -117,11 +136,10 @@ export default function HeroVideo() {
           "-=0.4",
         );
 
-      // 3. РОЗДІЛЯЄМО ЛОГІКУ ЧЕРЕЗ GSAP MATCHMEDIA
       let mm = gsap.matchMedia();
 
       // ==========================================
-      // ДЕСКТОП (залишаємо як було)
+      // ДЕСКТОП (Canvas + секвенція)
       // ==========================================
       mm.add("(min-width: 1025px)", () => {
         const canvas = canvasRef.current;
@@ -237,15 +255,13 @@ export default function HeroVideo() {
           }
         };
 
-        // Ініціалізація десктопу
         preloadFirstFrame().then(() => {
           calculateMetrics();
           render();
           preloadOtherFrames();
-          entranceTl.play(); // Запускаємо анімацію вступу на десктопі
+          entranceTl.play();
         });
 
-        // Скрол-секвенція
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: heroRef.current,
@@ -275,7 +291,6 @@ export default function HeroVideo() {
           2,
         );
 
-        // Resize handler для десктопу
         let lastWidth = window.innerWidth;
         const handleResize = () => {
           if (window.innerWidth !== lastWidth) {
@@ -286,36 +301,48 @@ export default function HeroVideo() {
         };
         window.addEventListener("resize", handleResize);
 
-        // Cleanup
         return () => window.removeEventListener("resize", handleResize);
       });
 
       // ==========================================
-      // МОБАЙЛ (Нова легка логіка)
+      // МОБАЙЛ (Статика + Parallax + Ефект Наїзду)
       // ==========================================
       mm.add("(max-width: 1024px)", () => {
-        // Очищаємо GSAP стилі, якщо вони залишились від десктопу
         gsap.set([heroRef.current, canvasRef.current, contentRef.current], {
           clearProps: "all",
         });
 
-        // 🔥 1. Запускаємо анімацію вступу (відтворюємо заготовлений timeline)
         entranceTl.play();
 
-        // 🔥 2. Додаємо легкий Parallax на фон секції
-        // Ми не фіксуємо екран (pin: false), просто рухаємо фон при скролі.
+        // ЕФЕКТ НАЇЗДУ (Overlap)
+        ScrollTrigger.create({
+          trigger: heroRef.current,
+          start: "top top",
+          end: "+=100%",
+          pin: true,
+          pinSpacing: false, // Наступна секція наїде зверху
+          onUpdate: (self) => {
+            if (overlayRef.current) {
+              gsap.set(overlayRef.current, {
+                opacity: 0.2 + self.progress * 0.5,
+              });
+            }
+          },
+        });
+
+        // ПАРАЛАКС ФОНУ
         gsap.to(heroRef.current, {
-          backgroundPosition: "50% 100%", // Рухаємо фон вниз на 20%
+          backgroundPosition: "50% 80%",
           ease: "none",
           scrollTrigger: {
             trigger: heroRef.current,
             start: "top top",
-            end: "bottom top",
-            scrub: true, // Плавний рух за скролом (це не гальмує на мобайлі)
+            end: "+=100%",
+            scrub: true,
           },
         });
 
-        return () => {}; // Cleanup
+        return () => {};
       });
     },
     { scope: heroRef },
@@ -323,7 +350,6 @@ export default function HeroVideo() {
 
   return (
     <>
-      {/* 1. Монолітна секція з відео. Висота 1 екран. */}
       <div className={styles.heroSection} ref={heroRef}>
         <canvas ref={canvasRef} className={styles.canvas} />
         <div ref={overlayRef} className={styles.canvasOverlay} />
@@ -331,7 +357,6 @@ export default function HeroVideo() {
         <HeroContent ref={contentRef} />
       </div>
 
-      {/* 2. ПАУЗА ДЛЯ СКРОЛУ. (Діє тільки на десктопі, схована в CSS на мобайлі). */}
       <div className={styles.delaySpacer} />
     </>
   );
