@@ -10,15 +10,17 @@ $primary: #0056b3;
   position: relative;
   width: 100%;
 
+  /* 🔥 ФІКС ДЛЯ ПОВНОГО ЕКРАНА:
+     Використовуємо lvh. Це примусово розтягує блок на весь фізичний екран, 
+     ігноруючи системні панелі Safari. Ніяких чорних смуг більше не буде. */
   height: 100vh;
-  height: 100dvh;
+  height: 100lvh;
 
-  /* 🔥 РОБИМО ЧОРНИМ! Щоб під чолкою завжди була темрява, як на відео */
   background-color: #000000 !important;
-
   overflow: hidden;
   z-index: 1;
 
+  /* Налаштування фону */
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
