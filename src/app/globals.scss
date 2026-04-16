@@ -7,13 +7,14 @@
 html,
 body {
   width: 100%;
-  height: auto !important; /* 🔥 Знімаємо будь-які обмеження висоти */
+  height: auto !important;
   min-height: 100% !important;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
-  background-color: #ffffff;
+
+  /* Зміни білий на темний, щоб перехід був безболісним */
+  background-color: #000000;
   color: #333333;
 
-  /* 🔥 ЯДЕРНИЙ ФІКС: Примусова інерція скролу для iOS */
   overflow: visible !important;
   -webkit-overflow-scrolling: touch !important;
 }
