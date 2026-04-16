@@ -17,16 +17,19 @@ export const metadata = {
   title: "ВІН ПАУЕР ГРУП | Ваша енергетична стабільність",
   description:
     "Електромонтажні роботи, сонячні станції та системи резервного живлення під ключ.",
+  // 🔥 ФОЛБЕК ДЛЯ СТАРИХ ВЕРСІЙ NEXT.JS
+  viewport:
+    "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
+  themeColor: "#000000",
 };
 
-// 🔥 САМЕ ЦЕЙ БЛОК РОБИТЬ МАГІЮ "ВЕСЬ ЕКРАН"
+// 🔥 ФОЛБЕК ДЛЯ НОВИХ ВЕРСІЙ NEXT.JS (14+)
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false, // Забороняємо зум, щоб сайт поводився як додаток
-  viewportFit: "cover", // ЗАЛАЗИТИ ПІД ЧОЛКУ І ПІД ПАНЕЛІ
-  themeColor: "#000000", // Фарбує статус-бар (де годинник і батарея) в колір відео
+  viewportFit: "cover",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({ children }) {
@@ -37,8 +40,19 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-        {/* ❌ ТУТ НЕ ПОВИННО БУТИ <meta name="viewport" ... /> */}
-        {/* ❌ ТУТ НЕ ПОВИННО БУТИ <meta name="theme-color" ... /> */}
+        {/* 🔥 ГАРАНТОВАНИЙ МЕТА-ТЕГ (Ігноруємо правила Next.js і вставляємо напряму) */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+          suppressHydrationWarning
+        />
+
+        {/* 🔥 ЗМУШУЄМО SAFARI РОБИТИ ПАНЕЛІ ПРОЗОРИМИ/ТЕМНИМИ */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
 
         <link
           rel="preload"

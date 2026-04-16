@@ -10,15 +10,15 @@ $primary: #0056b3;
   position: relative;
   width: 100%;
 
-  /* 🔥 ФІКС ВИСОТИ: dvh адаптується під панель браузера ідеально */
-  height: 100vh; /* Фолбек для старих браузерів */
-  height: 100dvh; /* Динамічна висота для сучасних мобільних */
+  height: 100vh;
+  height: 100dvh;
 
-  background-color: var(--background, #ffffff) !important;
+  /* 🔥 РОБИМО ЧОРНИМ! Щоб під чолкою завжди була темрява, як на відео */
+  background-color: #000000 !important;
+
   overflow: hidden;
   z-index: 1;
 
-  /* НАЛАШТУВАННЯ ФОНУ ДЛЯ МОБАЙЛУ */
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
