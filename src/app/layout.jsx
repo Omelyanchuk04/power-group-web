@@ -19,13 +19,13 @@ export const metadata = {
     "Електромонтажні роботи, сонячні станції та системи резервного живлення під ключ.",
 };
 
-// 🔥 1. ДОДАЄМО ПРАВИЛЬНИЙ ЕКСПОРТ ДЛЯ NEXT.JS (Це розтягне Safari)
+// 🔥 ОБОВ'ЯЗКОВО ПЕРЕВІР, ЧИ Є ЦЕЙ ЕКСПОРТ (саме він вбиває сейф-зони Safari):
 export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  viewportFit: "cover",
-  themeColor: "#000000",
+  viewportFit: "cover", // Ось ця магія розтягує контент під камеру
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }) {

@@ -25,28 +25,6 @@ export default function HeroVideo() {
   const imagesRef = useRef([]);
   const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
 
-  // ЗАМОРОЖУЄМО ВИСОТУ (Фікс ривків Chrome)
-  useEffect(() => {
-    const setFixedVH = () => {
-      if (heroRef.current) {
-        heroRef.current.style.height = `${window.innerHeight}px`;
-      }
-    };
-
-    setFixedVH();
-
-    let currentWidth = window.innerWidth;
-    const resizeObserver = () => {
-      if (window.innerWidth !== currentWidth) {
-        currentWidth = window.innerWidth;
-        setFixedVH();
-      }
-    };
-
-    window.addEventListener("resize", resizeObserver);
-    return () => window.removeEventListener("resize", resizeObserver);
-  }, []);
-
   useGSAP(
     () => {
       if (!logoRef.current || !contentRef.current) return;

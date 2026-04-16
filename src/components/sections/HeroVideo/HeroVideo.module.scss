@@ -10,15 +10,15 @@ $primary: #0056b3;
   position: relative;
   width: 100%;
 
-  /* Базовий 100vh. JS встановить жорсткі пікселі */
-  height: 100vh;
+  /* 🔥 ФІКС ВИСОТИ: dvh адаптується під панель браузера ідеально */
+  height: 100vh; /* Фолбек для старих браузерів */
+  height: 100dvh; /* Динамічна висота для сучасних мобільних */
 
-  /* 🔥 Повернули білий фон (або прозорий, якщо сторінка біла) */
   background-color: var(--background, #ffffff) !important;
   overflow: hidden;
   z-index: 1;
 
-  /* НАЛАШТУВАННЯ ФОНУ ДЛЯ МОБАЙЛУ (Parallax) */
+  /* НАЛАШТУВАННЯ ФОНУ ДЛЯ МОБАЙЛУ */
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
