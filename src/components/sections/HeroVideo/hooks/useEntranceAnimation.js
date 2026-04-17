@@ -23,7 +23,7 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
       const contentCards =
         contentRef.current.querySelectorAll(".animCardWrapper"); // Переконайтеся, що цей клас є в HTML
 
-      const entranceTl = gsap.timeline({ delay: 0.2 });
+      const entranceTl = gsap.timeline({ delay: 0.6 });
 
       // Замінюємо opacity на autoAlpha
       entranceTl
