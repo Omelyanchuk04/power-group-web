@@ -416,14 +416,15 @@ $text-dark: #1d1d1f;
     z-index: 101;
   }
 
-  /* Оверлей меню */
   .mobileMenuOverlay {
     display: block;
     position: fixed;
-    top: 0;
+    /* 1. КОМПЕНСУЄМО ВІДСТУП ХЕДЕРА (-10px замість 0) */
+    top: -10px;
     left: 0;
     width: 100vw;
-    height: 100dvh;
+    /* 2. РОБИМО ВИСОТУ З ЗАПАСОМ */
+    height: calc(100dvh + 10px);
     z-index: 90;
     background: rgba(255, 255, 255, 0.85);
     -webkit-backdrop-filter: blur(24px) saturate(150%);
@@ -433,6 +434,9 @@ $text-dark: #1d1d1f;
     transition:
       opacity 0.4s ease,
       visibility 0.4s ease;
+
+    /* 3. ЗАБОРОНЯЄМО ФОНУ СКРОЛИТИСЬ ПРИ СВАЙПАХ */
+    overscroll-behavior: none;
   }
 
   .mobileMenuOverlayOpen {
@@ -444,8 +448,13 @@ $text-dark: #1d1d1f;
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 100px 24px 40px;
+    /* Додаємо 10px до верхнього padding (було 100px, стало 110px), 
+       щоб контент не прилип до верху через наш зсув */
+    padding: 110px 24px 40px;
     overflow-y: auto;
+
+    /* 4. ІЗОЛЮЄМО СКРОЛ ТІЛЬКИ В МЕЖАХ ЦЬОГО БЛОКУ */
+    overscroll-behavior: contain;
   }
 
   .mobileNav {
