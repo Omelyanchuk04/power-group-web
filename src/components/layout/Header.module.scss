@@ -288,9 +288,9 @@ $text-dark: #1d1d1f;
    АДАПТИВ ДЛЯ МОБАЙЛУ (< 1024px)
    ========================================== */
 @media (max-width: 1024px) {
-  .header {
-    top: 10px;
-  }
+  // .header {
+  //   top: 10px;
+  // }
   .header__container {
     padding: 0 16px;
   }
