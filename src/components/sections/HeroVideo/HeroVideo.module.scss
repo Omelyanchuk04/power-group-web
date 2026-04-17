@@ -283,7 +283,7 @@ $primary: #0056b3;
 // ==========================================
 @media (max-width: 1024px) {
   .heroSection {
-    background-image: url("/frames/frame-001.jpg");
+    background-image: url("/hero-mobile.jpg");
     position: relative;
 
     /* ФІКС ПЕГЛЯДАННЯ ДРУГОЇ СЕКЦІЇ */
@@ -327,6 +327,9 @@ $primary: #0056b3;
 }
 
 @media (max-width: 768px) {
+  .logoStep {
+    margin-top: -100px;
+  }
   .logoContainer {
     flex-direction: column;
     gap: 16px;
