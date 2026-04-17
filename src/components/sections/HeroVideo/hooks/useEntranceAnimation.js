@@ -29,25 +29,13 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
         .fromTo(
           icon,
           { y: 30, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            clearProps: "all",
-          },
+          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
           0,
         )
         .fromTo(
           text,
           { y: 30, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power3.out",
-            clearProps: "all",
-          },
+          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
           0.1,
         )
         .fromTo(

@@ -107,7 +107,6 @@ $primary: #0056b3;
   opacity: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  will-change: transform, opacity; /* Додайте це для ще більшої плавності */
 }
 
 .animIcon img {
