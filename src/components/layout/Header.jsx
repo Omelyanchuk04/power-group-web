@@ -87,7 +87,7 @@ export default function Header() {
               viewBox="0 0 220 251"
               fill="none"
               className={styles.logoMobile}
-              priority
+              //priority
               alt="ВІН ПАУЕР ГРУП іконка"
               xmlns="http://www.w3.org/2000/svg"
             >
