@@ -21,11 +21,16 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
         `.${styles.animButtonWrapper}`,
       );
       const contentCards =
-        contentRef.current.querySelectorAll(".animCardWrapper"); // Переконайтеся, що цей клас є в HTML
+        contentRef.current.querySelectorAll(".animCardWrapper");
 
-      const entranceTl = gsap.timeline({ delay: 0.6 });
+      // --- ДОДАНО: Визначаємо затримку залежно від розміру екрана ---
+      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      const initialDelay = isMobile ? 0.8 : 0.6;
 
-      // Замінюємо opacity на autoAlpha
+      // Передаємо динамічне значення у таймлайн
+      const entranceTl = gsap.timeline({ delay: initialDelay });
+
+      // Далі йде ваша анімація без змін
       entranceTl
         .fromTo(
           icon,
