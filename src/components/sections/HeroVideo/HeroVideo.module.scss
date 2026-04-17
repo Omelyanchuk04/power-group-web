@@ -302,10 +302,13 @@ $primary: #0056b3;
     display: none;
   }
 
-  .contentWrapper {
-    /* ЦЕНТРУЄМО КОНТЕНТ ПО ВЕРТИКАЛІ ТА ВІДШТОВХУЄМО ЗНИЗУ */
-    justify-content: center;
-    padding: 0 20px 120px;
+  // .contentWrapper {
+  //   justify-content: center;
+  //   padding: 0 20px 120px;
+  // }
+
+  .mainContent {
+    margin-top: -100px;
   }
 
   .animTitle {
@@ -348,10 +351,6 @@ $primary: #0056b3;
   .animSlogan {
     font-size: 14px;
     text-align: center;
-  }
-
-  .mainContent {
-    margin-top: 0;
   }
 
   .animTitle {
