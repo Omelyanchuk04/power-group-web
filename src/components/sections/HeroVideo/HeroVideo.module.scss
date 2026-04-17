@@ -278,33 +278,34 @@ $primary: #0056b3;
 // ==========================================
 // АДАПТИВНІСТЬ
 // ==========================================
+// ==========================================
+// АДАПТИВНІСТЬ
+// ==========================================
 @media (max-width: 1024px) {
   .heroSection {
     background-image: url("/frames/frame-001.jpg");
-    position: relative !important;
+    position: relative;
 
-    /* 🔥 ФІКС ПЕГЛЯДАННЯ ДРУГОЇ СЕКЦІЇ */
-    height: calc(100vh + 100px) !important;
-    height: calc(100lvh + 100px) !important;
+    /* ФІКС ПЕГЛЯДАННЯ ДРУГОЇ СЕКЦІЇ */
+    height: calc(100vh + 100px);
+    height: calc(100lvh + 100px);
 
     z-index: 1;
   }
 
-  /* 🔥 ВИРІВНЮЄМО ЯСКРАВІСТЬ ФОНУ */
+  /* ВИРІВНЮЄМО ЯСКРАВІСТЬ ФОНУ */
   .canvasOverlay {
-    background-color: rgba(0, 0, 0, 0.2) !important;
+    background-color: rgba(0, 0, 0, 0.2);
   }
 
   .delaySpacer {
-    display: none !important;
+    display: none;
   }
 
   .contentWrapper {
-    /* 🔥 ЦЕНТРУЄМО КОНТЕНТ ПО ВЕРТИКАЛІ */
-    justify-content: center !important;
-
-    /* Прибираємо 120px зверху, щоб він не зсував текст вниз */
-    padding: 0 20px;
+    /* ЦЕНТРУЄМО КОНТЕНТ ПО ВЕРТИКАЛІ ТА ВІДШТОВХУЄМО ЗНИЗУ */
+    justify-content: center;
+    padding: 0 20px 120px;
   }
 
   .animTitle {
@@ -349,7 +350,6 @@ $primary: #0056b3;
     text-align: center;
   }
 
-  /* Прибираємо зсув margin-top, який теж міг зміщувати контент */
   .mainContent {
     margin-top: 0;
   }
@@ -381,7 +381,7 @@ $primary: #0056b3;
   }
 
   .contentWrapper {
-    /* Прибираємо 100px зверху на найменших екранах */
-    padding: 0 16px;
+    /* Для найменших екранів */
+    padding: 0 16px 120px;
   }
 }
