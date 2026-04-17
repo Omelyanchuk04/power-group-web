@@ -107,6 +107,10 @@ $primary: #0056b3;
   opacity: 0;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+
+  will-change: transform, opacity;
+  /* Іноді це допомагає примусово кинути елемент на GPU у Safari */
+  transform: translateZ(0);
 }
 
 .animIcon img {

@@ -29,7 +29,13 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
         .fromTo(
           icon,
           { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            force3D: true,
+          },
           0,
         )
         .fromTo(
@@ -58,6 +64,7 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             duration: 0.3,
             stagger: 0.05,
             ease: "power2.in",
+            force3D: true,
           },
           "+=0.3",
         )
