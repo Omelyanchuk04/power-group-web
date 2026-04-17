@@ -50,8 +50,21 @@ $text-dark: #1d1d1f;
   align-items: center;
   margin-right: 20px;
   flex-shrink: 0;
-}
+  /* Якщо цього немає, додайте z-index */
+  z-index: 2;
 
+  /* 🔥 ФІКС РОЗМИТТЯ ПРИ ЗУМІ НА МОБАЙЛІ 🔥 */
+  img,
+  svg {
+    /* Примушуємо GPU малювати SVG як окремий чіткий векторний шар */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    /* Готуємо браузер до масштабування */
+    will-change: transform;
+  }
+}
 .logoDesktop {
   display: block;
   width: 200px;
