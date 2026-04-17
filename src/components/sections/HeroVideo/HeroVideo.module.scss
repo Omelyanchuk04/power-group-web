@@ -283,29 +283,28 @@ $primary: #0056b3;
     background-image: url("/frames/frame-001.jpg");
     position: relative !important;
 
-    /* 🔥 ФІКС ПЕГЛЯДАННЯ ДРУГОЇ СЕКЦІЇ:
-       Додаємо ті самі 100px до висоти екрану. 
-       Тепер біла секція буде рівно під лінією екрана! */
+    /* 🔥 ФІКС ПЕГЛЯДАННЯ ДРУГОЇ СЕКЦІЇ */
     height: calc(100vh + 100px) !important;
     height: calc(100lvh + 100px) !important;
 
     z-index: 1;
   }
 
-  /* 🔥 ВИРІВНЮЄМО ЯСКРАВІСТЬ ФОНУ: 
-     Робимо затемнення таким самим світлим (20%), як його робить GSAP на десктопі */
+  /* 🔥 ВИРІВНЮЄМО ЯСКРАВІСТЬ ФОНУ */
   .canvasOverlay {
     background-color: rgba(0, 0, 0, 0.2) !important;
   }
 
-  /* Спейсер не потрібен, бо секція тепер займає місце */
   .delaySpacer {
     display: none !important;
   }
 
   .contentWrapper {
-    justify-content: center;
-    padding: 120px 20px 60px;
+    /* 🔥 ЦЕНТРУЄМО КОНТЕНТ ПО ВЕРТИКАЛІ */
+    justify-content: center !important;
+
+    /* Прибираємо 120px зверху, щоб він не зсував текст вниз */
+    padding: 0 20px;
   }
 
   .animTitle {
@@ -350,8 +349,9 @@ $primary: #0056b3;
     text-align: center;
   }
 
+  /* Прибираємо зсув margin-top, який теж міг зміщувати контент */
   .mainContent {
-    margin-top: 20px;
+    margin-top: 0;
   }
 
   .animTitle {
@@ -381,6 +381,7 @@ $primary: #0056b3;
   }
 
   .contentWrapper {
-    padding: 100px 16px 40px;
+    /* Прибираємо 100px зверху на найменших екранах */
+    padding: 0 16px;
   }
 }
