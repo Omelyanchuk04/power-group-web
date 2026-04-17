@@ -34,9 +34,8 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             opacity: 1,
             duration: 0.8,
             ease: "power3.out",
-            force3D: false,
-            clearProps: "transform",
-          }, // 🔥 Додано clearProps
+            clearProps: "all",
+          },
           0,
         )
         .fromTo(
@@ -47,9 +46,8 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             opacity: 1,
             duration: 0.8,
             ease: "power3.out",
-            force3D: false,
-            clearProps: "transform",
-          }, // 🔥 Додано clearProps
+            clearProps: "all",
+          },
           0.1,
         )
         .fromTo(

@@ -77,6 +77,17 @@ $primary: #0056b3;
   z-index: 3;
 }
 
+/* Знайдіть клас вашого логотипу в хедері (наприклад .headerLogo) і додайте: */
+.headerLogo img {
+  /* Забороняємо браузеру переносити картинку на окремий растровий шар */
+  transform: translateZ(0) scale(1, 1);
+  -webkit-transform: translateZ(0) scale(1, 1);
+
+  /* Примушуємо рендерити як графіку високої якості */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
 .logoContainer {
   display: flex;
   align-items: center;
@@ -94,6 +105,9 @@ $primary: #0056b3;
 .animLine,
 .animSlogan {
   opacity: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity; /* Додайте це для ще більшої плавності */
 }
 
 .animIcon img {
