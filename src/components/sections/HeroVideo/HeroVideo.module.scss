@@ -286,8 +286,8 @@ $primary: #0056b3;
     /* 🔥 ФІКС ПЕГЛЯДАННЯ ДРУГОЇ СЕКЦІЇ:
        Додаємо ті самі 40px до висоти екрану. 
        Тепер біла секція буде рівно під лінією екрана! */
-    height: calc(100vh + 80px) !important;
-    height: calc(100lvh + 80px) !important;
+    height: calc(100vh + 100px) !important;
+    height: calc(100lvh + 100px) !important;
 
     z-index: 1;
   }
