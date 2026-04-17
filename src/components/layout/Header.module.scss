@@ -419,12 +419,10 @@ $text-dark: #1d1d1f;
   .mobileMenuOverlay {
     display: block;
     position: fixed;
-    /* 1. КОМПЕНСУЄМО ВІДСТУП ХЕДЕРА (-10px замість 0) */
-    top: -10px;
+    top: 0;
     left: 0;
     width: 100vw;
-    /* 2. РОБИМО ВИСОТУ З ЗАПАСОМ */
-    height: calc(100dvh + 10px);
+    height: 100dvh;
     z-index: 90;
     background: rgba(255, 255, 255, 0.85);
     -webkit-backdrop-filter: blur(24px) saturate(150%);
@@ -435,7 +433,7 @@ $text-dark: #1d1d1f;
       opacity 0.4s ease,
       visibility 0.4s ease;
 
-    /* 3. ЗАБОРОНЯЄМО ФОНУ СКРОЛИТИСЬ ПРИ СВАЙПАХ */
+    /* 1. ДОДАЄМО: Забороняємо фону "пружинити" при свайпах */
     overscroll-behavior: none;
   }
 
@@ -443,18 +441,17 @@ $text-dark: #1d1d1f;
     opacity: 1;
     visibility: visible;
   }
-
   .mobileMenuContent {
     display: flex;
     flex-direction: column;
     height: 100%;
-    /* Додаємо 10px до верхнього padding (було 100px, стало 110px), 
-       щоб контент не прилип до верху через наш зсув */
-    padding: 110px 24px 40px;
+    padding: 100px 24px 40px;
     overflow-y: auto;
 
-    /* 4. ІЗОЛЮЄМО СКРОЛ ТІЛЬКИ В МЕЖАХ ЦЬОГО БЛОКУ */
+    /* 2. ДОДАЄМО: Ізолюємо скрол тільки в межах цього блоку */
     overscroll-behavior: contain;
+    /* ДОДАЄМО: Робимо скрол на iPhone плавним, як у нативних додатках */
+    -webkit-overflow-scrolling: touch;
   }
 
   .mobileNav {

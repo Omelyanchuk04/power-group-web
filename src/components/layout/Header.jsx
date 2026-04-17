@@ -19,13 +19,15 @@ export default function Header() {
 
   useEffect(() => {
     if (isMobileMenuOpen) {
-      // Блокуємо і body, і html (обов'язково для iOS)
+      // Блокуємо і body, і html (це критично важливо для iOS Safari)
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
       document.documentElement.style.overflow = "unset";
     }
+
+    // Очищення при розмонтуванні компонента
     return () => {
       document.body.style.overflow = "unset";
       document.documentElement.style.overflow = "unset";
