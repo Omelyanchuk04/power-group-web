@@ -13,15 +13,21 @@ $primary: #0056b3;
   /* Десктопна висота */
   height: 100vh;
 
-  /* Чорний фон для страховки */
+  /* Приємний колір для страховки (ви вже змінили, супер!) */
   background-color: #7094c1 !important;
+
+  /* 🔥 ДОДАЄМО: Перший кадр як статичний фон до запуску Canvas/GSAP */
+  background-image: url("/frames/frame-001.jpg");
+
   overflow: hidden;
   z-index: 1;
 
-  /* Налаштування фону (працюватимуть на мобайлі) */
+  /* Налаштування фону */
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+
+  /* Готуємо браузер до можливих анімацій фону */
   will-change: background-position;
 }
 
