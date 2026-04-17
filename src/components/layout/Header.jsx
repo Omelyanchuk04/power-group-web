@@ -6,11 +6,12 @@ import styles from "./Header.module.scss";
 import HeaderLogo from "./HeaderLogo";
 
 export default function Header() {
-  // Повертаємо простий стейт тільки для навігації
   const [pill, setPill] = useState({
     opacity: 0,
     left: 0,
+    top: 0,
     width: 0,
+    height: 0,
     isMoving: false,
   });
 
@@ -36,11 +37,14 @@ export default function Header() {
   ];
 
   const handleMouseEnter = (e) => {
-    const { offsetLeft, offsetWidth } = e.currentTarget;
+    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } =
+      e.currentTarget;
     setPill((prev) => ({
       opacity: 1,
       left: offsetLeft,
+      top: offsetTop,
       width: offsetWidth,
+      height: offsetHeight,
       isMoving: prev.opacity !== 0,
     }));
   };
@@ -54,18 +58,31 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.header__container}>
+        {/* БУРГЕР-МЕНЮ (Зліва на мобільному) */}
+        <button
+          className={`${styles.burgerBtn} ${isMobileMenuOpen ? styles.burgerOpen : ""}`}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Меню"
+        >
+          <span className={styles.burgerLine}></span>
+          <span className={styles.burgerLine}></span>
+        </button>
+
+        {/* ЛОГОТИП (На десктопі зліва, на мобільному по центру) */}
         <HeaderLogo closeMobileMenu={closeMobileMenu} />
 
-        {/* НАВІГАЦІЯ (Тільки посилання) */}
+        {/* НАВІГАЦІЯ ДЛЯ ДЕСКТОПУ */}
         <nav className={styles.nav} onMouseLeave={handleMouseLeave}>
           <div
             className={styles.navPill}
             style={{
               left: `${pill.left}px`,
+              top: `${pill.top}px`,
               width: `${pill.width}px`,
+              height: `${pill.height}px`,
               opacity: pill.opacity,
               transition: pill.isMoving
-                ? "left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease"
+                ? "left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease"
                 : "opacity 0.3s ease",
             }}
           />
@@ -81,7 +98,7 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* ДЕСКТОПНІ КОНТРОЛИ (Лупа повернулася сюди!) */}
+        {/* КОНТРОЛИ ДЛЯ ДЕСКТОПУ (Лупа + Зворотний зв'язок) */}
         <div className={styles.desktopControls}>
           <button className={styles.desktopSearchBtn} aria-label="Пошук">
             <svg
@@ -137,7 +154,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* МОБІЛЬНІ КОНТРОЛИ */}
+        {/* КОНТРОЛИ ДЛЯ МОБІЛЬНОГО (Справа: Телефон + Лупа) */}
         <div className={styles.mobileControls}>
           <a
             href="tel:+380670000000"
@@ -169,19 +186,10 @@ export default function Header() {
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
           </button>
-
-          <button
-            className={`${styles.burgerBtn} ${isMobileMenuOpen ? styles.burgerOpen : ""}`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Меню"
-          >
-            <span className={styles.burgerLine}></span>
-            <span className={styles.burgerLine}></span>
-          </button>
         </div>
       </div>
 
-      {/* МОБІЛЬНЕ МЕНЮ ... (без змін) */}
+      {/* МОБІЛЬНЕ МЕНЮ (Оверлей) */}
       <div
         className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.mobileMenuOverlayOpen : ""}`}
       >
