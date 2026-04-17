@@ -103,13 +103,21 @@ $primary: #0056b3;
 .animIcon,
 .animText,
 .animLine,
-.animSlogan {
-  opacity: 0;
+.animSlogan,
+.animTitle,           /* Додаємо сюди всі класи, */
+.animSubtitle,        /* які беремо в GSAP,    */
+.animButtonWrapper,
+.featureCard {
+  /* або .animCardWrapper, залежно від того, що в HTML */
+
+  /* БУЛО: opacity: 0; */
+  /* СТАЛО: */
+  visibility: hidden;
+
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 
   will-change: transform, opacity;
-  /* Іноді це допомагає примусово кинути елемент на GPU у Safari */
   transform: translateZ(0);
 }
 
