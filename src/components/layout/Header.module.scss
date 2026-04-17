@@ -348,9 +348,16 @@ $text-dark: #1d1d1f;
    АДАПТИВ ДЛЯ МОБАЙЛУ (< 1024px)
    ========================================== */
 @media (max-width: 1024px) {
+  .header {
+    top: 0;
+    padding-top: 10px; /* Залишаємо відступ для плашки */
+    /* Вимикаємо трансформацію, бо вона ламає fixed меню! */
+    transform: none !important;
+    -webkit-transform: none !important;
+  }
+
   .header__container {
     padding: 0 16px;
-    /* Відштовхує Бургер вліво, Іконки вправо */
     justify-content: space-between;
   }
 
@@ -419,7 +426,7 @@ $text-dark: #1d1d1f;
   .mobileMenuOverlay {
     display: block;
     position: fixed;
-    top: 0;
+    top: 0; /* Повертаємо на 0, бо хедер тепер теж на 0 */
     left: 0;
     width: 100vw;
     height: 100dvh;
@@ -433,8 +440,7 @@ $text-dark: #1d1d1f;
       opacity 0.4s ease,
       visibility 0.4s ease;
 
-    /* 1. ДОДАЄМО: Забороняємо фону "пружинити" при свайпах */
-    overscroll-behavior: none;
+    overscroll-behavior: none; /* Блокуємо скрол фону */
   }
 
   .mobileMenuOverlayOpen {
@@ -447,11 +453,8 @@ $text-dark: #1d1d1f;
     height: 100%;
     padding: 100px 24px 40px;
     overflow-y: auto;
-
-    /* 2. ДОДАЄМО: Ізолюємо скрол тільки в межах цього блоку */
     overscroll-behavior: contain;
-    /* ДОДАЄМО: Робимо скрол на iPhone плавним, як у нативних додатках */
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; /* Плавний скрол iOS */
   }
 
   .mobileNav {
