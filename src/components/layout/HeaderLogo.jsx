@@ -8,12 +8,11 @@ export default function HeaderLogo({ closeMobileMenu }) {
   return (
     <div className={styles.logo}>
       <Link href="/" onClick={closeMobileMenu}>
-        <Image
+        <img
           src="/logo.svg"
           alt="ВІН ПАУЕР ГРУП логотип"
           width={200}
           height={43}
-          priority
           className={styles.logoDesktop}
         />
 
