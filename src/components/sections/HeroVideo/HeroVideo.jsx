@@ -11,7 +11,7 @@ import styles from "./HeroVideo.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
-  // Залишаємо цю настройку, вона корисна
+  // Залишаємо цю настройку, вона корисна для десктопу
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
@@ -283,39 +283,19 @@ export default function HeroVideo() {
       });
 
       // ==========================================
-      // МОБАЙЛ (Без пінінгу! Тільки CSS Sticky + ScrollTrigger для ефектів)
+      // МОБАЙЛ (Просто статика, ніякого пінінгу чи тригерів)
       // ==========================================
       mm.add("(max-width: 1024px)", () => {
-        // Знімаємо всі старі стилі
+        // Очищаємо всі старі стилі GSAP
         gsap.set([heroRef.current, canvasRef.current, contentRef.current], {
           clearProps: "all",
         });
 
+        // Запускаємо тільки анімацію появи тексту при завантаженні сторінки
         entranceTl.play();
 
-        // 🔥 МИ ПОВНІСТЮ ВИДАЛИЛИ pin: true
-        // Оскільки секція вже "прилипла" до верху завдяки CSS (position: sticky),
-        // ми просто відстежуємо скрол сторінки, щоб анімувати затемнення.
-        ScrollTrigger.create({
-          trigger: document.body,
-          start: "top top",
-          end: () => `+=${window.innerHeight}`, // Ефект триватиме, поки ми не проскролимо 1 екран
-          scrub: true,
-          onUpdate: (self) => {
-            // Затемнення оверлею
-            if (overlayRef.current) {
-              gsap.set(overlayRef.current, {
-                opacity: 0.2 + self.progress * 0.5,
-              });
-            }
-            // Рух фону (паралакс)
-            if (heroRef.current) {
-              gsap.set(heroRef.current, {
-                backgroundPosition: `50% ${50 + self.progress * 30}%`,
-              });
-            }
-          },
-        });
+        // 🔥 ВСЕ! Більше ніяких ScrollTrigger для мобайлу.
+        // Секція буде скролитися природно разом з усім сайтом.
 
         return () => {};
       });

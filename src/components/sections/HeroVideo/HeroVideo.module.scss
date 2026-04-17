@@ -279,18 +279,21 @@ $primary: #0056b3;
 // АДАПТИВНІСТЬ
 // ==========================================
 @media (max-width: 1024px) {
-  /* 🔥 МАГІЯ ТУТ: Чистий CSS Sticky замість GSAP */
+  /* 🔥 ПРОСТИЙ І НАДІЙНИЙ ВАРІАНТ: Ніякої фіксації, просто секція */
   .heroSection {
     background-image: url("/frames/frame-001.jpg");
 
-    /* Прилипає до верху екрана */
-    position: sticky !important;
-    top: 0;
+    position: relative !important; /* Повертаємо звичайну поведінку */
 
-    /* 🔥 МАГІЯ ТУТ 2: vh розтягне картинку ПІД нижню і верхню панелі! */
-    height: 100vh !important;
+    /* svh гарантує, що секція ідеально ляже між верхньою та нижньою панелями */
+    height: 100svh !important;
 
-    z-index: 1; /* Тримаємо на нижньому рівні, щоб About наїхав зверху */
+    z-index: 1;
+  }
+
+  /* Спейсер не потрібен, бо секція тепер займає місце */
+  .delaySpacer {
+    display: none !important;
   }
 
   .contentWrapper {
