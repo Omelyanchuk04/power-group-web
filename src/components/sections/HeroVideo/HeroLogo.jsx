@@ -27,7 +27,7 @@ const HeroLogo = forwardRef((props, ref) => {
             alt="ВІН ПАУЕР ГРУП іконка"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <mask
+            <clipPath
               id="mask0_2396_1156-hero"
               style={{ maskType: "luminance" }}
               maskUnits="userSpaceOnUse"
@@ -36,12 +36,9 @@ const HeroLogo = forwardRef((props, ref) => {
               width="46"
               height="62"
             >
-              <path
-                d="M219.95 189.37H174.54V250.34H219.95V189.37Z"
-                fill="white"
-              />
-            </mask>
-            <g mask="url(#mask0_2396_1156-hero)">
+              <path d="M219.95 189.37H174.54V250.34H219.95V189.37Z" />
+            </clipPath>
+            <g clipPath="url(#mask0_2396_1156-hero)">
               <path
                 d="M219.95 231.8L174.54 229.58V189.37H219.95V231.8Z"
                 fill="#0303AD"
@@ -671,7 +668,7 @@ const HeroLogo = forwardRef((props, ref) => {
                 fill="#179FF3"
               />
             </g>
-            <mask
+            <clipPath
               id="mask1_2396_1156-hero"
               style={{ maskType: "luminance" }}
               maskUnits="userSpaceOnUse"
@@ -680,12 +677,9 @@ const HeroLogo = forwardRef((props, ref) => {
               width="129"
               height="79"
             >
-              <path
-                d="M167.17 167.4C166.25 168.46 165.3 169.49 164.31 170.49C152.69 182.27 136.54 189.58 118.69 189.58C108.97 189.58 99.7598 187.4 91.5098 183.53V242.74C100.24 244.79 109.34 245.88 118.69 245.88C150.9 245.88 180.1 233.02 201.45 212.16C208.43 205.33 214.81 197.74 219.94 189.37"
-                fill="white"
-              />
-            </mask>
-            <g mask="url(#mask1_2396_1156-hero)">
+              <path d="M167.17 167.4C166.25 168.46 165.3 169.49 164.31 170.49C152.69 182.27 136.54 189.58 118.69 189.58C108.97 189.58 99.7598 187.4 91.5098 183.53V242.74C100.24 244.79 109.34 245.88 118.69 245.88C150.9 245.88 180.1 233.02 201.45 212.16C208.43 205.33 214.81 197.74 219.94 189.37" />
+            </clipPath>
+            <g clipPath="url(#mask1_2396_1156-hero)">
               <path
                 d="M219.95 168.01L219.58 167.4H219.95V168.01Z"
                 fill="#092FC1"
@@ -1219,7 +1213,7 @@ const HeroLogo = forwardRef((props, ref) => {
                 fill="#19B4FC"
               />
             </g>
-            <mask
+            <clipPath
               id="mask2_2396_1156-hero"
               style={{ maskType: "luminance" }}
               maskUnits="userSpaceOnUse"
@@ -1228,12 +1222,9 @@ const HeroLogo = forwardRef((props, ref) => {
               width="46"
               height="62"
             >
-              <path
-                d="M219.95 180.32H174.54V241.29H219.95V180.32Z"
-                fill="white"
-              />
-            </mask>
-            <g mask="url( #mask2_2396_1156-hero)">
+              <path d="M219.95 180.32H174.54V241.29H219.95V180.32Z" />
+            </clipPath>
+            <g clipPath="url( #mask2_2396_1156-hero)">
               <path
                 d="M217.85 241.29L219.95 241.12V241.29H217.85Z"
                 fill="#127DE4"
@@ -1487,7 +1478,7 @@ const HeroLogo = forwardRef((props, ref) => {
                 fill="#1ABAFF"
               />
             </g>
-            <mask
+            <clipPath
               id="mask3_2396_1156-hero"
               style={{ maskType: "luminance" }}
               maskUnits="userSpaceOnUse"
@@ -1496,12 +1487,9 @@ const HeroLogo = forwardRef((props, ref) => {
               width="153"
               height="219"
             >
-              <path
-                d="M162.66 12.68C151.92 9.48002 140.54 7.75 128.76 7.75C63.3598 7.75 10.3398 60.77 10.3398 126.17C10.3398 167.97 31.9999 204.7 64.6999 225.78V129.1C64.6999 128.49 64.7299 127.88 64.7799 127.28C64.7299 126.27 64.6999 125.25 64.6999 124.22C64.6999 88.84 93.3798 60.16 128.76 60.16C141.21 60.16 152.83 63.72 162.66 69.87V12.68Z"
-                fill="white"
-              />
-            </mask>
-            <g mask="url(#mask3_2396_1156-hero)">
+              <path d="M162.66 12.68C151.92 9.48002 140.54 7.75 128.76 7.75C63.3598 7.75 10.3398 60.77 10.3398 126.17C10.3398 167.97 31.9999 204.7 64.6999 225.78V129.1C64.6999 128.49 64.7299 127.88 64.7799 127.28C64.7299 126.27 64.6999 125.25 64.6999 124.22C64.6999 88.84 93.3798 60.16 128.76 60.16C141.21 60.16 152.83 63.72 162.66 69.87V12.68Z" />
+            </clipPath>
+            <g clipPath="url(#mask3_2396_1156-hero)">
               <path
                 d="M162.66 7.80002L162.63 7.75H162.66V7.80002Z"
                 fill="#0512B4"
@@ -2179,7 +2167,7 @@ const HeroLogo = forwardRef((props, ref) => {
                 fill="#1ABAFF"
               />
             </g>
-            <mask
+            <clipPath
               id="mask4_2396_1156-hero"
               style={{ maskType: "luminance" }}
               maskUnits="userSpaceOnUse"
@@ -2188,12 +2176,9 @@ const HeroLogo = forwardRef((props, ref) => {
               width="60"
               height="60"
             >
-              <path
-                d="M117.93 148.5C134.278 148.5 147.53 135.248 147.53 118.9C147.53 102.552 134.278 89.3 117.93 89.3C101.582 89.3 88.3301 102.552 88.3301 118.9C88.3301 135.248 101.582 148.5 117.93 148.5Z"
-                fill="white"
-              />
-            </mask>
-            <g mask="url(#mask4_2396_1156-hero)">
+              <path d="M117.93 148.5C134.278 148.5 147.53 135.248 147.53 118.9C147.53 102.552 134.278 89.3 117.93 89.3C101.582 89.3 88.3301 102.552 88.3301 118.9C88.3301 135.248 101.582 148.5 117.93 148.5Z" />
+            </clipPath>
+            <g clipPath="url(#mask4_2396_1156-hero)">
               <path
                 d="M88.6501 89.3H88.3301V148.51H88.6501V89.3Z"
                 fill="#0303AD"
@@ -2828,7 +2813,7 @@ const HeroLogo = forwardRef((props, ref) => {
                 fill="#1ABAFF"
               />
             </g>
-            <mask
+            <clipPath
               id="mask5_2396_1156-hero"
               style={{ maskType: "luminance" }}
               maskUnits="userSpaceOnUse"
@@ -2837,12 +2822,9 @@ const HeroLogo = forwardRef((props, ref) => {
               width="129"
               height="79"
             >
-              <path
-                d="M167.17 158.36C166.25 159.42 165.3 160.45 164.31 161.45C152.69 173.23 136.54 180.54 118.69 180.54C108.97 180.54 99.7598 178.36 91.5098 174.49V233.7C100.24 235.75 109.34 236.84 118.69 236.84C150.9 236.84 180.1 223.98 201.45 203.12C208.43 196.29 214.81 188.7 219.94 180.33"
-                fill="white"
-              />
-            </mask>
-            <g mask="url(#mask5_2396_1156-hero)">
+              <path d="M167.17 158.36C166.25 159.42 165.3 160.45 164.31 161.45C152.69 173.23 136.54 180.54 118.69 180.54C108.97 180.54 99.7598 178.36 91.5098 174.49V233.7C100.24 235.75 109.34 236.84 118.69 236.84C150.9 236.84 180.1 223.98 201.45 203.12C208.43 196.29 214.81 188.7 219.94 180.33" />
+            </clipPath>
+            <g clipPath="url(#mask5_2396_1156-hero)">
               <path
                 d="M219.95 159.04L219.43 158.36H219.95V159.04Z"
                 fill="#0512B4"
@@ -3520,7 +3502,7 @@ const HeroLogo = forwardRef((props, ref) => {
                 fill="#1ABAFF"
               />
             </g>
-            <mask
+            <clipPath
               id="mask6_2396_1156-hero"
               style={{ maskType: "luminance" }}
               maskUnits="userSpaceOnUse"
@@ -3529,12 +3511,9 @@ const HeroLogo = forwardRef((props, ref) => {
               width="202"
               height="219"
             >
-              <path
-                d="M201.18 33.72C179.83 12.86 150.63 0 118.42 0C53.02 0 0 53.02 0 118.42C0 160.22 21.66 196.95 54.36 218.03V121.35C54.36 120.74 54.39 120.13 54.44 119.53C54.39 118.52 54.36 117.5 54.36 116.47C54.36 81.09 83.04 52.41 118.42 52.41C136.78 52.41 153.33 60.13 165.01 72.5"
-                fill="white"
-              />
-            </mask>
-            <g mask="url(#mask6_2396_1156-hero)">
+              <path d="M201.18 33.72C179.83 12.86 150.63 0 118.42 0C53.02 0 0 53.02 0 118.42C0 160.22 21.66 196.95 54.36 218.03V121.35C54.36 120.74 54.39 120.13 54.44 119.53C54.39 118.52 54.36 117.5 54.36 116.47C54.36 81.09 83.04 52.41 118.42 52.41C136.78 52.41 153.33 60.13 165.01 72.5" />
+            </clipPath>
+            <g clipPath="url(#mask6_2396_1156-hero)">
               <path d="M0.620003 0H0V218.03H0.620003V0Z" fill="#061AB7" />
               <path d="M1.40012 0H0.620117V218.03H1.40012V0Z" fill="#061BB8" />
               <path d="M2.1799 0H1.3999V218.03H2.1799V0Z" fill="#061CB8" />
