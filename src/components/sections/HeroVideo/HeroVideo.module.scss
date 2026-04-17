@@ -287,7 +287,7 @@ $primary: #0056b3;
        Додаємо ті самі 40px до висоти екрану. 
        Тепер біла секція буде рівно під лінією екрана! */
     height: calc(100vh + 40px) !important;
-    height: calc(100svh + 40px) !important;
+    height: calc(100lvh + 40px) !important;
 
     z-index: 1;
   }
