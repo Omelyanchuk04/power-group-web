@@ -11,10 +11,8 @@ body {
   min-height: 100% !important;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 
-  /* 🔥 ФІКС БІЛИХ ЗОН ПО КРАЯХ: 
-     Цей колір браузер підкладає під чолку та нижню панель. 
-     Якщо тут білий, то й рамки будуть білими. Робимо чорним! */
-  background-color: #000000;
+  /* 🔥 МІНЯЄМО НА СВІТЛИЙ КОЛІР (або колір твоєї секції About) */
+  background-color: #f5f5f5; /* Був #000000 */
   color: #333333;
 
   overflow: visible !important;
