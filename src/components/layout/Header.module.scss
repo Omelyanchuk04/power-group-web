@@ -72,7 +72,7 @@ $text-dark: #1d1d1f;
   align-items: center;
   position: relative;
   z-index: 10;
-  white-space: nowrap; /* Текст меню не переноситься на 2-й рядок */
+  white-space: nowrap;
 
   a {
     position: relative;
@@ -90,10 +90,68 @@ $text-dark: #1d1d1f;
   }
 }
 
+.desktopSearchBtn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $text-dark;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  z-index: 1;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    z-index: 2; /* Іконка завжди над фоном */
+  }
+
+  /* Це і є та сама "капля", тільки для однієї кнопки */
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0.3) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow:
+      inset 0 2px 4px rgba(255, 255, 255, 0.9),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.02),
+      0 4px 12px rgba(0, 0, 0, 0.06);
+
+    /* Схована за замовчуванням */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  /* При наведенні показуємо каплю і міняємо колір іконки */
+  &:hover {
+    color: $primary-blue;
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .navPill {
   position: absolute;
   top: 0;
-  height: 100%;
+  height: 100%; /* Повернули висоту! */
   z-index: 1;
   pointer-events: none;
   background: linear-gradient(
@@ -116,10 +174,13 @@ $text-dark: #1d1d1f;
   display: flex;
   align-items: center;
   gap: 12px;
-  flex-shrink: 0; /* Забороняємо стискатись */
+  flex-shrink: 0;
 }
 
 .actionIconBtn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
   background: transparent;
   border: none;
   color: $text-dark;
@@ -127,14 +188,14 @@ $text-dark: #1d1d1f;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
   border-radius: 50%;
   transition: all 0.2s ease;
-  text-decoration: none; // Для тегу <a>
+  text-decoration: none;
 
   svg {
     width: 20px;
     height: 20px;
+    stroke: currentColor;
   }
 
   &:hover {
@@ -146,7 +207,6 @@ $text-dark: #1d1d1f;
     transform: scale(0.9);
   }
 }
-
 .contactWrapper {
   position: relative;
 
