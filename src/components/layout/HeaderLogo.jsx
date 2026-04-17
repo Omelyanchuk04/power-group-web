@@ -8,15 +8,23 @@ export default function HeaderLogo({ closeMobileMenu }) {
   return (
     <div className={styles.logo}>
       <Link href="/" onClick={closeMobileMenu}>
-        {/* <img
+        <img
           src="/logo.svg"
           alt="ВІН ПАУЕР ГРУП логотип"
           width={200}
           height={43}
           className={styles.logoDesktop}
-        /> */}
+        />
 
-        <svg
+        <img
+          src="/logo-icon.svg"
+          alt="ВІН ПАУЕР ГРУП логотип"
+          width={32}
+          height={32}
+          className={styles.logoMobile}
+        />
+
+        {/* <svg
           width={32}
           height={32}
           viewBox="0 0 220 251"
@@ -3336,7 +3344,7 @@ export default function HeaderLogo({ closeMobileMenu }) {
             <path d="M125.26 0H124.48V218.03H125.26V0Z" fill="#1ABAFF" />
             <path d="M201.18 0H125.27V218.03H201.18V0Z" fill="#1ABAFF" />
           </g>
-        </svg>
+        </svg> */}
       </Link>
     </div>
   );
