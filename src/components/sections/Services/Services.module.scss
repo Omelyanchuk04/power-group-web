@@ -16,12 +16,22 @@ $border-color: #e2e8f0;
   overflow: hidden;
   color: #0f172a;
   display: flex;
-  align-items: center; // 🔥 Ідеально центрує трек по вертикалі
+  align-items: center;
   justify-content: flex-start;
+  // Запобігаємо системному баунсу (bounce) на iOS
+  overscroll-behavior-y: none;
 
-  &::before {
+  &::before,
+  &::after {
     content: "";
     position: absolute;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+    will-change: transform; // Оптимізація для анімацій
+  }
+
+  &::before {
     top: -10%;
     left: -10%;
     width: 70vw;
@@ -32,14 +42,10 @@ $border-color: #e2e8f0;
       transparent 60%
     );
     filter: blur(120px);
-    z-index: 0;
-    pointer-events: none;
     animation: floatGlow 15s infinite alternate ease-in-out;
   }
 
   &::after {
-    content: "";
-    position: absolute;
     bottom: -20%;
     right: -10%;
     width: 60vw;
@@ -50,8 +56,6 @@ $border-color: #e2e8f0;
       transparent 60%
     );
     filter: blur(120px);
-    z-index: 0;
-    pointer-events: none;
     animation: floatGlowReverse 12s infinite alternate ease-in-out;
   }
 }
@@ -79,7 +83,7 @@ $border-color: #e2e8f0;
 // ==========================================
 .staticHeader {
   position: absolute;
-  top: clamp(40px, 8vh, 100px); // 🔥 Безпечний адаптивний відступ зверху
+  top: clamp(40px, 8vh, 100px);
   left: 0;
   width: 100%;
   text-align: center;
@@ -137,18 +141,17 @@ $border-color: #e2e8f0;
     display: none;
   }
   z-index: 5;
-  margin-top: clamp(
-    10px,
-    4vh,
-    40px
-  ); // 🔥 Легке зміщення центру вниз (прибрали величезний марджин)
+  margin-top: clamp(10px, 4vh, 40px);
+
+  // 🔥 ВАЖЛИВО ДЛЯ МОБІЛОК: запобігає конфліктам зі свайпами назад/вперед браузера
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
 .spacer,
 .spacerEnd {
-  width: calc(
-    50vw - 364px
-  ); // Ідеальний відступ: (Екран / 2) - (Картка / 2) - Margin
+  width: calc(50vw - 364px);
   height: 100%;
   flex-shrink: 0;
   scroll-snap-align: none;
@@ -156,14 +159,13 @@ $border-color: #e2e8f0;
 
 .servicePanel {
   width: 680px;
-  height: clamp(
-    400px,
-    55vh,
-    480px
-  ); // 🔥 Картка сама підлаштує висоту під екран, не наїжджаючи на текст і кнопки
+  height: clamp(400px, 55vh, 480px);
   margin: 0 24px;
   flex-shrink: 0;
   scroll-snap-align: center;
+
+  // Додаткова оптимізація рендерингу для GSAP
+  will-change: transform;
 }
 
 .cardInner {
@@ -183,12 +185,18 @@ $border-color: #e2e8f0;
   opacity: 0.6;
   transform-origin: center center;
   will-change: transform, opacity;
-  transition: box-shadow 0.3s ease;
+  // На мобільних hover все одно не працює, тому transition тут краще не використовувати,
+  // щоб не перевантажувати GPU при GSAP scrub
+}
 
-  &:hover {
-    box-shadow:
-      0 20px 45px rgba(0, 0, 0, 0.15),
-      0 8px 20px rgba(0, 0, 0, 0.1);
+@media (hover: hover) and (pointer: fine) {
+  .cardInner {
+    transition: box-shadow 0.3s ease;
+    &:hover {
+      box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.15),
+        0 8px 20px rgba(0, 0, 0, 0.1);
+    }
   }
 }
 
@@ -211,7 +219,7 @@ $border-color: #e2e8f0;
 .cardContent {
   position: relative;
   z-index: 2;
-  padding: 36px; // Трохи зменшені відступи
+  padding: 36px;
   color: #ffffff;
 }
 
@@ -245,7 +253,7 @@ $border-color: #e2e8f0;
 // ==========================================
 .navControls {
   position: absolute;
-  bottom: clamp(60px, 10vh, 90px); // 🔥 Безпечний відступ знизу
+  bottom: clamp(60px, 10vh, 90px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -266,6 +274,8 @@ $border-color: #e2e8f0;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  // Прибираємо синій підсвіт при тапі на мобільних
+  -webkit-tap-highlight-color: transparent;
 
   svg {
     width: 24px;
@@ -273,12 +283,14 @@ $border-color: #e2e8f0;
     transition: transform 0.3s ease;
   }
 
-  &:hover {
-    background: $primary;
-    border-color: $primary;
-    color: #ffffff;
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 86, 179, 0.3);
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: $primary;
+      border-color: $primary;
+      color: #ffffff;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 86, 179, 0.3);
+    }
   }
   &:active {
     transform: translateY(0);
@@ -352,7 +364,7 @@ $border-color: #e2e8f0;
   .spacer,
   .spacerEnd {
     width: calc(50vw - 320px);
-  } // (600/2) + 20
+  }
   .cardTitle {
     font-size: 28px;
   }
@@ -370,10 +382,18 @@ $border-color: #e2e8f0;
   .spacer,
   .spacerEnd {
     width: calc(50vw - 246px);
-  } // (460/2) + 16
+  }
 }
 
 @media (max-width: 768px) {
+  .servicesSection {
+    // 🔥 ВИМИКАЄМО ВАЖКІ ФОНОВІ ЕФЕКТИ НА МОБІЛЬНИХ ДЛЯ ПЛАВНОСТІ
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+
   .staticHeader {
     top: 60px;
   }
@@ -397,7 +417,12 @@ $border-color: #e2e8f0;
   .spacer,
   .spacerEnd {
     width: calc(50vw - 182px);
-  } // (340/2) + 12
+  }
+
+  .cardInner {
+    // 🔥 Прибираємо важкі тіні для GSAP під час скролу на мобілці
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
 
   .cardContent {
     padding: 24px;
@@ -442,7 +467,7 @@ $border-color: #e2e8f0;
   .spacer,
   .spacerEnd {
     width: calc(50vw - 148px);
-  } // (280/2) + 8
+  }
 
   .cardContent {
     padding: 20px;

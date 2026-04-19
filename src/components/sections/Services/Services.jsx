@@ -15,6 +15,7 @@ export default function Services() {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
   const autoScrollTimer = useRef(null);
+  const isUserInteracting = useRef(false);
 
   const services = [
     {
@@ -58,9 +59,12 @@ export default function Services() {
   const resetAutoScroll = () => {
     if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
 
+    // Збільшуємо паузу, якщо користувач щойно взаємодіяв (щоб не виривало з-під пальців)
+    const timeout = isUserInteracting.current ? 8000 : 5000;
+
     autoScrollTimer.current = setInterval(() => {
       handleScroll("next", true);
-    }, 5000);
+    }, timeout);
   };
 
   useEffect(() => {
@@ -68,7 +72,7 @@ export default function Services() {
       const track = trackRef.current;
       const panels = gsap.utils.toArray(`.${styles.servicePanel}`);
 
-      // 🔥 Анімація появи секції при скролі сторінки вниз (залишається)
+      // Анімація появи секції
       gsap.from(
         [
           `.${styles.staticHeader}`,
@@ -90,18 +94,18 @@ export default function Services() {
         },
       );
 
-      // 🔥 Анімація карток: тепер прив'язана до ГОРИЗОНТАЛЬНОГО скролу самого треку
+      // Анімація карток при горизонтальному скролі
       panels.forEach((panel) => {
         const inner = panel.querySelector(`.${styles.cardInner}`);
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: panel,
-            scroller: track, // Тригером є прокрутка контейнера, а не вікна
-            horizontal: true, // Вказуємо, що скрол горизонтальний
+            scroller: track,
+            horizontal: true,
             start: "left 85%",
             end: "right 15%",
-            scrub: true,
+            scrub: 0.5, // 🔥 0.5 замість true! Це дає м'яке згладжування і прибирає лаги на телефонах
           },
         });
 
@@ -118,7 +122,7 @@ export default function Services() {
         });
       });
 
-      // 🔥 Анімація прогрес-бару, прив'язана до скролу треку
+      // Анімація прогрес-бару
       gsap.to(`.${styles.progressBarFill}`, {
         width: "100%",
         ease: "none",
@@ -128,27 +132,50 @@ export default function Services() {
           horizontal: true,
           start: "left left",
           end: () => `+=${track.scrollWidth - track.clientWidth}`,
-          scrub: true,
+          scrub: 0.1, // Легке згладжування для прогресу
         },
       });
     }, wrapperRef);
 
     resetAutoScroll();
 
-    // Скидання автоскролу при будь-якій взаємодії зі слайдером
+    // Оптимізовані обробники подій
     const track = trackRef.current;
-    const handleUserInteraction = () => resetAutoScroll();
+
+    const handleTouchStart = () => {
+      isUserInteracting.current = true;
+      if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
+    };
+
+    const handleTouchEnd = () => {
+      resetAutoScroll();
+      // Даємо час на завершення інерційного скролу
+      setTimeout(() => {
+        isUserInteracting.current = false;
+      }, 1000);
+    };
+
+    const handleWheel = () => {
+      isUserInteracting.current = true;
+      resetAutoScroll();
+      clearTimeout(track.wheelTimeout);
+      track.wheelTimeout = setTimeout(() => {
+        isUserInteracting.current = false;
+      }, 1000);
+    };
 
     if (track) {
-      track.addEventListener("scroll", handleUserInteraction);
-      track.addEventListener("touchstart", handleUserInteraction);
+      track.addEventListener("touchstart", handleTouchStart, { passive: true });
+      track.addEventListener("touchend", handleTouchEnd, { passive: true });
+      track.addEventListener("wheel", handleWheel, { passive: true });
     }
 
     return () => {
       if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
       if (track) {
-        track.removeEventListener("scroll", handleUserInteraction);
-        track.removeEventListener("touchstart", handleUserInteraction);
+        track.removeEventListener("touchstart", handleTouchStart);
+        track.removeEventListener("touchend", handleTouchEnd);
+        track.removeEventListener("wheel", handleWheel);
       }
       ctx.revert();
     };
@@ -173,7 +200,6 @@ export default function Services() {
         ? currentScroll + cardStep
         : currentScroll - cardStep;
 
-    // Якщо це автоскрол і ми дійшли до кінця - повертаємось на початок
     if (isAuto && currentScroll >= maxScroll - 10) {
       targetScroll = 0;
     }
@@ -183,7 +209,13 @@ export default function Services() {
       behavior: "smooth",
     });
 
-    if (!isAuto) resetAutoScroll();
+    if (!isAuto) {
+      isUserInteracting.current = true;
+      resetAutoScroll();
+      setTimeout(() => {
+        isUserInteracting.current = false;
+      }, 1000);
+    }
   };
 
   return (
@@ -206,6 +238,7 @@ export default function Services() {
                   fill
                   className={styles.bgImage}
                   sizes="(max-width: 1024px) 100vw, 800px"
+                  priority={index < 2} // Завантажуємо перші дві картинки одразу
                 />
                 <div className={styles.gradientOverlay}></div>
 
