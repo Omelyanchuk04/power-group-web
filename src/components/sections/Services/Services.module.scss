@@ -13,13 +13,13 @@ $border-color: #e2e8f0;
   background-color: #f9f9f9;
   height: 100vh;
   min-height: 600px;
-  overflow: hidden;
+  overflow: hidden; // Лише ховає сяючі плями, щоб не було зайвого скролу сторінки вбік
   color: #0f172a;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  // Запобігаємо системному баунсу (bounce) на iOS
-  overscroll-behavior-y: none;
+
+  // 🔥 Видалено overscroll-behavior-y: none, який блокував сторінку!
 
   &::before,
   &::after {
@@ -28,7 +28,7 @@ $border-color: #e2e8f0;
     border-radius: 50%;
     z-index: 0;
     pointer-events: none;
-    will-change: transform; // Оптимізація для анімацій
+    will-change: transform;
   }
 
   &::before {
@@ -142,11 +142,9 @@ $border-color: #e2e8f0;
   }
   z-index: 5;
   margin-top: clamp(10px, 4vh, 40px);
-
-  // 🔥 ВАЖЛИВО ДЛЯ МОБІЛОК: запобігає конфліктам зі свайпами назад/вперед браузера
-  overscroll-behavior-x: contain;
-  touch-action: pan-x pan-y;
   -webkit-overflow-scrolling: touch;
+
+  // 🔥 Видалено touch-action та overscroll-x, тепер браузер сам все ідеально рахує
 }
 
 .spacer,
@@ -163,8 +161,6 @@ $border-color: #e2e8f0;
   margin: 0 24px;
   flex-shrink: 0;
   scroll-snap-align: center;
-
-  // Додаткова оптимізація рендерингу для GSAP
   will-change: transform;
 }
 
@@ -185,8 +181,6 @@ $border-color: #e2e8f0;
   opacity: 0.6;
   transform-origin: center center;
   will-change: transform, opacity;
-  // На мобільних hover все одно не працює, тому transition тут краще не використовувати,
-  // щоб не перевантажувати GPU при GSAP scrub
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -274,7 +268,6 @@ $border-color: #e2e8f0;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-  // Прибираємо синій підсвіт при тапі на мобільних
   -webkit-tap-highlight-color: transparent;
 
   svg {
@@ -387,7 +380,6 @@ $border-color: #e2e8f0;
 
 @media (max-width: 768px) {
   .servicesSection {
-    // 🔥 ВИМИКАЄМО ВАЖКІ ФОНОВІ ЕФЕКТИ НА МОБІЛЬНИХ ДЛЯ ПЛАВНОСТІ
     &::before,
     &::after {
       display: none;
@@ -420,7 +412,6 @@ $border-color: #e2e8f0;
   }
 
   .cardInner {
-    // 🔥 Прибираємо важкі тіні для GSAP під час скролу на мобілці
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
 
