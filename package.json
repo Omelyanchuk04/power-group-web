@@ -20,5 +20,11 @@
   "devDependencies": {
     "eslint": "^9",
     "eslint-config-next": "16.2.2"
-  }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "iOS >= 13",
+    "not dead"
+  ]
 }
