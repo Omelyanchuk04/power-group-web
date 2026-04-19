@@ -11,8 +11,8 @@ $border-color: #e2e8f0;
 .servicesSection {
   position: relative;
   background-color: #f9f9f9;
-  height: 100vh; // Фолбек для старих браузерів
-  height: 100svh; // 🔥 SVH (Small Viewport Height) - Жорстко фіксує висоту, ігноруючи ховання адресної строки
+  height: 100vh;
+  height: 100svh; // 🔥 SVH (Small Viewport Height) - Жорстко фіксує висоту
   min-height: 480px;
   overflow: hidden;
   color: #0f172a;
@@ -24,38 +24,40 @@ $border-color: #e2e8f0;
   &::after {
     content: "";
     position: absolute;
-    border-radius: 50%;
+    inset: -20%;
     z-index: 0;
     pointer-events: none;
     will-change: transform;
   }
 
+  // 🔥 МЕНШІ ПЛЯМИ
   &::before {
-    top: -10%;
-    left: -10%;
-    width: 70vw;
-    height: 70vw;
-    background: radial-gradient(
-      circle,
-      rgba(0, 86, 179, 0.12) 0%,
-      transparent 60%
-    );
-    filter: blur(120px);
-    animation: floatGlow 15s infinite alternate ease-in-out;
+    background:
+      // Сині плями тепер компактніші (закінчуються на 35% і 40% замість 45% і 50%)
+
+      radial-gradient(
+        circle at 15% 30%,
+        rgba(0, 86, 179, 0.2) 0%,
+        transparent 35%
+      ),
+      radial-gradient(
+        circle at 85% 80%,
+        rgba(0, 86, 179, 0.15) 0%,
+        transparent 40%
+      );
+    filter: blur(80px); // Менше розмиття
+    animation: floatGlow 20s infinite alternate ease-in-out;
   }
 
   &::after {
-    bottom: -20%;
-    right: -10%;
-    width: 60vw;
-    height: 60vw;
+    // Жовте сонце також більш акуратне
     background: radial-gradient(
-      circle,
-      rgba(255, 204, 0, 0.15) 0%,
-      transparent 60%
+      circle at 80% 15%,
+      rgba(255, 204, 0, 0.25) 0%,
+      transparent 35%
     );
-    filter: blur(120px);
-    animation: floatGlowReverse 12s infinite alternate ease-in-out;
+    filter: blur(80px);
+    animation: floatGlowReverse 16s infinite alternate ease-in-out;
   }
 }
 
@@ -64,7 +66,7 @@ $border-color: #e2e8f0;
     transform: translate(0, 0) scale(1);
   }
   100% {
-    transform: translate(5%, 10%) scale(1.1);
+    transform: translate(2%, 3%) scale(1.05);
   }
 }
 
@@ -73,7 +75,7 @@ $border-color: #e2e8f0;
     transform: translate(0, 0) scale(1);
   }
   100% {
-    transform: translate(-5%, -10%) scale(1.2);
+    transform: translate(-2%, -3%) scale(1.08);
   }
 }
 
@@ -263,27 +265,36 @@ $border-color: #e2e8f0;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  // Трохи прискорюємо анімацію
+  transition: all 0.2s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
   -webkit-tap-highlight-color: transparent;
 
   svg {
     width: 24px;
     height: 24px;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
   }
 
+  // 🔥 Ефект підняття вверх ТІЛЬКИ для мишки (десктопу)
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       background: $primary;
       border-color: $primary;
       color: #ffffff;
-      transform: translateY(-4px);
+      transform: translateY(-4px); // Піднімається лише коли водиш мишкою
       box-shadow: 0 12px 24px rgba(0, 86, 179, 0.3);
     }
   }
+
+  // 🔥 Фізичний ефект натискання (універсальний для всіх екранів, але на смартфонах працює ідеально)
   &:active {
-    transform: translateY(0);
+    transform: scale(
+      0.92
+    ) !important; // Кнопка "провалюється" замість того, щоб стрибати вверх
+    background: #eef2f6; // Легке посіріння при натисканні
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.1s ease; // Швидке спрацьовування
   }
 }
 
@@ -377,9 +388,28 @@ $border-color: #e2e8f0;
 
 @media (max-width: 768px) {
   .servicesSection {
-    &::before,
+    // 🔥 На мобільних робимо плями ще менш агресивними
+    &::before {
+      background:
+        radial-gradient(
+          circle at 20% 20%,
+          rgba(0, 86, 179, 0.2) 0%,
+          transparent 45%
+        ),
+        radial-gradient(
+          circle at 80% 85%,
+          rgba(0, 86, 179, 0.15) 0%,
+          transparent 45%
+        );
+      filter: blur(60px);
+    }
     &::after {
-      display: none;
+      background: radial-gradient(
+        circle at 85% 15%,
+        rgba(255, 204, 0, 0.2) 0%,
+        transparent 40%
+      );
+      filter: blur(60px);
     }
   }
 
@@ -412,7 +442,6 @@ $border-color: #e2e8f0;
   .cardInner {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
-
   .cardContent {
     padding: 24px;
   }
@@ -442,11 +471,10 @@ $border-color: #e2e8f0;
 }
 
 // 🔥 ФІКС ДЛЯ МАЛЕНЬКИХ ЕКРАНІВ (iPhone 6/7/8/SE)
-// Жодних vh для позиціонування, щоб нічого не стрибало!
 @media (max-width: 480px) {
   .staticHeader {
     top: 30px;
-  } // Залізно фіксовано
+  }
   .title {
     font-size: 24px;
     margin-top: 4px;
@@ -459,7 +487,6 @@ $border-color: #e2e8f0;
   .servicePanel {
     width: 280px;
     margin: 0 8px;
-    // 🔥 Вираховуємо висоту стабільно: 100svh мінус 240px на шапку і кнопки
     height: calc(100svh - 240px);
     min-height: 320px;
     max-height: 480px;
@@ -483,7 +510,7 @@ $border-color: #e2e8f0;
   .navControls {
     bottom: 65px;
     gap: 12px;
-  } // Залізно фіксовано
+  }
   .navBtn {
     width: 44px;
     height: 44px;
@@ -492,7 +519,7 @@ $border-color: #e2e8f0;
   .progressContainer {
     bottom: 15px;
     padding: 0 15px 20px;
-  } // Залізно фіксовано
+  }
   .progressIcon {
     right: -6px;
   }
