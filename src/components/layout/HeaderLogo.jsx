@@ -17,7 +17,7 @@ export default function HeaderLogo({ closeMobileMenu }) {
         />
 
         <img
-          src="/logo-icon.svg"
+          src="/Logo-icon.svg"
           alt="ВІН ПАУЕР ГРУП логотип"
           width={32}
           height={32}
