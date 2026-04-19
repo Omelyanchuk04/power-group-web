@@ -13,7 +13,7 @@ $border-color: #e2e8f0;
   background-color: #f9f9f9;
   height: 100vh;
   height: 100dvh;
-  min-height: 500px;
+  min-height: 480px; // Знизив мінімальну висоту ще більше для iPhone SE
   overflow: hidden;
   color: #0f172a;
   display: flex;
@@ -441,64 +441,55 @@ $border-color: #e2e8f0;
   }
 }
 
-// 🔥 ОНОВЛЕНІ НАЛАШТУВАННЯ ДЛЯ СМАРТФОНІВ (Зменшено пустоти)
+// 🔥 ФІКС ДЛЯ МАЛЕНЬКИХ ЕКРАНІВ (iPhone 6/7/8/SE)
 @media (max-width: 480px) {
-  .servicesSection {
-    min-height: 550px;
-  }
-
-  // 1. Опускаємо шапку ближче до карток
   .staticHeader {
-    top: clamp(50px, 8vh, 70px);
-  }
+    top: clamp(20px, 5vh, 50px);
+  } // Сильно знижений мінімум, підніметься вище на малих екранах
   .title {
-    font-size: 26px;
+    font-size: clamp(22px, 6vw, 26px);
     margin-top: 4px;
-  }
+  } // Текст може стати трішки меншим
 
   .horizontalTrack {
-    margin-top: 0;
-  }
+    margin-top: 2vh;
+  } // Легке центрування
 
-  // 2. Робимо картку трохи ширшою і значно вищою
   .servicePanel {
-    width: 300px;
-    margin: 0 10px;
-    height: clamp(
-      400px,
-      62vh,
-      520px
-    ); // Тепер картка буде займати більше висоти екрану
+    width: 280px; // Трохи вужча, щоб не впиратися в краї
+    margin: 0 8px;
+    // 🔥 ГОЛОВНЕ: мінімальна висота знижена до 320px! На iPhone 11 вона витягнеться до 490px через 55vh, а на iPhone 6 буде акуратні 360px.
+    height: clamp(320px, 55vh, 500px);
   }
-  // Перерахований відступ, щоб картка 300px + 10px margin ідеально ставала по центру
+  // Перерахований відступ під 280px ширини
   .spacer,
   .spacerEnd {
-    width: calc(50vw - 160px);
+    width: calc(50vw - 148px);
   }
 
   .cardContent {
-    padding: 24px;
+    padding: 20px;
   }
   .cardTitle {
-    font-size: 22px;
+    font-size: 20px;
   }
   .cardDesc {
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.4;
   }
 
-  // 3. Піднімаємо кнопки ближче до карток
+  // Кнопки опустяться нижче, звільняючи місце
   .navControls {
-    bottom: clamp(75px, 12vh, 90px);
-    gap: 16px;
+    bottom: clamp(50px, 10vh, 85px);
+    gap: 12px;
   }
   .navBtn {
-    width: 48px;
-    height: 48px;
-  }
+    width: 44px;
+    height: 44px;
+  } // Самі кнопки трохи менші
 
   .progressContainer {
-    bottom: 20px;
+    bottom: 15px;
     padding: 0 15px;
   }
   .progressIcon {
