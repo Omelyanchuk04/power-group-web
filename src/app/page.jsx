@@ -8,7 +8,7 @@ export default function Home() {
       <HeroVideo />
       <About />
       <Services />
-      {/* <Projects /> */}
+      <Projects />
     </>
   );
 }
