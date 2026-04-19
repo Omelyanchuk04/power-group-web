@@ -12,7 +12,7 @@ $border-color: #e2e8f0;
   position: relative;
   background-color: #f9f9f9;
   height: 100vh;
-  height: 100svh; // 🔥 SVH (Small Viewport Height) - Жорстко фіксує висоту
+  height: 100svh;
   min-height: 480px;
   overflow: hidden;
   color: #0f172a;
@@ -27,14 +27,11 @@ $border-color: #e2e8f0;
     inset: -20%;
     z-index: 0;
     pointer-events: none;
-    will-change: transform;
+    // 🔥 Прибрали will-change з фону, бо він з'їдав пам'ять на смартфонах
   }
 
-  // 🔥 МЕНШІ ПЛЯМИ
   &::before {
     background:
-      // Сині плями тепер компактніші (закінчуються на 35% і 40% замість 45% і 50%)
-
       radial-gradient(
         circle at 15% 30%,
         rgba(0, 86, 179, 0.2) 0%,
@@ -45,12 +42,11 @@ $border-color: #e2e8f0;
         rgba(0, 86, 179, 0.15) 0%,
         transparent 40%
       );
-    filter: blur(80px); // Менше розмиття
+    filter: blur(80px);
     animation: floatGlow 20s infinite alternate ease-in-out;
   }
 
   &::after {
-    // Жовте сонце також більш акуратне
     background: radial-gradient(
       circle at 80% 15%,
       rgba(255, 204, 0, 0.25) 0%,
@@ -265,7 +261,6 @@ $border-color: #e2e8f0;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  // Трохи прискорюємо анімацію
   transition: all 0.2s ease;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
   -webkit-tap-highlight-color: transparent;
@@ -276,24 +271,21 @@ $border-color: #e2e8f0;
     transition: transform 0.2s ease;
   }
 
-  // 🔥 Ефект підняття вверх ТІЛЬКИ для мишки (десктопу)
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       background: $primary;
       border-color: $primary;
       color: #ffffff;
+      transform: translateY(-4px);
       box-shadow: 0 12px 24px rgba(0, 86, 179, 0.3);
     }
   }
 
-  // 🔥 Фізичний ефект натискання (універсальний для всіх екранів, але на смартфонах працює ідеально)
   &:active {
-    transform: scale(
-      0.92
-    ) !important; // Кнопка "провалюється" замість того, щоб стрибати вверх
-    background: #eef2f6; // Легке посіріння при натисканні
+    transform: scale(0.92) !important;
+    background: #eef2f6;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: all 0.1s ease; // Швидке спрацьовування
+    transition: all 0.1s ease;
   }
 }
 
@@ -387,28 +379,28 @@ $border-color: #e2e8f0;
 
 @media (max-width: 768px) {
   .servicesSection {
-    // 🔥 На мобільних робимо плями ще менш агресивними
     &::before {
+      // 🔥 ІМІТАЦІЯ БЛЮРУ: використовуємо дуже м'який перехід до transparent
       background:
         radial-gradient(
           circle at 20% 20%,
-          rgba(0, 86, 179, 0.2) 0%,
-          transparent 45%
+          rgba(0, 86, 179, 0.15) 0%,
+          rgba(0, 86, 179, 0) 60%
         ),
         radial-gradient(
           circle at 80% 85%,
-          rgba(0, 86, 179, 0.15) 0%,
-          transparent 45%
+          rgba(0, 86, 179, 0.12) 0%,
+          rgba(0, 86, 179, 0) 60%
         );
-      filter: blur(60px);
+      filter: none; // 🔥 ВБИВАЄМО ЛАГИ!
     }
     &::after {
       background: radial-gradient(
         circle at 85% 15%,
-        rgba(255, 204, 0, 0.2) 0%,
-        transparent 40%
+        rgba(255, 204, 0, 0.15) 0%,
+        rgba(255, 204, 0, 0) 60%
       );
-      filter: blur(60px);
+      filter: none; // 🔥 ВБИВАЄМО ЛАГИ!
     }
   }
 
@@ -469,7 +461,6 @@ $border-color: #e2e8f0;
   }
 }
 
-// 🔥 ФІКС ДЛЯ МАЛЕНЬКИХ ЕКРАНІВ (iPhone 6/7/8/SE)
 @media (max-width: 480px) {
   .staticHeader {
     top: 30px;
