@@ -133,7 +133,7 @@ $text-dark: #1d1d1f;
   border: none;
   cursor: pointer;
   transition: color 0.3s ease;
-  z-index: 1;
+  z-index: 20;
 
   svg {
     width: 20px;
@@ -229,6 +229,7 @@ $text-dark: #1d1d1f;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
   transform: translateY(15px);
@@ -242,6 +243,7 @@ $text-dark: #1d1d1f;
   z-index: 0;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(24px) saturate(150%);
+  border-radius: inherit;
 }
 
 .dropdownContent {
@@ -306,6 +308,7 @@ $text-dark: #1d1d1f;
   border-radius: 50%;
   transition: all 0.2s ease;
   text-decoration: none;
+  z-index: 20;
 
   svg {
     width: 22px;
@@ -323,6 +326,132 @@ $text-dark: #1d1d1f;
   }
 }
 
+/* ==========================================
+   ВІДРЕСТАВРОВАНИЙ БЛОК ПОШУКУ
+   ========================================== */
+.searchContainer {
+  position: absolute;
+  inset: 0; /* Розтягуємо рівно на всі 100% батька (.header__container) */
+  z-index: 200; /* ГАРАНТОВАНО вище за бургер (102) та іконки */
+  background: rgba(255, 255, 255, 0.9); /* Світліший фон для читабельності */
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+  border-radius: inherit; /* 🔥 Беремо 100px від головного хедера */
+
+  display: flex;
+  align-items: center;
+  padding: 0 14px 0 20px;
+  gap: 12px;
+
+  /* Анімація появи (виїжджає знизу вгору з прозорості) */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.searchOpen {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.searchIconInside {
+  width: 20px;
+  height: 20px;
+  color: $text-dark;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex-grow: 1;
+  height: 100%;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: $text-dark;
+  outline: none;
+  min-width: 0; /* Важливо для мобайлу, щоб інпут не розривав контейнер */
+
+  &::placeholder {
+    color: rgba($text-dark, 0.4);
+  }
+}
+
+.searchSubmitBtn {
+  background: $primary-blue;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: color.adjust($primary-blue, $lightness: -5%);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.searchCloseBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  color: $text-dark;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #ff3b30; /* Робимо хрестик червоним при наведенні */
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+/* Адаптив під смартфони */
+@media (max-width: 1024px) {
+  .searchContainer {
+    padding: 0 8px 0 16px;
+    gap: 8px;
+  }
+  .searchInput {
+    font-size: 15px; /* Трохи менший текст, щоб не зумило iOS */
+  }
+  .searchSubmitBtn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .searchCloseBtn {
+    width: 36px;
+    height: 36px;
+    background: transparent; /* На мобільному можна без сірого кружечка */
+  }
+}
 /* ==========================================
    ПРОМІЖНИЙ АДАПТИВ (1025px - 1200px)
    ========================================== */

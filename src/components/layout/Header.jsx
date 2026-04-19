@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./Header.module.scss";
 import HeaderLogo from "./HeaderLogo";
 
@@ -16,6 +16,8 @@ export default function Header() {
   });
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     // Якщо меню закрите — нічого не робимо
@@ -38,6 +40,13 @@ export default function Header() {
       window.scrollTo(0, scrollY);
     };
   }, [isMobileMenuOpen]);
+
+  // Фокус на інпуті при відкритті пошуку
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
 
   const navList = [
     { name: "ПОСЛУГИ", link: "/services" },
@@ -69,7 +78,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.header__container}>
-        {/* БУРГЕР-МЕНЮ (Зліва на мобільному) */}
+        {/* БУРГЕР-МЕНЮ */}
         <button
           className={`${styles.burgerBtn} ${isMobileMenuOpen ? styles.burgerOpen : ""}`}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -79,7 +88,7 @@ export default function Header() {
           <span className={styles.burgerLine}></span>
         </button>
 
-        {/* ЛОГОТИП (На десктопі зліва, на мобільному по центру) */}
+        {/* ЛОГОТИП */}
         <HeaderLogo closeMobileMenu={closeMobileMenu} />
 
         {/* НАВІГАЦІЯ ДЛЯ ДЕСКТОПУ */}
@@ -109,9 +118,13 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* КОНТРОЛИ ДЛЯ ДЕСКТОПУ (Лупа + Зворотний зв'язок) */}
+        {/* КОНТРОЛИ ДЛЯ ДЕСКТОПУ */}
         <div className={styles.desktopControls}>
-          <button className={styles.desktopSearchBtn} aria-label="Пошук">
+          <button
+            className={styles.desktopSearchBtn}
+            aria-label="Відкрити пошук"
+            onClick={() => setIsSearchOpen(true)}
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -130,6 +143,7 @@ export default function Header() {
             <div className={styles.contactDropdown}>
               <div className={styles.dropdownGlass}></div>
               <div className={styles.dropdownContent}>
+                {/* ... Твої посилання на телефон і пошту ... */}
                 <a href="tel:+380670000000" className={styles.dropdownLink}>
                   <svg
                     viewBox="0 0 24 24"
@@ -165,7 +179,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* КОНТРОЛИ ДЛЯ МОБІЛЬНОГО (Справа: Телефон + Лупа) */}
+        {/* КОНТРОЛИ ДЛЯ МОБІЛЬНОГО */}
         <div className={styles.mobileControls}>
           <a
             href="tel:+380670000000"
@@ -184,7 +198,11 @@ export default function Header() {
             </svg>
           </a>
 
-          <button className={styles.actionIconBtn} aria-label="Пошук">
+          <button
+            className={styles.actionIconBtn}
+            aria-label="Відкрити пошук"
+            onClick={() => setIsSearchOpen(true)}
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -198,9 +216,57 @@ export default function Header() {
             </svg>
           </button>
         </div>
+
+        {/* 🔥 ВІДРЕСТАВРОВАНИЙ БЛОК ПОШУКУ 🔥 */}
+        <div
+          className={`${styles.searchContainer} ${isSearchOpen ? styles.searchOpen : ""}`}
+        >
+          <svg
+            className={styles.searchIconInside}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+
+          <input
+            type="text"
+            placeholder="Шукати на сайті..."
+            className={styles.searchInput}
+            ref={searchInputRef}
+          />
+
+          <button className={styles.searchSubmitBtn} aria-label="Знайти">
+            Пошук
+          </button>
+
+          <button
+            className={styles.searchCloseBtn}
+            aria-label="Закрити пошук"
+            onClick={() => setIsSearchOpen(false)}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      {/* МОБІЛЬНЕ МЕНЮ (Оверлей) */}
+      {/* МОБІЛЬНЕ МЕНЮ */}
+      {/* ... Твій код мобільного меню залишається без змін ... */}
       <div
         className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.mobileMenuOverlayOpen : ""}`}
       >
@@ -218,7 +284,6 @@ export default function Header() {
               </Link>
             ))}
           </nav>
-
           <div className={styles.mobileContacts}>
             <a href="tel:+380670000000">
               <span>+38 067 000 00 00</span>
