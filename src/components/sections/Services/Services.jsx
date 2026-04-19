@@ -222,7 +222,7 @@ export default function Services() {
     <div ref={wrapperRef}>
       <section className={styles.servicesSection} ref={sectionRef}>
         <div className={styles.staticHeader}>
-          <span className={styles.badge}>Напрямки діяльності</span>
+          <span className={styles.badge}>Послуги</span>
           <h2 className={styles.title}>Що ми пропонуємо</h2>
         </div>
 
