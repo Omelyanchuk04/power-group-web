@@ -622,6 +622,7 @@ $border-color: #e2e8f0;
   }
 
   .targetCard {
+    pointer-events: none;
     height: 280px;
     padding: 24px;
     .cardContent {
@@ -663,6 +664,7 @@ $border-color: #e2e8f0;
 
     // Вкладаємо картку всередину сітки, щоб збільшити вагу (пріоритет) правила
     .statCard {
+      pointer-events: none;
       height: 180px;
       padding: 16px 12px;
 
