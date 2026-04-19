@@ -228,7 +228,7 @@ $border-color: #e2e8f0;
 }
 
 .offerWrapper {
-  margin-bottom: 80px;
+  //margin-bottom: 80px;
 }
 
 .offerHeader {
@@ -374,9 +374,9 @@ $border-color: #e2e8f0;
 
 .transitionBlock {
   max-width: 800px;
-  margin: 0 auto 80px;
+  margin: 0 auto;
   text-align: center;
-  padding: 0 20px;
+  padding: 80px 20px;
 
   h3 {
     font-size: 28px;
@@ -537,10 +537,6 @@ $border-color: #e2e8f0;
     height: 320px;
   }
 
-  .transitionBlock {
-    margin-bottom: 60px;
-  }
-
   .statsWrapper {
     padding: 30px;
   }
@@ -617,12 +613,12 @@ $border-color: #e2e8f0;
   .sectionHeader {
     margin-bottom: 50px;
     h2 {
-      font-size: 28px;
+      font-size: 24px;
     }
   }
 
   .offerHeader h3 {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   .targetCard {
@@ -639,7 +635,7 @@ $border-color: #e2e8f0;
   }
 
   .transitionBlock {
-    margin-bottom: 50px;
+    padding: 50px 0 50px;
     h3 {
       font-size: 22px;
     }
@@ -649,37 +645,41 @@ $border-color: #e2e8f0;
   }
 
   .statsWrapper {
-    padding: 30px 16px 16px; // Зменшили бокові відступи, щоб дати більше місця сітці
+    padding: 30px 16px 16px;
     border-radius: 32px;
   }
 
   .statsHeader {
-    gap: 12px; // Трохи посунули лінію до тексту
+    gap: 12px;
     h3 {
-      font-size: 18px; // Зменшили заголовок
-      white-space: normal; // ДОЗВОЛЯЄМО ПЕРЕНОС ТЕКСТУ, щоб не розривало екран
+      font-size: 18px;
+      white-space: normal;
     }
   }
 
+  /* 🔥 ФІКС СПЕЦИФІЧНОСТІ БЕЗ !important 🔥 */
   .statsGrid {
-    gap: 12px; // Зменшили відступи між самими картками
-  }
+    gap: 12px;
 
-  .statCard {
-    height: 180px; // Зробили картки нижчими
-    padding: 16px 12px; // 🔥 ГОЛОВНИЙ ФІКС: Зменшили відступи всередині, щоб вліз текст
-  }
+    // Вкладаємо картку всередину сітки, щоб збільшити вагу (пріоритет) правила
+    .statCard {
+      height: 180px;
+      padding: 16px 12px;
 
-  .statNum {
-    font-size: 32px; // 🔥 Зменшили цифри
-    margin-bottom: 4px;
-    letter-spacing: -1px;
-  }
+      // Тепер браузер бачить це як: .statsGrid .statCard .statNum
+      .statNum {
+        font-size: 32px;
+        margin-bottom: 4px;
+        letter-spacing: -1px;
+      }
 
-  .statLabel {
-    font-size: 11px; // 🔥 Зменшили шрифт підписів
-    letter-spacing: 0.5px;
-    line-height: 1.3;
-    word-break: break-word; // Запобігає наїзду довгих слів на краї картки
+      // Тепер браузер бачить це як: .statsGrid .statCard .statLabel
+      .statLabel {
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        line-height: 1.3;
+        word-break: break-word;
+      }
+    }
   }
 }
