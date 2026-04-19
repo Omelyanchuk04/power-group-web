@@ -59,10 +59,7 @@ export default function Services() {
     if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
 
     autoScrollTimer.current = setInterval(() => {
-      const st = ScrollTrigger.getById("servicesTrack");
-      if (st && st.isActive) {
-        handleScroll("next", true);
-      }
+      handleScroll("next", true);
     }, 5000);
   };
 
@@ -70,9 +67,8 @@ export default function Services() {
     let ctx = gsap.context(() => {
       const track = trackRef.current;
       const panels = gsap.utils.toArray(`.${styles.servicePanel}`);
-      const getScrollAmount = () => track.scrollWidth - window.innerWidth;
 
-      // 🔥 ОНОВЛЕНА АНІМАЦІЯ ПОЯВИ
+      // 🔥 Анімація появи секції при скролі сторінки вниз (залишається)
       gsap.from(
         [
           `.${styles.staticHeader}`,
@@ -81,41 +77,30 @@ export default function Services() {
           `.${styles.progressContainer}`,
         ],
         {
-          y: 80, // Більший зсув для відчутності
+          y: 80,
           opacity: 0,
-          duration: 1.2, // Трохи довший ефект
+          duration: 1.2,
           stagger: 0.15,
           ease: "power3.out",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 50%", // 🔥 Спрацює ТІЛЬКИ коли секція дійде до середини екрану
+            start: "top 70%",
             toggleActions: "play none none none",
           },
         },
       );
 
-      const scrollTween = gsap.to(track, {
-        x: () => -getScrollAmount(),
-        ease: "none",
-        scrollTrigger: {
-          id: "servicesTrack",
-          trigger: sectionRef.current,
-          pin: true,
-          scrub: 1,
-          end: () => `+=${getScrollAmount()}`,
-          invalidateOnRefresh: true,
-        },
-      });
-
+      // 🔥 Анімація карток: тепер прив'язана до ГОРИЗОНТАЛЬНОГО скролу самого треку
       panels.forEach((panel) => {
         const inner = panel.querySelector(`.${styles.cardInner}`);
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: panel,
-            containerAnimation: scrollTween,
-            start: "center 85%",
-            end: "center 15%",
+            scroller: track, // Тригером є прокрутка контейнера, а не вікна
+            horizontal: true, // Вказуємо, що скрол горизонтальний
+            start: "left 85%",
+            end: "right 15%",
             scrub: true,
           },
         });
@@ -133,65 +118,68 @@ export default function Services() {
         });
       });
 
-      gsap.fromTo(
-        `.${styles.progressBarFill}`,
-        { width: "0%" },
-        {
-          width: "100%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            scrub: 1,
-            start: "top top",
-            end: () => `+=${getScrollAmount()}`,
-          },
+      // 🔥 Анімація прогрес-бару, прив'язана до скролу треку
+      gsap.to(`.${styles.progressBarFill}`, {
+        width: "100%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: track,
+          scroller: track,
+          horizontal: true,
+          start: "left left",
+          end: () => `+=${track.scrollWidth - track.clientWidth}`,
+          scrub: true,
         },
-      );
+      });
     }, wrapperRef);
 
     resetAutoScroll();
 
+    // Скидання автоскролу при будь-якій взаємодії зі слайдером
+    const track = trackRef.current;
     const handleUserInteraction = () => resetAutoScroll();
-    window.addEventListener("wheel", handleUserInteraction);
-    window.addEventListener("touchstart", handleUserInteraction);
+
+    if (track) {
+      track.addEventListener("scroll", handleUserInteraction);
+      track.addEventListener("touchstart", handleUserInteraction);
+    }
 
     return () => {
       if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
-      window.removeEventListener("wheel", handleUserInteraction);
-      window.removeEventListener("touchstart", handleUserInteraction);
+      if (track) {
+        track.removeEventListener("scroll", handleUserInteraction);
+        track.removeEventListener("touchstart", handleUserInteraction);
+      }
       ctx.revert();
     };
   }, []);
 
   const handleScroll = (direction, isAuto = false) => {
-    const st = ScrollTrigger.getById("servicesTrack");
-    if (!st || !trackRef.current) return;
+    if (!trackRef.current) return;
+    const track = trackRef.current;
 
-    const panel = trackRef.current.querySelector(`.${styles.servicePanel}`);
+    const panel = track.querySelector(`.${styles.servicePanel}`);
     if (!panel) return;
 
     const style = window.getComputedStyle(panel);
     const margin = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
     const cardStep = panel.offsetWidth + margin;
 
-    const sectionTop = st.start;
-    const currentScrollInSection = window.scrollY - sectionTop;
+    const currentScroll = track.scrollLeft;
+    const maxScroll = track.scrollWidth - track.clientWidth;
 
-    let currentIndex = Math.round(currentScrollInSection / cardStep);
-    let targetIndex =
-      direction === "next" ? currentIndex + 1 : currentIndex - 1;
+    let targetScroll =
+      direction === "next"
+        ? currentScroll + cardStep
+        : currentScroll - cardStep;
 
-    if (isAuto && targetIndex >= services.length) {
-      targetIndex = 0;
-    } else {
-      if (targetIndex < 0) targetIndex = 0;
-      if (targetIndex >= services.length) targetIndex = services.length - 1;
+    // Якщо це автоскрол і ми дійшли до кінця - повертаємось на початок
+    if (isAuto && currentScroll >= maxScroll - 10) {
+      targetScroll = 0;
     }
 
-    const targetScrollY = sectionTop + targetIndex * cardStep;
-
-    window.scrollTo({
-      top: targetScrollY,
+    track.scrollTo({
+      left: targetScroll,
       behavior: "smooth",
     });
 
