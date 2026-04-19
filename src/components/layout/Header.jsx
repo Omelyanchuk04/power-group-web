@@ -18,18 +18,24 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      // Блокуємо скрол для body та html (цього достатньо!)
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
+    // Якщо меню закрите — нічого не робимо
+    if (!isMobileMenuOpen) return;
 
+    // 1. Запам'ятовуємо, де саме користувач зупинився
+    const scrollY = window.scrollY;
+
+    // 2. Жорстко фіксуємо сторінку на цьому ж місці
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+
+    // 3. Функція очищення (спрацює, коли меню закриється)
     return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      // Повертаємо користувача точно туди, де він був
+      window.scrollTo(0, scrollY);
     };
   }, [isMobileMenuOpen]);
 
