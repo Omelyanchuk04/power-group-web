@@ -11,9 +11,9 @@ $border-color: #e2e8f0;
 .servicesSection {
   position: relative;
   background-color: #f9f9f9;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 480px; // Знизив мінімальну висоту ще більше для iPhone SE
+  height: 100vh; // Фолбек для старих браузерів
+  height: 100svh; // 🔥 SVH (Small Viewport Height) - Жорстко фіксує висоту, ігноруючи ховання адресної строки
+  min-height: 480px;
   overflow: hidden;
   color: #0f172a;
   display: flex;
@@ -442,26 +442,28 @@ $border-color: #e2e8f0;
 }
 
 // 🔥 ФІКС ДЛЯ МАЛЕНЬКИХ ЕКРАНІВ (iPhone 6/7/8/SE)
+// Жодних vh для позиціонування, щоб нічого не стрибало!
 @media (max-width: 480px) {
   .staticHeader {
-    top: clamp(20px, 5vh, 50px);
-  } // Сильно знижений мінімум, підніметься вище на малих екранах
+    top: 30px;
+  } // Залізно фіксовано
   .title {
-    font-size: clamp(22px, 6vw, 26px);
+    font-size: 24px;
     margin-top: 4px;
-  } // Текст може стати трішки меншим
+  }
 
   .horizontalTrack {
-    margin-top: 2vh;
-  } // Легке центрування
+    margin-top: 0;
+  }
 
   .servicePanel {
-    width: 280px; // Трохи вужча, щоб не впиратися в краї
+    width: 280px;
     margin: 0 8px;
-    // 🔥 ГОЛОВНЕ: мінімальна висота знижена до 320px! На iPhone 11 вона витягнеться до 490px через 55vh, а на iPhone 6 буде акуратні 360px.
-    height: clamp(320px, 55vh, 500px);
+    // 🔥 Вираховуємо висоту стабільно: 100svh мінус 240px на шапку і кнопки
+    height: calc(100svh - 240px);
+    min-height: 320px;
+    max-height: 480px;
   }
-  // Перерахований відступ під 280px ширини
   .spacer,
   .spacerEnd {
     width: calc(50vw - 148px);
@@ -478,20 +480,19 @@ $border-color: #e2e8f0;
     line-height: 1.4;
   }
 
-  // Кнопки опустяться нижче, звільняючи місце
   .navControls {
-    bottom: clamp(50px, 10vh, 85px);
+    bottom: 65px;
     gap: 12px;
-  }
+  } // Залізно фіксовано
   .navBtn {
     width: 44px;
     height: 44px;
-  } // Самі кнопки трохи менші
+  }
 
   .progressContainer {
     bottom: 15px;
     padding: 0 15px;
-  }
+  } // Залізно фіксовано
   .progressIcon {
     width: 28px;
     height: 28px;
