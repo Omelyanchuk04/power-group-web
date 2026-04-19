@@ -19,21 +19,17 @@ export default function Header() {
 
   useEffect(() => {
     if (isMobileMenuOpen) {
-      // Блокуємо скрол для body та html
+      // Блокуємо скрол для body та html (цього достатньо!)
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
-      // Забороняємо браузеру реагувати на свайпи по фону
-      document.body.style.touchAction = "none";
     } else {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
-      document.body.style.touchAction = "";
     }
 
     return () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
-      document.body.style.touchAction = "";
     };
   }, [isMobileMenuOpen]);
 
