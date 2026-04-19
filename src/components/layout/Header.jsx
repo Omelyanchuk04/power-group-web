@@ -138,7 +138,10 @@ export default function Header() {
             </svg>
           </button>
 
-          <div className={styles.contactWrapper}>
+          <div
+            className={styles.contactWrapper}
+            style={{ pointerEvents: isSearchOpen ? "none" : "auto" }}
+          >
             <button className={styles.contactBtn}>Зворотний зв'язок</button>
             <div className={styles.contactDropdown}>
               <div className={styles.dropdownGlass}></div>
