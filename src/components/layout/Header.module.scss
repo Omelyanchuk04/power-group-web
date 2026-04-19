@@ -52,11 +52,7 @@ $text-dark: #1d1d1f;
   flex-shrink: 0;
   z-index: 2;
 
-  /* Видаляємо всі transform: translateZ(0) та will-change для img та svg! */
-  img,
-  svg {
-    display: block; // За бажанням, для скидання відступів
-  }
+  /* Більше нічого не потрібно, ніяких img чи svg тут! */
 }
 .logoDesktop {
   display: block;
