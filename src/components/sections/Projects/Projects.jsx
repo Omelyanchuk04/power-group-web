@@ -3,7 +3,12 @@
 import { useEffect, useRef } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 import styles from "./Projects.module.scss";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const TIMELINE_PROJECTS = [
   {
@@ -132,10 +137,28 @@ export default function Projects() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      gsap.fromTo(
-        containerRef.current,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+      // Оновлений масив елементів для анімації (відповідно до нової структури)
+      gsap.from(
+        [
+          `.${styles.badge}`,
+          `.${styles.title}`,
+          `.${styles.subtitle}`,
+          `.${styles.headerBottom}`,
+          `.${styles.sliderContainer}`,
+          `.${styles.progressContainer}`,
+        ],
+        {
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 75%",
+            toggleActions: "play none none none",
+          },
+          y: 60,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.15,
+          ease: "power3.out",
+        },
       );
     }, containerRef);
 
@@ -222,78 +245,75 @@ export default function Projects() {
       <div className={styles.blob5}></div>
 
       <div className={styles.container}>
-        {/* 🔥 ОНОВЛЕНА СТРУКТУРА ШАПКИ 🔥 */}
+        {/* 🔥 ОНОВЛЕНА ШАПКА ВІДПОВІДНО ДО СКРІНШОТІВ 🔥 */}
         <div className={styles.header}>
-          <div className={styles.badgeWrapper}>
+          {/* Верхній блок: Бейдж, Заголовок, Підзаголовок (Все по центру) */}
+          <div className={styles.headerTop}>
             <span className={styles.badge}>Досвід</span>
+            <h2 className={styles.title}>Реалізовані проєкти</h2>
+            <p className={styles.subtitle}>
+              Переглядайте наші об'єкти за допомогою стрілок або свайпу
+            </p>
           </div>
 
-          <div className={styles.headerContent}>
-            <div className={styles.headerLeft}>
-              <h2 className={styles.title}>Реалізовані проєкти</h2>
-              <p className={styles.subtitle}>
-                Переглядайте наші об'єкти за допомогою стрілок або свайпу
-              </p>
-            </div>
+          {/* Нижній блок: Кнопка зліва, стрілки справа */}
+          <div className={styles.headerBottom}>
+            <button className={styles.viewAllBtn}>
+              Всі проєкти
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ marginLeft: "8px" }}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
 
-            <div className={styles.headerRight}>
-              <button className={styles.viewAllBtn}>
-                Всі проєкти
+            <div className={styles.controls}>
+              <button
+                ref={prevBtnRef}
+                className={styles.controlBtn}
+                onClick={() => scrollByAmount("prev")}
+                aria-label="Попередній"
+              >
                 <svg
-                  width="18"
-                  height="18"
+                  width="24"
+                  height="24"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ marginLeft: "8px" }}
                 >
-                  <path d="M5 12h14M12 5l7 7-7 7" />
+                  <path d="M15 18l-6-6 6-6" />
                 </svg>
               </button>
-
-              <div className={styles.controls}>
-                <button
-                  ref={prevBtnRef}
-                  className={styles.controlBtn}
-                  onClick={() => scrollByAmount("prev")}
-                  aria-label="Попередній"
+              <button
+                ref={nextBtnRef}
+                className={styles.controlBtn}
+                onClick={() => scrollByAmount("next")}
+                aria-label="Наступний"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
-                </button>
-                <button
-                  ref={nextBtnRef}
-                  className={styles.controlBtn}
-                  onClick={() => scrollByAmount("next")}
-                  aria-label="Наступний"
-                >
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </button>
-              </div>
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>

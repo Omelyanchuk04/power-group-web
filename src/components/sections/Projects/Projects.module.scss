@@ -137,18 +137,20 @@ $white: #ffffff;
   z-index: 2;
 }
 
-// 🔥 ОНОВЛЕНИЙ HEADER З БЕЙДЖЕМ ПО ЦЕНТРУ 🔥
+// 🔥 ОНОВЛЕНИЙ HEADER З ЦЕНТРАЛЬНИМ ТЕКСТОМ І КНОПКАМИ ПО КРАЯХ 🔥
 .header {
   padding: 0 5vw;
   margin-bottom: 50px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 40px; // Відстань між текстом і кнопками
 }
 
-.badgeWrapper {
+.headerTop {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center; // Центруємо все всередині
+  text-align: center;
   width: 100%;
 }
 
@@ -164,46 +166,31 @@ $white: #ffffff;
   letter-spacing: 1px;
   padding: 8px 20px;
   border-radius: 100px;
-}
-
-.headerContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-}
-
-.headerLeft {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  max-width: 800px;
+  margin-bottom: 24px;
 }
 
 .title {
-  align-self: flex-start;
   font-size: 56px;
   font-weight: 800;
   color: $text-dark;
   letter-spacing: -2px;
-  margin: 0 0 10px 0;
+  margin: 0 0 16px 0;
 }
 
 .subtitle {
-  align-self: flex-start;
-  text-align: left;
   font-size: 18px;
   color: $text-gray;
   margin: 0;
   font-weight: 500;
+  text-align: left;
 }
 
-.headerRight {
+// Рядок з кнопками (Всі проєкти зліва, Стрілки справа)
+.headerBottom {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 30px;
-  padding-bottom: 5px;
+  width: 100%;
 }
 
 .viewAllBtn {
@@ -291,7 +278,6 @@ $white: #ffffff;
   }
 }
 
-// 🔥 ІДЕАЛЬНО ВИРАХУВАНИЙ НАТИВНИЙ СКРОЛ 🔥
 .sliderContainer {
   width: 100vw;
   overflow-x: auto;
@@ -314,7 +300,6 @@ $white: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  // Завжди центруємо картку в межах екрану
   scroll-snap-align: center;
   scroll-snap-stop: normal;
 }
@@ -474,7 +459,13 @@ $white: #ffffff;
     height: 320px;
   }
   .title {
+    align-self: flex-start;
     font-size: 42px;
+  }
+
+  .subtitle {
+    align-self: flex-start;
+    font-size: 18px;
   }
   .cardTitle {
     font-size: 20px;
@@ -533,34 +524,24 @@ $white: #ffffff;
     }
   }
 
-  .headerContent {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
+  .header {
+    gap: 30px;
   }
 
-  .headerRight {
-    width: 100%;
-    justify-content: space-between;
-    padding-bottom: 0;
+  .title {
+    font-size: 32px;
   }
 
   .viewAllBtn {
     padding: 12px 20px;
     font-size: 14px;
   }
-  .title {
-    font-size: 32px;
-  }
 
   .sliderTrack {
     gap: 16px;
-    // 🔥 РІВНО ТАК ЖЕ: 50vw мінус половина картки на мобільному (85vw / 2 = 42.5vw)
-    // 50vw - 42.5vw = 7.5vw. Це гарантує ідеальне центрування без ривків!
     padding: 10px 7.5vw 30px 7.5vw;
   }
 
-  // Переконуємось, що тут теж стоїть center
   .projectCardWrapper {
     scroll-snap-align: center;
   }
