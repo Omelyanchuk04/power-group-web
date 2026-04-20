@@ -10,31 +10,30 @@ $viber-color: #7360f2;
 
 .contactTrigger {
   position: relative;
-  z-index: 50;
+  z-index: 20;
+  // 🔥 ПОВЕРНУТО: забезпечує фізичне перекриття
+  margin-top: -200px;
 }
 
 .parallaxWrapper {
   position: relative;
   width: 100%;
   overflow: hidden;
-  background-color: #010409;
-  border-radius: 40px 40px 0 0;
-  padding: 50px 0 100px 0;
-  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.4);
-}
 
-.bgImage {
-  position: absolute;
-  top: -15%;
-  left: 0;
-  width: 100%;
-  height: 130%;
+  // 🔥 ПОВЕРНУТО ФОН: Безпосередньо в контейнері, як у твоєму оригіналі
+  background-color: #010409;
   background-image: url("/images/background-img.jpg");
   background-size: cover;
   background-position: center;
-  z-index: 0;
-  pointer-events: none;
+
+  border-radius: 40px 40px 0 0;
+  padding: 140px 0 100px 0;
+
+  // 🔥 ОПТИМІЗАЦІЯ АНМАЦІЇ: Прискорення ТІЛЬКИ на цьому контейнері
+  will-change: transform;
   transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .backgroundOverlay {
@@ -67,8 +66,8 @@ $viber-color: #7360f2;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 100px;
   color: $dodgerblue;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
@@ -212,6 +211,11 @@ $viber-color: #7360f2;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+
+  // 🔥 ГОЛОВНИЙ ФІКС ЛАГІВ:
+  // Я видалив звідси will-change та transform: translateZ.
+  // Вони конфліктували з анімацією батьківського контейнера і вбивали FPS.
+
   padding: 50px;
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 1);
@@ -247,7 +251,7 @@ $viber-color: #7360f2;
     background: transparent !important;
     border: none;
     padding: 10px 0;
-    font-size: 16px; // 🔥 Важливо для мобайлу (щоб iOS не зумив при фокусі)
+    font-size: 16px; // Відключає авто-зум на iPhone
     color: $dark;
     font-family: inherit;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
@@ -255,7 +259,7 @@ $viber-color: #7360f2;
     outline: none !important;
     box-shadow: none !important;
     resize: none;
-    border-radius: 0; // Скидання заокруглень iOS
+    border-radius: 0;
 
     &:-webkit-autofill,
     &:-webkit-autofill:hover,
@@ -339,8 +343,12 @@ $viber-color: #7360f2;
   }
 }
 
-// 🔥 ОПТИМІЗАЦІЯ ДЛЯ ПЛАНШЕТІВ ТА МОБІЛОК 🔥
+// 🔥 МОБІЛЬНА АДАПТАЦІЯ 🔥
 @media (max-width: 1024px) {
+  .contactTrigger {
+    // На планшетах і мобільних відключаємо перекриття, щоб форма не налізла на контент
+    margin-top: 0;
+  }
   .splitLayout {
     grid-template-columns: 1fr;
     gap: 50px;
@@ -359,7 +367,6 @@ $viber-color: #7360f2;
     padding: 0;
   }
 
-  // Заголовок і підзаголовок по центру
   .title,
   .subtitle {
     text-align: center;
@@ -370,7 +377,6 @@ $viber-color: #7360f2;
     font-size: 38px;
   }
 
-  // Контакти залишаємо з вирівнюванням по лівому краю, але центруємо сам блок
   .contactList {
     width: 100%;
     max-width: 360px;
@@ -378,7 +384,7 @@ $viber-color: #7360f2;
   }
 
   .contactRow {
-    flex-direction: row; // Іконка зліва, текст справа - це легко читати
+    flex-direction: row;
     align-items: flex-start;
   }
   .textWrapper {
@@ -397,7 +403,7 @@ $viber-color: #7360f2;
     margin: 40px auto 0;
     justify-content: center;
     a {
-      flex: 1; // Розтягуємо кнопки рівномірно
+      flex: 1;
     }
   }
 
@@ -412,7 +418,6 @@ $viber-color: #7360f2;
 @media (max-width: 768px) {
   .parallaxWrapper {
     padding: 80px 0 60px 0;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
   }
   .centeredBadge {
     margin-bottom: 30px;
@@ -429,7 +434,7 @@ $viber-color: #7360f2;
   .modernForm {
     padding: 30px 24px;
     border-radius: 20px;
-    // 🔥 Менший блюр для ідеального FPS на старих Android
+    // На слабких мобілках зменшений блюр для стабільних 60 FPS
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 
@@ -439,7 +444,7 @@ $viber-color: #7360f2;
     }
   }
 
-  // 🔥 На мобільному поля "Ім'я" та "Телефон" стають одне під одним
+  // Поля введення стають одне під одним
   .row {
     display: flex;
     flex-direction: column;

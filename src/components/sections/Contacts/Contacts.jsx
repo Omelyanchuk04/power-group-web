@@ -11,40 +11,30 @@ if (typeof window !== "undefined") {
 
 export default function Contact() {
   const sectionTriggerRef = useRef(null);
-  const bgRef = useRef(null);
+  const parallaxWrapperRef = useRef(null);
   const formRef = useRef(null);
   const infoRef = useRef(null);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      const prevSection = sectionTriggerRef.current?.previousElementSibling;
-      if (prevSection) {
-        ScrollTrigger.create({
-          trigger: sectionTriggerRef.current,
-          start: "top bottom",
-          end: "bottom bottom",
-          pin: prevSection,
-          pinSpacing: false,
-          invalidateOnRefresh: true, // 🔥 Перераховує координати при зміні висоти екрана (ховання URL-панелі на мобільному)
-        });
-      }
-
+      // 🔥 ПОВЕРНУТО: Твій оригінальний ефект наїзду (динамічне перекриття)
       gsap.fromTo(
-        bgRef.current,
-        { y: "-10%" },
+        parallaxWrapperRef.current,
+        { y: 200 }, // Спочатку секція опущена (ховає margin-top)
         {
-          y: "10%",
+          y: 0, // Підтягується вгору, створюючи ефект наїзду на попередню секцію
           ease: "none",
           scrollTrigger: {
             trigger: sectionTriggerRef.current,
             start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-            invalidateOnRefresh: true,
+            end: "top 15%",
+            scrub: 0.4,
+            fastScrollEnd: true,
           },
         },
       );
 
+      // Анімація тексту
       gsap.fromTo(
         infoRef.current.children,
         { opacity: 0, x: -30 },
@@ -56,11 +46,12 @@ export default function Contact() {
           ease: "power2.out",
           scrollTrigger: {
             trigger: sectionTriggerRef.current,
-            start: "top 75%",
+            start: "top 60%",
           },
         },
       );
 
+      // Анімація форми
       gsap.fromTo(
         formRef.current,
         { opacity: 0, y: 30, scale: 0.98 },
@@ -72,10 +63,14 @@ export default function Contact() {
           ease: "power3.out",
           scrollTrigger: {
             trigger: sectionTriggerRef.current,
-            start: "top 75%",
+            start: "top 60%",
           },
         },
       );
+
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 150);
     }, sectionTriggerRef);
 
     return () => ctx.revert();
@@ -87,8 +82,7 @@ export default function Contact() {
       ref={sectionTriggerRef}
       id="contacts"
     >
-      <div className={styles.parallaxWrapper}>
-        <div className={styles.bgImage} ref={bgRef}></div>
+      <div className={styles.parallaxWrapper} ref={parallaxWrapperRef}>
         <div className={styles.backgroundOverlay}></div>
 
         <div className={styles.container}>
