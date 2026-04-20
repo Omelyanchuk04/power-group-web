@@ -127,7 +127,10 @@ export default function Projects() {
   const prevBtnRef = useRef(null);
   const nextBtnRef = useRef(null);
 
-  // Анімація появи секції
+  // Рефи для швидкої анімації кнопок
+  const targetIndexRef = useRef(0);
+  const tweenRef = useRef(null);
+
   useEffect(() => {
     let ctx = gsap.context(() => {
       gsap.fromTo(
@@ -137,13 +140,10 @@ export default function Projects() {
       );
     }, containerRef);
 
-    // Ініціалізуємо стан кнопок при завантаженні
-    handleScroll();
-
+    handleScroll(); // Ініціалізація прогрес-бару та кнопок
     return () => ctx.revert();
   }, []);
 
-  // ОПТИМІЗОВАНИЙ обробник скролу (без React setState)
   const handleScroll = () => {
     const slider = sliderRef.current;
     if (!slider) return;
@@ -151,7 +151,7 @@ export default function Projects() {
     const scrollLeft = slider.scrollLeft;
     const maxScroll = slider.scrollWidth - slider.clientWidth;
 
-    // Пряме оновлення DOM для кнопок (уникаємо перерендерів)
+    // Пряме оновлення кнопок (без лагів від React setState)
     if (prevBtnRef.current) {
       if (scrollLeft <= 0) prevBtnRef.current.classList.add(styles.disabled);
       else prevBtnRef.current.classList.remove(styles.disabled);
@@ -163,33 +163,58 @@ export default function Projects() {
       else nextBtnRef.current.classList.remove(styles.disabled);
     }
 
-    // Оновлення смужки прогресу
+    // Прогрес-бар
     const progress = maxScroll > 0 ? scrollLeft / maxScroll : 0;
     if (progressBarRef.current) {
       progressBarRef.current.style.transform = `scaleX(${progress})`;
     }
   };
 
-  // Прокрутка кнопками
+  // 🔥 Швидка та надійна прокрутка кнопками (GSAP)
   const scrollByAmount = (direction) => {
     const slider = sliderRef.current;
     if (!slider) return;
 
-    // Знаходимо ширину однієї картки + відступ
     const card = slider.querySelector(`.${styles.projectCardWrapper}`);
     if (!card) return;
 
-    const style = window.getComputedStyle(card);
     const gap =
       parseFloat(
         window.getComputedStyle(slider.querySelector(`.${styles.sliderTrack}`))
           .gap,
       ) || 40;
-    const scrollAmount = card.offsetWidth + gap;
+    const step = card.offsetWidth + gap;
+    const maxScroll = slider.scrollWidth - slider.clientWidth;
+    const maxIndex = Math.ceil(maxScroll / step);
 
-    slider.scrollBy({
-      left: direction === "next" ? scrollAmount : -scrollAmount,
-      behavior: "smooth",
+    // Якщо ми свайпали вручну, синхронізуємо індекс
+    if (!tweenRef.current?.isActive()) {
+      targetIndexRef.current = Math.round(slider.scrollLeft / step);
+    }
+
+    // Розрахунок наступного індексу (ідеально обробляє швидкі кліки)
+    if (direction === "next") {
+      targetIndexRef.current = Math.min(targetIndexRef.current + 1, maxIndex);
+    } else {
+      targetIndexRef.current = Math.max(targetIndexRef.current - 1, 0);
+    }
+
+    let targetX = targetIndexRef.current * step;
+    if (targetX > maxScroll) targetX = maxScroll;
+
+    // Тимчасово вимикаємо snap, щоб браузер не боровся з GSAP
+    slider.style.scrollSnapType = "none";
+
+    if (tweenRef.current) tweenRef.current.kill();
+
+    tweenRef.current = gsap.to(slider, {
+      scrollLeft: targetX,
+      duration: 0.35, // 🔥 Дуже швидка реакція
+      ease: "power2.out",
+      onComplete: () => {
+        slider.style.scrollSnapType = "x mandatory"; // Повертаємо snap для свайпів
+        handleScroll();
+      },
     });
   };
 
@@ -274,7 +299,6 @@ export default function Projects() {
           </div>
         </div>
 
-        {/* НАТИВНИЙ СКРОЛ КОНТЕЙНЕР */}
         <div
           className={styles.sliderContainer}
           ref={sliderRef}

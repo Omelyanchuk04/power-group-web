@@ -206,7 +206,6 @@ $white: #ffffff;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
 
-  // Hover тільки для мишки
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       background: $primary;
@@ -217,10 +216,10 @@ $white: #ffffff;
     }
   }
 
-  // Швидке натискання для мобайлу
   &:active {
     transform: scale(0.95);
     background: rgba(0, 86, 179, 0.1);
+    transition: transform 0.05s ease;
   }
 }
 
@@ -242,6 +241,7 @@ $white: #ffffff;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  // Швидша анімація для кращого відгуку
   transition:
     transform 0.15s ease,
     opacity 0.3s ease,
@@ -253,7 +253,6 @@ $white: #ffffff;
     transition: transform 0.2s ease;
   }
 
-  // Hover тільки для мишки
   @media (hover: hover) and (pointer: fine) {
     &:hover:not(.disabled) {
       background: $primary;
@@ -264,15 +263,11 @@ $white: #ffffff;
     }
   }
 
-  // Швидке натискання для мобайлу
+  // 🔥 Миттєвий і чіткий ефект натискання
   &:active:not(.disabled) {
     transform: scale(0.9);
-    background: rgba(
-      0,
-      86,
-      179,
-      0.1
-    ); // Легке затемнення, без синього залипання
+    background: rgba(0, 86, 179, 0.15);
+    transition: transform 0.05s ease; // Щоб відразу реагувало
   }
 
   &.disabled {
@@ -282,13 +277,13 @@ $white: #ffffff;
   }
 }
 
+// 🔥 НАТИВНИЙ СКРОЛ (без `scroll-behavior: smooth`, бо тепер це робить GSAP)
 .sliderContainer {
   width: 100vw;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -438,6 +433,7 @@ $white: #ffffff;
 
   &:active {
     transform: scale(0.95);
+    transition: transform 0.05s ease;
   }
 }
 
@@ -457,7 +453,7 @@ $white: #ffffff;
   background-color: $primary;
   transform-origin: left;
   transform: scaleX(0);
-  transition: transform 0.1s linear; // Робимо прогрес-бар плавнішим
+  transition: transform 0.1s linear;
   will-change: transform;
 }
 
