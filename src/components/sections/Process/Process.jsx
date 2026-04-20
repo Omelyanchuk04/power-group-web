@@ -7,7 +7,6 @@ import styles from "./Process.module.scss";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
-  // 🔥 ВИДАЛЕНО normalizeScroll! Тепер скрол на мобільних ідеальний, з рідною інерцією.
 }
 
 const PROCESS_STEPS = [
@@ -114,11 +113,9 @@ export default function Process() {
   const containerRef = useRef(null);
   const lineRef = useRef(null);
 
-  // 🔥 ВИДАЛЕНО слухач скролу (is-scrolling), який викликав жорсткі перемальовки і лаги сторінки.
-
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // 1. Анімація центральної лінії
+      // 1. Анімація центральної лінії (залишаємо scrub, щоб малювалася за скролом)
       gsap.fromTo(
         lineRef.current,
         { scaleY: 0 },
@@ -129,15 +126,13 @@ export default function Process() {
             trigger: containerRef.current,
             start: "top 50%",
             end: "bottom 80%",
-            scrub: 0.2, // Швидший відгук
+            scrub: 1, // М'якше згладжування лінії
           },
         },
       );
 
       // 2. Анімація карток і точок
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
-
-      // Перевіряємо, чи це мобільний телефон (спрощуємо анімацію для них)
       const isMobile = window.innerWidth <= 768;
 
       rows.forEach((row) => {
@@ -145,9 +140,8 @@ export default function Process() {
         const dot = row.querySelector(`.${styles.dot}`);
         const glow = row.querySelector(`.${styles.activeGlow}`);
 
-        // Для мобілок картки завжди їдуть зліва, для десктопу - з різних сторін
         const xOffset = isMobile
-          ? -20
+          ? -30
           : row.classList.contains(styles.left)
             ? -40
             : 40;
@@ -155,26 +149,35 @@ export default function Process() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: row,
-            start: "top 80%",
-            end: "top 50%",
-            scrub: 0.2,
+            start: "top 85%", // Спрацьовує трохи раніше
+            // 🔥 ГОЛОВНИЙ ФІКС: Відв'язуємо від пальця!
+            // play: при скролі вниз, reverse: при скролі вгору
+            toggleActions: "play none none reverse",
           },
         });
 
-        // Анімуємо точку
-        tl.to(dot, { backgroundColor: "#00d4ff", scale: 1.3 }, 0).to(
-          glow,
-          { opacity: 1, scale: 1 },
+        // Плавна, незалежна від швидкості скролу анімація
+        tl.to(
+          dot,
+          {
+            backgroundColor: "#00d4ff",
+            scale: 1.3,
+            duration: 0.4,
+            ease: "back.out(1.5)",
+          },
           0,
-        );
-
-        // Анімуємо картку (Оптимізовано: без тіней, тільки transform і opacity)
-        tl.fromTo(
-          card,
-          { opacity: 0, x: xOffset, scale: 0.95 },
-          { opacity: 1, x: 0, scale: 1, ease: "power1.out" },
-          0,
-        );
+        )
+          .to(
+            glow,
+            { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
+            0,
+          )
+          .fromTo(
+            card,
+            { opacity: 0, x: xOffset, scale: 0.95 },
+            { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: "power3.out" },
+            0.1, // Картка випливає на 0.1 сек пізніше за точку
+          );
       });
     }, containerRef);
 

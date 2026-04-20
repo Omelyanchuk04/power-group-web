@@ -25,7 +25,8 @@ $white: #ffffff;
     z-index: 0;
     pointer-events: none;
     opacity: 0.8;
-    transform: translateZ(0); // Апаратне прискорення
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   &::before {
@@ -53,6 +54,7 @@ $white: #ffffff;
   height: 25vw;
   background: rgba(255, 170, 0, 0.6);
   filter: blur(40px);
+  box-shadow: 0 0 120px rgba(255, 170, 0, 0.8);
   top: 40%;
   left: 20%;
   animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
@@ -204,6 +206,7 @@ $white: #ffffff;
   background: linear-gradient(to bottom, $primary, $cyan);
   border-radius: 2px;
   transform-origin: top;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
 }
 
 .stepsContainer {
@@ -249,7 +252,7 @@ $white: #ffffff;
   );
   opacity: 0;
   transform: scale(0.5);
-  transition: all 0.3s ease; // Пришвидшено
+  // 🔥 ВИДАЛЕНО transition: all 0.3s ease; Щоб не конфліктувати з GSAP!
 }
 
 .dot {
@@ -260,45 +263,46 @@ $white: #ffffff;
   border: 3px solid $light-bg;
   position: relative;
   z-index: 2;
-  transition: all 0.3s ease; // Пришвидшено
+  // 🔥 ВИДАЛЕНО transition: all 0.3s ease;
 }
 
 .card {
   width: 42%;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+
   border-radius: 30px;
   padding: 36px;
   position: relative;
   overflow: hidden;
+
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-bottom-color: rgba(255, 255, 255, 0.4);
   border-right-color: rgba(255, 255, 255, 0.4);
 
-  // 🔥 Апаратне прискорення (вбиває мікролаги при скролі)
-  transform: translateZ(0);
   will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 
   box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.04),
+    0 20px 40px rgba(0, 0, 0, 0.04),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
 
-  // Hover працює ТІЛЬКИ на десктопі
+  // 🔥 ГОЛОВНИЙ ФІКС: З транзицій прибрано transform! GSAP тепер працює без опору.
+  transition: box-shadow 0.4s ease;
+
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      transform: translateY(-5px) translateZ(0);
       box-shadow:
-        0 20px 40px rgba(0, 86, 179, 0.08),
+        0 30px 60px rgba(0, 86, 179, 0.08),
         inset 0 0 0 1px rgba(255, 255, 255, 1);
 
       .innerGlow {
         transform: translate(-20px, 20px) scale(1.2);
         opacity: 0.8;
       }
+
       .iconCircle {
         transform: scale(1.05) rotate(5deg);
         box-shadow: 0 15px 30px rgba(0, 212, 255, 0.4);
@@ -322,7 +326,7 @@ $white: #ffffff;
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
-  transition: all 0.4s ease;
+  transition: all 0.6s ease;
 }
 
 .stepDigit {
@@ -361,7 +365,7 @@ $white: #ffffff;
   justify-content: center;
   align-items: center;
   box-shadow: 0 10px 20px rgba(0, 86, 179, 0.2);
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   svg {
     width: 28px;
@@ -376,6 +380,7 @@ $white: #ffffff;
     color: $text-dark;
     margin: 0 0 10px;
     line-height: 1.3;
+    letter-spacing: -0.5px;
   }
   p {
     font-size: 15px;
@@ -425,7 +430,7 @@ $white: #ffffff;
   .processSection {
     padding: 80px 0;
 
-    // 🔥 Оптимізуємо плями для телефонів (спрощуємо градієнти, вимикаємо блюр)
+    // 🔥 Оптимізуємо плями для телефонів
     &::before {
       background: radial-gradient(
         circle,
@@ -476,7 +481,6 @@ $white: #ffffff;
   .timelineWrapper {
     padding: 0;
   }
-
   .mainLine {
     left: 24px;
     transform: none;
@@ -497,7 +501,7 @@ $white: #ffffff;
     .card {
       width: calc(100% - 64px);
       margin-left: 64px;
-      padding: 24px; // Трохи менші відступи на телефоні
+      padding: 28px;
     }
   }
 }
