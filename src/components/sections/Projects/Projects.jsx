@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
 import styles from "./Projects.module.scss";
@@ -124,8 +124,8 @@ export default function Projects() {
   const containerRef = useRef(null);
   const sliderRef = useRef(null);
   const progressBarRef = useRef(null);
-  const [isAtStart, setIsAtStart] = useState(true);
-  const [isAtEnd, setIsAtEnd] = useState(false);
+  const prevBtnRef = useRef(null);
+  const nextBtnRef = useRef(null);
 
   // Анімація появи секції
   useEffect(() => {
@@ -136,10 +136,14 @@ export default function Projects() {
         { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
       );
     }, containerRef);
+
+    // Ініціалізуємо стан кнопок при завантаженні
+    handleScroll();
+
     return () => ctx.revert();
   }, []);
 
-  // Оновлення прогрес-бару при нативному скролі
+  // ОПТИМІЗОВАНИЙ обробник скролу (без React setState)
   const handleScroll = () => {
     const slider = sliderRef.current;
     if (!slider) return;
@@ -147,17 +151,23 @@ export default function Projects() {
     const scrollLeft = slider.scrollLeft;
     const maxScroll = slider.scrollWidth - slider.clientWidth;
 
-    // Оновлюємо стан кнопок
-    setIsAtStart(scrollLeft <= 0);
-    setIsAtEnd(scrollLeft >= maxScroll - 10);
+    // Пряме оновлення DOM для кнопок (уникаємо перерендерів)
+    if (prevBtnRef.current) {
+      if (scrollLeft <= 0) prevBtnRef.current.classList.add(styles.disabled);
+      else prevBtnRef.current.classList.remove(styles.disabled);
+    }
 
-    // Оновлюємо смужку прогресу
+    if (nextBtnRef.current) {
+      if (scrollLeft >= maxScroll - 10)
+        nextBtnRef.current.classList.add(styles.disabled);
+      else nextBtnRef.current.classList.remove(styles.disabled);
+    }
+
+    // Оновлення смужки прогресу
     const progress = maxScroll > 0 ? scrollLeft / maxScroll : 0;
-    gsap.to(progressBarRef.current, {
-      scaleX: progress,
-      duration: 0.1,
-      ease: "none",
-    });
+    if (progressBarRef.current) {
+      progressBarRef.current.style.transform = `scaleX(${progress})`;
+    }
   };
 
   // Прокрутка кнопками
@@ -194,7 +204,6 @@ export default function Projects() {
       <div className={styles.blob5}></div>
 
       <div className={styles.container}>
-        {/* 🔥 ВИРІВНЯНИЙ HEADER 🔥 */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <span className={styles.badge}>Досвід</span>
@@ -224,7 +233,8 @@ export default function Projects() {
 
             <div className={styles.controls}>
               <button
-                className={`${styles.controlBtn} ${isAtStart ? styles.disabled : ""}`}
+                ref={prevBtnRef}
+                className={styles.controlBtn}
                 onClick={() => scrollByAmount("prev")}
                 aria-label="Попередній"
               >
@@ -242,7 +252,8 @@ export default function Projects() {
                 </svg>
               </button>
               <button
-                className={`${styles.controlBtn} ${isAtEnd ? styles.disabled : ""}`}
+                ref={nextBtnRef}
+                className={styles.controlBtn}
                 onClick={() => scrollByAmount("next")}
                 aria-label="Наступний"
               >
@@ -263,7 +274,7 @@ export default function Projects() {
           </div>
         </div>
 
-        {/* 🔥 НАТИВНИЙ СКРОЛ КОНТЕЙНЕР 🔥 */}
+        {/* НАТИВНИЙ СКРОЛ КОНТЕЙНЕР */}
         <div
           className={styles.sliderContainer}
           ref={sliderRef}
@@ -313,7 +324,6 @@ export default function Projects() {
                 </div>
               );
             })}
-            {/* Додаємо порожній блок в кінці, щоб остання картка не прилипала до краю екрану */}
             <div className={styles.spacerEnd}></div>
           </div>
         </div>
