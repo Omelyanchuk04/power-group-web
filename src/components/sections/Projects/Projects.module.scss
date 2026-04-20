@@ -169,6 +169,7 @@ $white: #ffffff;
 }
 
 .title {
+  align-self: flex-start;
   font-size: 56px;
   font-weight: 800;
   color: $text-dark;
@@ -177,6 +178,8 @@ $white: #ffffff;
 }
 
 .subtitle {
+  align-self: flex-start;
+  text-align: left;
   font-size: 18px;
   color: $text-gray;
   margin: 0;
@@ -275,7 +278,6 @@ $white: #ffffff;
   }
 }
 
-// 🔥 ІДЕАЛЬНО ВИРАХУВАНИЙ НАТИВНИЙ СКРОЛ 🔥
 .sliderContainer {
   width: 100vw;
   overflow-x: auto;
@@ -290,13 +292,10 @@ $white: #ffffff;
 .sliderTrack {
   display: flex;
   gap: 40px;
-  // 🔥 ВАЖЛИВО: Відступ = 50% екрану мінус половина картки (580px / 2 = 290px).
-  // Це гарантує ідеальне центрування першої і останньої картки без "ривків"!
   padding: 20px calc(50vw - 290px) 40px calc(50vw - 290px);
   width: max-content;
 }
 
-// Додатковий пустий блок більше не потрібен, CSS робить відступи ідеально.
 .spacerEnd {
   display: none;
 }
@@ -305,8 +304,8 @@ $white: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  scroll-snap-align: center; // Магнітить ідеально по центру
-  scroll-snap-stop: normal; // 🔥 Дозволяє швидким свайпом перелітати через кілька карток без гальмування
+  scroll-snap-align: center;
+  scroll-snap-stop: normal;
 }
 
 .yearLabel {
@@ -471,7 +470,6 @@ $white: #ffffff;
   }
 
   .sliderTrack {
-    // 500px / 2 = 250px
     padding: 20px calc(50vw - 250px) 40px calc(50vw - 250px);
   }
 }
@@ -482,7 +480,6 @@ $white: #ffffff;
   }
 
   .projectsSection {
-    // Імітація блюру для плавності
     &::before {
       background: radial-gradient(
         circle,
@@ -529,8 +526,15 @@ $white: #ffffff;
     padding: 0 20px;
     margin-bottom: 30px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center; // 🔥 ЦЕНТРУВАННЯ НА МОБІЛЬНОМУ
     gap: 24px;
+  }
+
+  // 🔥 ЦЕНТРУЄМО ТЕКСТ ТА БЕЙДЖ 🔥
+  .headerLeft {
+    align-items: center;
+    text-align: center;
+    width: 100%;
   }
 
   .headerRight {
@@ -549,15 +553,18 @@ $white: #ffffff;
 
   .sliderTrack {
     gap: 16px;
-    // 🔥 Картка на мобайлі 85vw. Половина це 42.5vw.
-    // 50vw - 42.5vw = 7.5vw. Рівно такий відступ дасть ідеальне центрування!
     padding: 10px 7.5vw 30px 7.5vw;
+  }
+
+  .projectCardWrapper {
+    scroll-snap-align: start;
   }
 
   .projectCard {
     width: 85vw;
     flex-direction: column;
     height: auto;
+    pointer-events: none; // 🔥 РОБИТЬ КАРТКИ НЕКЛІКАБЕЛЬНИМИ НА МОБІЛЬНОМУ 🔥
   }
 
   .imagePanel {
