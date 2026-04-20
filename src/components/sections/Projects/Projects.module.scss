@@ -210,7 +210,7 @@ $white: #ffffff;
     background: $primary;
     color: $white;
     border-color: $primary;
-    transform: translateY(-2px);
+    //transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
   }
   &:active {
@@ -243,7 +243,7 @@ $white: #ffffff;
     background: $primary;
     color: $white;
     border-color: $primary;
-    transform: translateY(-2px);
+    //transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
   }
 
@@ -449,12 +449,46 @@ $white: #ffffff;
   }
 
   .projectsSection {
-    // 🔥 Оптимізуємо плями для мобільних
-    &::before,
-    &::after,
-    .blob3,
-    .blob4,
+    // 🔥 Оптимізуємо плями для мобільних (вимикаємо блюр, щоб не лагало)
+    // Замість блюру використовуємо м'які градієнти
+    &::before {
+      background: radial-gradient(
+        circle,
+        rgba(0, 86, 179, 0.15) 0%,
+        rgba(0, 86, 179, 0) 60%
+      );
+      filter: none;
+    }
+    &::after {
+      background: radial-gradient(
+        circle,
+        rgba(0, 163, 255, 0.12) 0%,
+        rgba(0, 163, 255, 0) 60%
+      );
+      filter: none;
+    }
+    .blob3 {
+      background: radial-gradient(
+        circle,
+        rgba(255, 170, 0, 0.1) 0%,
+        rgba(255, 170, 0, 0) 60%
+      );
+      filter: none;
+    }
+    .blob4 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 212, 255, 0.1) 0%,
+        rgba(0, 212, 255, 0) 60%
+      );
+      filter: none;
+    }
     .blob5 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 86, 179, 0.1) 0%,
+        rgba(0, 86, 179, 0) 60%
+      );
       filter: none;
     }
   }
