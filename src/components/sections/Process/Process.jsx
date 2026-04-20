@@ -5,14 +5,9 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import styles from "./Process.module.scss";
 
-// 🔥 ОПТИМІЗАЦІЯ 1: Перехоплення нативного скролу (лікує ривки трекпада Mac)
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.normalizeScroll({
-    allowNestedScroll: true,
-    lockAxis: false,
-    momentum: (self) => Math.min(self, 2), // Зменшуємо інерцію
-  });
+  // 🔥 ВИДАЛЕНО normalizeScroll! Тепер скрол на мобільних ідеальний, з рідною інерцією.
 }
 
 const PROCESS_STEPS = [
@@ -119,31 +114,11 @@ export default function Process() {
   const containerRef = useRef(null);
   const lineRef = useRef(null);
 
-  // 🔥 ОПТИМІЗАЦІЯ 2: Вимикаємо hover-ефекти під час скролу для розвантаження CPU
-  useEffect(() => {
-    let scrollTimeout;
-
-    const handleScroll = () => {
-      if (!document.body.classList.contains("is-scrolling")) {
-        document.body.classList.add("is-scrolling");
-      }
-
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        document.body.classList.remove("is-scrolling");
-      }, 150);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearTimeout(scrollTimeout);
-    };
-  }, []);
+  // 🔥 ВИДАЛЕНО слухач скролу (is-scrolling), який викликав жорсткі перемальовки і лаги сторінки.
 
   useEffect(() => {
     let ctx = gsap.context(() => {
+      // 1. Анімація центральної лінії
       gsap.fromTo(
         lineRef.current,
         { scaleY: 0 },
@@ -154,52 +129,53 @@ export default function Process() {
             trigger: containerRef.current,
             start: "top 50%",
             end: "bottom 80%",
-            scrub: 0.4,
-            fastScrollEnd: true,
+            scrub: 0.2, // Швидший відгук
           },
         },
       );
 
+      // 2. Анімація карток і точок
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
+
+      // Перевіряємо, чи це мобільний телефон (спрощуємо анімацію для них)
+      const isMobile = window.innerWidth <= 768;
 
       rows.forEach((row) => {
         const card = row.querySelector(`.${styles.card}`);
         const dot = row.querySelector(`.${styles.dot}`);
         const glow = row.querySelector(`.${styles.activeGlow}`);
 
-        const xOffset = row.classList.contains(styles.left) ? -40 : 40;
+        // Для мобілок картки завжди їдуть зліва, для десктопу - з різних сторін
+        const xOffset = isMobile
+          ? -20
+          : row.classList.contains(styles.left)
+            ? -40
+            : 40;
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: row,
-            start: "top 75%",
-            end: "top 55%",
-            scrub: 0.4,
-            fastScrollEnd: true,
+            start: "top 80%",
+            end: "top 50%",
+            scrub: 0.2,
           },
         });
 
-        tl.to(
-          dot,
-          {
-            backgroundColor: "#00d4ff",
-            scale: 1.4,
-            boxShadow: "0 0 20px rgba(0, 212, 255, 0.6)",
-          },
+        // Анімуємо точку
+        tl.to(dot, { backgroundColor: "#00d4ff", scale: 1.3 }, 0).to(
+          glow,
+          { opacity: 1, scale: 1 },
           0,
-        )
-          .to(glow, { opacity: 1, scale: 1 }, 0)
-          .fromTo(
-            card,
-            { opacity: 0, x: xOffset, scale: 0.9 },
-            { opacity: 1, x: 0, scale: 1 },
-            0,
-          );
-      });
+        );
 
-      setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 150);
+        // Анімуємо картку (Оптимізовано: без тіней, тільки transform і opacity)
+        tl.fromTo(
+          card,
+          { opacity: 0, x: xOffset, scale: 0.95 },
+          { opacity: 1, x: 0, scale: 1, ease: "power1.out" },
+          0,
+        );
+      });
     }, containerRef);
 
     return () => ctx.revert();
