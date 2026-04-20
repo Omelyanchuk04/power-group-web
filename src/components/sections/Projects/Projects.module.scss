@@ -140,7 +140,6 @@ $white: #ffffff;
 // 🔥 ОНОВЛЕНИЙ HEADER З ЦЕНТРАЛЬНИМ ТЕКСТОМ І КНОПКАМИ ПО КРАЯХ 🔥
 .header {
   padding: 0 5vw;
-  margin-bottom: 50px;
   display: flex;
   flex-direction: column;
   gap: 40px; // Відстань між текстом і кнопками
@@ -170,7 +169,7 @@ $white: #ffffff;
 }
 
 .title {
-  font-size: 56px;
+  font-size: 46px;
   font-weight: 800;
   color: $text-dark;
   letter-spacing: -2px;
@@ -188,7 +187,8 @@ $white: #ffffff;
 // Рядок з кнопками (Всі проєкти зліва, Стрілки справа)
 .headerBottom {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 30px;
   align-items: center;
   width: 100%;
 }
@@ -279,6 +279,7 @@ $white: #ffffff;
 }
 
 .sliderContainer {
+  margin-top: 30px;
   width: 100vw;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -460,7 +461,7 @@ $white: #ffffff;
   }
   .title {
     align-self: flex-start;
-    font-size: 42px;
+    font-size: 40px;
   }
 
   .subtitle {
@@ -528,8 +529,12 @@ $white: #ffffff;
     gap: 30px;
   }
 
+  .headerBottom {
+    justify-content: space-between;
+  }
+
   .title {
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .viewAllBtn {
