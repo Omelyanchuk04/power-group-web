@@ -127,7 +127,6 @@ export default function Projects() {
   const prevBtnRef = useRef(null);
   const nextBtnRef = useRef(null);
 
-  // Рефи для швидкої анімації кнопок
   const targetIndexRef = useRef(0);
   const tweenRef = useRef(null);
 
@@ -140,7 +139,7 @@ export default function Projects() {
       );
     }, containerRef);
 
-    handleScroll(); // Ініціалізація прогрес-бару та кнопок
+    handleScroll();
     return () => ctx.revert();
   }, []);
 
@@ -151,7 +150,6 @@ export default function Projects() {
     const scrollLeft = slider.scrollLeft;
     const maxScroll = slider.scrollWidth - slider.clientWidth;
 
-    // Пряме оновлення кнопок (без лагів від React setState)
     if (prevBtnRef.current) {
       if (scrollLeft <= 0) prevBtnRef.current.classList.add(styles.disabled);
       else prevBtnRef.current.classList.remove(styles.disabled);
@@ -163,14 +161,12 @@ export default function Projects() {
       else nextBtnRef.current.classList.remove(styles.disabled);
     }
 
-    // Прогрес-бар
     const progress = maxScroll > 0 ? scrollLeft / maxScroll : 0;
     if (progressBarRef.current) {
       progressBarRef.current.style.transform = `scaleX(${progress})`;
     }
   };
 
-  // 🔥 Швидка та надійна прокрутка кнопками (GSAP)
   const scrollByAmount = (direction) => {
     const slider = sliderRef.current;
     if (!slider) return;
@@ -187,12 +183,10 @@ export default function Projects() {
     const maxScroll = slider.scrollWidth - slider.clientWidth;
     const maxIndex = Math.ceil(maxScroll / step);
 
-    // Якщо ми свайпали вручну, синхронізуємо індекс
     if (!tweenRef.current?.isActive()) {
       targetIndexRef.current = Math.round(slider.scrollLeft / step);
     }
 
-    // Розрахунок наступного індексу (ідеально обробляє швидкі кліки)
     if (direction === "next") {
       targetIndexRef.current = Math.min(targetIndexRef.current + 1, maxIndex);
     } else {
@@ -202,17 +196,16 @@ export default function Projects() {
     let targetX = targetIndexRef.current * step;
     if (targetX > maxScroll) targetX = maxScroll;
 
-    // Тимчасово вимикаємо snap, щоб браузер не боровся з GSAP
     slider.style.scrollSnapType = "none";
 
     if (tweenRef.current) tweenRef.current.kill();
 
     tweenRef.current = gsap.to(slider, {
       scrollLeft: targetX,
-      duration: 0.35, // 🔥 Дуже швидка реакція
+      duration: 0.35,
       ease: "power2.out",
       onComplete: () => {
-        slider.style.scrollSnapType = "x mandatory"; // Повертаємо snap для свайпів
+        slider.style.scrollSnapType = "x mandatory";
         handleScroll();
       },
     });
@@ -229,72 +222,78 @@ export default function Projects() {
       <div className={styles.blob5}></div>
 
       <div className={styles.container}>
+        {/* 🔥 ОНОВЛЕНА СТРУКТУРА ШАПКИ 🔥 */}
         <div className={styles.header}>
-          <div className={styles.headerLeft}>
+          <div className={styles.badgeWrapper}>
             <span className={styles.badge}>Досвід</span>
-            <h2 className={styles.title}>Реалізовані проєкти</h2>
-            <p className={styles.subtitle}>
-              Переглядайте наші об'єкти за допомогою стрілок або свайпу
-            </p>
           </div>
 
-          <div className={styles.headerRight}>
-            <button className={styles.viewAllBtn}>
-              Всі проєкти
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{ marginLeft: "8px" }}
-              >
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
+          <div className={styles.headerContent}>
+            <div className={styles.headerLeft}>
+              <h2 className={styles.title}>Реалізовані проєкти</h2>
+              <p className={styles.subtitle}>
+                Переглядайте наші об'єкти за допомогою стрілок або свайпу
+              </p>
+            </div>
 
-            <div className={styles.controls}>
-              <button
-                ref={prevBtnRef}
-                className={styles.controlBtn}
-                onClick={() => scrollByAmount("prev")}
-                aria-label="Попередній"
-              >
+            <div className={styles.headerRight}>
+              <button className={styles.viewAllBtn}>
+                Всі проєкти
                 <svg
-                  width="24"
-                  height="24"
+                  width="18"
+                  height="18"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  style={{ marginLeft: "8px" }}
                 >
-                  <path d="M15 18l-6-6 6-6" />
+                  <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </button>
-              <button
-                ref={nextBtnRef}
-                className={styles.controlBtn}
-                onClick={() => scrollByAmount("next")}
-                aria-label="Наступний"
-              >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+
+              <div className={styles.controls}>
+                <button
+                  ref={prevBtnRef}
+                  className={styles.controlBtn}
+                  onClick={() => scrollByAmount("prev")}
+                  aria-label="Попередній"
                 >
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </button>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                </button>
+                <button
+                  ref={nextBtnRef}
+                  className={styles.controlBtn}
+                  onClick={() => scrollByAmount("next")}
+                  aria-label="Наступний"
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -348,7 +347,6 @@ export default function Projects() {
                 </div>
               );
             })}
-            <div className={styles.spacerEnd}></div>
           </div>
         </div>
       </div>

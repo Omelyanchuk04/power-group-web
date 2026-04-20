@@ -137,20 +137,19 @@ $white: #ffffff;
   z-index: 2;
 }
 
+// 🔥 ОНОВЛЕНИЙ HEADER З БЕЙДЖЕМ ПО ЦЕНТРУ 🔥
 .header {
   padding: 0 5vw;
   margin-bottom: 50px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.headerLeft {
+.badgeWrapper {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  max-width: 800px;
+  justify-content: center;
+  width: 100%;
 }
 
 .badge {
@@ -165,7 +164,21 @@ $white: #ffffff;
   letter-spacing: 1px;
   padding: 8px 20px;
   border-radius: 100px;
-  margin-bottom: 24px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  max-width: 800px;
 }
 
 .title {
@@ -278,6 +291,7 @@ $white: #ffffff;
   }
 }
 
+// 🔥 ІДЕАЛЬНО ВИРАХУВАНИЙ НАТИВНИЙ СКРОЛ 🔥
 .sliderContainer {
   width: 100vw;
   overflow-x: auto;
@@ -296,14 +310,11 @@ $white: #ffffff;
   width: max-content;
 }
 
-.spacerEnd {
-  display: none;
-}
-
 .projectCardWrapper {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  // Завжди центруємо картку в межах екрану
   scroll-snap-align: center;
   scroll-snap-stop: normal;
 }
@@ -522,19 +533,10 @@ $white: #ffffff;
     }
   }
 
-  .header {
-    padding: 0 20px;
-    margin-bottom: 30px;
+  .headerContent {
     flex-direction: column;
-    align-items: center; // 🔥 ЦЕНТРУВАННЯ НА МОБІЛЬНОМУ
+    align-items: flex-start;
     gap: 24px;
-  }
-
-  // 🔥 ЦЕНТРУЄМО ТЕКСТ ТА БЕЙДЖ 🔥
-  .headerLeft {
-    align-items: center;
-    text-align: center;
-    width: 100%;
   }
 
   .headerRight {
@@ -553,18 +555,21 @@ $white: #ffffff;
 
   .sliderTrack {
     gap: 16px;
+    // 🔥 РІВНО ТАК ЖЕ: 50vw мінус половина картки на мобільному (85vw / 2 = 42.5vw)
+    // 50vw - 42.5vw = 7.5vw. Це гарантує ідеальне центрування без ривків!
     padding: 10px 7.5vw 30px 7.5vw;
   }
 
+  // Переконуємось, що тут теж стоїть center
   .projectCardWrapper {
-    scroll-snap-align: start;
+    scroll-snap-align: center;
   }
 
   .projectCard {
     width: 85vw;
     flex-direction: column;
     height: auto;
-    pointer-events: none; // 🔥 РОБИТЬ КАРТКИ НЕКЛІКАБЕЛЬНИМИ НА МОБІЛЬНОМУ 🔥
+    pointer-events: none;
   }
 
   .imagePanel {
