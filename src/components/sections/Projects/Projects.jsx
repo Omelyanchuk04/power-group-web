@@ -1,14 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
-import { Draggable } from "gsap/Draggable";
 import styles from "./Projects.module.scss";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(Draggable);
-}
 
 const TIMELINE_PROJECTS = [
   {
@@ -128,109 +123,11 @@ const TIMELINE_PROJECTS = [
 export default function Projects() {
   const containerRef = useRef(null);
   const sliderRef = useRef(null);
-  const trackRef = useRef(null);
   const progressBarRef = useRef(null);
+  const [isAtStart, setIsAtStart] = useState(true);
+  const [isAtEnd, setIsAtEnd] = useState(false);
 
-  const updateProgressRef = useRef(null);
-  const autoPlayCallRef = useRef(null);
-  const isHoveredRef = useRef(false);
-  const isDraggingRef = useRef(false);
-
-  const currentIndexRef = useRef(0);
-
-  const getStep = () => {
-    const track = trackRef.current;
-    if (!track || track.children.length < 2) return 620;
-    return track.children[1].offsetLeft - track.children[0].offsetLeft;
-  };
-
-  const goToIndex = (newIndex, isManual = false) => {
-    const track = trackRef.current;
-    const slider = sliderRef.current;
-    if (!track || !slider) return;
-
-    const maxScroll = track.scrollWidth - slider.offsetWidth;
-    const step = getStep();
-
-    const maxIndex = Math.ceil(maxScroll / step);
-    let isRewinding = false;
-
-    if (newIndex > maxIndex || newIndex * step > maxScroll + step / 2) {
-      newIndex = 0;
-      isRewinding = true;
-    } else if (newIndex < 0) {
-      newIndex = 0;
-    }
-
-    currentIndexRef.current = newIndex;
-    let targetX = -(newIndex * step);
-
-    if (targetX < -maxScroll) targetX = -maxScroll;
-    if (targetX > 0) targetX = 0;
-
-    let animDuration = isManual ? 0.6 : 1.2;
-    if (isRewinding && !isManual) animDuration = 1.4;
-
-    // Основний рух
-    gsap.to(track, {
-      x: targetX,
-      duration: animDuration,
-      ease: isManual ? "power3.out" : "power2.inOut",
-      overwrite: "auto",
-      onUpdate: () => {
-        if (updateProgressRef.current) updateProgressRef.current();
-      },
-    });
-
-    // Ефект Motion Blur для ілюзії легкості та швидкості
-    if (isManual || isRewinding) {
-      gsap.fromTo(
-        track,
-        { opacity: 1, filter: "blur(0px)" },
-        {
-          opacity: 0.6,
-          filter: "blur(3px)",
-          duration: animDuration * 0.3,
-          yoyo: true,
-          repeat: 1,
-          ease: "power1.inOut",
-        },
-      );
-    }
-  };
-
-  const slideNext = (isManualFlag = true) => {
-    const isManual = typeof isManualFlag === "boolean" ? isManualFlag : true;
-    stopAutoPlay();
-    goToIndex(currentIndexRef.current + 1, isManual);
-    startAutoPlay();
-  };
-
-  const slidePrev = (isManualFlag = true) => {
-    const isManual = typeof isManualFlag === "boolean" ? isManualFlag : true;
-    stopAutoPlay();
-    if (currentIndexRef.current > 0) {
-      goToIndex(currentIndexRef.current - 1, isManual);
-    }
-    startAutoPlay();
-  };
-
-  const startAutoPlay = () => {
-    stopAutoPlay();
-    autoPlayCallRef.current = gsap.delayedCall(4.5, () => {
-      if (!isHoveredRef.current && !isDraggingRef.current) {
-        slideNext(false);
-      }
-    });
-  };
-
-  const stopAutoPlay = () => {
-    if (autoPlayCallRef.current) {
-      autoPlayCallRef.current.kill();
-      autoPlayCallRef.current = null;
-    }
-  };
-
+  // Анімація появи секції
   useEffect(() => {
     let ctx = gsap.context(() => {
       gsap.fromTo(
@@ -238,72 +135,52 @@ export default function Projects() {
         { opacity: 0, y: 40 },
         { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
       );
-
-      const track = trackRef.current;
-      const slider = sliderRef.current;
-
-      const updateProgress = () => {
-        const maxScroll = track.scrollWidth - slider.offsetWidth;
-        if (maxScroll <= 0) return;
-
-        const currentX = gsap.getProperty(track, "x") || 0;
-        const progress = Math.abs(currentX) / maxScroll;
-
-        gsap.to(progressBarRef.current, {
-          scaleX: progress,
-          duration: 0.1,
-          ease: "none",
-        });
-      };
-
-      updateProgressRef.current = updateProgress;
-
-      Draggable.create(track, {
-        type: "x",
-        bounds: slider,
-        inertia: true,
-        dragResistance: 0.1,
-        edgeResistance: 0.6,
-        snap: {
-          x: function (endValue) {
-            const step = getStep();
-            const closestIndex = Math.round(Math.abs(endValue) / step);
-            currentIndexRef.current = closestIndex;
-            return -(closestIndex * step);
-          },
-        },
-        onPress: () => {
-          isDraggingRef.current = true;
-          stopAutoPlay();
-          gsap.killTweensOf(track);
-          gsap.to(track, { opacity: 0.9, duration: 0.2 });
-        },
-        onRelease: () => {
-          isDraggingRef.current = false;
-          if (!isHoveredRef.current) startAutoPlay();
-          gsap.to(track, { opacity: 1, duration: 0.2 });
-        },
-        onDrag: updateProgress,
-        onThrowUpdate: updateProgress,
-      });
-
-      startAutoPlay();
     }, containerRef);
-
-    return () => {
-      ctx.revert();
-      stopAutoPlay();
-    };
+    return () => ctx.revert();
   }, []);
 
-  const handleMouseEnter = () => {
-    isHoveredRef.current = true;
-    stopAutoPlay();
+  // Оновлення прогрес-бару при нативному скролі
+  const handleScroll = () => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const scrollLeft = slider.scrollLeft;
+    const maxScroll = slider.scrollWidth - slider.clientWidth;
+
+    // Оновлюємо стан кнопок
+    setIsAtStart(scrollLeft <= 0);
+    setIsAtEnd(scrollLeft >= maxScroll - 10);
+
+    // Оновлюємо смужку прогресу
+    const progress = maxScroll > 0 ? scrollLeft / maxScroll : 0;
+    gsap.to(progressBarRef.current, {
+      scaleX: progress,
+      duration: 0.1,
+      ease: "none",
+    });
   };
 
-  const handleMouseLeave = () => {
-    isHoveredRef.current = false;
-    if (!isDraggingRef.current) startAutoPlay();
+  // Прокрутка кнопками
+  const scrollByAmount = (direction) => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    // Знаходимо ширину однієї картки + відступ
+    const card = slider.querySelector(`.${styles.projectCardWrapper}`);
+    if (!card) return;
+
+    const style = window.getComputedStyle(card);
+    const gap =
+      parseFloat(
+        window.getComputedStyle(slider.querySelector(`.${styles.sliderTrack}`))
+          .gap,
+      ) || 40;
+    const scrollAmount = card.offsetWidth + gap;
+
+    slider.scrollBy({
+      left: direction === "next" ? scrollAmount : -scrollAmount,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -317,12 +194,13 @@ export default function Projects() {
       <div className={styles.blob5}></div>
 
       <div className={styles.container}>
+        {/* 🔥 ВИРІВНЯНИЙ HEADER 🔥 */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <span className={styles.badge}>Досвід</span>
             <h2 className={styles.title}>Реалізовані проєкти</h2>
             <p className={styles.subtitle}>
-              Переглядайте наші об'єкти за допомогою стрілок
+              Переглядайте наші об'єкти за допомогою стрілок або свайпу
             </p>
           </div>
 
@@ -346,8 +224,8 @@ export default function Projects() {
 
             <div className={styles.controls}>
               <button
-                className={styles.controlBtn}
-                onClick={slidePrev}
+                className={`${styles.controlBtn} ${isAtStart ? styles.disabled : ""}`}
+                onClick={() => scrollByAmount("prev")}
                 aria-label="Попередній"
               >
                 <svg
@@ -364,8 +242,8 @@ export default function Projects() {
                 </svg>
               </button>
               <button
-                className={styles.controlBtn}
-                onClick={slideNext}
+                className={`${styles.controlBtn} ${isAtEnd ? styles.disabled : ""}`}
+                onClick={() => scrollByAmount("next")}
                 aria-label="Наступний"
               >
                 <svg
@@ -385,15 +263,13 @@ export default function Projects() {
           </div>
         </div>
 
+        {/* 🔥 НАТИВНИЙ СКРОЛ КОНТЕЙНЕР 🔥 */}
         <div
           className={styles.sliderContainer}
           ref={sliderRef}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleMouseEnter}
-          onTouchEnd={handleMouseLeave}
+          onScroll={handleScroll}
         >
-          <div className={styles.sliderTrack} ref={trackRef}>
+          <div className={styles.sliderTrack}>
             {TIMELINE_PROJECTS.map((project, index) => {
               const showYear =
                 index === 0 ||
@@ -414,7 +290,7 @@ export default function Projects() {
                         alt={project.title}
                         fill
                         className={styles.image}
-                        sizes="400px"
+                        sizes="(max-width: 768px) 100vw, 400px"
                         priority={index < 2}
                         draggable={false}
                       />
@@ -437,6 +313,8 @@ export default function Projects() {
                 </div>
               );
             })}
+            {/* Додаємо порожній блок в кінці, щоб остання картка не прилипала до краю екрану */}
+            <div className={styles.spacerEnd}></div>
           </div>
         </div>
       </div>

@@ -137,26 +137,24 @@ $white: #ffffff;
   z-index: 2;
 }
 
-// 🔥 ОНОВЛЕНИЙ БЛОК HEADER 🔥
+// 🔥 ВИПРАВЛЕНИЙ HEADER 🔥
 .header {
   padding: 0 5vw;
   margin-bottom: 50px;
-  position: relative;
   display: flex;
-  justify-content: center; /* Центруємо весь блок .headerLeft відносно екрана */
-  align-items: center;
+  justify-content: space-between; // Розносить текст і кнопки по краях
+  align-items: flex-end; // Вирівнює кнопки по нижній лінії заголовка
 }
 
 .headerLeft {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Центруємо елементи всередині блоку (бейдж буде над заголовком) */
-  text-align: center; /* Вирівнюємо текст по центру */
-  width: 100%;
+  align-items: flex-start; // Рівняємо по лівому краю
+  text-align: left;
+  max-width: 800px;
 }
 
 .badge {
-  /* Тут ми прибираємо align-self, оскільки батьківський .headerLeft вже має align-items: center */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -170,13 +168,13 @@ $white: #ffffff;
   border-radius: 100px;
   margin-bottom: 24px;
 }
+
 .title {
   font-size: 56px;
   font-weight: 800;
   color: $text-dark;
   letter-spacing: -2px;
   margin: 0 0 10px 0;
-  align-self: self-start;
 }
 
 .subtitle {
@@ -184,19 +182,13 @@ $white: #ffffff;
   color: $text-gray;
   margin: 0;
   font-weight: 500;
-  align-self: self-start;
 }
 
 .headerRight {
-  position: absolute; // "Відриваємо" блок з кнопками від потоку
-  right: 5vw; // Притискаємо до правого краю (відступ такий самий, як padding у .header)
-  top: 50%;
-  transform: translateY(
-    -50%
-  ); // Відцентровуємо ідеально по вертикалі відносно заголовка
   display: flex;
   align-items: center;
   gap: 30px;
+  padding-bottom: 5px; // Легке вирівнювання з текстом
 }
 
 .viewAllBtn {
@@ -221,9 +213,8 @@ $white: #ffffff;
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
   }
-
   &:active {
-    transform: translateY(0);
+    transform: scale(0.95);
   }
 }
 
@@ -246,8 +237,9 @@ $white: #ffffff;
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
 
-  &:hover {
+  &:hover:not(.disabled) {
     background: $primary;
     color: $white;
     border-color: $primary;
@@ -255,17 +247,27 @@ $white: #ffffff;
     box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
   }
 
-  &:active {
-    transform: translateY(0);
+  &:active:not(.disabled) {
+    transform: scale(0.92);
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.2);
   }
 }
 
+// 🔥 НАТИВНИЙ СКРОЛ 🔥
 .sliderContainer {
   width: 100vw;
-  overflow: hidden;
-  cursor: grab;
-  &:active {
-    cursor: grabbing;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth; // Щоб кнопки гортали плавно
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -276,11 +278,17 @@ $white: #ffffff;
   width: max-content;
 }
 
+.spacerEnd {
+  width: 5vw; // Запас місця в кінці
+  flex-shrink: 0;
+}
+
 .projectCardWrapper {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  user-select: none;
+  scroll-snap-align: center; // Магнітить картку по центру екрану
+  scroll-snap-stop: always;
 }
 
 .yearLabel {
@@ -289,10 +297,8 @@ $white: #ffffff;
   color: $primary;
   margin-left: 20px;
   pointer-events: none;
-  transition: opacity 0.3s ease;
 }
 
-// 🔥 КЛАС ДЛЯ ПРИХОВУВАННЯ РОКУ (але зберігає відступ)
 .hiddenYear {
   opacity: 0;
 }
@@ -301,12 +307,10 @@ $white: #ffffff;
   display: flex;
   width: 580px;
   height: 340px;
-
   background: #ebebeb99;
   border: 1px solid #ffffff;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
@@ -331,6 +335,7 @@ $white: #ffffff;
     z-index: 2;
   }
 }
+
 .image {
   object-fit: cover;
 }
@@ -352,6 +357,7 @@ $white: #ffffff;
   letter-spacing: 1px;
   margin-bottom: 5px;
 }
+
 .cardTitle {
   font-size: 24px;
   font-weight: 700;
@@ -359,18 +365,21 @@ $white: #ffffff;
   line-height: 1.2;
   margin: 0;
 }
+
 .divider {
   width: 100%;
   height: 1px;
   background-color: rgba(0, 0, 0, 0.05);
   margin: 20px 0;
 }
+
 .powerInfo {
   display: flex;
   flex-direction: column;
   gap: 4px;
   margin-bottom: 20px;
 }
+
 .powerLabel {
   color: $text-gray;
   font-size: 10px;
@@ -397,6 +406,9 @@ $white: #ffffff;
   &:hover {
     background-color: color.adjust(#0056b3, $lightness: -8%);
   }
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .progressContainer {
@@ -408,6 +420,7 @@ $white: #ffffff;
   background-color: rgba(0, 0, 0, 0.05);
   z-index: 10;
 }
+
 .progressBar {
   width: 100%;
   height: 100%;
@@ -435,42 +448,46 @@ $white: #ffffff;
     padding: 80px 0;
   }
 
+  .projectsSection {
+    // 🔥 Оптимізуємо плями для мобільних
+    &::before,
+    &::after,
+    .blob3,
+    .blob4,
+    .blob5 {
+      filter: none;
+    }
+  }
+
   .header {
     padding: 0 20px;
     margin-bottom: 30px;
     flex-direction: column; // На мобільному блоки стають один під одним
-    align-items: center; // Центруємо все по горизонталі
+    align-items: flex-start;
     gap: 24px;
   }
 
   .headerRight {
-    position: static; // Знімаємо абсолютне позиціонування на телефоні
-    transform: none;
     width: 100%;
-    justify-content: center; // Кнопки теж по центру
-    gap: 15px;
-  }
-
-  .headerLeft {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* Вирівнює бейдж та всі елементи по лівому краю */
-    text-align: left; /* Вирівнює текст по лівому краю */
-    max-width: 800px;
+    justify-content: space-between; // Кнопки по краях екрану
+    padding-bottom: 0;
   }
 
   .viewAllBtn {
     padding: 12px 20px;
     font-size: 14px;
   }
-
   .title {
     font-size: 32px;
   }
 
   .sliderTrack {
-    gap: 20px;
+    gap: 16px;
     padding: 10px 20px 30px 20px;
+  }
+
+  .projectCardWrapper {
+    scroll-snap-align: start; // Магнітить до лівого краю екрана
   }
 
   .projectCard {
@@ -478,14 +495,16 @@ $white: #ffffff;
     flex-direction: column;
     height: auto;
   }
+
   .imagePanel {
     flex: none;
-    height: 250px;
+    height: 200px;
     width: 100%;
     &::after {
       background: linear-gradient(to bottom, transparent 60%, #ebebeb99 100%);
     }
   }
+
   .infoPanel {
     flex: none;
     width: 100%;
