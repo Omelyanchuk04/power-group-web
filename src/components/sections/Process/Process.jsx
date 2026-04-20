@@ -115,7 +115,7 @@ export default function Process() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // 1. Анімація центральної лінії (залишаємо scrub, щоб малювалася за скролом)
+      // 1. Анімація центральної лінії
       gsap.fromTo(
         lineRef.current,
         { scaleY: 0 },
@@ -126,37 +126,28 @@ export default function Process() {
             trigger: containerRef.current,
             start: "top 50%",
             end: "bottom 80%",
-            scrub: 1, // М'якше згладжування лінії
+            scrub: 1,
           },
         },
       );
 
       // 2. Анімація карток і точок
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
-      const isMobile = window.innerWidth <= 768;
 
       rows.forEach((row) => {
         const card = row.querySelector(`.${styles.card}`);
         const dot = row.querySelector(`.${styles.dot}`);
         const glow = row.querySelector(`.${styles.activeGlow}`);
 
-        const xOffset = isMobile
-          ? -30
-          : row.classList.contains(styles.left)
-            ? -40
-            : 40;
-
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: row,
-            start: "top 85%", // Спрацьовує трохи раніше
-            // 🔥 ГОЛОВНИЙ ФІКС: Відв'язуємо від пальця!
-            // play: при скролі вниз, reverse: при скролі вгору
+            start: "top 85%",
             toggleActions: "play none none reverse",
           },
         });
 
-        // Плавна, незалежна від швидкості скролу анімація
+        // Анімуємо точку
         tl.to(
           dot,
           {
@@ -172,11 +163,12 @@ export default function Process() {
             { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
             0,
           )
+          // 🔥 ВИПЛИВАЄ ЗНИЗУ: замість осі x використовуємо вісь y (y: 50)
           .fromTo(
             card,
-            { opacity: 0, x: xOffset, scale: 0.95 },
-            { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: "power3.out" },
-            0.1, // Картка випливає на 0.1 сек пізніше за точку
+            { opacity: 0, y: 50, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" },
+            0.1,
           );
       });
     }, containerRef);
