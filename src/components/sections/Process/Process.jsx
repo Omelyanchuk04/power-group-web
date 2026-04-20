@@ -115,7 +115,6 @@ export default function Process() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // 1. Анімація центральної лінії
       gsap.fromTo(
         lineRef.current,
         { scaleY: 0 },
@@ -131,7 +130,6 @@ export default function Process() {
         },
       );
 
-      // 2. Анімація карток і точок
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
 
       rows.forEach((row) => {
@@ -147,7 +145,6 @@ export default function Process() {
           },
         });
 
-        // Анімуємо точку
         tl.to(
           dot,
           {
@@ -163,7 +160,6 @@ export default function Process() {
             { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
             0,
           )
-          // 🔥 ВИПЛИВАЄ ЗНИЗУ: замість осі x використовуємо вісь y (y: 50)
           .fromTo(
             card,
             { opacity: 0, y: 50, scale: 0.95 },

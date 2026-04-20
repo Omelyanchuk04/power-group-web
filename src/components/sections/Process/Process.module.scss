@@ -54,7 +54,6 @@ $white: #ffffff;
   height: 25vw;
   background: rgba(255, 170, 0, 0.6);
   filter: blur(40px);
-  box-shadow: 0 0 120px rgba(255, 170, 0, 0.8);
   top: 40%;
   left: 20%;
   animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
@@ -188,7 +187,8 @@ $white: #ffffff;
 
 .mainLine {
   position: absolute;
-  left: calc(50% - 2px);
+  left: 50%;
+  transform: translateX(-50%);
   top: 0;
   bottom: 0;
   width: 4px;
@@ -279,14 +279,12 @@ $white: #ffffff;
   border-bottom-color: rgba(255, 255, 255, 0.4);
   border-right-color: rgba(255, 255, 255, 0.4);
 
-  will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
 
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.04),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-
   transition: box-shadow 0.4s ease;
 
   @media (hover: hover) and (pointer: fine) {
@@ -351,21 +349,47 @@ $white: #ffffff;
   gap: 24px;
 }
 
+// 🔥 ОНОВЛЕНИЙ КОЛІР ІКОНКИ: Тепер у фірмовому синьо-блакитному, але зберіг скляний об'єм 🔥
 .iconCircle {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, $primary 0%, $cyan 100%);
+  // Повернув градієнт від світло-блакитного до фірмового синього
+  background: linear-gradient(135deg, #4facfe 0%, $primary 100%);
   color: $white;
   border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 10px 20px rgba(0, 86, 179, 0.2);
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 10px 20px rgba(0, 86, 179, 0.3),
+    // Синя тінь під брендовий стиль
+    inset 0 2px 4px rgba(255, 255, 255, 0.4); // Світла фаска для об'єму
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  // Скляний блік під іконкою залишився
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: 18px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 100%
+    );
+    z-index: -1;
+  }
 
   svg {
     width: 28px;
     height: 28px;
+    stroke-width: 2.5px;
+    filter: drop-shadow(
+      0 2px 4px rgba(0, 0, 0, 0.2)
+    ); // Легка тінь від самої іконки
   }
 }
 
@@ -469,6 +493,10 @@ $white: #ffffff;
     }
   }
 
+  .iconCircle {
+    pointer-events: none;
+  }
+
   .header .title {
     font-size: 32px;
   }
@@ -476,12 +504,13 @@ $white: #ffffff;
   .timelineWrapper {
     padding: 0;
   }
+
   .mainLine {
-    left: 24px;
-    transform: none;
+    left: 32px;
+    transform: translateX(-50%);
   }
   .dotWrapper {
-    left: 24px;
+    left: 32px;
     top: 60px;
   }
 
@@ -494,9 +523,9 @@ $white: #ffffff;
   .right {
     justify-content: flex-start;
     .card {
-      width: calc(100% - 64px);
-      margin-left: 64px;
-      padding: 28px;
+      width: calc(100% - 72px);
+      margin-left: 72px;
+      padding: 24px;
     }
   }
 }
