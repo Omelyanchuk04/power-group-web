@@ -9,7 +9,7 @@ $white: #ffffff;
 
 .projectsSection {
   background-color: $light-bg;
-  padding: 100px 0;
+  padding: 50px 0;
   position: relative;
   z-index: 10;
   overflow: hidden;
@@ -159,8 +159,8 @@ $white: #ffffff;
   justify-content: center;
   background-color: rgba(0, 86, 179, 0.1);
   color: $primary;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
   padding: 8px 20px;
@@ -187,9 +187,11 @@ $white: #ffffff;
 // Рядок з кнопками (Всі проєкти зліва, Стрілки справа)
 .headerBottom {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 30px;
   align-items: center;
+  margin: 0 auto;
+  max-width: 1200px;
   width: 100%;
 }
 
