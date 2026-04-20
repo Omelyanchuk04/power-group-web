@@ -241,7 +241,6 @@ $white: #ffffff;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  // Швидша анімація для кращого відгуку
   transition:
     transform 0.15s ease,
     opacity 0.3s ease,
@@ -263,11 +262,10 @@ $white: #ffffff;
     }
   }
 
-  // 🔥 Миттєвий і чіткий ефект натискання
   &:active:not(.disabled) {
     transform: scale(0.9);
     background: rgba(0, 86, 179, 0.15);
-    transition: transform 0.05s ease; // Щоб відразу реагувало
+    transition: transform 0.05s ease;
   }
 
   &.disabled {
@@ -277,7 +275,7 @@ $white: #ffffff;
   }
 }
 
-// 🔥 НАТИВНИЙ СКРОЛ (без `scroll-behavior: smooth`, бо тепер це робить GSAP)
+// 🔥 ІДЕАЛЬНО ВИРАХУВАНИЙ НАТИВНИЙ СКРОЛ 🔥
 .sliderContainer {
   width: 100vw;
   overflow-x: auto;
@@ -292,21 +290,23 @@ $white: #ffffff;
 .sliderTrack {
   display: flex;
   gap: 40px;
-  padding: 20px 5vw 40px 5vw;
+  // 🔥 ВАЖЛИВО: Відступ = 50% екрану мінус половина картки (580px / 2 = 290px).
+  // Це гарантує ідеальне центрування першої і останньої картки без "ривків"!
+  padding: 20px calc(50vw - 290px) 40px calc(50vw - 290px);
   width: max-content;
 }
 
+// Додатковий пустий блок більше не потрібен, CSS робить відступи ідеально.
 .spacerEnd {
-  width: 5vw;
-  flex-shrink: 0;
+  display: none;
 }
 
 .projectCardWrapper {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
+  scroll-snap-align: center; // Магнітить ідеально по центру
+  scroll-snap-stop: normal; // 🔥 Дозволяє швидким свайпом перелітати через кілька карток без гальмування
 }
 
 .yearLabel {
@@ -469,6 +469,11 @@ $white: #ffffff;
   .cardTitle {
     font-size: 20px;
   }
+
+  .sliderTrack {
+    // 500px / 2 = 250px
+    padding: 20px calc(50vw - 250px) 40px calc(50vw - 250px);
+  }
 }
 
 @media (max-width: 768px) {
@@ -477,6 +482,7 @@ $white: #ffffff;
   }
 
   .projectsSection {
+    // Імітація блюру для плавності
     &::before {
       background: radial-gradient(
         circle,
@@ -543,11 +549,9 @@ $white: #ffffff;
 
   .sliderTrack {
     gap: 16px;
-    padding: 10px 20px 30px 20px;
-  }
-
-  .projectCardWrapper {
-    scroll-snap-align: start;
+    // 🔥 Картка на мобайлі 85vw. Половина це 42.5vw.
+    // 50vw - 42.5vw = 7.5vw. Рівно такий відступ дасть ідеальне центрування!
+    padding: 10px 7.5vw 30px 7.5vw;
   }
 
   .projectCard {
