@@ -17,19 +17,18 @@ export default function Contact() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // 🔥 1. ЕФЕКТ ЗАЛИПАННЯ ПОПЕРЕДНЬОЇ СЕКЦІЇ (0 лагів)
       const prevSection = sectionTriggerRef.current?.previousElementSibling;
       if (prevSection) {
         ScrollTrigger.create({
           trigger: sectionTriggerRef.current,
-          start: "top bottom", // Починаємо, коли контакти торкаються низу екрана
-          end: "bottom bottom", // Закінчуємо, коли контакти повністю на екрані
-          pin: prevSection, // Фіксуємо попередню секцію
-          pinSpacing: false, // Дозволяємо контактам "наїхати" поверх неї
+          start: "top bottom",
+          end: "bottom bottom",
+          pin: prevSection,
+          pinSpacing: false,
+          invalidateOnRefresh: true, // 🔥 Перераховує координати при зміні висоти екрана (ховання URL-панелі на мобільному)
         });
       }
 
-      // 🔥 2. Плавний паралакс тільки для фону (не навантажує сторінку)
       gsap.fromTo(
         bgRef.current,
         { y: "-10%" },
@@ -41,11 +40,11 @@ export default function Contact() {
             start: "top bottom",
             end: "bottom top",
             scrub: true,
+            invalidateOnRefresh: true,
           },
         },
       );
 
-      // 3. Поява тексту
       gsap.fromTo(
         infoRef.current.children,
         { opacity: 0, x: -30 },
@@ -57,12 +56,11 @@ export default function Contact() {
           ease: "power2.out",
           scrollTrigger: {
             trigger: sectionTriggerRef.current,
-            start: "top 70%",
+            start: "top 75%",
           },
         },
       );
 
-      // 4. Поява форми
       gsap.fromTo(
         formRef.current,
         { opacity: 0, y: 30, scale: 0.98 },
@@ -74,7 +72,7 @@ export default function Contact() {
           ease: "power3.out",
           scrollTrigger: {
             trigger: sectionTriggerRef.current,
-            start: "top 70%",
+            start: "top 75%",
           },
         },
       );
