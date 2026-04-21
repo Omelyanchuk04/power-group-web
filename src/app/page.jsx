@@ -4,6 +4,7 @@ import Services from "@/components/sections/Services/Services";
 import Projects from "@/components/sections/Projects/Projects";
 import Process from "@/components/sections/Process/Process";
 import Footer from "@/components/layout/Footer"; // 🔥 Футер тепер тут!
+import ContactCTA from "@/components/sections/Contacts/Contacts";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 
 export default function Home() {

@@ -1,70 +1,41 @@
 @use "sass:color";
 
-$primary: #0056b3;
-$dodgerblue: #1e90ff;
-$dark: #0a2540;
-$gray: #52637a;
+$primary-blue: #0056b3;
+$text-dark: #1d1d1f;
+$gray-text: #64748b;
 $white: #ffffff;
 
-$telegram-color: #0088cc;
-$viber-color: #7360f2;
-
-.contactTrigger {
+.ctaSection {
+  background-color: transparent; // Пропускаємо глобальні плями
+  padding: 80px 0 20px 0; // Знизу відступ менший, бо далі йде футер
   position: relative;
-  z-index: 50;
-}
-
-.pageBackground {
-  position: relative;
-  width: 100%;
-  padding: 160px 0; // Симетричні відступи зверху і знизу
-  overflow: hidden;
-  border-radius: 40px 40px 0 0;
-  background-color: #010409;
-}
-
-.bgImage {
-  position: absolute;
-  top: -15%;
-  left: 0;
-  width: 100%;
-  height: 130%;
-  background-image: url("/images/background-img.jpg");
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
-  pointer-events: none;
-  transform: translateZ(0);
-}
-
-.backgroundOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  // Темний напівпрозорий шар, щоб текст ідеально читався
-  background-color: rgba(10, 37, 64, 0.7);
-  z-index: 1;
+  z-index: 10;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 40px;
-  position: relative;
-  z-index: 5;
+  padding: 0 20px;
 }
 
-.splitLayout {
+// 🔥 СКЛЯНА КАРТКА (Стилістика Хедера та Футера)
+.glassCard {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  border-radius: 40px;
+  padding: 60px;
+
   display: grid;
-  grid-template-columns: 1fr 420px;
-  gap: 80px;
+  grid-template-columns: 1fr 1fr; // Розділяємо на дві колонки
+  gap: 60px;
   align-items: center;
 }
 
-// ЛІВА ЧАСТИНА
-.ctaContent {
+// --- ЛІВА ЧАСТИНА (Текст) ---
+.textContent {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -72,247 +43,189 @@ $viber-color: #7360f2;
 
 .badge {
   display: inline-block;
-  padding: 10px 24px;
-  background: rgba(255, 255, 255, 0.05); // Скляний ефект на темному фоні
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 100px;
-  color: $dodgerblue;
-  font-size: 13px;
-  font-weight: 800;
+  padding: 8px 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 86, 179, 0.1),
+    rgba(0, 212, 255, 0.1)
+  );
+  color: $primary-blue;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  border-radius: 100px;
   margin-bottom: 24px;
+  border: 1px solid rgba(0, 212, 255, 0.2);
 }
 
 .title {
-  font-size: 56px; // Зробив заголовок трохи більшим, оскільки немає рамки
+  font-size: 42px;
   font-weight: 800;
-  color: $white; // Білий текст на темному фоні
-  line-height: 1.15;
-  margin-bottom: 20px;
-  letter-spacing: -1px;
+  color: $text-dark;
+  letter-spacing: -1.5px;
+  margin: 0 0 16px 0;
+  line-height: 1.1;
 }
 
 .subtitle {
-  font-size: 18px;
-  color: #cbd5e1; // Світло-сірий для підзаголовка
-  margin-bottom: 48px;
-  max-width: 500px;
+  font-size: 16px;
+  color: $gray-text;
   line-height: 1.6;
+  margin: 0 0 40px 0;
+  max-width: 90%;
 }
 
-.actionBtn {
-  padding: 20px 40px;
-  border: none;
-  border-radius: 100px;
-  background: linear-gradient(135deg, $primary 0%, #007bff 100%);
-  color: $white;
-  font-size: 18px;
-  font-weight: 800;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  box-shadow: 0 15px 30px rgba(0, 86, 179, 0.3);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  -webkit-tap-highlight-color: transparent;
+.directContacts {
+  padding-top: 30px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover {
-      box-shadow: 0 20px 40px rgba(0, 86, 179, 0.4);
-      transform: translateY(-3px);
-      svg {
-        transform: translateX(5px);
-      }
+  p {
+    font-size: 13px;
+    color: $gray-text;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 16px 0;
+  }
+}
+
+.contactLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-dark;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $primary-blue;
     }
+
+    &:hover {
+      color: $primary-blue;
+    }
+  }
+}
+
+// --- ПРАВА ЧАСТИНА (Форма) ---
+.formWrapper {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 30px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+  font-family: inherit;
+  font-size: 15px;
+  color: $text-dark;
+  transition: all 0.3s ease;
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $primary-blue;
+    background: $white;
+    box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+  }
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px 32px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  border-radius: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: rgba(0, 86, 179, 0.9);
+  transition: all 0.3s ease;
+  margin-top: 8px;
+
+  &:hover {
+    background-color: color.adjust($primary-blue, $lightness: 5%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.3);
   }
 
   &:active {
     transform: scale(0.98);
   }
-
-  svg {
-    width: 22px;
-    height: 22px;
-    transition: 0.4s;
-  }
 }
 
-// ПРАВА ЧАСТИНА (ПАНЕЛЬ КОНТАКТІВ ЯК ОКРЕМИЙ БЛОК)
-.contactPanel {
-  background: #f8fafc; // Світлий блок
-  border-radius: 30px;
-  padding: 40px;
-  border: 1px solid rgba(0, 0, 0, 0.03);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); // Легка тінь
+.agreement {
+  font-size: 11px;
+  color: $gray-text;
+  text-align: center;
+  line-height: 1.5;
+  margin: 8px 0 0 0;
 }
 
-.panelTitle {
-  font-size: 24px;
-  font-weight: 800;
-  color: $dark;
-  margin-bottom: 30px;
-}
-
-.contactList {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-
-.contactItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.iconBox {
-  width: 48px;
-  height: 48px;
-  background: $white;
-  border-radius: 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: $dodgerblue;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04);
-  flex-shrink: 0;
-  svg {
-    width: 22px;
-    height: 22px;
-  }
-}
-
-.itemText {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 2px;
-
-  .label {
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #94a3b8;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-  }
-  p,
-  a {
-    font-size: 18px;
-    font-weight: 700;
-    color: $dark;
-    text-decoration: none;
-    line-height: 1.3;
-    transition: 0.2s;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    a:hover {
-      color: $primary;
-    }
-  }
-}
-
-.messengers {
-  margin-top: 40px;
-  display: flex;
-  gap: 12px;
-
-  a {
-    flex: 1;
-    padding: 16px 20px;
-    border-radius: 16px;
-    font-weight: 700;
-    font-size: 15px;
-    text-decoration: none;
-    color: $white;
-    display: inline-flex;
-    justify-content: center;
-    transition: all 0.3s ease;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: translateY(-3px);
-        filter: brightness(1.1);
-      }
-    }
-    &:active {
-      transform: scale(0.96);
-    }
-  }
-
-  .tg {
-    background-color: $telegram-color;
-  }
-  .viber {
-    background-color: $viber-color;
-  }
-}
-
-// 🔥 АДАПТИВНІСТЬ 🔥
+// --- АДАПТИВНІСТЬ ---
 @media (max-width: 1024px) {
-  .pageBackground {
-    padding: 100px 0;
-    border-radius: 30px 30px 0 0;
-  }
-  .splitLayout {
-    grid-template-columns: 1fr; // Переводимо в одну колонку
-    gap: 60px;
-  }
-
-  .ctaContent {
-    align-items: center;
-    text-align: center;
+  .glassCard {
+    padding: 40px;
+    gap: 40px;
   }
   .title {
-    font-size: 42px;
-  }
-  .subtitle {
-    max-width: 600px;
-  }
-  .contactPanel {
-    max-width: 500px;
-    margin: 0 auto;
-    width: 100%;
+    font-size: 36px;
   }
 }
 
 @media (max-width: 768px) {
-  .pageBackground {
-    padding: 80px 0;
-    border-radius: 20px 20px 0 0;
+  .ctaSection {
+    padding: 60px 0 0 0;
   }
-  .container {
-    padding: 0 20px;
+
+  .glassCard {
+    grid-template-columns: 1fr; // На мобайлі ставимо форму під текстом
+    padding: 30px 24px;
+    gap: 40px;
+    border-radius: 30px;
   }
 
   .title {
-    font-size: 36px;
+    font-size: 32px;
   }
 
-  .actionBtn {
-    width: 100%;
-    padding: 16px 24px;
-    font-size: 16px;
+  .subtitle {
+    max-width: 100%;
   }
 
-  .contactPanel {
+  .formWrapper {
     padding: 30px 20px;
-    border-radius: 20px;
-  }
-
-  .itemText {
-    p,
-    a {
-      font-size: 16px;
-    }
-  }
-
-  .messengers {
-    flex-direction: column;
-    a {
-      width: 100%;
-      padding: 14px 20px;
-    }
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.4);
   }
 }

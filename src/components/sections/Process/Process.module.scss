@@ -5,14 +5,13 @@ $cyan: #00d4ff;
 $text-dark: #0a2540;
 $text-gray: #52637a;
 $white: #ffffff;
-$light-bg: #f5f5f5; // Залишаємо для бордера у крапки
+$light-bg: #f5f5f5;
 
 .processSection {
-  background-color: transparent; // 🔥 Робимо секцію прозорою
-  padding: 50px 0;
+  background-color: transparent;
+  padding: 100px 0;
   position: relative;
   z-index: 10;
-  // overflow: hidden; видалено, щоб не різало тіні карток, глобальний фон це вже контролює
 }
 
 .container {
@@ -72,7 +71,7 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   left: 50%;
   transform: translateX(-50%);
   top: 0;
-  bottom: 0;
+  bottom: 60px;
   width: 4px;
   background-color: rgba(0, 0, 0, 0.05);
   border-radius: 2px;
@@ -123,7 +122,6 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   z-index: 3;
 }
 
-// 🔥 Блакитне світіння навколо точки
 .activeGlow {
   position: absolute;
   width: 100%;
@@ -142,7 +140,7 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   height: 16px;
   background-color: #cbd5e1;
   border-radius: 50%;
-  border: 3px solid $light-bg; // Можна залишити цей колір для бордера, щоб крапка виділялась
+  border: 3px solid $light-bg;
   position: relative;
   z-index: 2;
 }
@@ -188,7 +186,6 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   }
 }
 
-// Легке світіння всередині картки (залишаємо, бо воно локальне)
 .innerGlow {
   position: absolute;
   top: -50px;
@@ -266,8 +263,8 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   svg {
     width: 28px;
     height: 28px;
-    stroke-width: 2.5px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    stroke-width: 2px;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
   }
 }
 
@@ -301,20 +298,108 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   }
 }
 
+// ==========================================
+// CTA (Call to Action) Секція
+// ==========================================
+
+.ctaRow {
+  justify-content: center;
+  margin-top: 60px;
+
+  .dotWrapper {
+    top: 0;
+  }
+}
+
+.ctaCard {
+  width: 100%;
+  text-align: left; // Вирівнювання по лівому краю як у звичайних карток
+  padding: 40px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.4s ease;
+  position: relative; // Для позиціонування бейджа
+
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.95)),
+    url("/images/background-img.jpg");
+  background-size: cover;
+  background-position: center;
+
+  .innerGlow {
+    display: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: 0 20px 40px rgba($primary, 0.08);
+    }
+  }
+}
+
+.ctaButton {
+  align-self: flex-start; // Кнопка вирівняна по лівому краю
+  margin-top: 8px;
+  padding: 16px 40px;
+  font-size: 16px;
+  font-weight: 700;
+  color: $white;
+  // Глибокий, професійний синій градієнт замість кислотного cyan
+  background: linear-gradient(135deg, #0073e6 0%, $primary 100%);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba($primary, 0.25);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+
+  span {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 30px rgba($primary, 0.4);
+    filter: brightness(1.05);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// ==========================================
 // АДАПТИВНІСТЬ
+// ==========================================
+
 @media (max-width: 1024px) {
   .card {
     padding: 30px;
     width: 45%;
+  }
+  .ctaCard {
+    width: 100%;
+    padding: 30px;
   }
   .stepDigit {
     font-size: 48px;
     top: 20px;
     right: 24px;
   }
+
   .iconCircle {
     width: 56px;
     height: 56px;
+
+    &::before {
+      inset: 1px;
+      border-radius: 16px;
+    }
+
     svg {
       width: 24px;
       height: 24px;
@@ -328,7 +413,6 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
 @media (max-width: 768px) {
   .processSection {
     padding: 80px 0;
-    // Всі перевизначення фонів для ::before, ::after та blob видалено
   }
 
   .header .title {
@@ -342,7 +426,9 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   .mainLine {
     left: 32px;
     transform: translateX(-50%);
+    bottom: 40px;
   }
+
   .dotWrapper {
     left: 32px;
     top: 60px;
@@ -354,12 +440,25 @@ $light-bg: #f5f5f5; // Залишаємо для бордера у крапки
   }
 
   .left,
-  .right {
+  .right,
+  .ctaRow {
     justify-content: flex-start;
     .card {
       width: calc(100% - 72px);
       margin-left: 72px;
       padding: 24px;
+      text-align: left;
+    }
+  }
+
+  .ctaRow {
+    .dotWrapper {
+      top: 50%;
+    }
+
+    .ctaButton {
+      width: 100%;
+      text-align: center;
     }
   }
 }

@@ -20,7 +20,7 @@ const PROCESS_STEPS = [
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -39,7 +39,7 @@ const PROCESS_STEPS = [
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -61,7 +61,7 @@ const PROCESS_STEPS = [
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -79,7 +79,7 @@ const PROCESS_STEPS = [
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -97,7 +97,7 @@ const PROCESS_STEPS = [
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       >
@@ -124,7 +124,7 @@ export default function Process() {
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 50%",
-            end: "bottom 80%",
+            end: "bottom 90%",
             scrub: 1,
           },
         },
@@ -174,8 +174,6 @@ export default function Process() {
 
   return (
     <section className={styles.processSection} ref={containerRef} id="process">
-      {/* Фонові blob-елементи ВИДАЛЕНО, бо тепер є GlobalBackground */}
-
       <div className={styles.container}>
         <div className={styles.header}>
           <span className={styles.badge}>Алгоритм роботи</span>
@@ -204,12 +202,9 @@ export default function Process() {
 
                 <div className={styles.card}>
                   <div className={styles.innerGlow}></div>
-
                   <div className={styles.stepDigit}>{step.id}</div>
-
                   <div className={styles.cardContentWrapper}>
                     <div className={styles.iconCircle}>{step.icon}</div>
-
                     <div className={styles.textContent}>
                       <h3>{step.title}</h3>
                       <p>{step.description}</p>
@@ -218,6 +213,48 @@ export default function Process() {
                 </div>
               </div>
             ))}
+
+            {/* ФІНАЛЬНИЙ БЛОК ЗВОРОТНОГО ЗВ'ЯЗКУ */}
+            <div className={`${styles.stepRow} ${styles.ctaRow}`}>
+              <div className={styles.dotWrapper}>
+                <div className={styles.activeGlow}></div>
+                <div className={styles.dot}></div>
+              </div>
+
+              <div className={`${styles.card} ${styles.ctaCard}`}>
+                {/* Бейдж стоїть на місці цифри (справа зверху) */}
+
+                {/* Використовуємо ту саму структуру, що й у звичайних картках */}
+                <div className={styles.cardContentWrapper}>
+                  <div className={styles.iconCircle}>
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M22 2L11 13"></path>
+                      <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+                    </svg>
+                  </div>
+
+                  <div className={styles.textContent}>
+                    <h3>Залишилися питання?</h3>
+                    <p>
+                      Якщо у Вас є питання, або ви хочете співпрацювати —
+                      заповніть форму зворотного зв’язку і ми надамо відповідь у
+                      найкоротші терміни.
+                    </p>
+                  </div>
+
+                  <button className={styles.ctaButton}>
+                    <span>Заповнити форму</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
