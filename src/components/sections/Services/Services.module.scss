@@ -1,12 +1,9 @@
-$primary: #0056b3;
 $text-dark: #0a2540;
+$primary: #0056b3;
 
-// ==========================================
-// ГОЛОВНИЙ КОНТЕЙНЕР
-// ==========================================
 .servicesSection {
   position: relative;
-  background-color: transparent; // Залишається прозорим
+  background-color: transparent;
   height: 100vh;
   height: 100svh;
   min-height: 480px;
@@ -16,11 +13,7 @@ $text-dark: #0a2540;
   align-items: center;
   justify-content: flex-start;
 }
-// Усі фонові ::before, ::after та @keyframes видалено!
 
-// ==========================================
-// ШАПКА
-// ==========================================
 .staticHeader {
   position: absolute;
   top: clamp(40px, 8vh, 100px);
@@ -66,9 +59,6 @@ $text-dark: #0a2540;
   filter: drop-shadow(0 4px 10px rgba(0, 86, 179, 0.15));
 }
 
-// ==========================================
-// ГОРИЗОНТАЛЬНИЙ ТРЕК І КАРТКИ
-// ==========================================
 .horizontalTrack {
   display: flex;
   align-items: center;
@@ -180,9 +170,6 @@ $text-dark: #0a2540;
   max-width: 600px;
 }
 
-// ==========================================
-// КНОПКИ ТА ПРОГРЕС
-// ==========================================
 .navControls {
   position: absolute;
   bottom: clamp(60px, 10vh, 90px);
@@ -247,6 +234,19 @@ $text-dark: #0a2540;
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 2px;
   position: relative;
+  cursor: pointer; // 🔥 Показуємо, що це можна клікати
+  touch-action: none; // 🔥 Забороняємо браузеру скролити сторінку вниз, коли тягнемо повзунок на телефоні
+
+  // 🔥 Невидима зона (Hitbox), щоб було легко схопити пальцем на телефоні
+  &::after {
+    content: "";
+    position: absolute;
+    top: -15px;
+    bottom: -15px;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
 }
 
 .progressBarFill {
@@ -258,13 +258,14 @@ $text-dark: #0a2540;
   background-color: $primary;
   border-radius: 2px;
   box-shadow: 0 0 8px rgba(0, 86, 179, 0.6);
+  pointer-events: none; // Щоб клік проходив наскрізь до .progressBar
 }
 
 .progressIcon {
   position: absolute;
-  right: -12px;
+  right: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(50%, -50%);
   width: 40px;
   height: 40px;
   background: #ffffff;
@@ -277,16 +278,16 @@ $text-dark: #0a2540;
     0 0 12px rgba(255, 204, 0, 0.6),
     0 2px 8px rgba(0, 86, 179, 0.3);
 
+  cursor: grab; // 🔥 Ефект "схопити"
+  pointer-events: none;
+
   svg {
     width: 14px;
     height: 14px;
     fill: #ffcc00;
   }
 }
-
-// ==========================================
 // АДАПТИВНІСТЬ ДЛЯ РІЗНИХ ЕКРАНІВ
-// ==========================================
 @media (max-width: 1440px), (max-height: 850px) {
   .title {
     font-size: 38px;
@@ -320,8 +321,6 @@ $text-dark: #0a2540;
 }
 
 @media (max-width: 768px) {
-  // 🔥 Видалено локальні перевизначення фону для мобілок
-
   .staticHeader {
     top: clamp(30px, 5vh, 60px);
   }
@@ -334,7 +333,6 @@ $text-dark: #0a2540;
     font-size: 28px;
     margin-bottom: 8px;
   }
-
   .horizontalTrack {
     margin-top: 2vh;
   }
@@ -347,7 +345,6 @@ $text-dark: #0a2540;
   .spacerEnd {
     width: calc(50vw - 182px);
   }
-
   .cardInner {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
@@ -365,7 +362,6 @@ $text-dark: #0a2540;
   .cardDesc {
     font-size: 15px;
   }
-
   .navControls {
     bottom: clamp(65px, 12vh, 80px);
     gap: 12px;
@@ -374,8 +370,11 @@ $text-dark: #0a2540;
     width: 50px;
     height: 50px;
   }
+
   .progressContainer {
     bottom: 20px;
+    // 🔥 На таблетках залишаємо достатньо місця по краях (іконка займає 20px радіусу)
+    padding: 0 24px 20px;
   }
 }
 
@@ -387,11 +386,9 @@ $text-dark: #0a2540;
     font-size: 24px;
     margin-top: 4px;
   }
-
   .horizontalTrack {
     margin-top: 0;
   }
-
   .servicePanel {
     width: 280px;
     margin: 0 8px;
@@ -403,7 +400,6 @@ $text-dark: #0a2540;
   .spacerEnd {
     width: calc(50vw - 148px);
   }
-
   .cardContent {
     padding: 20px;
   }
@@ -414,7 +410,6 @@ $text-dark: #0a2540;
     font-size: 14px;
     line-height: 1.4;
   }
-
   .navControls {
     bottom: 65px;
     gap: 12px;
@@ -426,9 +421,10 @@ $text-dark: #0a2540;
 
   .progressContainer {
     bottom: 15px;
-    padding: 0 15px 20px;
+    // 🔥 Головний фікс для мобайлу: padding збільшено з 15px до 24px,
+    // щоб іконка (радіус якої 20px) мала безпечну зону і не вилазила за екран.
+    padding: 0 24px 20px;
   }
-  .progressIcon {
-    right: -6px;
-  }
+
+  // (Видалено локальні кастомні зсуви right: -6px, тепер transform вирішує все)
 }

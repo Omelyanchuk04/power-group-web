@@ -14,6 +14,7 @@ export default function Services() {
   const wrapperRef = useRef(null);
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
+  const progressRef = useRef(null); // 🔥 Новий реф для прогрес-бару
   const autoScrollTimer = useRef(null);
   const isUserInteracting = useRef(false);
 
@@ -56,12 +57,16 @@ export default function Services() {
     },
   ];
 
+  const stopAutoScroll = () => {
+    if (autoScrollTimer.current) {
+      clearInterval(autoScrollTimer.current);
+      autoScrollTimer.current = null;
+    }
+  };
+
   const resetAutoScroll = () => {
-    if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
-
-    // Збільшуємо паузу, якщо користувач щойно взаємодіяв (щоб не виривало з-під пальців)
+    stopAutoScroll();
     const timeout = isUserInteracting.current ? 8000 : 5000;
-
     autoScrollTimer.current = setInterval(() => {
       handleScroll("next", true);
     }, timeout);
@@ -71,6 +76,17 @@ export default function Services() {
     let ctx = gsap.context(() => {
       const track = trackRef.current;
       const panels = gsap.utils.toArray(`.${styles.servicePanel}`);
+
+      // Запуск автоскролу тільки коли секція на екрані
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 80%",
+        end: "bottom 20%",
+        onEnter: () => resetAutoScroll(),
+        onLeave: () => stopAutoScroll(),
+        onEnterBack: () => resetAutoScroll(),
+        onLeaveBack: () => stopAutoScroll(),
+      });
 
       // Анімація появи секції
       gsap.from(
@@ -94,10 +110,9 @@ export default function Services() {
         },
       );
 
-      // Анімація карток при горизонтальному скролі
+      // Анімація карток
       panels.forEach((panel) => {
         const inner = panel.querySelector(`.${styles.cardInner}`);
-
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: panel,
@@ -105,7 +120,7 @@ export default function Services() {
             horizontal: true,
             start: "left 85%",
             end: "right 15%",
-            scrub: 0.5, // 🔥 0.5 замість true! Це дає м'яке згладжування і прибирає лаги на телефонах
+            scrub: 0.5,
           },
         });
 
@@ -132,24 +147,21 @@ export default function Services() {
           horizontal: true,
           start: "left left",
           end: () => `+=${track.scrollWidth - track.clientWidth}`,
-          scrub: 0.1, // Легке згладжування для прогресу
+          scrub: 0.1,
         },
       });
     }, wrapperRef);
-
-    resetAutoScroll();
 
     // Оптимізовані обробники подій
     const track = trackRef.current;
 
     const handleTouchStart = () => {
       isUserInteracting.current = true;
-      if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
+      stopAutoScroll();
     };
 
     const handleTouchEnd = () => {
       resetAutoScroll();
-      // Даємо час на завершення інерційного скролу
       setTimeout(() => {
         isUserInteracting.current = false;
       }, 1000);
@@ -171,7 +183,7 @@ export default function Services() {
     }
 
     return () => {
-      if (autoScrollTimer.current) clearInterval(autoScrollTimer.current);
+      stopAutoScroll();
       if (track) {
         track.removeEventListener("touchstart", handleTouchStart);
         track.removeEventListener("touchend", handleTouchEnd);
@@ -184,7 +196,6 @@ export default function Services() {
   const handleScroll = (direction, isAuto = false) => {
     if (!trackRef.current) return;
     const track = trackRef.current;
-
     const panel = track.querySelector(`.${styles.servicePanel}`);
     if (!panel) return;
 
@@ -218,6 +229,57 @@ export default function Services() {
     }
   };
 
+  // 🔥 ЛОГІКА ПЕРЕТЯГУВАННЯ ПОВЗУНКА 🔥
+  const handleProgressDrag = (e) => {
+    isUserInteracting.current = true;
+    stopAutoScroll();
+
+    const track = trackRef.current;
+    const progress = progressRef.current;
+    if (!track || !progress) return;
+
+    // Забороняємо виділення тексту під час перетягування
+    document.body.style.userSelect = "none";
+
+    const updateScroll = (clientX) => {
+      const rect = progress.getBoundingClientRect();
+      let x = clientX - rect.left;
+
+      // Обмежуємо значення від 0 до ширини прогрес-бару
+      x = Math.max(0, Math.min(x, rect.width));
+
+      const percentage = x / rect.width;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+
+      // Одразу скролимо трек, а GSAP сам оновить дизайн прогрес-бару!
+      track.scrollLeft = percentage * maxScroll;
+    };
+
+    // Стрибок на місце кліку
+    updateScroll(e.clientX);
+
+    const onPointerMove = (moveEvent) => {
+      updateScroll(moveEvent.clientX);
+    };
+
+    const onPointerUp = () => {
+      document.body.style.userSelect = "";
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+
+      resetAutoScroll();
+      setTimeout(() => {
+        isUserInteracting.current = false;
+      }, 1000);
+    };
+
+    // Слухаємо рух мишки/пальця по всьому вікну
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+  };
+
   return (
     <div ref={wrapperRef}>
       <section className={styles.servicesSection} ref={sectionRef}>
@@ -238,7 +300,7 @@ export default function Services() {
                   fill
                   className={styles.bgImage}
                   sizes="(max-width: 1024px) 100vw, 800px"
-                  priority={index < 2} // Завантажуємо перші дві картинки одразу
+                  priority={index < 2}
                 />
                 <div className={styles.gradientOverlay}></div>
 
@@ -292,7 +354,12 @@ export default function Services() {
         </div>
 
         <div className={styles.progressContainer}>
-          <div className={styles.progressBar}>
+          {/* 🔥 Додали реф та обробник натискання (pointerdown працює і для миші, і для пальців) 🔥 */}
+          <div
+            className={styles.progressBar}
+            ref={progressRef}
+            onPointerDown={handleProgressDrag}
+          >
             <div className={styles.progressBarFill}>
               <div className={styles.progressIcon}>
                 <svg viewBox="0 0 24 24" fill="currentColor">
