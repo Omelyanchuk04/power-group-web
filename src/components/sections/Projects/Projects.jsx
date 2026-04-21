@@ -240,10 +240,6 @@ export default function Projects() {
       ref={containerRef}
       id="projects"
     >
-      <div className={styles.blob3}></div>
-      <div className={styles.blob4}></div>
-      <div className={styles.blob5}></div>
-
       <div className={styles.container}>
         {/* 🔥 ОНОВЛЕНА ШАПКА ВІДПОВІДНО ДО СКРІНШОТІВ 🔥 */}
         <div className={styles.header}>

@@ -1,55 +1,25 @@
 @use "sass:color";
 
-// Змінні синхронізовані з хедером
+// Змінні
 $primary-blue: #0056b3;
 $text-dark: #1d1d1f;
 $gray-text: #64748b;
 $white: #ffffff;
 
-// Фірмові кольори соцмереж
 $brand-telegram: #0088cc;
 $brand-viber: #7360f2;
 
 .footerWrapper {
-  // Базовий фон для секції футера (щоб скло мало на чому виділятися)
-  background-color: #fdfdfd;
+  // 🔥 1. Робимо фон повністю прозорим
+  background-color: transparent;
   padding: 60px 20px;
   position: relative;
   z-index: 10;
   width: 100%;
   display: flex;
   justify-content: center;
-  overflow: hidden; // Важливо! Ховає краї розмитих плям, щоб не було скролу
 
-  // 🔥 Локальна фонова аура (тільки для футера) 🔥
-  &::before,
-  &::after {
-    content: "";
-    position: absolute; // Позиціонуємо відносно .footerWrapper
-    border-radius: 50%;
-    filter: blur(120px); // Сильне розмиття
-    opacity: 0.15; // Прозорість
-    z-index: 1; // Позаду скляної картки (яка має z-index 5)
-    pointer-events: none;
-  }
-
-  // Велика синя пляма справа
-  &::before {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, #0056b3 0%, rgba(0, 86, 179, 0) 70%);
-    top: -150px;
-    right: -100px;
-  }
-
-  // Світліша синя пляма зліва
-  &::after {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0) 70%);
-    bottom: -100px;
-    left: -80px;
-  }
+  // 🔥 2. Видалили overflow: hidden та ВСІ локальні плями (::before, ::after)
 }
 
 // 🔥 КАРТКА ФУТЕРА В СТИЛІ ХЕДЕРА 🔥
@@ -72,7 +42,7 @@ $brand-viber: #7360f2;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
 
   position: relative;
-  z-index: 5; // Вище за фонові плями
+  z-index: 5;
 }
 
 .topRow {
@@ -80,7 +50,7 @@ $brand-viber: #7360f2;
   grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
   gap: 30px;
   margin-bottom: 50px;
-  align-items: flex-start; // 🔥 Відрівнювання до верху всіх колонок
+  align-items: flex-start;
 }
 
 // ЛОГОТИП
@@ -112,7 +82,7 @@ $brand-viber: #7360f2;
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 12px; // Трохи збільшив відступ, бо прибрали "капсули"
+  gap: 12px;
 
   a {
     font-size: 14px;
@@ -122,7 +92,6 @@ $brand-viber: #7360f2;
     transition: color 0.3s ease;
     width: fit-content;
 
-    // 🔥 Класичний ховер без фону
     &:hover {
       color: $primary-blue;
     }
@@ -219,27 +188,25 @@ $brand-viber: #7360f2;
     border-radius: 100px;
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    // 🔥 Позиціонування іконки та тексту 🔥
     display: flex;
     align-items: center;
-    gap: 10px; // Відступ між іконкою та текстом
+    gap: 10px;
 
     svg {
-      width: 18px; // Розмір іконки
+      width: 18px;
       height: 18px;
-      fill: $text-dark; // Базовий колір іконки (чорний)
-      transition: fill 0.3s ease; // Плавна зміна кольору
+      fill: $text-dark;
+      transition: fill 0.3s ease;
     }
 
     &:hover {
       background: $white;
-      // Текст і іконка стають синіми при загальному ховері
       color: $primary-blue;
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
 
       svg {
-        fill: $primary-blue; // Іконка теж стає синьою
+        fill: $primary-blue;
       }
     }
   }
@@ -299,7 +266,7 @@ $brand-viber: #7360f2;
     grid-template-columns: 1fr;
     gap: 35px;
     text-align: center;
-    align-items: center; // На мобілках лишаємо центрування для кращого вигляду в стовпчик
+    align-items: center;
   }
 
   .brandCol,

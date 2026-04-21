@@ -19,7 +19,6 @@ export const metadata = {
     "Електромонтажні роботи, сонячні станції та системи резервного живлення під ключ.",
 };
 
-// Next.js автоматично перетворить це на правильний <meta name="viewport">
 export const viewport = {
   width: "device-width",
   initialScale: 1,
@@ -35,9 +34,6 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
     >
       <head>
-        {/* Ручний <meta name="viewport"> видалено, щоб не було дублів */}
-
-        {/* Завантажуємо перші кадри анімації пріоритетно */}
         <link
           rel="preload"
           href="/frames/frame-001.jpg"
@@ -50,8 +46,6 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/frames/frame-005.jpg" as="image" />
       </head>
       <body>
-        {" "}
-        {/* suppressHydrationWarning тут зазвичай не потрібен, якщо він є на html */}
         <Header />
         <main>{children}</main>
         <Footer />

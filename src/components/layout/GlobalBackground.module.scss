@@ -1,0 +1,183 @@
+@use "sass:color";
+
+$light-bg: #f5f5f5;
+
+.stickyWrapper {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: $light-bg;
+  z-index: 0;
+  overflow: hidden;
+  margin-bottom: -100vh;
+  pointer-events: none;
+
+  /* 🔥 ПЕРЕНОСИМО ЗАОКРУГЛЕННЯ ТА ТІНЬ ПРЯМО НА ФОН 🔥 */
+  border-radius: 40px 40px 0 0;
+  box-shadow: 0 -15px 25px rgba(0, 0, 0, 0.15);
+
+  .blob1,
+  .blob2,
+  .blob3,
+  .blob4,
+  .blob5 {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  .blob1 {
+    width: 35vw;
+    height: 35vw;
+    background: rgba(0, 86, 179, 0.25);
+    filter: blur(80px);
+    top: -5%;
+    left: -5%;
+    animation: floatBlob1 20s infinite alternate ease-in-out;
+  }
+
+  .blob2 {
+    width: 30vw;
+    height: 40vw;
+    background: rgba(0, 163, 255, 0.2);
+    filter: blur(75px);
+    bottom: 10%;
+    right: -5%;
+    animation: floatBlob2 25s infinite alternate ease-in-out;
+  }
+
+  .blob3 {
+    width: 25vw;
+    height: 25vw;
+    background: rgba(255, 170, 0, 0.15);
+    filter: blur(70px);
+    top: 40%;
+    left: 20%;
+    animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
+  }
+
+  .blob4 {
+    width: 40vw;
+    height: 30vw;
+    background: rgba(0, 212, 255, 0.15);
+    filter: blur(85px);
+    top: 20%;
+    right: 15%;
+    animation: floatBlob4 28s infinite alternate ease-in-out;
+  }
+
+  .blob5 {
+    width: 20vw;
+    height: 30vw;
+    background: rgba(0, 86, 179, 0.2);
+    filter: blur(65px);
+    bottom: -5%;
+    left: 10%;
+    animation: floatBlob5 22s infinite alternate-reverse ease-in-out;
+  }
+}
+
+/* АНІМАЦІЇ */
+@keyframes floatBlob1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(15vw, 10vh) scale(1.1);
+  }
+  100% {
+    transform: translate(-5vw, 20vh) scale(0.9);
+  }
+}
+@keyframes floatBlob2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-20vw, -15vh) scale(0.9);
+  }
+  100% {
+    transform: translate(-5vw, -5vh) scale(1.1);
+  }
+}
+@keyframes floatBlob3 {
+  0% {
+    transform: translate(0, 0) scale(0.9);
+  }
+  50% {
+    transform: translate(-10vw, 25vh) scale(1.2);
+  }
+  100% {
+    transform: translate(15vw, -15vh) scale(1);
+  }
+}
+@keyframes floatBlob4 {
+  0% {
+    transform: translate(0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate(-25vw, 15vh) scale(0.85);
+  }
+  100% {
+    transform: translate(-10vw, -10vh) scale(1.05);
+  }
+}
+@keyframes floatBlob5 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(10vw, -20vh) scale(1.2);
+  }
+  100% {
+    transform: translate(25vw, 5vh) scale(0.9);
+  }
+}
+
+/* АДАПТИВ ДЛЯ МОБАЙЛУ */
+@media (max-width: 768px) {
+  .stickyWrapper {
+    .blob1 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 86, 179, 0.15) 0%,
+        rgba(0, 86, 179, 0) 60%
+      );
+      filter: none;
+    }
+    .blob2 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 163, 255, 0.12) 0%,
+        rgba(0, 163, 255, 0) 60%
+      );
+      filter: none;
+    }
+    .blob3 {
+      background: radial-gradient(
+        circle,
+        rgba(255, 170, 0, 0.1) 0%,
+        rgba(255, 170, 0, 0) 60%
+      );
+      filter: none;
+    }
+    .blob4 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 212, 255, 0.1) 0%,
+        rgba(0, 212, 255, 0) 60%
+      );
+      filter: none;
+    }
+    .blob5 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 86, 179, 0.1) 0%,
+        rgba(0, 86, 179, 0) 60%
+      );
+      filter: none;
+    }
+  }
+}

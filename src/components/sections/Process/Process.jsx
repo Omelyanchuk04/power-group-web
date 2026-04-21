@@ -174,9 +174,7 @@ export default function Process() {
 
   return (
     <section className={styles.processSection} ref={containerRef} id="process">
-      <div className={styles.blob3}></div>
-      <div className={styles.blob4}></div>
-      <div className={styles.blob5}></div>
+      {/* Фонові blob-елементи ВИДАЛЕНО, бо тепер є GlobalBackground */}
 
       <div className={styles.container}>
         <div className={styles.header}>

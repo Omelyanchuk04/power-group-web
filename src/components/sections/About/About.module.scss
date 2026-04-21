@@ -1,172 +1,23 @@
 @use "sass:color";
 
 $primary: #0056b3;
-$light-bg: #f5f5f5;
-$white: #ffffff;
 $text-dark: #0a2540;
 $text-gray: #52637a;
 $border-color: #e2e8f0;
+$white: #ffffff;
 
 // ==========================================
-// ФОН СЕКЦІЇ ТА АНІМОВАНІ ПЛЯМИ
+// ФОН СЕКЦІЇ
 // ==========================================
 
 .lightSection {
-  background-color: $light-bg;
-  padding: 40px 20px 100px;
+  background-color: transparent;
   position: relative;
-  margin-top: -40px;
-  z-index: 10;
-  border-radius: 40px 40px 0 0;
-  box-shadow: 0 -15px 25px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-
-  &::before,
-  &::after,
-  .blob3,
-  .blob4,
-  .blob5 {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0.8;
-    will-change: transform;
-    transform: translate3d(0, 0, 0);
-    -webkit-transform: translate3d(0, 0, 0);
-  }
-
-  // ОПТИМІЗОВАНІ ПЛЯМИ
-  &::before {
-    width: 60vw;
-    height: 60vw;
-    background: radial-gradient(
-      circle,
-      rgba(0, 86, 179, 0.25) 0%,
-      rgba(0, 86, 179, 0) 70%
-    );
-    top: -15%;
-    left: -15%;
-    animation: floatBlob1 20s infinite alternate ease-in-out;
-  }
-
-  &::after {
-    width: 50vw;
-    height: 60vw;
-    background: radial-gradient(
-      circle,
-      rgba(0, 163, 255, 0.2) 0%,
-      rgba(0, 163, 255, 0) 70%
-    );
-    bottom: 5%;
-    right: -10%;
-    animation: floatBlob2 25s infinite alternate ease-in-out;
-  }
+  /* Ставимо z-index вище, ніж у Hero (там 1) */
+  z-index: 2;
 }
 
-.blob3 {
-  width: 40vw;
-  height: 40vw;
-  background: radial-gradient(
-    circle,
-    rgba(255, 170, 0, 0.15) 0%,
-    rgba(255, 170, 0, 0) 70%
-  );
-  top: 30%;
-  left: 10%;
-  animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
-}
-
-.blob4 {
-  width: 60vw;
-  height: 50vw;
-  background: radial-gradient(
-    circle,
-    rgba(0, 212, 255, 0.15) 0%,
-    rgba(0, 212, 255, 0) 70%
-  );
-  top: 10%;
-  right: 5%;
-  animation: floatBlob4 28s infinite alternate ease-in-out;
-}
-
-.blob5 {
-  width: 40vw;
-  height: 50vw;
-  background: radial-gradient(
-    circle,
-    rgba(0, 86, 179, 0.2) 0%,
-    rgba(0, 86, 179, 0) 70%
-  );
-  bottom: -15%;
-  left: 0%;
-  animation: floatBlob5 22s infinite alternate-reverse ease-in-out;
-}
-
-// ==========================================
-// КЛЮЧОВІ КАДРИ ДЛЯ РУХУ ПЛЯМ
-// ==========================================
-
-@keyframes floatBlob1 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(15vw, 10vh, 0) scale(1.1) rotate(45deg);
-  }
-  100% {
-    transform: translate3d(-5vw, 20vh, 0) scale(0.9) rotate(90deg);
-  }
-}
-
-@keyframes floatBlob2 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(-20vw, -15vh, 0) scale(0.9) rotate(-45deg);
-  }
-  100% {
-    transform: translate3d(-5vw, -5vh, 0) scale(1.1) rotate(-90deg);
-  }
-}
-
-@keyframes floatBlob3 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(0.9) rotate(0deg);
-  }
-  50% {
-    transform: translate3d(-10vw, 25vh, 0) scale(1.2) rotate(45deg);
-  }
-  100% {
-    transform: translate3d(15vw, -15vh, 0) scale(1) rotate(90deg);
-  }
-}
-
-@keyframes floatBlob4 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate3d(-25vw, 15vh, 0) scale(0.85);
-  }
-  100% {
-    transform: translate3d(-10vw, -10vh, 0) scale(1.05);
-  }
-}
-
-@keyframes floatBlob5 {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(10vw, -20vh, 0) scale(1.2);
-  }
-  100% {
-    transform: translate3d(25vw, 5vh, 0) scale(0.9);
-  }
-}
+// 🔥 ВИДАЛЕНО ВСІ КЛАСИ .blob ТА @keyframes
 
 // ==========================================
 // КОНТЕНТ
@@ -225,10 +76,6 @@ $border-color: #e2e8f0;
       font-weight: 600;
     }
   }
-}
-
-.offerWrapper {
-  //margin-bottom: 80px;
 }
 
 .offerHeader {
@@ -520,32 +367,23 @@ $border-color: #e2e8f0;
 // ==========================================
 
 @media (max-width: 1024px) {
-  .lightSection {
-    box-shadow: none !important;
-  }
-
   .sectionHeader h2 {
     font-size: 34px;
   }
-
   .targetGrid {
     grid-template-columns: 1fr;
     gap: 24px;
   }
-
   .targetCard {
     height: 320px;
   }
-
   .statsWrapper {
     padding: 30px;
   }
-
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
   }
-
   .statCard {
     height: 260px;
   }
@@ -556,71 +394,57 @@ $border-color: #e2e8f0;
     flex-direction: column;
     gap: 16px;
   }
-
   .logoRightColumn {
     align-items: center;
   }
-
   .animLine {
     max-width: 280px;
   }
-
   .animIcon img {
     width: 100px;
   }
-
   .animText img {
     width: 300px;
   }
-
   .animSlogan {
     font-size: 14px;
     text-align: center;
   }
-
   .mainContent {
     margin-top: -20px;
   }
-
   .animTitle {
     font-size: 36px;
     letter-spacing: -1px;
   }
-
   .animSubtitle {
     font-size: 16px;
     margin-bottom: 30px;
   }
-
   .featuresRow {
     flex-direction: column;
     width: 100%;
     max-width: 350px;
     margin-top: 40px;
   }
-
   .featureCard {
     width: 100%;
   }
 }
 
-/* 🔥 ОНОВЛЕНИЙ БЛОК ДЛЯ МОБАЙЛУ (ВИПРАВЛЯЄ КАРТКИ) 🔥 */
 @media (max-width: 576px) {
   .lightSection {
     padding: 30px 10px;
   }
-
   .sectionHeader {
     margin-bottom: 50px;
     h2 {
       font-size: 24px;
     }
   }
-
   .offerHeader h3 {
     font-size: 20px;
   }
-
   .targetCard {
     pointer-events: none;
     height: 280px;
@@ -634,7 +458,6 @@ $border-color: #e2e8f0;
       font-size: 22px;
     }
   }
-
   .transitionBlock {
     padding: 50px 0 50px;
     h3 {
@@ -644,12 +467,10 @@ $border-color: #e2e8f0;
       font-size: 16px;
     }
   }
-
   .statsWrapper {
     padding: 30px 16px 16px;
     border-radius: 32px;
   }
-
   .statsHeader {
     gap: 12px;
     h3 {
@@ -657,25 +478,17 @@ $border-color: #e2e8f0;
       white-space: normal;
     }
   }
-
-  /* 🔥 ФІКС СПЕЦИФІЧНОСТІ БЕЗ !important 🔥 */
   .statsGrid {
     gap: 12px;
-
-    // Вкладаємо картку всередину сітки, щоб збільшити вагу (пріоритет) правила
     .statCard {
       pointer-events: none;
       height: 180px;
       padding: 16px 12px;
-
-      // Тепер браузер бачить це як: .statsGrid .statCard .statNum
       .statNum {
         font-size: 32px;
         margin-bottom: 4px;
         letter-spacing: -1px;
       }
-
-      // Тепер браузер бачить це як: .statsGrid .statCard .statLabel
       .statLabel {
         font-size: 11px;
         letter-spacing: 0.5px;
