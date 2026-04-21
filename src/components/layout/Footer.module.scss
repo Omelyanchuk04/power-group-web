@@ -6,41 +6,60 @@ $text-dark: #1d1d1f;
 $gray-text: #64748b;
 $white: #ffffff;
 
-$brand-telegram: #0088cc;
-$brand-viber: #7360f2;
-
 .footerWrapper {
-  // 🔥 1. Робимо фон повністю прозорим
-  background-color: transparent;
+  // 🔥 1. ПОВЕРТАЄМО ФОН: Футер має свій незалежний бекграунд
+  background-color: #f5f5f5;
   padding: 60px 20px;
   position: relative;
   z-index: 10;
   width: 100%;
   display: flex;
   justify-content: center;
+  overflow: hidden; // Важливо для обрізки локальних плям футера
 
-  // 🔥 2. Видалили overflow: hidden та ВСІ локальні плями (::before, ::after)
+  // 🔥 2. ПОВЕРТАЄМО ЛОКАЛЬНІ ПЛЯМИ ФУТЕРА
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  // Велика синя пляма справа
+  &::before {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #0056b3 0%, rgba(0, 86, 179, 0) 70%);
+    top: -150px;
+    right: -100px;
+  }
+
+  // Світліша синя пляма зліва
+  &::after {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0) 70%);
+    bottom: -100px;
+    left: -80px;
+  }
 }
 
-// 🔥 КАРТКА ФУТЕРА В СТИЛІ ХЕДЕРА 🔥
+// 🔥 КАРТКА ФУТЕРА 🔥
 .footerCard {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-
-  // Ефект скла 1в1 як у хедері
   background: rgba(255, 255, 255, 0.4);
   -webkit-backdrop-filter: blur(24px) saturate(150%);
   backdrop-filter: blur(24px) saturate(150%);
-
-  // Форма, що перегукується з хедером
   border-radius: 40px;
   padding: 50px 60px 28px;
-
-  // Рамка та тінь з хедера
   border: 1px solid rgba(255, 255, 255, 1);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
-
   position: relative;
   z-index: 5;
 }
@@ -142,7 +161,6 @@ $brand-viber: #7360f2;
   gap: 24px;
 }
 
-// 🔥 КНОПКА 1В1 ЯК У ХЕДЕРІ 🔥
 .ctaBtn {
   padding: 12px 28px;
   font-size: 14px;
@@ -152,7 +170,6 @@ $brand-viber: #7360f2;
   cursor: pointer;
   white-space: nowrap;
   border: none;
-
   background-color: rgba(0, 86, 179, 0.9);
   -webkit-backdrop-filter: blur(12px) saturate(150%);
   backdrop-filter: blur(12px) saturate(150%);
@@ -171,7 +188,6 @@ $brand-viber: #7360f2;
   }
 }
 
-// Соцмережі в "скляному" стилі
 .socials {
   display: flex;
   gap: 12px;
@@ -187,7 +203,6 @@ $brand-viber: #7360f2;
     font-weight: 500;
     border-radius: 100px;
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-
     display: flex;
     align-items: center;
     gap: 10px;
@@ -204,7 +219,6 @@ $brand-viber: #7360f2;
       color: $primary-blue;
       transform: translateY(-3px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
-
       svg {
         fill: $primary-blue;
       }
@@ -268,29 +282,24 @@ $brand-viber: #7360f2;
     text-align: center;
     align-items: center;
   }
-
   .brandCol,
   .navCol,
   .contactsCol,
   .actionCol {
     align-items: center;
   }
-
   .logo {
     justify-content: center;
   }
-
   .ctaBtn {
     width: 100%;
     justify-content: center;
     display: flex;
   }
-
   .socials {
     width: 100%;
     justify-content: center;
   }
-
   .bottomRow {
     flex-direction: column;
     gap: 15px;

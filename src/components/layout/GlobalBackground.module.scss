@@ -13,10 +13,6 @@ $light-bg: #f5f5f5;
   margin-bottom: -100vh;
   pointer-events: none;
 
-  /* 🔥 ПЕРЕНОСИМО ЗАОКРУГЛЕННЯ ТА ТІНЬ ПРЯМО НА ФОН 🔥 */
-  border-radius: 40px 40px 0 0;
-  box-shadow: 0 -15px 25px rgba(0, 0, 0, 0.15);
-
   .blob1,
   .blob2,
   .blob3,
