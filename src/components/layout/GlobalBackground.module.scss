@@ -1,70 +1,132 @@
 @use "sass:color";
 
 .absoluteWrapper {
-  position: absolute; /* Розтягується на всю висоту Мега-Контейнера */
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
 
+  // Оновлений список усіх 10 плям
   .blob1,
   .blob2,
   .blob3,
   .blob4,
-  .blob5 {
+  .blob5,
+  .blob6,
+  .blob7,
+  .blob8,
+  .blob9,
+  .blob10 {
     position: absolute;
     border-radius: 50%;
     pointer-events: none;
-    opacity: 0.8;
   }
 
-  // Розподіляємо плями рівномірно від верху до самого футера
+  /* --- БАЗОВІ ПЛЯМИ --- */
   .blob1 {
     width: 35vw;
     height: 35vw;
-    background: rgba(0, 86, 179, 0.25);
+    background: rgba(0, 86, 179, 0.35);
     filter: blur(80px);
     top: 5%;
-    left: -5%; /* Зверху (About) */
+    left: -5%;
     animation: floatBlob1 20s infinite alternate ease-in-out;
   }
+
   .blob2 {
     width: 30vw;
     height: 40vw;
-    background: rgba(0, 163, 255, 0.2);
+    background: rgba(0, 163, 255, 0.3);
     filter: blur(75px);
     top: 25%;
-    right: -5%; /* (Services) */
+    right: -5%;
     animation: floatBlob2 25s infinite alternate ease-in-out;
   }
+
   .blob3 {
     width: 25vw;
     height: 25vw;
-    background: rgba(255, 170, 0, 0.15);
-    filter: blur(70px);
+    background: rgba(255, 170, 0, 0.4);
+    filter: blur(40px);
     top: 50%;
-    left: 20%; /* (Projects) */
+    left: 20%;
     animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
   }
+
   .blob4 {
     width: 40vw;
     height: 30vw;
-    background: rgba(0, 212, 255, 0.15);
+    background: rgba(0, 212, 255, 0.3);
     filter: blur(85px);
     top: 75%;
-    right: 15%; /* (Process) */
+    right: 15%;
     animation: floatBlob4 28s infinite alternate ease-in-out;
   }
+
   .blob5 {
     width: 20vw;
     height: 30vw;
-    background: rgba(0, 86, 179, 0.2);
-    filter: blur(65px);
+    background: rgba(0, 86, 179, 0.35);
+    filter: blur(80px);
     bottom: 2%;
-    left: 10%; /* Самий низ (Футер) */
+    left: 10%;
     animation: floatBlob5 22s infinite alternate-reverse ease-in-out;
+  }
+
+  /* --- ДОДАТКОВІ ПЛЯМИ --- */
+  .blob6 {
+    width: 28vw;
+    height: 28vw;
+    background: rgba(0, 212, 255, 0.25);
+    filter: blur(70px);
+    top: 15%;
+    right: 25%;
+    animation: floatBlob6 22s infinite alternate ease-in-out;
+  }
+
+  .blob7 {
+    width: 35vw;
+    height: 25vw;
+    background: rgba(0, 86, 179, 0.25);
+    filter: blur(85px);
+    top: 60%;
+    left: -10%;
+    animation: floatBlob7 26s infinite alternate-reverse ease-in-out;
+  }
+
+  .blob8 {
+    width: 22vw;
+    height: 22vw;
+    background: rgba(255, 170, 0, 0.25);
+    filter: blur(55px);
+    bottom: 18%;
+    right: 5%;
+    animation: floatBlob8 24s infinite alternate ease-in-out;
+  }
+
+  /* 🔥 ПЛЯМИ 9 та 10 🔥 */
+  .blob9 {
+    width: 26vw;
+    height: 26vw;
+    background: rgba(0, 163, 255, 0.25); /* Світло-блакитна */
+    filter: blur(65px);
+    top: -5%;
+    left: 45%; /* По центру зверху */
+    animation: floatBlob9 28s infinite alternate-reverse ease-in-out;
+  }
+
+  .blob10 {
+    width: 32vw;
+    height: 32vw;
+    background: rgba(0, 86, 179, 0.25); /* Глибока синя */
+    filter: blur(80px);
+    bottom: 35%;
+    right: 10%; /* Знизу справа */
+    animation: floatBlob10 32s infinite alternate ease-in-out;
   }
 }
 
@@ -125,12 +187,71 @@
   }
 }
 
+@keyframes floatBlob6 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-10vw, 15vh) scale(1.15);
+  }
+  100% {
+    transform: translate(5vw, -5vh) scale(0.9);
+  }
+}
+@keyframes floatBlob7 {
+  0% {
+    transform: translate(0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate(15vw, -10vh) scale(0.9);
+  }
+  100% {
+    transform: translate(-5vw, 15vh) scale(1.05);
+  }
+}
+@keyframes floatBlob8 {
+  0% {
+    transform: translate(0, 0) scale(0.9);
+  }
+  50% {
+    transform: translate(-15vw, -15vh) scale(1.2);
+  }
+  100% {
+    transform: translate(10vw, 10vh) scale(1);
+  }
+}
+
+/* Анімації для 9 та 10 */
+@keyframes floatBlob9 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(10vw, 15vh) scale(0.9);
+  }
+  100% {
+    transform: translate(-10vw, 5vh) scale(1.1);
+  }
+}
+@keyframes floatBlob10 {
+  0% {
+    transform: translate(0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate(-15vw, -10vh) scale(0.95);
+  }
+  100% {
+    transform: translate(5vw, -20vh) scale(1.05);
+  }
+}
+
+/* АДАПТИВ ДЛЯ МОБАЙЛУ */
 @media (max-width: 768px) {
   .absoluteWrapper {
     .blob1 {
       background: radial-gradient(
         circle,
-        rgba(0, 86, 179, 0.15) 0%,
+        rgba(0, 86, 179, 0.25) 0%,
         rgba(0, 86, 179, 0) 60%
       );
       filter: none;
@@ -138,7 +259,7 @@
     .blob2 {
       background: radial-gradient(
         circle,
-        rgba(0, 163, 255, 0.12) 0%,
+        rgba(0, 163, 255, 0.2) 0%,
         rgba(0, 163, 255, 0) 60%
       );
       filter: none;
@@ -146,7 +267,7 @@
     .blob3 {
       background: radial-gradient(
         circle,
-        rgba(255, 170, 0, 0.1) 0%,
+        rgba(255, 170, 0, 0.3) 0%,
         rgba(255, 170, 0, 0) 60%
       );
       filter: none;
@@ -154,7 +275,7 @@
     .blob4 {
       background: radial-gradient(
         circle,
-        rgba(0, 212, 255, 0.1) 0%,
+        rgba(0, 212, 255, 0.2) 0%,
         rgba(0, 212, 255, 0) 60%
       );
       filter: none;
@@ -162,7 +283,50 @@
     .blob5 {
       background: radial-gradient(
         circle,
-        rgba(0, 86, 179, 0.1) 0%,
+        rgba(0, 86, 179, 0.25) 0%,
+        rgba(0, 86, 179, 0) 60%
+      );
+      filter: none;
+    }
+
+    .blob6 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 212, 255, 0.2) 0%,
+        rgba(0, 212, 255, 0) 60%
+      );
+      filter: none;
+    }
+    .blob7 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 86, 179, 0.2) 0%,
+        rgba(0, 86, 179, 0) 60%
+      );
+      filter: none;
+    }
+    .blob8 {
+      background: radial-gradient(
+        circle,
+        rgba(255, 170, 0, 0.2) 0%,
+        rgba(255, 170, 0, 0) 60%
+      );
+      filter: none;
+    }
+
+    /* Градієнти для 9 та 10 */
+    .blob9 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 163, 255, 0.2) 0%,
+        rgba(0, 163, 255, 0) 60%
+      );
+      filter: none;
+    }
+    .blob10 {
+      background: radial-gradient(
+        circle,
+        rgba(0, 86, 179, 0.2) 0%,
         rgba(0, 86, 179, 0) 60%
       );
       filter: none;
