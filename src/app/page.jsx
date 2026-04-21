@@ -3,39 +3,39 @@ import About from "@/components/sections/About/About";
 import Services from "@/components/sections/Services/Services";
 import Projects from "@/components/sections/Projects/Projects";
 import Process from "@/components/sections/Process/Process";
-
-// Імпортуємо наш фон
+import Footer from "@/components/layout/Footer"; // 🔥 Футер тепер тут!
 import GlobalBackground from "@/components/layout/GlobalBackground";
 
 export default function Home() {
   return (
-    <main>
+    <>
       <HeroVideo />
 
-      {/* 🔥 ГОЛОВНА ОБГОРТКА ("ШТОРА") 🔥 */}
+      {/* 🔥 МЕГА-КОНТЕЙНЕР ДЛЯ ВСЬОГО САЙТУ ПІСЛЯ HERO 🔥 */}
       <div
         style={{
           position: "relative",
           zIndex: 10,
           marginTop: "-40px",
+          backgroundColor: "#f5f5f5",
           borderRadius: "40px 40px 0 0",
           boxShadow: "0 -15px 25px rgba(0, 0, 0, 0.15)",
-          /* Магія: обрізає фон під форму кутів, але не ламає sticky! */
-          overflow: "clip",
-          backgroundColor: "#f5f5f5",
+          /* overflow: hidden ідеально обрізає кути і ховає краї плям */
+          overflow: "hidden",
         }}
       >
-        {/* Наш липкий фон (тепер без власних кутів) */}
+        {/* Абсолютний фон, розтягнутий на весь цей контейнер */}
         <GlobalBackground />
 
-        {/* Контент */}
-        <div style={{ position: "relative", zIndex: 1 }}>
+        {/* Контент, включно з футером */}
+        <div style={{ position: "relative", zIndex: 2 }}>
           <About />
           <Services />
           <Projects />
           <Process />
+          <Footer />
         </div>
       </div>
-    </main>
+    </>
   );
 }

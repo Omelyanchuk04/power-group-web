@@ -1,54 +1,21 @@
 @use "sass:color";
 
-// Змінні
 $primary-blue: #0056b3;
 $text-dark: #1d1d1f;
 $gray-text: #64748b;
 $white: #ffffff;
 
 .footerWrapper {
-  // 🔥 1. ПОВЕРТАЄМО ФОН: Футер має свій незалежний бекграунд
-  background-color: #f5f5f5;
-  padding: 60px 20px;
+  background-color: transparent; // 🔥 ПОВНІСТЮ ПРОЗОРИЙ ФОН
+  padding: 80px 20px;
   position: relative;
   z-index: 10;
   width: 100%;
   display: flex;
   justify-content: center;
-  overflow: hidden; // Важливо для обрізки локальних плям футера
-
-  // 🔥 2. ПОВЕРТАЄМО ЛОКАЛЬНІ ПЛЯМИ ФУТЕРА
-  &::before,
-  &::after {
-    content: "";
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.15;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  // Велика синя пляма справа
-  &::before {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, #0056b3 0%, rgba(0, 86, 179, 0) 70%);
-    top: -150px;
-    right: -100px;
-  }
-
-  // Світліша синя пляма зліва
-  &::after {
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0) 70%);
-    bottom: -100px;
-    left: -80px;
-  }
+  // 🔥 ВСІ ЛОКАЛЬНІ ПЛЯМИ (::before, ::after) ВИДАЛЕНО
 }
 
-// 🔥 КАРТКА ФУТЕРА 🔥
 .footerCard {
   width: 100%;
   max-width: 1200px;
@@ -72,7 +39,6 @@ $white: #ffffff;
   align-items: flex-start;
 }
 
-// ЛОГОТИП
 .brandCol {
   display: flex;
   flex-direction: column;
@@ -83,7 +49,6 @@ $white: #ffffff;
   display: flex;
   align-items: center;
   text-decoration: none;
-
   .logoImage {
     width: 180px;
     height: auto;
@@ -91,18 +56,15 @@ $white: #ffffff;
     object-fit: contain;
     transition: transform 0.3s ease;
   }
-
   &:hover .logoImage {
     transform: translateY(-2px);
   }
 }
 
-// НАВІГАЦІЯ
 .nav {
   display: flex;
   flex-direction: column;
   gap: 12px;
-
   a {
     font-size: 14px;
     font-weight: 500;
@@ -110,19 +72,16 @@ $white: #ffffff;
     text-decoration: none;
     transition: color 0.3s ease;
     width: fit-content;
-
     &:hover {
       color: $primary-blue;
     }
   }
 }
 
-// КОНТАКТИ
 .contactInfo {
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   .phone {
     font-size: 16px;
     font-weight: 600;
@@ -133,7 +92,6 @@ $white: #ffffff;
       color: $primary-blue;
     }
   }
-
   .email {
     font-size: 14px;
     font-weight: 500;
@@ -144,7 +102,6 @@ $white: #ffffff;
       color: $primary-blue;
     }
   }
-
   .address {
     font-size: 13px;
     font-weight: 400;
@@ -153,7 +110,6 @@ $white: #ffffff;
   }
 }
 
-// КНОПКА ТА СОЦМЕРЕЖІ
 .actionCol {
   display: flex;
   flex-direction: column;
@@ -178,7 +134,6 @@ $white: #ffffff;
     inset 0 1px 2px rgba(255, 255, 255, 0.3),
     0 4px 12px rgba(0, 86, 179, 0.2);
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-
   &:hover {
     background-color: color.adjust($primary-blue, $lightness: 5%);
     transform: translateY(-2px) scale(1.02);
@@ -191,7 +146,6 @@ $white: #ffffff;
 .socials {
   display: flex;
   gap: 12px;
-
   .socialLink {
     padding: 10px 20px;
     background: rgba(255, 255, 255, 0.5);
@@ -206,14 +160,12 @@ $white: #ffffff;
     display: flex;
     align-items: center;
     gap: 10px;
-
     svg {
       width: 18px;
       height: 18px;
       fill: $text-dark;
       transition: fill 0.3s ease;
     }
-
     &:hover {
       background: $white;
       color: $primary-blue;
@@ -226,14 +178,12 @@ $white: #ffffff;
   }
 }
 
-// НИЖНЯ ПАНЕЛЬ (КОПІРАЙТ)
 .bottomRow {
   padding-top: 28px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   p {
     font-size: 13px;
     color: $gray-text;
@@ -254,7 +204,6 @@ $white: #ffffff;
   }
 }
 
-// АДАПТИВНІСТЬ
 @media (max-width: 1024px) {
   .footerCard {
     padding: 40px 40px 24px;

@@ -1,16 +1,12 @@
 @use "sass:color";
 
-$light-bg: #f5f5f5;
-
-.stickyWrapper {
-  position: sticky;
+.absoluteWrapper {
+  position: absolute; /* Розтягується на всю висоту Мега-Контейнера */
   top: 0;
-  height: 100vh;
-  width: 100%;
-  background-color: $light-bg;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 0;
-  overflow: hidden;
-  margin-bottom: -100vh;
   pointer-events: none;
 
   .blob1,
@@ -24,53 +20,50 @@ $light-bg: #f5f5f5;
     opacity: 0.8;
   }
 
+  // Розподіляємо плями рівномірно від верху до самого футера
   .blob1 {
     width: 35vw;
     height: 35vw;
     background: rgba(0, 86, 179, 0.25);
     filter: blur(80px);
-    top: -5%;
-    left: -5%;
+    top: 5%;
+    left: -5%; /* Зверху (About) */
     animation: floatBlob1 20s infinite alternate ease-in-out;
   }
-
   .blob2 {
     width: 30vw;
     height: 40vw;
     background: rgba(0, 163, 255, 0.2);
     filter: blur(75px);
-    bottom: 10%;
-    right: -5%;
+    top: 25%;
+    right: -5%; /* (Services) */
     animation: floatBlob2 25s infinite alternate ease-in-out;
   }
-
   .blob3 {
     width: 25vw;
     height: 25vw;
     background: rgba(255, 170, 0, 0.15);
     filter: blur(70px);
-    top: 40%;
-    left: 20%;
+    top: 50%;
+    left: 20%; /* (Projects) */
     animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
   }
-
   .blob4 {
     width: 40vw;
     height: 30vw;
     background: rgba(0, 212, 255, 0.15);
     filter: blur(85px);
-    top: 20%;
-    right: 15%;
+    top: 75%;
+    right: 15%; /* (Process) */
     animation: floatBlob4 28s infinite alternate ease-in-out;
   }
-
   .blob5 {
     width: 20vw;
     height: 30vw;
     background: rgba(0, 86, 179, 0.2);
     filter: blur(65px);
-    bottom: -5%;
-    left: 10%;
+    bottom: 2%;
+    left: 10%; /* Самий низ (Футер) */
     animation: floatBlob5 22s infinite alternate-reverse ease-in-out;
   }
 }
@@ -132,9 +125,8 @@ $light-bg: #f5f5f5;
   }
 }
 
-/* АДАПТИВ ДЛЯ МОБАЙЛУ */
 @media (max-width: 768px) {
-  .stickyWrapper {
+  .absoluteWrapper {
     .blob1 {
       background: radial-gradient(
         circle,

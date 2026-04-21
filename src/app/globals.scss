@@ -12,7 +12,8 @@ body {
   min-height: 100% !important;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 
-  background-color: #f5f5f5;
+  /* 🔥 ПОВЕРНУЛИ КОЛІР ДЛЯ БЕЗПЕЧНИХ ЗОН ТЕЛЕФОНІВ */
+  background-color: #f5f5f5 !important;
   color: #333333;
 
   overflow: visible !important;
