@@ -4,36 +4,37 @@ $primary: #0056b3;
 $dodgerblue: #1e90ff;
 $dark: #0a2540;
 $gray: #52637a;
+$white: #ffffff;
 
 $telegram-color: #0088cc;
 $viber-color: #7360f2;
 
 .contactTrigger {
   position: relative;
-  z-index: 20;
-  // 🔥 ПОВЕРНУТО: забезпечує фізичне перекриття
-  margin-top: -200px;
+  z-index: 50;
 }
 
-.parallaxWrapper {
+.pageBackground {
   position: relative;
   width: 100%;
+  padding: 160px 0; // Симетричні відступи зверху і знизу
   overflow: hidden;
-
-  // 🔥 ПОВЕРНУТО ФОН: Безпосередньо в контейнері, як у твоєму оригіналі
+  border-radius: 40px 40px 0 0;
   background-color: #010409;
+}
+
+.bgImage {
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 100%;
+  height: 130%;
   background-image: url("/images/background-img.jpg");
   background-size: cover;
   background-position: center;
-
-  border-radius: 40px 40px 0 0;
-  padding: 140px 0 100px 0;
-
-  // 🔥 ОПТИМІЗАЦІЯ АНМАЦІЇ: Прискорення ТІЛЬКИ на цьому контейнері
-  will-change: transform;
+  z-index: 0;
+  pointer-events: none;
   transform: translateZ(0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .backgroundOverlay {
@@ -42,7 +43,8 @@ $viber-color: #7360f2;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(3, 7, 18, 0.85);
+  // Темний напівпрозорий шар, щоб текст ідеально читався
+  background-color: rgba(10, 37, 64, 0.7);
   z-index: 1;
 }
 
@@ -54,15 +56,24 @@ $viber-color: #7360f2;
   z-index: 5;
 }
 
-.centeredBadge {
+.splitLayout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 80px;
+  align-items: center;
+}
+
+// ЛІВА ЧАСТИНА
+.ctaContent {
   display: flex;
-  justify-content: center;
-  margin-bottom: 50px;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .badge {
-  padding: 8px 24px;
-  background: rgba(255, 255, 255, 0.03);
+  display: inline-block;
+  padding: 10px 24px;
+  background: rgba(255, 255, 255, 0.05); // Скляний ефект на темному фоні
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 100px;
   color: $dodgerblue;
@@ -70,262 +81,47 @@ $viber-color: #7360f2;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-}
-
-.splitLayout {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.infoSide {
-  flex: 1;
-  padding-right: 20px;
+  margin-bottom: 24px;
 }
 
 .title {
-  font-size: 48px;
+  font-size: 56px; // Зробив заголовок трохи більшим, оскільки немає рамки
   font-weight: 800;
-  color: #ffffff;
+  color: $white; // Білий текст на темному фоні
   line-height: 1.15;
-  margin-bottom: 16px;
-  letter-spacing: -1.5px;
+  margin-bottom: 20px;
+  letter-spacing: -1px;
 }
 
 .subtitle {
-  font-size: 16px;
-  color: #94a3b8;
-  margin-bottom: 40px;
-  max-width: 420px;
-  line-height: 1.5;
-}
-
-.contactList {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.contactRow {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.miniIcon {
-  width: 42px;
-  height: 42px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: $dodgerblue;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  flex-shrink: 0;
-  svg {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-.textWrapper {
-  display: flex;
-  flex-direction: column;
-  .caption {
-    font-size: 10px;
-    text-transform: uppercase;
-    color: #94a3b8;
-    font-weight: 800;
-    letter-spacing: 0.8px;
-    margin-bottom: 3px;
-  }
-  p,
-  a {
-    font-size: 17px;
-    font-weight: 700;
-    color: #ffffff;
-    text-decoration: none;
-    line-height: 1.2;
-    transition: 0.3s;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    a:hover {
-      color: $dodgerblue;
-    }
-  }
-}
-
-.phoneStack {
-  display: flex;
-  gap: 15px;
-}
-
-.messengers {
-  margin-top: 40px;
-  display: flex;
-  gap: 12px;
-  a {
-    padding: 14px 30px;
-    border-radius: 100px;
-    font-weight: 700;
-    font-size: 14px;
-    text-decoration: none;
-    color: white;
-    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: none;
-    display: inline-flex;
-    justify-content: center;
-
-    @media (hover: hover) and (pointer: fine) {
-      &:hover {
-        transform: translateY(-3px);
-        filter: brightness(1.15);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-      }
-    }
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-
-  .tg {
-    background-color: $telegram-color;
-  }
-  .viber {
-    background-color: $viber-color;
-  }
-}
-
-.formSide {
-  flex: 0 0 500px;
-  z-index: 10;
-}
-
-.glassWrapper {
-  position: relative;
-}
-
-.modernForm {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  // 🔥 ГОЛОВНИЙ ФІКС ЛАГІВ:
-  // Я видалив звідси will-change та transform: translateZ.
-  // Вони конфліктували з анімацією батьківського контейнера і вбивали FPS.
-
-  padding: 50px;
-  border-radius: 30px;
-  border: 1px solid rgba(255, 255, 255, 1);
-  border-bottom-color: rgba(255, 255, 255, 0.4);
-  border-right-color: rgba(255, 255, 255, 0.4);
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  font-family: inherit;
-
-  .formTitle {
-    font-size: 28px;
-    font-weight: 800;
-    color: $dark;
-    margin-bottom: 40px;
-    letter-spacing: -1px;
-  }
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.inputWrapper {
-  position: relative;
-  margin-bottom: 30px;
-
-  input,
-  textarea {
-    width: 100%;
-    background: transparent !important;
-    border: none;
-    padding: 10px 0;
-    font-size: 16px; // Відключає авто-зум на iPhone
-    color: $dark;
-    font-family: inherit;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    transition: 0.4s ease;
-    outline: none !important;
-    box-shadow: none !important;
-    resize: none;
-    border-radius: 0;
-
-    &:-webkit-autofill,
-    &:-webkit-autofill:hover,
-    &:-webkit-autofill:focus,
-    &:-webkit-autofill:active {
-      -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
-      -webkit-text-fill-color: $dark !important;
-      transition: background-color 5000s ease-in-out 0s;
-    }
-
-    &:focus ~ label,
-    &:not(:placeholder-shown) ~ label {
-      top: -18px;
-      font-size: 11px;
-      color: $dodgerblue;
-      font-weight: 700;
-    }
-
-    &:focus ~ .line {
-      width: 100%;
-      background: $dodgerblue;
-    }
-  }
-
-  label {
-    position: absolute;
-    left: 0;
-    top: 10px;
-    font-size: 16px;
-    color: $gray;
-    pointer-events: none;
-    transition: 0.3s ease;
-  }
-
-  .line {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: transparent;
-    transition: 0.6s ease;
-  }
+  font-size: 18px;
+  color: #cbd5e1; // Світло-сірий для підзаголовка
+  margin-bottom: 48px;
+  max-width: 500px;
+  line-height: 1.6;
 }
 
 .actionBtn {
-  width: 100%;
-  padding: 18px 35px;
+  padding: 20px 40px;
   border: none;
   border-radius: 100px;
-  background: $dodgerblue;
-  color: white;
-  font-size: 16px;
+  background: linear-gradient(135deg, $primary 0%, #007bff 100%);
+  color: $white;
+  font-size: 18px;
   font-weight: 800;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  box-shadow: 0 15px 30px rgba(0, 86, 179, 0.3);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   -webkit-tap-highlight-color: transparent;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      background: #187bcd;
-      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(0, 86, 179, 0.4);
+      transform: translateY(-3px);
       svg {
         transform: translateX(5px);
       }
@@ -337,125 +133,186 @@ $viber-color: #7360f2;
   }
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     transition: 0.4s;
   }
 }
 
-// 🔥 МОБІЛЬНА АДАПТАЦІЯ 🔥
+// ПРАВА ЧАСТИНА (ПАНЕЛЬ КОНТАКТІВ ЯК ОКРЕМИЙ БЛОК)
+.contactPanel {
+  background: #f8fafc; // Світлий блок
+  border-radius: 30px;
+  padding: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); // Легка тінь
+}
+
+.panelTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: $dark;
+  margin-bottom: 30px;
+}
+
+.contactList {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.iconBox {
+  width: 48px;
+  height: 48px;
+  background: $white;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $dodgerblue;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+
+  .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+  p,
+  a {
+    font-size: 18px;
+    font-weight: 700;
+    color: $dark;
+    text-decoration: none;
+    line-height: 1.3;
+    transition: 0.2s;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover {
+      color: $primary;
+    }
+  }
+}
+
+.messengers {
+  margin-top: 40px;
+  display: flex;
+  gap: 12px;
+
+  a {
+    flex: 1;
+    padding: 16px 20px;
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    color: $white;
+    display: inline-flex;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    @media (hover: hover) and (pointer: fine) {
+      &:hover {
+        transform: translateY(-3px);
+        filter: brightness(1.1);
+      }
+    }
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+
+  .tg {
+    background-color: $telegram-color;
+  }
+  .viber {
+    background-color: $viber-color;
+  }
+}
+
+// 🔥 АДАПТИВНІСТЬ 🔥
 @media (max-width: 1024px) {
-  .contactTrigger {
-    // На планшетах і мобільних відключаємо перекриття, щоб форма не налізла на контент
-    margin-top: 0;
+  .pageBackground {
+    padding: 100px 0;
+    border-radius: 30px 30px 0 0;
   }
   .splitLayout {
-    grid-template-columns: 1fr;
-    gap: 50px;
+    grid-template-columns: 1fr; // Переводимо в одну колонку
+    gap: 60px;
   }
-  .parallaxWrapper {
-    padding: 100px 0 80px 0;
-    border-radius: 30px 30px 0 0;
+
+  .ctaContent {
+    align-items: center;
+    text-align: center;
+  }
+  .title {
+    font-size: 42px;
+  }
+  .subtitle {
+    max-width: 600px;
+  }
+  .contactPanel {
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageBackground {
+    padding: 80px 0;
+    border-radius: 20px 20px 0 0;
   }
   .container {
     padding: 0 20px;
   }
 
-  .infoSide {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-  }
-
-  .title,
-  .subtitle {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
   .title {
-    font-size: 38px;
-  }
-
-  .contactList {
-    width: 100%;
-    max-width: 360px;
-    margin: 0 auto;
-  }
-
-  .contactRow {
-    flex-direction: row;
-    align-items: flex-start;
-  }
-  .textWrapper {
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .phoneStack {
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .messengers {
-    width: 100%;
-    max-width: 360px;
-    margin: 40px auto 0;
-    justify-content: center;
-    a {
-      flex: 1;
-    }
-  }
-
-  .formSide {
-    width: 100%;
-    flex: none;
-    max-width: 550px;
-    margin: 0 auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .parallaxWrapper {
-    padding: 80px 0 60px 0;
-  }
-  .centeredBadge {
-    margin-bottom: 30px;
-  }
-  .title {
-    font-size: 32px;
-    margin-bottom: 12px;
-  }
-  .subtitle {
-    font-size: 15px;
-    margin-bottom: 30px;
-  }
-
-  .modernForm {
-    padding: 30px 24px;
-    border-radius: 20px;
-    // На слабких мобілках зменшений блюр для стабільних 60 FPS
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-
-    .formTitle {
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
-  }
-
-  // Поля введення стають одне під одним
-  .row {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .inputWrapper {
-    margin-bottom: 24px;
+    font-size: 36px;
   }
 
   .actionBtn {
-    padding: 16px 20px;
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+  }
+
+  .contactPanel {
+    padding: 30px 20px;
+    border-radius: 20px;
+  }
+
+  .itemText {
+    p,
+    a {
+      font-size: 16px;
+    }
+  }
+
+  .messengers {
+    flex-direction: column;
+    a {
+      width: 100%;
+      padding: 14px 20px;
+    }
   }
 }
