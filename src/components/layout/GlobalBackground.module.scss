@@ -248,88 +248,60 @@
 /* АДАПТИВ ДЛЯ МОБАЙЛУ */
 @media (max-width: 768px) {
   .absoluteWrapper {
+    /* Робимо плями ВЕЛИЧЕЗНИМИ (більшими за ширину екрана) 
+       і трохи зменшуємо радіус розмиття, щоб вони не розсіювалися в нуль */
+
     .blob1 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 86, 179, 0.25) 0%,
-        rgba(0, 86, 179, 0) 60%
-      );
-      filter: none;
+      width: 120vw;
+      height: 120vw;
+      filter: blur(45px);
     }
     .blob2 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 163, 255, 0.2) 0%,
-        rgba(0, 163, 255, 0) 60%
-      );
-      filter: none;
+      width: 140vw;
+      height: 150vw;
+      filter: blur(45px);
     }
     .blob3 {
-      background: radial-gradient(
-        circle,
-        rgba(255, 170, 0, 0.3) 0%,
-        rgba(255, 170, 0, 0) 60%
-      );
-      filter: none;
-    }
+      width: 100vw;
+      height: 100vw;
+      filter: blur(30px);
+    } /* Жовта */
     .blob4 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 212, 255, 0.2) 0%,
-        rgba(0, 212, 255, 0) 60%
-      );
-      filter: none;
+      width: 130vw;
+      height: 130vw;
+      filter: blur(45px);
     }
     .blob5 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 86, 179, 0.25) 0%,
-        rgba(0, 86, 179, 0) 60%
-      );
-      filter: none;
+      width: 150vw;
+      height: 150vw;
+      filter: blur(45px);
     }
 
     .blob6 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 212, 255, 0.2) 0%,
-        rgba(0, 212, 255, 0) 60%
-      );
-      filter: none;
+      width: 110vw;
+      height: 110vw;
+      filter: blur(40px);
     }
     .blob7 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 86, 179, 0.2) 0%,
-        rgba(0, 86, 179, 0) 60%
-      );
-      filter: none;
+      width: 140vw;
+      height: 120vw;
+      filter: blur(50px);
     }
     .blob8 {
-      background: radial-gradient(
-        circle,
-        rgba(255, 170, 0, 0.2) 0%,
-        rgba(255, 170, 0, 0) 60%
-      );
-      filter: none;
-    }
+      width: 90vw;
+      height: 90vw;
+      filter: blur(35px);
+    } /* Жовта */
 
-    /* Градієнти для 9 та 10 */
     .blob9 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 163, 255, 0.2) 0%,
-        rgba(0, 163, 255, 0) 60%
-      );
-      filter: none;
+      width: 120vw;
+      height: 120vw;
+      filter: blur(40px);
     }
     .blob10 {
-      background: radial-gradient(
-        circle,
-        rgba(0, 86, 179, 0.2) 0%,
-        rgba(0, 86, 179, 0) 60%
-      );
-      filter: none;
+      width: 130vw;
+      height: 130vw;
+      filter: blur(45px);
     }
   }
 }
