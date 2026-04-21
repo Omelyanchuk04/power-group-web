@@ -1,19 +1,24 @@
 @use "sass:color";
 
+// --- ЗМІННІ ---
 $primary-blue: #0056b3;
 $text-dark: #1d1d1f;
 $gray-text: #64748b;
 $white: #ffffff;
 
+// Фірмові кольори
+$telegram-color: #0088cc;
+$viber-color: #7360f2;
+
+// --- ОСНОВНІ БЛОКИ ---
 .footerWrapper {
-  background-color: transparent; // 🔥 ПОВНІСТЮ ПРОЗОРИЙ ФОН
-  padding: 80px 20px;
+  background-color: transparent;
+  padding: 40px 20px 30px;
   position: relative;
   z-index: 10;
   width: 100%;
   display: flex;
   justify-content: center;
-  // 🔥 ВСІ ЛОКАЛЬНІ ПЛЯМИ (::before, ::after) ВИДАЛЕНО
 }
 
 .footerCard {
@@ -39,6 +44,7 @@ $white: #ffffff;
   align-items: flex-start;
 }
 
+// --- ЛОГОТИП ---
 .brandCol {
   display: flex;
   flex-direction: column;
@@ -61,6 +67,19 @@ $white: #ffffff;
   }
 }
 
+// 🔥 МІКСИН ДЛЯ КРАСИВОГО ПІДКРЕСЛЕННЯ 🔥
+%link-hover {
+  text-decoration: none;
+  transition: all 0.3s ease;
+  &:hover {
+    color: $primary-blue;
+    text-decoration: underline;
+    text-underline-offset: 6px; /* Відступ лінії від тексту */
+    text-decoration-thickness: 2px; /* Товщина лінії */
+  }
+}
+
+// --- НАВІГАЦІЯ ---
 .nav {
   display: flex;
   flex-direction: column;
@@ -69,15 +88,12 @@ $white: #ffffff;
     font-size: 14px;
     font-weight: 500;
     color: $text-dark;
-    text-decoration: none;
-    transition: color 0.3s ease;
     width: fit-content;
-    &:hover {
-      color: $primary-blue;
-    }
+    @extend %link-hover;
   }
 }
 
+// --- КОНТАКТИ ---
 .contactInfo {
   display: flex;
   flex-direction: column;
@@ -86,21 +102,15 @@ $white: #ffffff;
     font-size: 16px;
     font-weight: 600;
     color: $text-dark;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    &:hover {
-      color: $primary-blue;
-    }
+    width: fit-content;
+    @extend %link-hover;
   }
   .email {
     font-size: 14px;
     font-weight: 500;
     color: $gray-text;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    &:hover {
-      color: $primary-blue;
-    }
+    width: fit-content;
+    @extend %link-hover;
   }
   .address {
     font-size: 13px;
@@ -110,14 +120,20 @@ $white: #ffffff;
   }
 }
 
+// --- КНОПКИ ТА СОЦМЕРЕЖІ ---
 .actionCol {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 24px;
+  align-items: stretch; // 🔥 Головний секрет: розтягує всі кнопки до єдиної ширини
+  width: fit-content; // 🔥 Колонка обіймає кнопки, не даючи їм стати занадто широкими
+  gap: 20px; // Трохи зменшив відступ між рядами для компактності
 }
 
 .ctaBtn {
+  width: 100%; // 🔥 Кнопка займає 100% ширини колонки
+  justify-content: center;
+  display: flex;
+
   padding: 12px 28px;
   font-size: 14px;
   font-weight: 600;
@@ -146,38 +162,61 @@ $white: #ffffff;
 .socials {
   display: flex;
   gap: 12px;
+  width: 100%; // 🔥 Контейнер соцмереж розтягується на ту ж ширину
+
   .socialLink {
+    flex: 1; // 🔥 Кожна кнопка соцмережі займає рівно 50% доступного місця
+    justify-content: center; // Ідеально центруємо іконку і текст
+
     padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-    color: $text-dark;
     text-decoration: none;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: 100px;
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: flex;
     align-items: center;
     gap: 10px;
+    color: $white;
+
     svg {
       width: 18px;
       height: 18px;
-      fill: $text-dark;
-      transition: fill 0.3s ease;
+      fill: currentColor;
+      transition: transform 0.3s ease;
     }
+
     &:hover {
-      background: $white;
-      color: $primary-blue;
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
       svg {
-        fill: $primary-blue;
+        transform: scale(1.1);
       }
+    }
+  }
+
+  // ФІРМОВІ КОЛЬОРИ КНОПОК
+  .telegram {
+    background-color: $telegram-color;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3);
+    &:hover {
+      background-color: color.adjust($telegram-color, $lightness: -5%);
+      box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4);
+    }
+  }
+
+  .viber {
+    background-color: $viber-color;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(115, 96, 242, 0.3);
+    &:hover {
+      background-color: color.adjust($viber-color, $lightness: -5%);
+      box-shadow: 0 8px 20px rgba(115, 96, 242, 0.4);
     }
   }
 }
 
+// --- НИЖНЯ ЧАСТИНА ---
 .bottomRow {
   padding-top: 28px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
@@ -195,14 +234,13 @@ $white: #ffffff;
   a {
     font-size: 13px;
     color: $gray-text;
-    text-decoration: none;
-    transition: color 0.2s;
-    font-weight: 400;
-    &:hover {
-      color: $primary-blue;
-    }
+    @extend %link-hover;
   }
 }
+
+// ==========================================
+// АДАПТИВНІСТЬ ДЛЯ ПЛАНШЕТІВ І МОБІЛОК
+// ==========================================
 
 @media (max-width: 1024px) {
   .footerCard {
@@ -219,40 +257,63 @@ $white: #ffffff;
 
 @media (max-width: 768px) {
   .footerWrapper {
-    padding: 40px 16px;
+    padding: 30px 16px;
   }
   .footerCard {
-    padding: 40px 24px 28px;
+    padding: 32px 24px 24px;
     border-radius: 24px;
   }
+
   .topRow {
     grid-template-columns: 1fr;
-    gap: 35px;
-    text-align: center;
-    align-items: center;
+    gap: 32px;
+    text-align: left;
+    align-items: flex-start;
+    margin-bottom: 32px;
   }
+
   .brandCol,
   .navCol,
   .contactsCol,
   .actionCol {
-    align-items: center;
+    align-items: flex-start;
+    width: 100%;
   }
+
   .logo {
-    justify-content: center;
+    justify-content: flex-start;
   }
+
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+    width: 100%;
+  }
+
   .ctaBtn {
     width: 100%;
     justify-content: center;
     display: flex;
   }
+
   .socials {
     width: 100%;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    .socialLink {
+      width: 100%;
+      justify-content: center;
+    }
   }
+
   .bottomRow {
     flex-direction: column;
-    gap: 15px;
-    text-align: center;
-    padding-top: 24px;
+    gap: 12px;
+    align-items: flex-start;
+    text-align: left;
+    padding-top: 20px;
   }
 }
