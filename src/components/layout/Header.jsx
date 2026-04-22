@@ -1,4 +1,5 @@
 "use client";
+import { useModal } from "@/context/ModalContext";
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -15,6 +16,7 @@ export default function Header() {
     isMoving: false,
   });
 
+  const { openModal } = useModal();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchInputRef = useRef(null);
@@ -142,7 +144,9 @@ export default function Header() {
             className={styles.contactWrapper}
             style={{ pointerEvents: isSearchOpen ? "none" : "auto" }}
           >
-            <button className={styles.contactBtn}>Зворотний зв'язок</button>
+            <button className={styles.contactBtn} onClick={openModal}>
+              Зворотний зв'язок
+            </button>
             <div className={styles.contactDropdown}>
               <div className={styles.dropdownGlass}></div>
               <div className={styles.dropdownContent}>

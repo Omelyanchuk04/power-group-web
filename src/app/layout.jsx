@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.scss";
 import Header from "@/components/layout/Header";
+import { ModalProvider } from "@/context/ModalContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,8 +46,11 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/frames/frame-005.jpg" as="image" />
       </head>
       <body>
-        <Header />
-        <main>{children}</main>
+        {/* Додаємо ModalProvider ось тут */}
+        <ModalProvider>
+          <Header />
+          <main>{children}</main>
+        </ModalProvider>
       </body>
     </html>
   );

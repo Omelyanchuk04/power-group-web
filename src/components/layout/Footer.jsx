@@ -3,8 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./Footer.module.scss";
+import { useModal } from "@/context/ModalContext";
 
 export default function Footer() {
+  const { openModal } = useModal();
   const currentYear = new Date().getFullYear();
 
   // --- Оригінальні SVG Іконки ---
@@ -81,7 +83,9 @@ export default function Footer() {
 
           {/* КОЛОНКА 4: КНОПКА ТА СОЦМЕРЕЖІ */}
           <div className={styles.actionCol}>
-            <button className={styles.ctaBtn}>Замовити консультацію</button>
+            <button className={styles.ctaBtn} onClick={openModal}>
+              Замовити консультацію
+            </button>
             <div className={styles.socials}>
               <a
                 href="https://t.me/+380672671477"

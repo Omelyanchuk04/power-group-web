@@ -1,9 +1,11 @@
 "use client";
 
 import { forwardRef } from "react";
+import { useModal } from "@/context/ModalContext";
 import styles from "./HeroVideo.module.scss";
 
 const HeroContent = forwardRef((props, ref) => {
+  const { openModal } = useModal();
   return (
     <div className={styles.contentWrapper} ref={ref}>
       {/* 1. ЦЕНТРАЛЬНИЙ БЛОК */}
@@ -17,7 +19,11 @@ const HeroContent = forwardRef((props, ref) => {
           цивільній та промисловій сфері.
         </p>
         <div className={styles.animButtonWrapper}>
-          <button className={styles.animButton} type="button">
+          <button
+            className={styles.animButton}
+            onClick={openModal}
+            type="button"
+          >
             {" "}
             {/* Додав type="button" для безпеки форм */}
             Отримати консультацію
