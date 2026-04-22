@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import styles from "./Process.module.scss";
+// Імпорт вашого нового компонента модалки
+import ContactModal from "../../modals/ContactModal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -112,6 +114,8 @@ const PROCESS_STEPS = [
 export default function Process() {
   const containerRef = useRef(null);
   const lineRef = useRef(null);
+  // Стан для керування видимістю модального вікна
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
@@ -222,9 +226,8 @@ export default function Process() {
               </div>
 
               <div className={`${styles.card} ${styles.ctaCard}`}>
-                {/* Бейдж стоїть на місці цифри (справа зверху) */}
+                <span className={styles.ctaBadge}>Швидка відповідь</span>
 
-                {/* Використовуємо ту саму структуру, що й у звичайних картках */}
                 <div className={styles.cardContentWrapper}>
                   <div className={styles.iconCircle}>
                     <svg
@@ -249,7 +252,11 @@ export default function Process() {
                     </p>
                   </div>
 
-                  <button className={styles.ctaButton}>
+                  {/* Кнопка тепер відкриває модалку */}
+                  <button
+                    className={styles.ctaButton}
+                    onClick={() => setIsModalOpen(true)}
+                  >
                     <span>Заповнити форму</span>
                   </button>
                 </div>
@@ -258,6 +265,12 @@ export default function Process() {
           </div>
         </div>
       </div>
+
+      {/* Компонент модальної форми */}
+      <ContactModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 }
