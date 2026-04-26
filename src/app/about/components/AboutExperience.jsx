@@ -4,54 +4,75 @@ import React, { useEffect, useRef, useState } from "react";
 import styles from "../about.module.scss";
 
 const AboutExperience = () => {
-  const sectionRef = useRef(null);
-  const [inView, setInView] = useState(false);
+  const headerRef = useRef(null);
+  const gridRef = useRef(null);
+
+  const [headerInView, setHeaderInView] = useState(false);
+  const [gridInView, setGridInView] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    // 1. Спостерігач для заголовку (спрацьовує, коли видно 20% тексту)
+    const headerObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
+          setHeaderInView(true);
+          headerObserver.disconnect();
         }
       },
-      {
-        // Анімація запуститься ПІЗНІШЕ: чекаємо поки 30% секції з'явиться на екрані
-        threshold: 0.3,
-        // Додатково відкладаємо старт, поки користувач не проскролить ще трохи нижче
-        rootMargin: "0px 0px -10% 0px",
-      },
+      { threshold: 0.2 },
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    // 2. Спостерігач для сітки (спрацьовує, коли видно 15% самої сітки карток)
+    const gridObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setGridInView(true);
+          gridObserver.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
 
-    return () => observer.disconnect();
+    if (headerRef.current) headerObserver.observe(headerRef.current);
+    if (gridRef.current) gridObserver.observe(gridRef.current);
+
+    return () => {
+      headerObserver.disconnect();
+      gridObserver.disconnect();
+    };
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className={`${styles.experienceSection} ${inView ? styles.inView : ""}`}
-    >
+    <section className={styles.experienceSection}>
       <div className={styles.container}>
-        <div className={styles.badgeWrapper}>
-          <span className={styles.badgeDark}>Енергія в діях</span>
+        {/* БЛОК 1: Заголовки (Анімуються окремо) */}
+        <div
+          ref={headerRef}
+          className={`${styles.headerBlock} ${headerInView ? styles.inView : ""}`}
+        >
+          <div className={styles.badgeWrapper}>
+            <span className={styles.badgeDark}>Енергія в діях</span>
+          </div>
+
+          <h2 className={styles.sectionTitle}>Експертність, яка не підведе</h2>
+          <p className={styles.sectionDesc}>
+            Ми не просто монтуємо кабелі. Досвід спеціалістів ВІН ПАУЕР ГРУП
+            дозволяє реалізувати проєкти будь-якого масштабу — від затишного
+            приватного будинку до потужного промислового об'єкта.
+          </p>
         </div>
 
-        <h2 className={styles.sectionTitle}>Експертність, яка не підведе</h2>
-        <p className={styles.sectionDesc}>
-          Ми не просто монтуємо кабелі. Досвід спеціалістів ВІН ПАУЕР ГРУП
-          дозволяє реалізувати проєкти будь-якого масштабу — від затишного
-          приватного будинку до потужного промислового об'єкта.
-        </p>
-
-        <div className={styles.bentoGrid}>
+        {/* БЛОК 2: Сітка (Анімується тільки коли до неї доскролять) */}
+        <div
+          ref={gridRef}
+          className={`${styles.bentoGrid} ${gridInView ? styles.inView : ""}`}
+        >
           {/* Блок 1: Темно-синій */}
           <div
             className={`${styles.bentoCard} ${styles.bentoDark} ${styles.size2x2}`}
           >
+            <div className={styles.cardBgLayer}></div>
+            <div className={styles.imageOverlay}></div>
             <div className={styles.bentoContent}>
               <div className={styles.iconCircle}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -82,6 +103,8 @@ const AboutExperience = () => {
           <div
             className={`${styles.bentoCard} ${styles.bentoWarm} ${styles.size2x1}`}
           >
+            <div className={styles.cardBgLayer}></div>
+            <div className={styles.imageOverlay}></div>
             <div className={styles.bentoContent}>
               <div className={styles.iconCircle}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -101,6 +124,8 @@ const AboutExperience = () => {
           <div
             className={`${styles.bentoCard} ${styles.bentoBlue} ${styles.size1x1}`}
           >
+            <div className={styles.cardBgLayer}></div>
+            <div className={styles.imageOverlay}></div>
             <div className={styles.bentoContent}>
               <div className={styles.iconCircle}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -136,6 +161,8 @@ const AboutExperience = () => {
           <div
             className={`${styles.bentoCard} ${styles.bentoSuccess} ${styles.size3x1}`}
           >
+            <div className={styles.cardBgLayer}></div>
+            <div className={styles.imageOverlay}></div>
             <div className={styles.bentoContent}>
               <div className={styles.iconCircle}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">

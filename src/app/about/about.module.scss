@@ -8,6 +8,8 @@ $bg-light: #f9fafb;
 
 .aboutPage {
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   color: $text-dark;
   line-height: 1.6;
 }
@@ -26,15 +28,14 @@ $bg-light: #f9fafb;
   background-color: #000;
 
   @media (max-width: 768px) {
-    min-height: 550px;
+    min-height: 90svh;
     padding: 100px 0;
   }
 
-  /* 🔥 Ізолюємо стилі Hero, щоб вони не зливалися з нижньою секцією */
   .badgeWrapper {
     width: 100%;
     display: flex;
-    justify-content: center; /* Вирівнювання ліворуч */
+    justify-content: center;
     margin-bottom: 3rem;
   }
 
@@ -42,7 +43,7 @@ $bg-light: #f9fafb;
     text-align: left;
     max-width: 800px;
     padding-top: 50px;
-    margin: 0; /* Прибрали автоматичний відступ (0 auto), щоб текст став ліворуч */
+    margin: 0;
 
     @media (max-width: 768px) {
       padding-top: 30px;
@@ -93,15 +94,17 @@ $bg-light: #f9fafb;
   flex-direction: column;
 }
 
-/* Анімація Hero */
+/* Анімація Hero (Апаратне прискорення) */
 .badgeWrapper,
 .title,
 .description {
   opacity: 0;
-  transform: translateY(40px);
+  transform: translateY(40px) translateZ(0); /* translateZ(0) вмикає GPU */
+  will-change: transform, opacity; /* Попереджає браузер про анімацію */
+  backface-visibility: hidden;
   transition:
-    opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+    opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mounted {
@@ -109,7 +112,7 @@ $bg-light: #f9fafb;
   .title,
   .description {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateZ(0);
   }
 
   .badgeWrapper {
@@ -171,137 +174,135 @@ $bg-light: #f9fafb;
 
 .experienceSection {
   padding: 80px 0;
-  overflow: hidden;
+  width: 100%;
 
   @media (max-width: 768px) {
     padding: 60px 0;
   }
+}
 
-  /* Ізолюємо бедж для цієї секції (по центру) */
+/* 1. АНІМАЦІЯ БЛОКУ ЗАГОЛОВКІВ (Апаратне прискорення) */
+.headerBlock {
   .badgeWrapper {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-bottom: 24px;
   }
-}
 
-/* Анімація скролу (Apple-style reveal) */
-.inView {
+  .badgeDark {
+    padding: 8px 24px;
+    background: #e0e7ff;
+    color: #3730a3;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
   .badgeWrapper,
   .sectionTitle,
   .sectionDesc {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 0;
+    transform: translateY(40px) translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transition:
+      opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .bentoCard {
-    opacity: 1;
-    --reveal-y: 0px;
-  }
-
-  .badgeWrapper {
-    transition-delay: 0.1s;
-  }
   .sectionTitle {
-    transition-delay: 0.3s;
+    font-size: 48px;
+    font-weight: 800;
+    color: #111827;
+    margin-bottom: 24px;
+    text-align: left;
+    letter-spacing: -1px;
+
+    @media (max-width: 768px) {
+      font-size: 32px;
+    }
   }
+
   .sectionDesc {
-    transition-delay: 0.5s;
+    font-size: 20px;
+    line-height: 1.6;
+    color: #4b5563;
+    max-width: 700px;
+    margin-bottom: 60px;
+    text-align: left;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
   }
 
-  /* Картки виходять з черговістю */
-  .bentoCard:nth-child(1) {
-    transition-delay: 0.5s;
-  }
-  .bentoCard:nth-child(2) {
-    transition-delay: 0.7s;
-  }
-  .bentoCard:nth-child(3) {
-    transition-delay: 0.9s;
-  }
-  .bentoCard:nth-child(4) {
-    transition-delay: 1.1s;
-  }
-  .bentoCard:nth-child(5) {
-    transition-delay: 1.3s;
+  &.inView {
+    .badgeWrapper,
+    .sectionTitle,
+    .sectionDesc {
+      opacity: 1;
+      transform: translateY(0) translateZ(0);
+    }
+    .badgeWrapper {
+      transition-delay: 0s;
+    }
+    .sectionTitle {
+      transition-delay: 0.15s;
+    }
+    .sectionDesc {
+      transition-delay: 0.3s;
+    }
   }
 }
 
-.sectionTitle {
-  font-size: 48px;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 24px;
-  text-align: left;
-  letter-spacing: -1px;
-  opacity: 0;
-  transform: translateY(50px);
-  transition:
-    opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-
-  @media (max-width: 768px) {
-    font-size: 32px;
-  }
-}
-
-.sectionDesc {
-  font-size: 20px;
-  line-height: 1.6;
-  color: #4b5563;
-  max-width: 700px;
-  margin-bottom: 60px;
-  text-align: left;
-  opacity: 0;
-  transform: translateY(50px);
-  transition:
-    opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-
-  @media (max-width: 768px) {
-    font-size: 16px;
-    margin-bottom: 40px;
-  }
-}
-
-.badgeDark {
-  padding: 8px 24px;
-  background: #e0e7ff;
-  color: #3730a3;
-  border-radius: 100px;
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-
-/* --- BENTO GRID СІТКА --- */
+/* --- 2. СІТКА BENTO GRID --- */
 .bentoGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* 🔥 Даємо карткам гнучкість. Мінімум 180px, але можуть збільшуватись (auto), якщо тексту багато */
   grid-auto-rows: minmax(180px, auto);
   gap: 20px;
 
-  /* Планшет: 3 колонки */
   @media (max-width: 992px) {
     grid-template-columns: repeat(3, 1fr);
     grid-auto-rows: minmax(180px, auto);
   }
 
-  /* Мобільний: 2 колонки */
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
-    /* Дозволяє картці розтягнутись, якщо текст переноситься на нові рядки */
     grid-auto-rows: minmax(160px, auto);
     gap: 12px;
   }
+
+  /* Анімація появи карток */
+  &.inView {
+    .bentoCard {
+      opacity: 1;
+      --reveal-y: 0px;
+    }
+
+    .bentoCard:nth-child(1) {
+      transition-delay: 0.1s;
+    }
+    .bentoCard:nth-child(2) {
+      transition-delay: 0.25s;
+    }
+    .bentoCard:nth-child(3) {
+      transition-delay: 0.4s;
+    }
+    .bentoCard:nth-child(4) {
+      transition-delay: 0.55s;
+    }
+    .bentoCard:nth-child(5) {
+      transition-delay: 0.7s;
+    }
+  }
 }
 
-/* --- РОЗМІРИ КАРТОК (Тетріс) --- */
-
-/* 1. Desktop (Сітка 4x3) */
+/* --- РОЗМІРИ КАРТОК --- */
 .size2x2 {
   grid-column: span 2;
   grid-row: span 2;
@@ -323,7 +324,6 @@ $bg-light: #f9fafb;
   grid-row: span 1;
 }
 
-/* 2. Tablet (Сітка 3x4) */
 @media (max-width: 992px) {
   .size2x2 {
     grid-column: span 2;
@@ -347,7 +347,6 @@ $bg-light: #f9fafb;
   }
 }
 
-/* 3. Mobile (Мозаїка) */
 @media (max-width: 768px) {
   .size2x2 {
     grid-column: span 2;
@@ -371,7 +370,7 @@ $bg-light: #f9fafb;
   }
 }
 
-/* --- БАЗОВА КАРТКА ТА ВНУТРІШНІЙ АДАПТИВ --- */
+/* --- БАЗОВА КАРТКА (ОПТИМІЗОВАНО ПЛАВНІСТЬ) --- */
 .bentoCard {
   position: relative;
   border-radius: 24px;
@@ -381,15 +380,23 @@ $bg-light: #f9fafb;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  color: #ffffff;
+
+  /* 🔥 Оптимізація для 60FPS */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 
   --reveal-y: 60px;
   --hover-scale: 1;
   opacity: 0;
-  transform: translateY(var(--reveal-y)) scale(var(--hover-scale));
 
+  /* Збираємо все в один transform + додаємо GPU прискорення (translateZ) */
+  transform: translateY(var(--reveal-y)) scale(var(--hover-scale)) translateZ(0);
+
+  /* Плавна і швидка поява */
   transition:
-    opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 1.2s cubic-bezier(0.25, 1, 0.5, 1),
+    opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.4s ease;
 
   @media (max-width: 768px) {
@@ -397,19 +404,63 @@ $bg-light: #f9fafb;
     border-radius: 20px;
   }
 
-  &:hover {
-    --hover-scale: 1.02;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-    transition:
-      transform 0.4s ease,
-      box-shadow 0.4s ease;
-    transition-delay: 0s !important;
+  .cardBgLayer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 1;
+    will-change: transform;
+    backface-visibility: hidden;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 
-    .iconCircle {
-      transform: scale(1.05) rotate(5deg);
-      box-shadow:
-        inset 0 0 0 1.5px rgba(255, 255, 255, 0.6),
-        0 15px 30px rgba(0, 0, 0, 0.2);
+  .imageOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+    transition: background 0.4s ease;
+  }
+
+  /* 🔥 ХОВЕР ЕФЕКТ (ТІЛЬКИ МИШКА) */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      --hover-scale: 1.02;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+
+      /* Перевизначаємо transition для миттєвого, пружного ховеру без затримок */
+      transition:
+        transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease;
+      transition-delay: 0s !important;
+
+      .iconCircle {
+        transform: scale(1.05) rotate(5deg) translateZ(0);
+        box-shadow:
+          inset 0 0 0 1.5px rgba(255, 255, 255, 0.6),
+          0 15px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .cardBgLayer {
+        transform: scale(1.05) translateZ(0);
+      }
+
+      .imageOverlay {
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.95) 0%,
+          rgba(0, 0, 0, 0.25) 100%
+        );
+      }
+
+      &.bentoDark .bentoIconBig {
+        transform: rotate(0deg) scale(1.1) translateZ(0);
+      }
     }
   }
 
@@ -425,7 +476,7 @@ $bg-light: #f9fafb;
       font-weight: 800;
       margin-bottom: 6px;
       line-height: 1.2;
-      margin-top: auto; /* Виштовхує заголовок вниз, якщо є місце зверху */
+      margin-top: auto;
 
       @media (max-width: 768px) {
         font-size: 15px;
@@ -446,7 +497,7 @@ $bg-light: #f9fafb;
   }
 }
 
-/* --- СТИЛЬ ІКОНОК --- */
+/* --- СТИЛЬ ІКОНОК (Сині) --- */
 .iconCircle {
   width: 56px;
   height: 56px;
@@ -461,11 +512,16 @@ $bg-light: #f9fafb;
   flex-shrink: 0;
   margin-bottom: 16px;
 
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
+
   box-shadow:
     inset 0 0 0 1.5px rgba(255, 255, 255, 0.3),
     0 10px 20px rgba(0, 86, 179, 0.3);
 
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition:
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.4s ease;
 
   svg {
     width: 24px;
@@ -487,16 +543,10 @@ $bg-light: #f9fafb;
   }
 }
 
-/* --- ВАРІАЦІЇ КОЛЬОРІВ КАРТОК --- */
+/* --- ПРИЗНАЧЕННЯ ФОНОВИХ КАРТИНОК --- */
 .bentoDark {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
-  color: #ffffff;
-
-  .iconCircle {
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow:
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.3),
-      0 10px 20px rgba(0, 0, 0, 0.2);
+  .cardBgLayer {
+    background-image: url("/images/about-page-hero/about-hero-1.jpg");
   }
 
   .bentoIconBig {
@@ -505,94 +555,37 @@ $bg-light: #f9fafb;
     right: -20px;
     width: 200px;
     height: 200px;
-    color: rgba(255, 255, 255, 0.05);
-    transform: rotate(15deg);
-    transition: transform 0.6s ease;
+    color: rgba(255, 255, 255, 0.08);
+    transform: rotate(15deg) translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 3;
 
     @media (max-width: 768px) {
       width: 140px;
       height: 140px;
     }
   }
-
-  &:hover .bentoIconBig {
-    transform: rotate(0deg) scale(1.1);
-  }
 }
 
 .bentoWarm {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #ffffff;
-
-  .iconCircle {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow:
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.4),
-      0 10px 20px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.bentoBlue {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-  color: #ffffff;
-
-  .iconCircle {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow:
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.4),
-      0 10px 20px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.bentoSuccess {
-  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-  color: #ffffff;
-
-  .iconCircle {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow:
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.4),
-      0 10px 20px rgba(0, 0, 0, 0.15);
-  }
-}
-
-.bentoImage {
-  color: #ffffff;
-
   .cardBgLayer {
-    position: absolute;
-    inset: 0;
-    background-image: url("/images/about-page-hero/about-hero-1.jpg");
-    background-size: cover;
-    background-position: center;
-    z-index: 1;
-    transition: transform 0.6s ease;
+    background-image: url("/images/about-page-hero/about-hero-2.jpg");
   }
-
-  .imageOverlay {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.8) 0%,
-      rgba(0, 0, 0, 0.2) 100%
-    );
-    transition: background 0.4s ease;
+}
+.bentoBlue {
+  .cardBgLayer {
+    background-image: url("/images/about-page-hero/about-hero-3.jpg");
   }
-
-  .iconCircle {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow:
-      inset 0 0 0 1.5px rgba(255, 255, 255, 0.4),
-      0 10px 20px rgba(0, 0, 0, 0.3);
+}
+.bentoImage {
+  .cardBgLayer {
+    background-image: url("/images/about-page-hero/about-hero-4.jpg");
   }
-
-  &:hover .imageOverlay {
-    background: rgba(30, 58, 138, 0.7);
-  }
-
-  &:hover .cardBgLayer {
-    transform: scale(1.1);
+}
+.bentoSuccess {
+  .cardBgLayer {
+    background-image: url("/images/about-page-hero/about-hero-5.jpg");
   }
 }
