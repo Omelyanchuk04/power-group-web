@@ -157,6 +157,15 @@ $white: #ffffff;
   }
 }
 
+@media (max-width: 768px) {
+  .statsHeader {
+    h3 {
+      font-size: 19px;
+      white-space: normal;
+    }
+  }
+}
+
 @media (max-width: 576px) {
   .statsWrapper {
     padding: 30px 16px 16px;
