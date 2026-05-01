@@ -10,7 +10,6 @@ export default function ClientLayout({ children }) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
-  // Гідратація: чекаємо, поки клієнт завантажиться
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -21,26 +20,24 @@ export default function ClientLayout({ children }) {
 
   return (
     <ModalProvider>
-      {/* Контейнер, який розтягується на всю висоту */}
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",
           width: "100%",
+          position: "relative",
+          overflow: "clip" /* 🔥 Вбиває порожній білий скрол під футером */,
         }}
       >
-        {/* Глобальний фон (він сам сховається на головній сторінці) */}
         <GlobalBackground isLayout={true} />
 
         <Header />
 
-        {/* Основний контент розтягується, штовхаючи футер вниз */}
         <main style={{ flex: 1, position: "relative", zIndex: 1 }}>
           {children}
         </main>
 
-        {/* 🔥 КЛЮЧОВИЙ МОМЕНТ: Рендеримо футер ТІЛЬКИ на внутрішніх сторінках */}
         {!isHome && <Footer />}
       </div>
     </ModalProvider>

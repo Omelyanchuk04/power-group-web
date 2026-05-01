@@ -23,7 +23,7 @@
     pointer-events: none;
   }
 
-  /* --- БАЗОВІ ПЛЯМИ --- */
+  /* --- БАЗОВІ ПЛЯМИ (На ПК працюють всі 10) --- */
   .blob1 {
     width: 35vw;
     height: 35vw;
@@ -124,8 +124,7 @@
   top: 0 !important;
   left: 0 !important;
   width: 100vw;
-  height: 100vh;
-  /* 🔥 ГОЛОВНИЙ ФІКС: Змінено з -1 на 0, щоб фон не ховався за тілом сайту */
+  height: 100dvh; /* 🔥 dvh замість vh, щоб Safari не відрізав низ */
   z-index: 0;
   background-color: #f5f5f5;
 }
@@ -242,58 +241,40 @@
   }
 }
 
-/* АДАПТИВ ДЛЯ МОБАЙЛУ */
+/* 🔥 АДАПТИВ ДЛЯ МОБАЙЛУ (АНТИ-ЛАГ) 🔥 */
 @media (max-width: 768px) {
   .absoluteWrapper {
+    /* 1. Відключаємо 6 важких плям для збереження батареї і плавності */
+    .blob4,
+    .blob6,
+    .blob7,
+    .blob8,
+    .blob9,
+    .blob10 {
+      display: none !important;
+      animation: none !important;
+    }
+
+    /* 2. Зменшуємо blur і розміри для 4 залишених плям */
     .blob1 {
-      width: 120vw;
-      height: 120vw;
-      filter: blur(45px);
-    }
-    .blob2 {
-      width: 140vw;
-      height: 150vw;
-      filter: blur(45px);
-    }
-    .blob3 {
       width: 100vw;
       height: 100vw;
-      filter: blur(30px);
+      filter: blur(25px); /* 🔥 Різко знижено blur */
     }
-    .blob4 {
-      width: 130vw;
-      height: 130vw;
-      filter: blur(45px);
+    .blob2 {
+      width: 110vw;
+      height: 120vw;
+      filter: blur(25px);
+    }
+    .blob3 {
+      width: 80vw;
+      height: 80vw;
+      filter: blur(15px);
     }
     .blob5 {
-      width: 150vw;
-      height: 150vw;
-      filter: blur(45px);
-    }
-    .blob6 {
-      width: 110vw;
-      height: 110vw;
-      filter: blur(40px);
-    }
-    .blob7 {
-      width: 140vw;
-      height: 120vw;
-      filter: blur(50px);
-    }
-    .blob8 {
-      width: 90vw;
-      height: 90vw;
-      filter: blur(35px);
-    }
-    .blob9 {
       width: 120vw;
       height: 120vw;
-      filter: blur(40px);
-    }
-    .blob10 {
-      width: 130vw;
-      height: 130vw;
-      filter: blur(45px);
+      filter: blur(25px);
     }
   }
 }
