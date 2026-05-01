@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.scss";
-import Header from "@/components/layout/Header";
-import { ModalProvider } from "@/context/ModalContext";
+import ClientLayout from "@/components/layout/ClientLayout"; // 🔥 Головний клієнтський компонент
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,12 +44,13 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/frames/frame-004.jpg" as="image" />
         <link rel="preload" href="/frames/frame-005.jpg" as="image" />
       </head>
-      <body>
-        {/* Додаємо ModalProvider ось тут */}
-        <ModalProvider>
-          <Header />
-          <main>{children}</main>
-        </ModalProvider>
+      {/* Body залишаємо як flex-контейнер для підтримки sticky-footer, 
+         хоча основна логіка тепер всередині ClientLayout 
+      */}
+      <body
+        style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      >
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
