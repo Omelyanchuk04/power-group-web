@@ -55,7 +55,7 @@ export default function CompanyStats() {
         {/* 🔥 А ось цей блок повертає заокруглення та прозорість */}
         <div className={styles.statsWrapper}>
           <div className={styles.statsHeader}>
-            <h3>Факти, що говорять самі за себе</h3>
+            <h3>Наш практичний досвід у цифрах та фактах</h3>
             <div className={styles.headerLine}></div>
           </div>
 
