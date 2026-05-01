@@ -6,6 +6,7 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import styles from "./About.module.scss";
+import CompanyStats from "@/components/shared/CompanyStats"; // 🔥 ІМПОРТУЄМО БЛОК
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -14,13 +15,9 @@ if (typeof window !== "undefined") {
 export default function About() {
   const sectionRef = useRef(null);
 
-  // ==========================================
-  // 🚨 ЛОГЕР ПОЯВИ СЕКЦІЇ
-  // ==========================================
   useEffect(() => {
     if (!sectionRef.current) return;
 
-    // Слідкуємо, коли секція "Про компанію" торкається екрану
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -35,20 +32,16 @@ export default function About() {
     );
 
     observer.observe(sectionRef.current);
-
     return () => observer.disconnect();
   }, []);
 
   useGSAP(
     () => {
-      // Трекаємо спрацювання ScrollTrigger
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top bottom",
-        onEnter: () =>
-          console.log("🔥 [TRIGGER] About: onEnter (верх торкнувся низу)"),
-        onLeaveBack: () =>
-          console.log("⬅️ [TRIGGER] About: onLeaveBack (повернулися нагору)"),
+        onEnter: () => console.log("🔥 [TRIGGER] About: onEnter"),
+        onLeaveBack: () => console.log("⬅️ [TRIGGER] About: onLeaveBack"),
       });
 
       gsap.fromTo(
@@ -91,10 +84,7 @@ export default function About() {
           stagger: 0.15,
           duration: 0.8,
           ease: "power3.out",
-          scrollTrigger: {
-            trigger: `.${styles.targetGrid}`,
-            start: "top 80%",
-          },
+          scrollTrigger: { trigger: `.${styles.targetGrid}`, start: "top 80%" },
         },
       );
 
@@ -113,42 +103,9 @@ export default function About() {
         },
       );
 
-      gsap.fromTo(
-        `.${styles.statsHeader}`,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: `.${styles.statsHeader}`,
-            start: "top 85%",
-          },
-        },
-      );
-
-      gsap.fromTo(
-        ".animStatWrapper",
-        { opacity: 0, scale: 0.95, y: 40 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          stagger: 0.15,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: `.${styles.statsGrid}`,
-            start: "top 80%",
-          },
-        },
-      );
-
       const parallaxWrappers = gsap.utils.toArray(
         `.${styles.imgParallaxWrapper}`,
       );
-
       parallaxWrappers.forEach((wrapper) => {
         gsap.fromTo(
           wrapper,
@@ -166,16 +123,11 @@ export default function About() {
         );
       });
     },
-    // 🔥 ДОДАНО dependencies: [] щоб хук не ререндерився зайвий раз
     { scope: sectionRef, dependencies: [] },
   );
 
   return (
     <section className={styles.lightSection} ref={sectionRef}>
-      <div className={styles.blob3}></div>
-      <div className={styles.blob4}></div>
-      <div className={styles.blob5}></div>
-
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
           <span className={styles.badge}>Про компанію</span>
@@ -281,98 +233,7 @@ export default function About() {
           </p>
         </div>
 
-        <div className={styles.statsWrapper}>
-          <div className={styles.statsHeader}>
-            <h3>Факти, що говорять самі за себе</h3>
-            <div className={styles.headerLine}></div>
-          </div>
-
-          <div className={styles.statsGrid}>
-            <div className="animStatWrapper">
-              <div className={styles.statCard}>
-                <NextImage
-                  src="/images/experiense-card.jpg"
-                  alt="Досвід"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                  className={styles.statBgImage}
-                />
-                <div className={styles.statOverlay}></div>
-                <div className={styles.statContent}>
-                  <div className={styles.statNum}>8+</div>
-                  <div className={styles.statLabel}>
-                    Років
-                    <br />
-                    досвіду
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="animStatWrapper">
-              <div className={styles.statCard}>
-                <NextImage
-                  src="/images/projects-card.jpg"
-                  alt="Проєкти"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                  className={styles.statBgImage}
-                />
-                <div className={styles.statOverlay}></div>
-                <div className={styles.statContent}>
-                  <div className={styles.statNum}>150+</div>
-                  <div className={styles.statLabel}>
-                    Успішних
-                    <br />
-                    проєктів
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="animStatWrapper">
-              <div className={styles.statCard}>
-                <NextImage
-                  src="/images/employees-card.jpg"
-                  alt="Спеціалісти"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                  className={styles.statBgImage}
-                />
-                <div className={styles.statOverlay}></div>
-                <div className={styles.statContent}>
-                  <div className={styles.statNum}>30+</div>
-                  <div className={styles.statLabel}>
-                    Кваліфікованих
-                    <br />
-                    спеціалістів
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="animStatWrapper">
-              <div className={styles.statCard}>
-                <NextImage
-                  src="/images/power-card.jpg"
-                  alt="Потужність"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                  className={styles.statBgImage}
-                />
-                <div className={styles.statOverlay}></div>
-                <div className={styles.statContent}>
-                  <div className={styles.statNum}>50+</div>
-                  <div className={styles.statLabel}>
-                    МВт загальної
-                    <br />
-                    потужності
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <CompanyStats />
       </div>
     </section>
   );

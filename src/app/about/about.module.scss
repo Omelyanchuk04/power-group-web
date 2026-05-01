@@ -407,10 +407,10 @@ $bg-light: #f9fafb;
   backface-visibility: hidden;
 
   --reveal-y: 60px;
-  --hover-scale: 1;
+  // --hover-scale: 1;
   opacity: 0;
 
-  transform: translateY(var(--reveal-y)) scale(var(--hover-scale)) translateZ(0);
+  // transform: translateY(var(--reveal-y)) scale(var(--hover-scale)) translateZ(0);
 
   transition:
     opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
