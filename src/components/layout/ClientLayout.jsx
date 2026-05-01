@@ -27,10 +27,11 @@ export default function ClientLayout({ children }) {
           minHeight: "100vh",
           width: "100%",
           position: "relative",
-          overflow: "clip" /* 🔥 Вбиває порожній білий скрол під футером */,
+          /* 🔥 ОСЬ ВБИВЦЯ ПОРОЖНЬОГО МІСЦЯ ЗНИЗУ: */
+          overflow: "clip",
         }}
       >
-        <GlobalBackground isLayout={true} />
+        {isHome && <GlobalBackground isLayout={true} />}
 
         <Header />
 

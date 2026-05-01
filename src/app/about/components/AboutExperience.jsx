@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import styles from "../about.module.scss";
+import GlobalBackground from "@/components/layout/GlobalBackground"; // 🔥 ІМПОРТУЄМО ФОН
 
 const AboutExperience = () => {
   const headerRef = useRef(null);
@@ -11,7 +12,7 @@ const AboutExperience = () => {
   const [gridInView, setGridInView] = useState(false);
 
   useEffect(() => {
-    // 1. Спостерігач для заголовку (спрацьовує, коли видно 20% тексту)
+    // 1. Спостерігач для заголовку
     const headerObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -22,7 +23,7 @@ const AboutExperience = () => {
       { threshold: 0.2 },
     );
 
-    // 2. Спостерігач для сітки (спрацьовує, коли видно 15% самої сітки карток)
+    // 2. Спостерігач для сітки
     const gridObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -44,7 +45,14 @@ const AboutExperience = () => {
 
   return (
     <section className={styles.experienceSection}>
-      <div className={styles.container}>
+      {/* 🔥 1. ВСТАВЛЯЄМО ЛОКАЛЬНИЙ ФОН */}
+      <GlobalBackground isLayout={false} />
+
+      {/* 🔥 2. КОНТЕНТ ПІДНІМАЄМО НАД ПЛЯМАМИ */}
+      <div
+        className={styles.container}
+        style={{ position: "relative", zIndex: 1 }}
+      >
         {/* БЛОК 1: Заголовки (Анімуються окремо) */}
         <div
           ref={headerRef}

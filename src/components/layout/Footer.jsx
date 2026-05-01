@@ -2,12 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation"; // 🔥 ДОДАНО: хук для перевірки сторінки
 import styles from "./Footer.module.scss";
 import { useModal } from "@/context/ModalContext";
+import GlobalBackground from "@/components/layout/GlobalBackground"; // 🔥 ДОДАНО: імпорт фону
 
 export default function Footer() {
   const { openModal } = useModal();
+  const pathname = usePathname(); // 🔥 Отримуємо поточний шлях
   const currentYear = new Date().getFullYear();
+
+  // 🔥 Перевіряємо, чи ми зараз на Головній сторінці
+  const isHome = pathname === "/";
 
   // --- Оригінальні SVG Іконки ---
   const TelegramIcon = () => (
@@ -38,8 +44,15 @@ export default function Footer() {
 
   return (
     <footer className={styles.footerWrapper}>
+      {/* 🔥 ДОДАНО: Рендеримо локальний фон ТІЛЬКИ на внутрішніх сторінках */}
+      {!isHome && <GlobalBackground isLayout={false} />}
+
       {/* Головна картка футера (Прозоре скло) */}
-      <div className={styles.footerCard}>
+      {/* 🔥 ДОДАНО: style={{ position: "relative", zIndex: 1 }}, щоб картка була НАД плямами */}
+      <div
+        className={styles.footerCard}
+        style={{ position: "relative", zIndex: 1 }}
+      >
         <div className={styles.topRow}>
           {/* КОЛОНКА 1: ЛОГО */}
           <div className={styles.brandCol}>

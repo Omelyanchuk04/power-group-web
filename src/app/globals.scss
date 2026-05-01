@@ -8,15 +8,16 @@
 html,
 body {
   width: 100%;
-  min-height: 100dvh;
+  height: auto !important;
+  min-height: 100% !important;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 
-  /* 🔥 ФОН, ЯКИЙ ЗАПОВНЮЄ БЕЗПЕЧНІ ЗОНИ ТА БІЛІ ДІРКИ */
   background-color: #f5f5f5 !important;
   color: #333333;
 
-  /* Жорстко ріжемо горизонтальний скрол, щоб сайт не хитався вбоки */
+  /* 🔥 ЗАМІНИЛИ visible НА hidden ПО ГОРИЗОНТАЛІ */
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch !important;
 }
 
 main {
