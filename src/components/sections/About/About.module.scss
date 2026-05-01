@@ -210,6 +210,7 @@ $white: #ffffff;
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
+  /* 🔥 Тут залишаємо 0 знизу, щоб не сумувалося з відступом статистики */
   padding: 80px 20px 0;
 
   h3 {
@@ -228,7 +229,9 @@ $white: #ffffff;
   }
 }
 
-// АДАПТИВНІСТЬ
+/* ==========================================
+   АДАПТИВНІСТЬ
+   ========================================== */
 @media (max-width: 1024px) {
   .sectionHeader h2 {
     font-size: 34px;
@@ -240,10 +243,6 @@ $white: #ffffff;
   .targetCard {
     height: 320px;
   }
-}
-
-@media (max-width: 768px) {
-  // Тут були класи якісь ліві (.logoContainer, .animLine), якщо вони потрібні — залишай, я вирізав лише статистику.
 }
 
 @media (max-width: 576px) {
@@ -273,6 +272,7 @@ $white: #ffffff;
     }
   }
   .transitionBlock {
+    /* 🔥 І на мобільному залишаємо 0 знизу */
     padding: 50px 0 0;
     h3 {
       font-size: 22px;

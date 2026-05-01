@@ -1,63 +1,68 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import styles from "../about.module.scss";
-import GlobalBackground from "@/components/layout/GlobalBackground"; // 🔥 ІМПОРТУЄМО ФОН
+import GlobalBackground from "@/components/layout/GlobalBackground";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const AboutExperience = () => {
-  const headerRef = useRef(null);
-  const gridRef = useRef(null);
+  const containerRef = useRef(null);
 
-  const [headerInView, setHeaderInView] = useState(false);
-  const [gridInView, setGridInView] = useState(false);
+  useGSAP(
+    () => {
+      // 1. Анімація для заголовку (залізобетонна видимість)
+      gsap.fromTo(
+        `.${styles.headerBlock}`,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: `.${styles.headerBlock}`,
+            start: "top 85%",
+          },
+        },
+      );
 
-  useEffect(() => {
-    // 1. Спостерігач для заголовку
-    const headerObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setHeaderInView(true);
-          headerObserver.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-
-    // 2. Спостерігач для сітки
-    const gridObserver = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setGridInView(true);
-          gridObserver.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-
-    if (headerRef.current) headerObserver.observe(headerRef.current);
-    if (gridRef.current) gridObserver.observe(gridRef.current);
-
-    return () => {
-      headerObserver.disconnect();
-      gridObserver.disconnect();
-    };
-  }, []);
+      // 2. Анімація для карток (залізобетонна видимість)
+      gsap.fromTo(
+        ".animBentoCard",
+        { opacity: 0, scale: 0.95, y: 40 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: `.${styles.bentoGrid}`,
+            start: "top 80%",
+          },
+        },
+      );
+    },
+    { scope: containerRef },
+  );
 
   return (
-    <section className={styles.experienceSection}>
-      {/* 🔥 1. ВСТАВЛЯЄМО ЛОКАЛЬНИЙ ФОН */}
+    <section className={styles.experienceSection} ref={containerRef}>
       <GlobalBackground isLayout={false} />
 
-      {/* 🔥 2. КОНТЕНТ ПІДНІМАЄМО НАД ПЛЯМАМИ */}
       <div
         className={styles.container}
         style={{ position: "relative", zIndex: 1 }}
       >
-        {/* БЛОК 1: Заголовки (Анімуються окремо) */}
-        <div
-          ref={headerRef}
-          className={`${styles.headerBlock} ${headerInView ? styles.inView : ""}`}
-        >
+        {/* БЛОК 1: Заголовки */}
+        <div className={styles.headerBlock}>
           <div className={styles.badgeWrapper}>
             <span className={styles.badgeDark}>Енергія в діях</span>
           </div>
@@ -70,14 +75,10 @@ const AboutExperience = () => {
           </p>
         </div>
 
-        {/* БЛОК 2: Сітка (Анімується тільки коли до неї доскролять) */}
-        <div
-          ref={gridRef}
-          className={`${styles.bentoGrid} ${gridInView ? styles.inView : ""}`}
-        >
-          {/* Блок 1: Темно-синій */}
+        {/* БЛОК 2: Сітка карток */}
+        <div className={styles.bentoGrid}>
           <div
-            className={`${styles.bentoCard} ${styles.bentoDark} ${styles.size2x2}`}
+            className={`animBentoCard ${styles.bentoCard} ${styles.bentoDark} ${styles.size2x2}`}
           >
             <div className={styles.cardBgLayer}></div>
             <div className={styles.imageOverlay}></div>
@@ -107,9 +108,8 @@ const AboutExperience = () => {
             </svg>
           </div>
 
-          {/* Блок 2: Оранжевий */}
           <div
-            className={`${styles.bentoCard} ${styles.bentoWarm} ${styles.size2x1}`}
+            className={`animBentoCard ${styles.bentoCard} ${styles.bentoWarm} ${styles.size2x1}`}
           >
             <div className={styles.cardBgLayer}></div>
             <div className={styles.imageOverlay}></div>
@@ -128,9 +128,8 @@ const AboutExperience = () => {
             </div>
           </div>
 
-          {/* Блок 3: БЛАКИТНИЙ (Надійні матеріали) */}
           <div
-            className={`${styles.bentoCard} ${styles.bentoBlue} ${styles.size1x1}`}
+            className={`animBentoCard ${styles.bentoCard} ${styles.bentoBlue} ${styles.size1x1}`}
           >
             <div className={styles.cardBgLayer}></div>
             <div className={styles.imageOverlay}></div>
@@ -145,9 +144,8 @@ const AboutExperience = () => {
             </div>
           </div>
 
-          {/* Блок 4: Фото */}
           <div
-            className={`${styles.bentoCard} ${styles.bentoImage} ${styles.size1x2}`}
+            className={`animBentoCard ${styles.bentoCard} ${styles.bentoImage} ${styles.size1x2}`}
           >
             <div className={styles.cardBgLayer}></div>
             <div className={styles.imageOverlay}></div>
@@ -165,9 +163,8 @@ const AboutExperience = () => {
             </div>
           </div>
 
-          {/* Блок 5: ЗЕЛЕНИЙ (Відповідальність) */}
           <div
-            className={`${styles.bentoCard} ${styles.bentoSuccess} ${styles.size3x1}`}
+            className={`animBentoCard ${styles.bentoCard} ${styles.bentoSuccess} ${styles.size3x1}`}
           >
             <div className={styles.cardBgLayer}></div>
             <div className={styles.imageOverlay}></div>
