@@ -23,7 +23,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: "cover",
-  themeColor: "#f5f5f5" /* 🔥 Зафарбовує системні зони Safari */,
+  themeColor: "#f5f5f5" /* 🔥 БЕЗ ЦЬОГО РЯДКА ПОЛОСИ НЕ ЗНИКНУТЬ */,
 };
 
 export default function RootLayout({ children }) {
