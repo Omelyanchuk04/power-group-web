@@ -8,7 +8,7 @@ $border-light: rgba(0, 0, 0, 0.1);
 $error-color: #ef4444;
 
 .ctaSection {
-  background-color: transparent;
+  //   background-color: transparent;
   padding: 80px 0 40px;
   position: relative;
   z-index: 10;
@@ -18,10 +18,6 @@ $error-color: #ef4444;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-
-  @media (max-width: 560px) {
-    padding: 0 10px;
-  }
 }
 
 .glassCard {
@@ -34,13 +30,15 @@ $error-color: #ef4444;
   gap: 60px;
   align-items: start;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 1);
 
+  /* Твоя картинка і градієнт на місці */
+  background-color: #ffffff; /* Глуха база під картинкою, щоб плями не лізли знизу */
   background-image:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.9) 0%,
-      rgba(255, 255, 255, 0.7) 100%
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.85) 100%
     ),
     url("/images/background-img.jpg");
   background-size: cover;
@@ -52,11 +50,12 @@ $error-color: #ef4444;
     padding: 48px 24px;
   }
 
-  &:hover .iconCircle {
-    transform: scale(1.05) rotate(5deg);
+  @media (hover: hover) {
+    &:hover .iconCircle {
+      transform: scale(1.05) rotate(5deg);
+    }
   }
 }
-
 .textContent {
   display: flex;
   flex-direction: column;
@@ -89,12 +88,15 @@ $error-color: #ef4444;
   box-shadow:
     inset 0 0 0 1.5px rgba(255, 255, 255, 0.3),
     0 10px 20px rgba($primary, 0.3);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   svg {
     width: 28px;
     height: 28px;
     stroke-width: 2px;
+
+    /* Оптичне вирівнювання: зсовуємо іконку трохи вліво і вниз, щоб вона виглядала ідеально по центру */
+    transform: translate(-2px, 2px);
   }
 }
 
@@ -184,7 +186,6 @@ $error-color: #ef4444;
   }
 }
 
-/* ВИТОНЧЕНЕ ВИПРАВЛЕННЯ СТРИБАННЯ ФОРМ: ВИКОРИСТОВУЄМО ТІНЬ ЗАМІСТЬ ЗМІНИ ТОВЩИНИ */
 .input {
   width: 100%;
   border: none;
@@ -204,7 +205,6 @@ $error-color: #ef4444;
   &:focus {
     outline: none;
     border-bottom-color: $primary;
-    /* Тінь малює ще 1px знизу без зсуву макета! */
     box-shadow: 0 1px 0 0 $primary;
   }
 }
@@ -228,11 +228,10 @@ $error-color: #ef4444;
   transform: translateY(100%);
 }
 
-/* ОБГОРТКА ТЕЛЕФОНУ ТА ПРЕФІКС */
 .phoneInputWrapper {
   display: flex;
-  align-items: baseline; /* Ідеальне вирівнювання тексту по одній лінії */
-  gap: 6px; /* Трохи зменшив відступ для цілісності */
+  align-items: baseline;
+  gap: 6px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.4);
   transition: all 0.3s ease;
   padding: 12px 0;
@@ -240,7 +239,7 @@ $error-color: #ef4444;
 
   .prefix {
     font-size: 16px;
-    color: $text-dark; /* Однаковий колір із текстом вводу */
+    color: $text-dark;
     font-weight: 400;
   }
 
@@ -252,7 +251,7 @@ $error-color: #ef4444;
     width: auto;
     flex: 1;
     font-size: 16px;
-    color: $text-dark; /* Однаковий колір із префіксом */
+    color: $text-dark;
     font-weight: 400;
 
     &::placeholder {
@@ -267,7 +266,7 @@ $error-color: #ef4444;
 
   &:focus-within {
     border-bottom-color: $primary;
-    box-shadow: 0 1px 0 0 $primary; /* Тінь для відсутності стрибків */
+    box-shadow: 0 1px 0 0 $primary;
   }
 }
 

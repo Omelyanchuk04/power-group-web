@@ -16,46 +16,51 @@ export default function ContactCTA() {
 
   const [errors, setErrors] = useState({});
 
-  // Створюємо рефи для GSAP анімацій
   const sectionRef = useRef(null);
   const cardRef = useRef(null);
-  const textContentRef = useRef(null);
   const formWrapperRef = useRef(null);
 
   useEffect(() => {
-    // Реєструємо плагін ScrollTrigger
     gsap.registerPlugin(ScrollTrigger);
 
-    // Створюємо контекст GSAP (це найкраща практика для React, щоб легко очищати анімації)
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 80%", // Анімація почнеться, коли верх секції досягне 80% висоти екрану
-          toggleActions: "play none none none", // Грати 1 раз. Якщо хочете щоб анімація повторювалась при кожному скролі туди-сюди, змініть на "play none none reverse"
+          start: "top 80%",
+          toggleActions: "play none none none",
         },
       });
 
-      // 1. Плавно піднімаємо всю скляну картку
+      // 1. Поява всієї картки (Іконка з'явиться одразу з нею, статично на своєму місці)
       tl.from(cardRef.current, {
-        y: 80,
+        y: 50,
         opacity: 0,
         duration: 0.8,
         ease: "power3.out",
+        clearProps: "transform",
       })
-        // 2. По черзі проявляємо елементи тексту зліва (заголовок, підзаголовок тощо)
+
+        // 2. ТЕКСТИ: плавно виїжджають знизу по черзі
         .from(
-          textContentRef.current.children,
+          [
+            `.${styles.badgeOverlay}`,
+            `.${styles.title}`,
+            `.${styles.subtitle}`,
+            `.${styles.directContacts}`,
+          ],
           {
-            y: 30,
+            y: 20,
             opacity: 0,
-            duration: 0.6,
-            stagger: 0.15, // Затримка між появою кожного елемента
+            duration: 0.5,
+            stagger: 0.1,
             ease: "power2.out",
+            clearProps: "all",
           },
           "-=0.4",
-        ) // Починаємо трохи раніше, ніж закінчиться попередня анімація
-        // 3. Плавно показуємо форму (виїжджає трохи справа)
+        )
+
+        // 3. ФОРМА: виїжджає справа
         .from(
           formWrapperRef.current,
           {
@@ -63,12 +68,12 @@ export default function ContactCTA() {
             opacity: 0,
             duration: 0.7,
             ease: "power3.out",
+            clearProps: "all",
           },
           "-=0.6",
         );
     }, sectionRef);
 
-    // Очищення при розмонтуванні компонента
     return () => ctx.revert();
   }, []);
 
@@ -133,8 +138,7 @@ export default function ContactCTA() {
     <section className={styles.ctaSection} ref={sectionRef}>
       <div className={styles.container}>
         <div className={styles.glassCard} ref={cardRef}>
-          {/* Додали ref сюди, щоб анімувати його дочірні елементи */}
-          <div className={styles.textContent} ref={textContentRef}>
+          <div className={styles.textContent}>
             <div className={styles.badgeOverlay}>Швидка відповідь</div>
 
             <div className={styles.iconCircle}>
@@ -176,7 +180,6 @@ export default function ContactCTA() {
             </div>
           </div>
 
-          {/* Додали ref на форму */}
           <div className={styles.formWrapper} ref={formWrapperRef}>
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
               <div className={styles.grid}>
