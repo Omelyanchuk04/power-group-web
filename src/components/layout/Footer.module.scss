@@ -19,8 +19,7 @@ $viber-color: #7360f2;
   display: flex;
   justify-content: center;
 
-  /* 🔥 Пускаємо на 300px вгору, але жорстко ріжемо знизу (0) */
-  clip-path: inset(-300px 0 0 0);
+  /* 🔥 ПОВНІСТЮ ВИДАЛИЛИ clip-path */
 }
 
 .footerCard {

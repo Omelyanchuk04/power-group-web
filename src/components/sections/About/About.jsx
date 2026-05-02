@@ -6,7 +6,7 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import styles from "./About.module.scss";
-import CompanyStats from "@/components/shared/CompanyStats"; // 🔥 ІМПОРТУЄМО БЛОК
+import CompanyStats from "@/components/shared/CompanyStats/CompanyStats"; // 🔥 ІМПОРТУЄМО БЛОК
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);

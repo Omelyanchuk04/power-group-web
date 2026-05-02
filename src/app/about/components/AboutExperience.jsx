@@ -55,7 +55,7 @@ const AboutExperience = () => {
 
   return (
     <section className={styles.experienceSection} ref={containerRef}>
-      <GlobalBackground isLayout={false} />
+      {/* <GlobalBackground isLayout={false} /> */}
 
       <div
         className={styles.container}
