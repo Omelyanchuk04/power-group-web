@@ -209,7 +209,7 @@ export default function ContactCTA() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="9X-XXX-XX-XX"
+                      placeholder="XX-XXX-XX-XX"
                       className={styles.innerInput}
                     />
                   </div>
