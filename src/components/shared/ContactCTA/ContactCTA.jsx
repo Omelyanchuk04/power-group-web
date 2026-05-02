@@ -139,7 +139,7 @@ export default function ContactCTA() {
       <div className={styles.container}>
         <div className={styles.glassCard} ref={cardRef}>
           <div className={styles.textContent}>
-            <div className={styles.badgeOverlay}>Швидка відповідь</div>
+            {/* <div className={styles.badgeOverlay}>Швидка відповідь</div> */}
 
             <div className={styles.iconCircle}>
               <svg
