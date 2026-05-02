@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./ContactCTA.module.scss";
 
 export default function ContactCTA() {
@@ -14,17 +16,69 @@ export default function ContactCTA() {
 
   const [errors, setErrors] = useState({});
 
+  // Створюємо рефи для GSAP анімацій
+  const sectionRef = useRef(null);
+  const cardRef = useRef(null);
+  const textContentRef = useRef(null);
+  const formWrapperRef = useRef(null);
+
+  useEffect(() => {
+    // Реєструємо плагін ScrollTrigger
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Створюємо контекст GSAP (це найкраща практика для React, щоб легко очищати анімації)
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%", // Анімація почнеться, коли верх секції досягне 80% висоти екрану
+          toggleActions: "play none none none", // Грати 1 раз. Якщо хочете щоб анімація повторювалась при кожному скролі туди-сюди, змініть на "play none none reverse"
+        },
+      });
+
+      // 1. Плавно піднімаємо всю скляну картку
+      tl.from(cardRef.current, {
+        y: 80,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out",
+      })
+        // 2. По черзі проявляємо елементи тексту зліва (заголовок, підзаголовок тощо)
+        .from(
+          textContentRef.current.children,
+          {
+            y: 30,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.15, // Затримка між появою кожного елемента
+            ease: "power2.out",
+          },
+          "-=0.4",
+        ) // Починаємо трохи раніше, ніж закінчиться попередня анімація
+        // 3. Плавно показуємо форму (виїжджає трохи справа)
+        .from(
+          formWrapperRef.current,
+          {
+            x: 40,
+            opacity: 0,
+            duration: 0.7,
+            ease: "power3.out",
+          },
+          "-=0.6",
+        );
+    }, sectionRef);
+
+    // Очищення при розмонтуванні компонента
+    return () => ctx.revert();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "phone") {
-      // Видаляємо всі нецифрові символи
       const numericValue = value.replace(/\D/g, "");
-
-      // Обмежуємо довжину до 9 цифр
       const truncated = numericValue.slice(0, 9);
 
-      // Форматуємо як XX-XXX-XX-XX
       let formattedPhone = truncated;
       if (truncated.length > 7) {
         formattedPhone = `${truncated.slice(0, 2)}-${truncated.slice(2, 5)}-${truncated.slice(5, 7)}-${truncated.slice(7)}`;
@@ -54,7 +108,6 @@ export default function ContactCTA() {
     if (!formData.phone.trim()) {
       newErrors.phone = "Телефон є обов'язковим";
     } else if (formData.phone.replace(/\D/g, "").length !== 9) {
-      // Перевіряємо саме кількість цифр, ігноруючи дефіси
       newErrors.phone = "Введіть 9 цифр номера";
     }
 
@@ -77,10 +130,11 @@ export default function ContactCTA() {
   };
 
   return (
-    <section className={styles.ctaSection}>
+    <section className={styles.ctaSection} ref={sectionRef}>
       <div className={styles.container}>
-        <div className={styles.glassCard}>
-          <div className={styles.textContent}>
+        <div className={styles.glassCard} ref={cardRef}>
+          {/* Додали ref сюди, щоб анімувати його дочірні елементи */}
+          <div className={styles.textContent} ref={textContentRef}>
             <div className={styles.badgeOverlay}>Швидка відповідь</div>
 
             <div className={styles.iconCircle}>
@@ -122,7 +176,8 @@ export default function ContactCTA() {
             </div>
           </div>
 
-          <div className={styles.formWrapper}>
+          {/* Додали ref на форму */}
+          <div className={styles.formWrapper} ref={formWrapperRef}>
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
               <div className={styles.grid}>
                 <div className={styles.inputGroup}>
@@ -151,7 +206,7 @@ export default function ContactCTA() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="XX-XXX-XX-XX"
+                      placeholder="9X-XXX-XX-XX"
                       className={styles.innerInput}
                     />
                   </div>
