@@ -25,7 +25,6 @@ $text-gray: #52637a;
 .tabsContainer {
   display: inline-flex;
   background-color: rgba(118, 118, 128, 0.12);
-  /* Збільшили відступ обгортки для кращого візуалу */
   padding: 6px;
   border-radius: 100px;
 
@@ -44,15 +43,12 @@ $text-gray: #52637a;
 .tabButton {
   background: transparent;
   border: none;
-  /* Зробили кнопки більшими (було 8px 32px) */
   padding: 12px 40px;
   border-radius: 100px;
-  /* Збільшили розмір шрифту */
   font-size: 16px;
   font-weight: 600;
   color: #636366;
   cursor: pointer;
-  /* 🔥 Плавна анімація кольору та тіні для м'якого перемикання 🔥 */
   transition:
     background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -134,7 +130,6 @@ $text-gray: #52637a;
 
 @media (hover: hover) and (pointer: fine) {
   .servicePanel:hover .cardInner {
-    /* 🔥 Прибрали transform: translateY(-8px), картка більше не стрибає 🔥 */
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
 
     .bgImage {
@@ -239,10 +234,10 @@ $text-gray: #52637a;
 /* ШАР 1: Темний статичний фон */
 .backdropLayer {
   position: fixed;
-  inset: 0;
+  /* 🔥 Хак для Safari: робимо фон більшим за екран, щоб при ефекті пружини (bounce) ніколи не було видно білих проміжків 🔥 */
+  inset: -100px;
   z-index: 999998;
 
-  /* Красивий темний градієнт для глибини замість глючного блюру */
   background: linear-gradient(
     135deg,
     rgba(10, 15, 30, 0.85) 0%,
@@ -270,13 +265,15 @@ $text-gray: #52637a;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
 
-  overscroll-behavior: none; /* Заборона відривання фону при скролі */
-
-  padding: 80px 20px;
+  /* 🔥 Рятуємось від безпечних зон Safari (notch, home indicator). Відступи динамічно реагують на розмір UI-панелей браузера 🔥 */
+  padding: calc(60px + env(safe-area-inset-top)) 20px
+    calc(60px + env(safe-area-inset-bottom));
 
   @media (max-width: 768px) {
-    padding: 40px 10px;
+    padding: calc(16px + env(safe-area-inset-top)) 10px
+      calc(24px + env(safe-area-inset-bottom));
   }
 }
 
@@ -299,12 +296,29 @@ $text-gray: #52637a;
   }
 }
 
-/* --- ІНШІ ЕЛЕМЕНТИ МОДАЛКИ --- */
+/* --- 🔥 ОБГОРТКА ДЛЯ ЛИПКОГО ХРЕСТИКА 🔥 --- */
+.closeStickyWrapper {
+  position: sticky;
+  top: 24px; /* Прилипає на 24px від краю екрана під час скролу */
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  height: 0; /* Щоб візуально не зсувати контент картки вниз */
 
+  /* Зміщуємо хрестик в кут картки, компенсуючи внутрішній паддінг .modalContent */
+  margin-top: -36px;
+  margin-right: -36px;
+
+  @media (max-width: 768px) {
+    top: calc(16px + env(safe-area-inset-top)); /* Враховує notch */
+    margin-top: -24px;
+    margin-right: -8px;
+  }
+}
+
+/* Сам хрестик */
 .closeBtn {
-  position: absolute;
-  top: 24px;
-  right: 24px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -316,7 +330,7 @@ $text-gray: #52637a;
   color: #86868b;
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 10;
+  pointer-events: auto; /* Обов'язково, бо обгортка має height: 0 */
 
   svg {
     width: 16px;
@@ -331,7 +345,7 @@ $text-gray: #52637a;
 
 .modalHeader {
   margin-bottom: 40px;
-  padding-right: 40px;
+  padding-right: 40px; /* Щоб текст не заліз під хрестик */
 }
 
 .modalNum {
