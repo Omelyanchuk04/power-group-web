@@ -228,27 +228,26 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   СТАБІЛЬНА ТЕМНА МОДАЛКА БЕЗ БЛЮРУ
+   СТАБІЛЬНА ТЕМНА МОДАЛКА (Safari Fix)
    ========================================= */
 
-/* ШАР 1: Темний статичний фон */
+/* ШАР 1: Нескінченний фон */
 .backdropLayer {
   position: fixed;
   /* 🔥 РОБИМО ФОН ГІГАНТСЬКИМ 🔥 
-     Він виходить за межі екрана на 20%, тому ніякі стрибки Safari не покажуть білу смугу */
-  top: -20vh;
-  bottom: -20vh;
-  left: -20vw;
-  right: -20vw;
-  width: 140vw;
-  height: 140vh;
-  z-index: 999998;
+     Він виходить за межі екрана у всі боки. 
+     Жоден відскок Safari не покаже "дірку". */
+  top: -100%;
+  bottom: -100%;
+  left: -100%;
+  right: -100%;
 
-  background: linear-gradient(
-    135deg,
-    rgba(10, 15, 30, 0.85) 0%,
-    rgba(2, 6, 16, 0.95) 100%
-  );
+  /* Максимально можливий z-index, щоб гарантовано перекрити все на сайті */
+  z-index: 9999998;
+
+  /* Краще використовувати суцільний напівпрозорий колір замість градієнта, 
+     оскільки на гігантських розмірах градієнт може рендеритись неправильно */
+  background: rgba(10, 15, 30, 0.95);
 
   opacity: 0;
   visibility: hidden;
@@ -265,14 +264,12 @@ $text-gray: #52637a;
 /* ШАР 2: Обгортка для скролу */
 .modalScrollWrapper {
   position: fixed;
+  /* Прив'язуємо рівно до меж екрана без використання vh/dvh */
   top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh; /* Фоллбек для старих браузерів */
-  height: 100dvh; /* 🔥 Динамічна висота для Safari (враховує появу/зникнення тулбарів) 🔥 */
-  z-index: 999999;
+  z-index: 9999999;
 
   overflow-y: auto;
   overflow-x: hidden;
@@ -284,8 +281,8 @@ $text-gray: #52637a;
     calc(80px + env(safe-area-inset-bottom));
 
   @media (max-width: 768px) {
-    padding: calc(60px + env(safe-area-inset-top)) 10px
-      calc(40px + env(safe-area-inset-bottom));
+    padding: calc(80px + env(safe-area-inset-top)) 10px
+      calc(60px + env(safe-area-inset-bottom));
   }
 }
 
@@ -311,8 +308,8 @@ $text-gray: #52637a;
 /* --- 🔥 ОБГОРТКА ДЛЯ ФІКСОВАНОГО ХРЕСТИКА 🔥 --- */
 .fixedCloseWrapper {
   position: fixed;
-  z-index: 1000000;
-  pointer-events: none; /* Щоб невидимий блок не перекривав кліки по екрану */
+  z-index: 10000000;
+  pointer-events: none; /* Невидимий блок не блокує кліки */
 
   /* Відступ від правого верхнього кута (враховуючи safe-area) */
   top: calc(24px + env(safe-area-inset-top));
@@ -326,7 +323,7 @@ $text-gray: #52637a;
 
 /* Сам хрестик */
 .closeBtn {
-  width: 40px; /* Трохи більший для зручності на телефоні */
+  width: 40px;
   height: 40px;
   border-radius: 50%;
   background: #f1f5f9;
@@ -338,7 +335,7 @@ $text-gray: #52637a;
   cursor: pointer;
   transition: all 0.2s ease;
   pointer-events: auto; /* Повертаємо клікабельність саме кнопці */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Додаємо тінь, щоб хрестик гарно читався */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
   svg {
     width: 18px;

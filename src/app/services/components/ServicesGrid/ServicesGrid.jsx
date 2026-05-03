@@ -256,7 +256,7 @@ export default function ServicesGrid() {
         selectedService &&
         createPortal(
           <>
-            {/* ШАР 1: Темний фон (гігантського розміру, щоб ніколи не обрізався) */}
+            {/* ШАР 1: Нескінченний темний фон */}
             <div
               className={`${styles.backdropLayer} ${!isClosing ? styles.backdropVisible : ""}`}
               onClick={closeModal}
@@ -268,8 +268,7 @@ export default function ServicesGrid() {
               onClick={closeModal}
               data-lenis-prevent="true"
             >
-              {/* 🔥 АБСОЛЮТНО ФІКСОВАНИЙ ХРЕСТИК 🔥 
-                  Він тепер лежить поза карткою, тому нікуди не зникає при скролі! */}
+              {/* Фіксований хрестик */}
               <div className={styles.fixedCloseWrapper}>
                 <button className={styles.closeBtn} onClick={closeModal}>
                   <svg
@@ -285,7 +284,7 @@ export default function ServicesGrid() {
                 </button>
               </div>
 
-              {/* Сама біла картка з контентом */}
+              {/* Біла картка */}
               <div
                 className={styles.modalContent}
                 ref={modalCardRef}
