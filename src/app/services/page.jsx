@@ -1,25 +1,49 @@
 import React from "react";
-import styles from "./services.module.scss"; // Залиш свій імпорт стилів сторінки, якщо він є
-
 import ServicesHero from "./components/ServicesHero/ServicesHero";
 import ServicesGrid from "./components/ServicesGrid/ServicesGrid";
 import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 
+// Якщо ти використовуєш services.module.scss, можеш розкоментувати імпорт:
+// import styles from "./services.module.scss";
+
 export default function ServicesPage() {
   return (
-    <main className={styles?.servicesPage || ""}>
+    <main
+      // className={styles?.servicesPage || ""} // розкоментуй, якщо треба
+      style={{
+        position: "relative",
+        width: "100%",
+        /* 🔥 ОСНОВНИЙ ФІКС МЕЖІ: дозволяємо фону вільно випадати вниз під футер 🔥 */
+        overflowY: "visible",
+        /* 🔥 Запобігаємо появі горизонтального скролу 🔥 */
+        overflowX: "clip",
+        backgroundColor: "transparent",
+      }}
+    >
       {/* Головна обгортка ДЛЯ ВСІХ секцій сторінки */}
-      <div style={{ position: "relative", zIndex: 1, width: "100%" }}>
-        {/* 🔥 ГЛОБАЛЬНИЙ ФОН 🔥 */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "100%",
+          /* Також гарантуємо, що обгортка нічого не ріже */
+          overflow: "visible",
+          /* Уникаємо злипання марджинів (margin collapse) нижньої секції */
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        {/* 🔥 ГЛОБАЛЬНИЙ ФОН (АБСОЛЮТНА ЗБРОЯ ПРОТИ ШВІВ) 🔥 */}
         <div
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             right: 0,
-            bottom: "-800px" /* Пробиваємо дно під футер */,
-            zIndex: -1 /* Ховаємо під усіма секціями */,
+            /* Пробиваємо дно. Збільшив до -1200px для 100% гарантії перекриття футера */
+            bottom: "-1200px",
+            zIndex: -1,
             pointerEvents: "none",
           }}
         >
