@@ -25,7 +25,8 @@ $text-gray: #52637a;
 .tabsContainer {
   display: inline-flex;
   background-color: rgba(118, 118, 128, 0.12);
-  padding: 4px;
+  /* Збільшили відступ обгортки для кращого візуалу */
+  padding: 6px;
   border-radius: 100px;
 
   @media (max-width: 768px) {
@@ -43,18 +44,24 @@ $text-gray: #52637a;
 .tabButton {
   background: transparent;
   border: none;
-  padding: 8px 32px;
+  /* Зробили кнопки більшими (було 8px 32px) */
+  padding: 12px 40px;
   border-radius: 100px;
-  font-size: 15px;
+  /* Збільшили розмір шрифту */
+  font-size: 16px;
   font-weight: 600;
   color: #636366;
   cursor: pointer;
-  transition: all 0.3s ease;
+  /* 🔥 Плавна анімація кольору та тіні для м'якого перемикання 🔥 */
+  transition:
+    background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 
   @media (max-width: 768px) {
-    padding: 8px 20px;
-    font-size: 14px;
+    padding: 10px 24px;
+    font-size: 15px;
   }
 
   @media (hover: hover) {
@@ -127,7 +134,7 @@ $text-gray: #52637a;
 
 @media (hover: hover) and (pointer: fine) {
   .servicePanel:hover .cardInner {
-    transform: translateY(-8px);
+    /* 🔥 Прибрали transform: translateY(-8px), картка більше не стрибає 🔥 */
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
 
     .bgImage {
@@ -203,6 +210,7 @@ $text-gray: #52637a;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   justify-content: center;
@@ -225,69 +233,64 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   APPLE-STYLE МОДАЛКА (НАДІЙНИЙ CSS-БЛЮР)
+   СТАБІЛЬНА ТЕМНА МОДАЛКА БЕЗ БЛЮРУ
    ========================================= */
 
-/* 
-  Єдина обгортка: відповідає за фон, блюр і скрол.
-  GSAP сюди не лізе, тому Chrome та Safari рендерять ідеально.
-*/
-.modalOverlay {
+/* ШАР 1: Темний статичний фон */
+.backdropLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 999998;
+
+  /* Красивий темний градієнт для глибини замість глючного блюру */
+  background: linear-gradient(
+    135deg,
+    rgba(10, 15, 30, 0.85) 0%,
+    rgba(2, 6, 16, 0.95) 100%
+  );
+
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+}
+
+.backdropVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ШАР 2: Обгортка для скролу */
+.modalScrollWrapper {
   position: fixed;
   inset: 0;
   z-index: 999999;
 
-  /* Ідеальний скрол на всіх пристроях */
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
 
-  /* Вирівнювання картки */
-  display: flex;
-  align-items: flex-start; /* Щоб картка могла рости вниз */
-  justify-content: center;
-  padding: 80px 20px; /* Відступи зверху і знизу */
+  overscroll-behavior: none; /* Заборона відривання фону при скролі */
 
-  /* 🔥 ЧИСТИЙ CSS ДЛЯ ФОНУ ТА БЛЮРУ (Стартовий прозорий стан) 🔥 */
-  background: rgba(15, 23, 42, 0);
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
-
-  /* Плавний перехід засобами браузера */
-  transition:
-    background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    -webkit-backdrop-filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 80px 20px;
 
   @media (max-width: 768px) {
-    padding: 20px 10px;
+    padding: 40px 10px;
   }
 }
 
-/* Активний стан (додається через React) */
-.modalOverlay.visible {
-  background: rgba(15, 23, 42, 0.45); /* Приємне затемнення */
-  backdrop-filter: blur(24px); /* Глибокий блюр */
-  -webkit-backdrop-filter: blur(24px);
-}
-
-/* Сама біла картка */
+/* Сама картка */
 .modalContent {
   background: #ffffff;
   width: 100%;
   max-width: 900px;
-
-  /* margin: auto дозволяє центрувати картку, якщо вона менша за екран, 
-     і коректно скролити, якщо вона більша */
-  margin: auto;
-
+  margin: 0 auto;
   border-radius: 40px;
   padding: 60px;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 
-  /* Важливо для плавного тексту під час анімації */
   will-change: transform, opacity;
 
   @media (max-width: 768px) {
@@ -296,7 +299,7 @@ $text-gray: #52637a;
   }
 }
 
-/* --- ЕЛЕМЕНТИ МОДАЛКИ (Без змін) --- */
+/* --- ІНШІ ЕЛЕМЕНТИ МОДАЛКИ --- */
 
 .closeBtn {
   position: absolute;

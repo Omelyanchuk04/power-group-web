@@ -91,7 +91,7 @@ const servicesData = [
 export default function ServicesGrid() {
   const [activeTab, setActiveTab] = useState(0);
   const [selectedService, setSelectedService] = useState(null);
-  const [isClosing, setIsClosing] = useState(false); // 🔥 Контроль закриття
+  const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const sectionRef = useRef(null);
@@ -102,7 +102,6 @@ export default function ServicesGrid() {
     setMounted(true);
   }, []);
 
-  // Блокування глобального скролу
   useEffect(() => {
     if (selectedService) {
       document.body.style.overflow = "hidden";
@@ -117,7 +116,6 @@ export default function ServicesGrid() {
     };
   }, [selectedService]);
 
-  // Анімація появи секції
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
@@ -132,7 +130,6 @@ export default function ServicesGrid() {
     return () => ctx.revert();
   }, []);
 
-  // Анімація табів
   useEffect(() => {
     if (!gridContentRef.current) return;
     const ctx = gsap.context(() => {
@@ -152,19 +149,16 @@ export default function ServicesGrid() {
     return () => ctx.revert();
   }, [activeTab]);
 
-  // Відкриття модалки
   const openModal = (service) => {
     setIsClosing(false);
     setSelectedService(service);
   };
 
-  // Правильне закриття модалки
   const closeModal = () => {
     if (isClosing) return;
-    setIsClosing(true); // Запускає CSS-транзицію зникнення фону
+    setIsClosing(true);
 
     if (modalCardRef.current) {
-      // Анімуємо тільки саму білу картку через GSAP
       gsap.to(modalCardRef.current, {
         y: 30,
         opacity: 0,
@@ -182,7 +176,6 @@ export default function ServicesGrid() {
     }
   };
 
-  // Анімація появи білої картки
   useEffect(() => {
     if (selectedService && !isClosing && modalCardRef.current) {
       gsap.fromTo(
@@ -262,72 +255,80 @@ export default function ServicesGrid() {
       {mounted &&
         selectedService &&
         createPortal(
-          /* 🔥 Головний оверлей. Клас .visible керує блюром через чистий CSS 🔥 */
-          <div
-            className={`${styles.modalOverlay} ${!isClosing ? styles.visible : ""}`}
-            onClick={closeModal}
-            data-lenis-prevent="true"
-          >
+          <>
+            {/* ШАР 1: Темний фон */}
             <div
-              className={styles.modalContent}
-              ref={modalCardRef}
-              onClick={(e) => e.stopPropagation()} // Блокуємо клік по самій картці
+              className={`${styles.backdropLayer} ${!isClosing ? styles.backdropVisible : ""}`}
+              onClick={closeModal}
+            ></div>
+
+            {/* ШАР 2: Обгортка для скролу картки */}
+            <div
+              className={styles.modalScrollWrapper}
+              onClick={closeModal}
+              data-lenis-prevent="true"
             >
-              <button className={styles.closeBtn} onClick={closeModal}>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
+              <div
+                className={styles.modalContent}
+                ref={modalCardRef}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className={styles.closeBtn} onClick={closeModal}>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
 
-              <div className={styles.modalHeader}>
-                <span className={styles.modalNum}>
-                  Послуга {selectedService.num}
-                </span>
-                <h2 className={styles.modalTitle}>{selectedService.title}</h2>
-              </div>
-
-              <div className={styles.modalRichContent}>
-                <div className={styles.modalBody}>
-                  <p>{selectedService.fullText}</p>
+                <div className={styles.modalHeader}>
+                  <span className={styles.modalNum}>
+                    Послуга {selectedService.num}
+                  </span>
+                  <h2 className={styles.modalTitle}>{selectedService.title}</h2>
                 </div>
 
-                <div className={styles.modalImageWrapper}>
-                  <NextImage
-                    src={selectedService.img}
-                    alt={selectedService.title}
-                    fill
-                    className={styles.modalImage}
-                    sizes="(max-width: 768px) 100vw, 800px"
-                  />
-                </div>
-              </div>
+                <div className={styles.modalRichContent}>
+                  <div className={styles.modalBody}>
+                    <p>{selectedService.fullText}</p>
+                  </div>
 
-              <div className={styles.modalFooter}>
-                <a
-                  href="#contact-cta"
-                  className={styles.ctaButton}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    closeModal();
-                    setTimeout(() => {
-                      document
-                        .querySelector("#contact-cta")
-                        ?.scrollIntoView({ behavior: "smooth" });
-                    }, 400);
-                  }}
-                >
-                  Отримати консультацію
-                </a>
+                  <div className={styles.modalImageWrapper}>
+                    <NextImage
+                      src={selectedService.img}
+                      alt={selectedService.title}
+                      fill
+                      className={styles.modalImage}
+                      sizes="(max-width: 768px) 100vw, 800px"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.modalFooter}>
+                  <a
+                    href="#contact-cta"
+                    className={styles.ctaButton}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      closeModal();
+                      setTimeout(() => {
+                        document
+                          .querySelector("#contact-cta")
+                          ?.scrollIntoView({ behavior: "smooth" });
+                      }, 400);
+                    }}
+                  >
+                    Отримати консультацію
+                  </a>
+                </div>
               </div>
             </div>
-          </div>,
+          </>,
           document.body,
         )}
     </>
