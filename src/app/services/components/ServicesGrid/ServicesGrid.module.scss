@@ -234,19 +234,12 @@ $text-gray: #52637a;
 /* ШАР 1: Нескінченний фон */
 .backdropLayer {
   position: fixed;
-  /* 🔥 РОБИМО ФОН ГІГАНТСЬКИМ 🔥 
-     Він виходить за межі екрана у всі боки. 
-     Жоден відскок Safari не покаже "дірку". */
   top: -100%;
   bottom: -100%;
   left: -100%;
   right: -100%;
 
-  /* Максимально можливий z-index, щоб гарантовано перекрити все на сайті */
   z-index: 9999998;
-
-  /* Краще використовувати суцільний напівпрозорий колір замість градієнта, 
-     оскільки на гігантських розмірах градієнт може рендеритись неправильно */
   background: rgba(10, 15, 30, 0.95);
 
   opacity: 0;
@@ -264,7 +257,6 @@ $text-gray: #52637a;
 /* ШАР 2: Обгортка для скролу */
 .modalScrollWrapper {
   position: fixed;
-  /* Прив'язуємо рівно до меж екрана без використання vh/dvh */
   top: 0;
   bottom: 0;
   left: 0;
@@ -276,7 +268,6 @@ $text-gray: #52637a;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
 
-  /* Відступи враховують notch і home indicator на iPhone */
   padding: calc(80px + env(safe-area-inset-top)) 20px
     calc(80px + env(safe-area-inset-bottom));
 
@@ -309,11 +300,12 @@ $text-gray: #52637a;
 .fixedCloseWrapper {
   position: fixed;
   z-index: 10000000;
-  pointer-events: none; /* Невидимий блок не блокує кліки */
+  pointer-events: none;
 
-  /* Відступ від правого верхнього кута (враховуючи safe-area) */
   top: calc(24px + env(safe-area-inset-top));
   right: 24px;
+
+  /* GSAP керуватиме opacity, тому transition тут не потрібен */
 
   @media (max-width: 768px) {
     top: calc(16px + env(safe-area-inset-top));
@@ -334,7 +326,7 @@ $text-gray: #52637a;
   color: #86868b;
   cursor: pointer;
   transition: all 0.2s ease;
-  pointer-events: auto; /* Повертаємо клікабельність саме кнопці */
+  pointer-events: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
   svg {

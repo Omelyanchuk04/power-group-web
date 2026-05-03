@@ -97,6 +97,7 @@ export default function ServicesGrid() {
   const sectionRef = useRef(null);
   const gridContentRef = useRef(null);
   const modalCardRef = useRef(null);
+  const closeBtnRef = useRef(null); // 🔥 Додали ref для хрестика
 
   useEffect(() => {
     setMounted(true);
@@ -159,6 +160,16 @@ export default function ServicesGrid() {
     setIsClosing(true);
 
     if (modalCardRef.current) {
+      // 🔥 Анімуємо зникнення хрестика синхронно з карткою
+      if (closeBtnRef.current) {
+        gsap.to(closeBtnRef.current, {
+          opacity: 0,
+          scale: 0.8,
+          duration: 0.2, // Трохи швидше для ефекту легкості
+          ease: "power2.in",
+        });
+      }
+
       gsap.to(modalCardRef.current, {
         y: 30,
         opacity: 0,
@@ -178,6 +189,7 @@ export default function ServicesGrid() {
 
   useEffect(() => {
     if (selectedService && !isClosing && modalCardRef.current) {
+      // Анімація появи картки
       gsap.fromTo(
         modalCardRef.current,
         { y: 40, opacity: 0, scale: 0.98 },
@@ -190,6 +202,21 @@ export default function ServicesGrid() {
           clearProps: "transform",
         },
       );
+
+      // 🔥 Плавна анімація появи хрестика з легким запізненням
+      if (closeBtnRef.current) {
+        gsap.fromTo(
+          closeBtnRef.current,
+          { opacity: 0, scale: 0.5 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.4,
+            delay: 0.1, // З'являється трохи пізніше за картку
+            ease: "power3.out",
+          },
+        );
+      }
     }
   }, [selectedService, isClosing]);
 
@@ -268,8 +295,8 @@ export default function ServicesGrid() {
               onClick={closeModal}
               data-lenis-prevent="true"
             >
-              {/* Фіксований хрестик */}
-              <div className={styles.fixedCloseWrapper}>
+              {/* Фіксований хрестик (анімується через ref) */}
+              <div className={styles.fixedCloseWrapper} ref={closeBtnRef}>
                 <button className={styles.closeBtn} onClick={closeModal}>
                   <svg
                     viewBox="0 0 24 24"
