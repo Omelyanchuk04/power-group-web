@@ -256,7 +256,7 @@ export default function ServicesGrid() {
         selectedService &&
         createPortal(
           <>
-            {/* ШАР 1: Темний фон */}
+            {/* ШАР 1: Темний фон (гігантського розміру, щоб ніколи не обрізався) */}
             <div
               className={`${styles.backdropLayer} ${!isClosing ? styles.backdropVisible : ""}`}
               onClick={closeModal}
@@ -268,27 +268,29 @@ export default function ServicesGrid() {
               onClick={closeModal}
               data-lenis-prevent="true"
             >
+              {/* 🔥 АБСОЛЮТНО ФІКСОВАНИЙ ХРЕСТИК 🔥 
+                  Він тепер лежить поза карткою, тому нікуди не зникає при скролі! */}
+              <div className={styles.fixedCloseWrapper}>
+                <button className={styles.closeBtn} onClick={closeModal}>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Сама біла картка з контентом */}
               <div
                 className={styles.modalContent}
                 ref={modalCardRef}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* 🔥 ОНОВЛЕНО: Липка обгортка для хрестика 🔥 */}
-                <div className={styles.closeStickyWrapper}>
-                  <button className={styles.closeBtn} onClick={closeModal}>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
-
                 <div className={styles.modalHeader}>
                   <span className={styles.modalNum}>
                     Послуга {selectedService.num}

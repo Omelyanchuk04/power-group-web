@@ -234,8 +234,14 @@ $text-gray: #52637a;
 /* ШАР 1: Темний статичний фон */
 .backdropLayer {
   position: fixed;
-  /* 🔥 Хак для Safari: робимо фон більшим за екран, щоб при ефекті пружини (bounce) ніколи не було видно білих проміжків 🔥 */
-  inset: -100px;
+  /* 🔥 РОБИМО ФОН ГІГАНТСЬКИМ 🔥 
+     Він виходить за межі екрана на 20%, тому ніякі стрибки Safari не покажуть білу смугу */
+  top: -20vh;
+  bottom: -20vh;
+  left: -20vw;
+  right: -20vw;
+  width: 140vw;
+  height: 140vh;
   z-index: 999998;
 
   background: linear-gradient(
@@ -259,7 +265,13 @@ $text-gray: #52637a;
 /* ШАР 2: Обгортка для скролу */
 .modalScrollWrapper {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh; /* Фоллбек для старих браузерів */
+  height: 100dvh; /* 🔥 Динамічна висота для Safari (враховує появу/зникнення тулбарів) 🔥 */
   z-index: 999999;
 
   overflow-y: auto;
@@ -267,13 +279,13 @@ $text-gray: #52637a;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
 
-  /* 🔥 Рятуємось від безпечних зон Safari (notch, home indicator). Відступи динамічно реагують на розмір UI-панелей браузера 🔥 */
-  padding: calc(60px + env(safe-area-inset-top)) 20px
-    calc(60px + env(safe-area-inset-bottom));
+  /* Відступи враховують notch і home indicator на iPhone */
+  padding: calc(80px + env(safe-area-inset-top)) 20px
+    calc(80px + env(safe-area-inset-bottom));
 
   @media (max-width: 768px) {
-    padding: calc(16px + env(safe-area-inset-top)) 10px
-      calc(24px + env(safe-area-inset-bottom));
+    padding: calc(60px + env(safe-area-inset-top)) 10px
+      calc(40px + env(safe-area-inset-bottom));
   }
 }
 
@@ -296,31 +308,26 @@ $text-gray: #52637a;
   }
 }
 
-/* --- 🔥 ОБГОРТКА ДЛЯ ЛИПКОГО ХРЕСТИКА 🔥 --- */
-.closeStickyWrapper {
-  position: sticky;
-  top: 24px; /* Прилипає на 24px від краю екрана під час скролу */
-  z-index: 100;
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  height: 0; /* Щоб візуально не зсувати контент картки вниз */
+/* --- 🔥 ОБГОРТКА ДЛЯ ФІКСОВАНОГО ХРЕСТИКА 🔥 --- */
+.fixedCloseWrapper {
+  position: fixed;
+  z-index: 1000000;
+  pointer-events: none; /* Щоб невидимий блок не перекривав кліки по екрану */
 
-  /* Зміщуємо хрестик в кут картки, компенсуючи внутрішній паддінг .modalContent */
-  margin-top: -36px;
-  margin-right: -36px;
+  /* Відступ від правого верхнього кута (враховуючи safe-area) */
+  top: calc(24px + env(safe-area-inset-top));
+  right: 24px;
 
   @media (max-width: 768px) {
-    top: calc(16px + env(safe-area-inset-top)); /* Враховує notch */
-    margin-top: -24px;
-    margin-right: -8px;
+    top: calc(16px + env(safe-area-inset-top));
+    right: 16px;
   }
 }
 
 /* Сам хрестик */
 .closeBtn {
-  width: 36px;
-  height: 36px;
+  width: 40px; /* Трохи більший для зручності на телефоні */
+  height: 40px;
   border-radius: 50%;
   background: #f1f5f9;
   border: none;
@@ -330,11 +337,12 @@ $text-gray: #52637a;
   color: #86868b;
   cursor: pointer;
   transition: all 0.2s ease;
-  pointer-events: auto; /* Обов'язково, бо обгортка має height: 0 */
+  pointer-events: auto; /* Повертаємо клікабельність саме кнопці */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Додаємо тінь, щоб хрестик гарно читався */
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   &:hover {
@@ -345,7 +353,6 @@ $text-gray: #52637a;
 
 .modalHeader {
   margin-bottom: 40px;
-  padding-right: 40px; /* Щоб текст не заліз під хрестик */
 }
 
 .modalNum {
