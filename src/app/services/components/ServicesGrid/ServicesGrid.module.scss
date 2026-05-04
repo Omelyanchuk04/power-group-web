@@ -78,7 +78,7 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   🔵 СИНЯ ТЕМА (ВМИКАЄТЬСЯ ДЛЯ 1-Ї ТАБИ) 🔵
+   🔵 СИНЯ ТЕМА 🔵
    ========================================= */
 .themeBlue {
   .activeTab {
@@ -106,7 +106,7 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   🌿 ЗЕЛЕНА ТЕМА (ВМИКАЄТЬСЯ ДЛЯ 2-Ї ТАБИ) 🌿
+   🌿 ЗЕЛЕНА ТЕМА 🌿
    ========================================= */
 .themeGreen {
   .activeTab {
@@ -133,9 +133,7 @@ $text-gray: #52637a;
   }
 }
 
-/* =========================================
-   🔥 СІТКА КАРТОК (FLEXBOX) 🔥
-   ========================================= */
+/* --- СІТКА КАРТОК (FLEXBOX) --- */
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -182,16 +180,15 @@ $text-gray: #52637a;
   justify-content: flex-end;
   border: 1px solid transparent;
   cursor: pointer;
-
-  /* Базова анімація з ефектом "пружинки" (для ПК) */
+  // Ідеально м'яка крива анімації
   transition:
-    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
     border-color 0.4s ease,
     box-shadow 0.4s ease;
 }
 
 /* =========================================
-   ХОВЕРИ КАРТОК (ТІЛЬКИ ДЛЯ ПК / МИШКИ)
+   ХОВЕРИ КАРТОК (ТІЛЬКИ ДЛЯ ПК)
    ========================================= */
 @media (hover: hover) and (pointer: fine) {
   .themeBlue .servicePanel:hover .cardInner {
@@ -234,47 +231,36 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   📱 ІДЕАЛЬНО ПЛАВНИЙ ВІДГУК НА СМАРТФОНАХ 📱
+   🔥 ІДЕАЛЬНА АНІМАЦІЯ КЛІКУ ДЛЯ СМАРТФОНІВ
+   (Тільки через JS клас .isTapped)
    ========================================= */
-@media (max-width: 1199px) {
-  /* 🔥 ФІКС 1: Забираємо "пружинку" при відпусканні картки. 
-     Тепер вона повертається м'яко, як в iOS */
-  .cardInner,
+.isTapped {
+  transform: scale(0.96) !important;
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+
   .plusBtn {
-    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    transform: scale(0.9) rotate(45deg) !important;
+    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
   }
+}
 
-  /* Реакція Синьої Теми */
-  .themeBlue .servicePanel:active .cardInner {
-    transform: scale(0.96); // М'яке продавлювання
-    border-color: rgba($primary, 0.8);
-    box-shadow: 0 8px 25px rgba($primary, 0.3);
-    /* 🔥 ФІКС 2: Збільшено час натискання з 0.15s до 0.25s для плавності */
-    transition: all 0.25s ease-out !important;
-
-    .plusBtn {
-      background: $primary;
-      box-shadow: inset 0 0 0 2px $primary;
-      color: #ffffff;
-      transform: scale(0.9) rotate(45deg);
-      transition: all 0.25s ease-out !important;
-    }
+.themeBlue .isTapped {
+  border-color: rgba($primary, 0.9) !important;
+  box-shadow: 0 8px 25px rgba($primary, 0.4) !important;
+  .plusBtn {
+    background: $primary !important;
+    box-shadow: inset 0 0 0 2px $primary !important;
+    color: #ffffff !important;
   }
+}
 
-  /* Реакція Зеленої Теми */
-  .themeGreen .servicePanel:active .cardInner {
-    transform: scale(0.96);
-    border-color: rgba($green, 0.8);
-    box-shadow: 0 8px 25px rgba($green, 0.3);
-    transition: all 0.25s ease-out !important;
-
-    .plusBtn {
-      background: $green;
-      box-shadow: inset 0 0 0 2px $green;
-      color: #ffffff;
-      transform: scale(0.9) rotate(45deg);
-      transition: all 0.25s ease-out !important;
-    }
+.themeGreen .isTapped {
+  border-color: rgba($green, 0.9) !important;
+  box-shadow: 0 8px 25px rgba($green, 0.4) !important;
+  .plusBtn {
+    background: $green !important;
+    box-shadow: inset 0 0 0 2px $green !important;
+    color: #ffffff !important;
   }
 }
 
@@ -345,7 +331,7 @@ $text-gray: #52637a;
   align-items: center;
   z-index: 5;
   border: none;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 

@@ -94,12 +94,14 @@ export default function ServicesGrid() {
   const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // 🔥 Новий стейт для відстеження анімації кліку
+  const [tappedCardId, setTappedCardId] = useState(null);
+
   const sectionRef = useRef(null);
   const gridContentRef = useRef(null);
   const modalCardRef = useRef(null);
   const closeBtnRef = useRef(null);
 
-  // 🔥 Визначаємо, яка тема зараз активна
   const isBlueTheme = activeTab === 0;
   const isGreenTheme = activeTab === 1;
 
@@ -154,9 +156,20 @@ export default function ServicesGrid() {
     return () => ctx.revert();
   }, [activeTab]);
 
-  const openModal = (service) => {
-    setIsClosing(false);
-    setSelectedService(service);
+  // 🔥 Оновлена функція кліку: спочатку анімація, потім модалка
+  const handleCardClick = (service) => {
+    // Якщо вже йде анімація іншої картки - ігноруємо
+    if (tappedCardId) return;
+
+    // 1. Вмикаємо ефект натискання
+    setTappedCardId(service.id);
+
+    // 2. Чекаємо 350мс (щоб ви побачили красиву анімацію плюсика), потім відкриваємо
+    setTimeout(() => {
+      setIsClosing(false);
+      setSelectedService(service);
+      setTappedCardId(null); // Знімаємо натискання
+    }, 350);
   };
 
   const closeModal = () => {
@@ -223,7 +236,6 @@ export default function ServicesGrid() {
 
   return (
     <>
-      {/* 🔥 Застосовуємо відповідний клас теми залежно від таби 🔥 */}
       <section
         className={`${styles.gridSection} ${isBlueTheme ? styles.themeBlue : ""} ${isGreenTheme ? styles.themeGreen : ""}`}
         ref={sectionRef}
@@ -247,8 +259,9 @@ export default function ServicesGrid() {
             {servicesData[activeTab].items.map((service, index) => (
               <div key={service.id} className={styles.servicePanel}>
                 <div
-                  className={styles.cardInner}
-                  onClick={() => openModal(service)}
+                  // 🔥 Додаємо клас isTapped, якщо по картці щойно клікнули
+                  className={`${styles.cardInner} ${tappedCardId === service.id ? styles.isTapped : ""}`}
+                  onClick={() => handleCardClick(service)}
                 >
                   <NextImage
                     src={service.img}
@@ -329,7 +342,6 @@ export default function ServicesGrid() {
                   <div className={styles.modalBody}>
                     <p>{selectedService.fullText}</p>
                   </div>
-
                   <div className={styles.modalImageWrapper}>
                     <NextImage
                       src={selectedService.img}
