@@ -1,6 +1,7 @@
 import React from "react";
 import ServicesHero from "./components/ServicesHero/ServicesHero";
 import ServicesGrid from "./components/ServicesGrid/ServicesGrid";
+import FAQ from "./components/FAQ/FAQ";
 import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 
@@ -53,6 +54,7 @@ export default function ServicesPage() {
         {/* Твої секції спокійно лежать зверху на фоні */}
         <ServicesHero />
         <ServicesGrid />
+        <FAQ />
         <ContactCTA />
       </div>
     </main>
