@@ -1,13 +1,14 @@
-//$primary: #0056b3;
+$primary: #0056b3;
+$green: #10b981;
 $text-dark: #0a2540;
 $text-gray: #52637a;
 
 .gridSection {
   background-color: transparent;
+  transition: all 0.5s ease;
 }
 
 .container {
-  /* 🔥 Збільшено ширину контейнера для широких екранів */
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
@@ -27,6 +28,7 @@ $text-gray: #52637a;
   background-color: rgba(118, 118, 128, 0.12);
   padding: 6px;
   border-radius: 100px;
+  transition: background-color 0.4s ease;
 
   @media (max-width: 768px) {
     flex-direction: row;
@@ -75,35 +77,102 @@ $text-gray: #52637a;
     0 3px 1px rgba(0, 0, 0, 0.04);
 }
 
-/* --- СІТКА КАРТОК --- */
+/* =========================================
+   🔵 СИНЯ ТЕМА (ВМИКАЄТЬСЯ ДЛЯ 1-Ї ТАБИ) 🔵
+   ========================================= */
+.themeBlue {
+  .activeTab {
+    background-color: #eef2ff;
+    color: $primary;
+    box-shadow:
+      0 3px 8px rgba(0, 86, 179, 0.15),
+      0 3px 1px rgba(0, 86, 179, 0.05);
+  }
+
+  .cardInner {
+    border-color: rgba($primary, 0.5);
+    box-shadow: 0 15px 40px rgba($primary, 0.3);
+  }
+
+  .cardNumber {
+    color: #4da3ff;
+  }
+
+  .plusBtn {
+    background: rgba(2, 6, 16, 0.4);
+    box-shadow: inset 0 0 0 2px rgba($primary, 0.8);
+    color: #ffffff;
+  }
+}
+
+/* =========================================
+   🌿 ЗЕЛЕНА ТЕМА (ВМИКАЄТЬСЯ ДЛЯ 2-Ї ТАБИ) 🌿
+   ========================================= */
+.themeGreen {
+  .activeTab {
+    background-color: #ecfdf5;
+    color: #059669;
+    box-shadow:
+      0 3px 8px rgba(16, 185, 129, 0.15),
+      0 3px 1px rgba(16, 185, 129, 0.05);
+  }
+
+  .cardInner {
+    border-color: rgba($green, 0.5);
+    box-shadow: 0 15px 40px rgba($green, 0.3);
+  }
+
+  .cardNumber {
+    color: $green;
+  }
+
+  .plusBtn {
+    background: rgba(2, 6, 16, 0.4);
+    box-shadow: inset 0 0 0 2px rgba($green, 0.8);
+    color: #ffffff;
+  }
+}
+
+/* =========================================
+   🔥 НОВА СІТКА КАРТОК (FLEXBOX) 🔥
+   ========================================= */
 .grid {
-  display: grid;
-  /* 🔥 Тепер картки стають в один рядок (4 колонки) на десктопі */
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; // Завдяки цьому 3 картки стають по центру
   gap: 20px;
   min-height: 480px;
 
   @media (max-width: 1200px) {
-    /* На екранах менше 1200px робимо 2 колонки */
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-  }
-
-  @media (max-width: 768px) {
-    /* На мобільних екранах 1 колонка */
-    grid-template-columns: 1fr;
+    gap: 30px; // На планшеті робимо більший відступ між рядками
   }
 }
 
 .servicePanel {
-  height: 480px;
-  width: 100%;
+  // На десктопі 4 колонки: 25% ширини мінус частина відступу gap
+  flex: 0 0 calc(25% - 15px);
+  max-width: calc(25% - 15px);
+  height: 520px;
   will-change: transform;
 
-  /* 🔥 Видалено старі правила для nth-child, оскільки тепер всі картки в один ряд */
+  @media (max-width: 1200px) {
+    // На планшеті 2 колонки: 50% мінус частина gap
+    flex: 0 0 calc(50% - 15px);
+    max-width: calc(50% - 15px);
+    height: 440px;
+    // 🔥 МАГІЯ ДЛЯ 3-Ї КАРТКИ:
+    // Якщо елемент є останнім І він непарний, він займає 100%
+    &:last-child:nth-child(odd) {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
 
   @media (max-width: 768px) {
-    height: 400px;
+    // На телефоні всі картки по 100%
+    flex: 0 0 100%;
+    max-width: 100%;
+    max-height: 350px;
   }
 }
 
@@ -113,28 +182,48 @@ $text-gray: #52637a;
   height: 100%;
   border-radius: 32px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid transparent;
   cursor: pointer;
   transition:
-    transform 0.4s ease,
+    transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    border-color 0.4s ease,
     box-shadow 0.4s ease;
 }
 
+/* ХОВЕРИ КАРТОК */
 @media (hover: hover) and (pointer: fine) {
-  .servicePanel:hover .cardInner {
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+  .themeBlue .servicePanel:hover .cardInner {
+    box-shadow: 0 25px 60px rgba($primary, 0.45);
+    border-color: rgba($primary, 0.9);
+    transform: translateY(-8px);
 
     .bgImage {
       transform: scale(1.05);
     }
     .plusBtn {
-      background: #ffffff;
-      color: $text-dark;
-      transform: scale(1.1);
+      background: $primary;
+      box-shadow: inset 0 0 0 2px $primary;
+      color: #ffffff;
+      transform: scale(1.1) rotate(90deg);
+    }
+  }
+
+  .themeGreen .servicePanel:hover .cardInner {
+    box-shadow: 0 25px 60px rgba($green, 0.45);
+    border-color: rgba($green, 0.9);
+    transform: translateY(-8px);
+
+    .bgImage {
+      transform: scale(1.05);
+    }
+    .plusBtn {
+      background: $green;
+      box-shadow: inset 0 0 0 2px $green;
+      color: #ffffff;
+      transform: scale(1.1) rotate(90deg);
     }
   }
 }
@@ -149,24 +238,25 @@ $text-gray: #52637a;
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(2, 6, 16, 0.95) 0%,
-    rgba(2, 6, 16, 0.4) 50%,
-    transparent 100%
+    rgba(6, 11, 25, 0.98) 0%,
+    rgba(6, 11, 25, 0.9) 30%,
+    rgba(6, 11, 25, 0.5) 60%,
+    transparent 90%
   );
   z-index: 1;
+  pointer-events: none;
 }
 
 .cardContent {
   position: relative;
   z-index: 2;
-  /* Зменшено відступи, щоб контент вміщувався у 4 вужчі колонки */
   padding: 28px;
-  padding-right: 64px;
+  padding-right: 85px;
   color: #ffffff;
 
   @media (max-width: 768px) {
     padding: 24px;
-    padding-right: 60px;
+    padding-right: 75px;
   }
 }
 
@@ -174,12 +264,11 @@ $text-gray: #52637a;
   font-family: monospace;
   font-size: 20px;
   font-weight: 700;
-  color: #4da3ff;
   margin-bottom: 8px;
+  transition: color 0.4s ease;
 }
 
 .cardTitle {
-  /* Зменшено шрифт для 4 колонок */
   font-size: 22px;
   font-weight: 800;
   margin: 0 0 10px 0;
@@ -187,7 +276,6 @@ $text-gray: #52637a;
 }
 
 .cardDesc {
-  /* Зменшено шрифт опису */
   font-size: 14px;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.5;
@@ -202,16 +290,14 @@ $text-gray: #52637a;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #ffffff;
   z-index: 5;
-  transition: all 0.3s ease;
+  border: none;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
   svg {
     width: 20px;
@@ -227,20 +313,17 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   СТАБІЛЬНА ТЕМНА МОДАЛКА (Safari Fix)
+   СТАБІЛЬНА ТЕМНА МОДАЛКА
    ========================================= */
 
-/* ШАР 1: Нескінченний фон */
 .backdropLayer {
   position: fixed;
   top: -100%;
   bottom: -100%;
   left: -100%;
   right: -100%;
-
   z-index: 9999998;
   background: rgba(10, 15, 30, 0.95);
-
   opacity: 0;
   visibility: hidden;
   transition:
@@ -253,7 +336,6 @@ $text-gray: #52637a;
   visibility: visible;
 }
 
-/* ШАР 2: Обгортка для скролу */
 .modalScrollWrapper {
   position: fixed;
   top: 0;
@@ -261,12 +343,10 @@ $text-gray: #52637a;
   left: 0;
   right: 0;
   z-index: 9999999;
-
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: none;
-
   padding: calc(80px + env(safe-area-inset-top)) 20px
     calc(80px + env(safe-area-inset-bottom));
 
@@ -276,7 +356,6 @@ $text-gray: #52637a;
   }
 }
 
-/* Сама картка */
 .modalContent {
   background: #ffffff;
   width: 100%;
@@ -286,7 +365,6 @@ $text-gray: #52637a;
   padding: 60px;
   position: relative;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-
   will-change: transform, opacity;
 
   @media (max-width: 768px) {
@@ -295,12 +373,10 @@ $text-gray: #52637a;
   }
 }
 
-/* --- 🔥 ОБГОРТКА ДЛЯ ФІКСОВАНОГО ХРЕСТИКА 🔥 --- */
 .fixedCloseWrapper {
   position: fixed;
   z-index: 10000000;
   pointer-events: none;
-
   top: calc(24px + env(safe-area-inset-top));
   right: 24px;
 
@@ -310,7 +386,6 @@ $text-gray: #52637a;
   }
 }
 
-/* Сам хрестик */
 .closeBtn {
   width: 40px;
   height: 40px;
@@ -416,7 +491,7 @@ $text-gray: #52637a;
   justify-content: center;
   align-items: center;
   padding: 18px 40px;
-  background-color: #0056b3; // Використовуємо колір напряму, якщо $primary викликає помилки
+  background-color: $primary;
   color: #ffffff;
   font-size: 17px;
   font-weight: 600;
@@ -429,7 +504,7 @@ $text-gray: #52637a;
   }
 
   &:hover {
-    background-color: #004494; // darken equivalent
+    background-color: darken(#0056b3, 10%);
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(0, 86, 179, 0.3);
   }
