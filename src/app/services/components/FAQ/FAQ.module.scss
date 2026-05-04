@@ -7,7 +7,7 @@ $border-color: rgba(0, 0, 0, 0.12);
   padding: 80px 0 120px;
   background-color: transparent;
   position: relative;
-  overflow: clip; // Запобігає обрізанню контенту, але ховає фонові світіння
+  overflow: clip;
   z-index: 5;
 
   @media (max-width: 768px) {
@@ -15,20 +15,19 @@ $border-color: rgba(0, 0, 0, 0.12);
   }
 }
 
-/* --- ОПТИМІЗОВАНІ ДЛЯ МОБІЛОК СВІТІННЯ (БЕЗ blur) --- */
+/* --- ФОН ТЕПЕР НЕ СТРИБАЄ --- */
 .ambientGlow1,
 .ambientGlow2 {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
-  // Апаратне прискорення
   transform: translateZ(0);
-  will-change: transform;
 }
 
 .ambientGlow1 {
-  top: 10%;
+  // Прив'язано ЖОРСТКО ДО ВЕРХУ
+  top: 50px;
   left: -15%;
   width: 600px;
   height: 600px;
@@ -40,7 +39,9 @@ $border-color: rgba(0, 0, 0, 0.12);
 }
 
 .ambientGlow2 {
-  bottom: 0;
+  // Було bottom: 0, тепер теж ЖОРСТКО ДО ВЕРХУ (400px від початку секції)
+  // Через це, коли секція тягнеться вниз, фон залишається на своєму місці!
+  top: 400px;
   right: -10%;
   width: 500px;
   height: 500px;
@@ -119,12 +120,15 @@ $border-color: rgba(0, 0, 0, 0.12);
 .faqItem {
   border-bottom: 1px solid $border-color;
   background: transparent;
-  // Жодного transition: all тут, щоб не конфліктувати з GSAP
+
+  // 🔥 ФІКС ФАНТОМНИХ ЛІНІЙ: Забороняємо браузеру розмивати межі блоку при зміні висоти
+  transform: translateZ(0);
+  backface-visibility: hidden;
 
   &.open {
     .iconWrapper {
       color: $text-dark;
-      transform: rotate(45deg) translateZ(0); // Хрестик крутиться з апаратним прискоренням
+      transform: rotate(45deg) translateZ(0);
     }
 
     .questionText {
@@ -181,10 +185,7 @@ $border-color: rgba(0, 0, 0, 0.12);
   align-items: center;
   color: #c8c8cc;
   flex-shrink: 0;
-
-  // Анімація плюсика і прискорення
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
   transform: translateZ(0);
 
   .icon {
@@ -200,15 +201,12 @@ $border-color: rgba(0, 0, 0, 0.12);
   }
 }
 
-/* --- МАГІЯ ПЛАВНОГО ВІДКРИТТЯ --- */
+/* --- МАГІЯ ПЛАВНОГО ВІДКРИТТЯ БЕЗ ЛАГІВ --- */
 .answerWrapper {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  // Прискорення відкриття на мобільних телефонах
-  will-change: grid-template-rows;
-  transform: translateZ(0);
+  // 🔥 ВИДАЛЕНО will-change: grid-template-rows; (саме він ламав лінії в Safari!)
 }
 
 .open .answerWrapper {
@@ -227,8 +225,17 @@ $border-color: rgba(0, 0, 0, 0.12);
   line-height: 1.6;
   font-weight: 400;
 
+  // Додаткова плавність: текст з'являється м'яко, приховуючи будь-які ривки
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
   @media (max-width: 768px) {
     padding: 0 0 28px 0;
     font-size: 16px;
   }
+}
+
+.open .answerText {
+  opacity: 1;
+  transition: opacity 0.4s ease 0.1s; // З'являється після початку розкриття блоку
 }

@@ -51,7 +51,6 @@ export default function FAQ() {
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // Анімація заголовку
       gsap.fromTo(
         ".faq-header",
         { y: 40, opacity: 0 },
@@ -67,7 +66,6 @@ export default function FAQ() {
         },
       );
 
-      // Анімація списку (надійний fromTo)
       gsap.fromTo(
         qRefs.current,
         { y: 20, opacity: 0 },
@@ -81,7 +79,7 @@ export default function FAQ() {
           duration: 0.6,
           stagger: 0.1,
           ease: "power2.out",
-          clearProps: "transform", // Очищаємо, щоб уникнути багів зі зникненням
+          clearProps: "transform",
         },
       );
     }, sectionRef);
@@ -91,7 +89,6 @@ export default function FAQ() {
 
   return (
     <section className={styles.faqSection} ref={sectionRef}>
-      {/* Оптимізовані світіння без важких фільтрів */}
       <div className={styles.ambientGlow1}></div>
       <div className={styles.ambientGlow2}></div>
 
