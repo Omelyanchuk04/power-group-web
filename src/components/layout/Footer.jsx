@@ -74,7 +74,7 @@ export default function Footer() {
           {/* КОЛОНКА 2: НАВІГАЦІЯ */}
           <div className={styles.navCol}>
             <nav className={styles.nav}>
-              <Link href="#services">Послуги</Link>
+              <Link href="/services">Послуги</Link>
               <Link href="/about">Про нас</Link>
               <Link href="#projects">Реалізовані проєкти</Link>
               <Link href="#cooperation">Співпраця</Link>
