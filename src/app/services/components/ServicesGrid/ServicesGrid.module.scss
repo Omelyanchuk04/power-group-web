@@ -180,9 +180,10 @@ $text-gray: #52637a;
   justify-content: flex-end;
   border: 1px solid transparent;
   cursor: pointer;
-  // Ідеально м'яка крива анімації
+
+  /* 🔥 ФІКС ПЛАВНОСТІ: Прибрали різку "пружинку", тепер анімація ідеально гладка */
   transition:
-    transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.3s ease,
     border-color 0.4s ease,
     box-shadow 0.4s ease;
 }
@@ -231,36 +232,19 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   🔥 ІДЕАЛЬНА АНІМАЦІЯ КЛІКУ ДЛЯ СМАРТФОНІВ
-   (Тільки через JS клас .isTapped)
+   📱 ЕЛЕМЕНТАРНИЙ ВІДГУК НА СМАРТФОНАХ 📱
    ========================================= */
-.isTapped {
-  transform: scale(0.96) !important;
-  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
-
-  .plusBtn {
-    transform: scale(0.9) rotate(45deg) !important;
-    transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+@media (max-width: 1199px) {
+  /* Завдяки transition: 0.15s при швидкому скролі картка не встигає зреагувати! */
+  .servicePanel:active .cardInner {
+    transform: scale(0.98); // Легке і ненав'язливе зменшення
+    transition: transform 0.15s ease-out;
   }
-}
 
-.themeBlue .isTapped {
-  border-color: rgba($primary, 0.9) !important;
-  box-shadow: 0 8px 25px rgba($primary, 0.4) !important;
-  .plusBtn {
-    background: $primary !important;
-    box-shadow: inset 0 0 0 2px $primary !important;
-    color: #ffffff !important;
-  }
-}
-
-.themeGreen .isTapped {
-  border-color: rgba($green, 0.9) !important;
-  box-shadow: 0 8px 25px rgba($green, 0.4) !important;
-  .plusBtn {
-    background: $green !important;
-    box-shadow: inset 0 0 0 2px $green !important;
-    color: #ffffff !important;
+  .servicePanel:active .plusBtn {
+    transform: scale(0.9);
+    opacity: 0.8;
+    transition: all 0.15s ease-out;
   }
 }
 
@@ -331,7 +315,7 @@ $text-gray: #52637a;
   align-items: center;
   z-index: 5;
   border: none;
-  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 

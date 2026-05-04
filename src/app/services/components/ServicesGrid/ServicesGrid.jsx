@@ -94,9 +94,6 @@ export default function ServicesGrid() {
   const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // 🔥 Новий стейт для відстеження анімації кліку
-  const [tappedCardId, setTappedCardId] = useState(null);
-
   const sectionRef = useRef(null);
   const gridContentRef = useRef(null);
   const modalCardRef = useRef(null);
@@ -156,20 +153,10 @@ export default function ServicesGrid() {
     return () => ctx.revert();
   }, [activeTab]);
 
-  // 🔥 Оновлена функція кліку: спочатку анімація, потім модалка
-  const handleCardClick = (service) => {
-    // Якщо вже йде анімація іншої картки - ігноруємо
-    if (tappedCardId) return;
-
-    // 1. Вмикаємо ефект натискання
-    setTappedCardId(service.id);
-
-    // 2. Чекаємо 350мс (щоб ви побачили красиву анімацію плюсика), потім відкриваємо
-    setTimeout(() => {
-      setIsClosing(false);
-      setSelectedService(service);
-      setTappedCardId(null); // Знімаємо натискання
-    }, 350);
+  // 🔥 Миттєве відкриття без жодних затримок
+  const openModal = (service) => {
+    setIsClosing(false);
+    setSelectedService(service);
   };
 
   const closeModal = () => {
@@ -259,9 +246,8 @@ export default function ServicesGrid() {
             {servicesData[activeTab].items.map((service, index) => (
               <div key={service.id} className={styles.servicePanel}>
                 <div
-                  // 🔥 Додаємо клас isTapped, якщо по картці щойно клікнули
-                  className={`${styles.cardInner} ${tappedCardId === service.id ? styles.isTapped : ""}`}
-                  onClick={() => handleCardClick(service)}
+                  className={styles.cardInner}
+                  onClick={() => openModal(service)}
                 >
                   <NextImage
                     src={service.img}
