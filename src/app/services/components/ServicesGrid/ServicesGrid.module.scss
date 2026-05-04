@@ -1,4 +1,4 @@
-$primary: #0056b3;
+//$primary: #0056b3;
 $text-dark: #0a2540;
 $text-gray: #52637a;
 
@@ -8,7 +8,8 @@ $text-gray: #52637a;
 }
 
 .container {
-  max-width: 1200px;
+  /* 🔥 Збільшено ширину контейнера для широких екранів */
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
   padding: 0 20px;
@@ -78,11 +79,19 @@ $text-gray: #52637a;
 /* --- СІТКА КАРТОК --- */
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  /* 🔥 Тепер картки стають в один рядок (4 колонки) на десктопі */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   min-height: 480px;
 
-  @media (max-width: 992px) {
+  @media (max-width: 1200px) {
+    /* На екранах менше 1200px робимо 2 колонки */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  @media (max-width: 768px) {
+    /* На мобільних екранах 1 колонка */
     grid-template-columns: 1fr;
   }
 }
@@ -92,19 +101,7 @@ $text-gray: #52637a;
   width: 100%;
   will-change: transform;
 
-  @media (min-width: 993px) {
-    &:last-child:nth-child(odd) {
-      grid-column: 1 / -1;
-      height: 400px;
-
-      .cardTitle {
-        font-size: 32px;
-      }
-      .cardDesc {
-        max-width: 600px;
-      }
-    }
-  }
+  /* 🔥 Видалено старі правила для nth-child, оскільки тепер всі картки в один ряд */
 
   @media (max-width: 768px) {
     height: 400px;
@@ -163,8 +160,9 @@ $text-gray: #52637a;
 .cardContent {
   position: relative;
   z-index: 2;
-  padding: 36px;
-  padding-right: 80px;
+  /* Зменшено відступи, щоб контент вміщувався у 4 вужчі колонки */
+  padding: 28px;
+  padding-right: 64px;
   color: #ffffff;
 
   @media (max-width: 768px) {
@@ -175,21 +173,23 @@ $text-gray: #52637a;
 
 .cardNumber {
   font-family: monospace;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: #4da3ff;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .cardTitle {
-  font-size: 26px;
+  /* Зменшено шрифт для 4 колонок */
+  font-size: 22px;
   font-weight: 800;
-  margin: 0 0 12px 0;
+  margin: 0 0 10px 0;
   line-height: 1.2;
 }
 
 .cardDesc {
-  font-size: 15px;
+  /* Зменшено шрифт опису */
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.85);
   line-height: 1.5;
   margin: 0;
@@ -198,10 +198,10 @@ $text-gray: #52637a;
 /* --- КНОПКА "+" --- */
 .plusBtn {
   position: absolute;
-  bottom: 36px;
-  right: 36px;
-  width: 48px;
-  height: 48px;
+  bottom: 28px;
+  right: 28px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
@@ -215,8 +215,8 @@ $text-gray: #52637a;
   transition: all 0.3s ease;
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
 
   @media (max-width: 768px) {
@@ -304,8 +304,6 @@ $text-gray: #52637a;
 
   top: calc(24px + env(safe-area-inset-top));
   right: 24px;
-
-  /* GSAP керуватиме opacity, тому transition тут не потрібен */
 
   @media (max-width: 768px) {
     top: calc(16px + env(safe-area-inset-top));
@@ -419,7 +417,7 @@ $text-gray: #52637a;
   justify-content: center;
   align-items: center;
   padding: 18px 40px;
-  background-color: $primary;
+  background-color: #0056b3; // Використовуємо колір напряму, якщо $primary викликає помилки
   color: #ffffff;
   font-size: 17px;
   font-weight: 600;
@@ -432,8 +430,8 @@ $text-gray: #52637a;
   }
 
   &:hover {
-    background-color: darken($primary, 10%);
+    background-color: #004494; // darken equivalent
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba($primary, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 86, 179, 0.3);
   }
 }
