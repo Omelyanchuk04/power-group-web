@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import ServicesHero from "./components/ServicesHero/ServicesHero";
 import ServicesGrid from "./components/ServicesGrid/ServicesGrid";
@@ -11,39 +13,36 @@ export default function ServicesPage() {
       style={{
         position: "relative",
         width: "100%",
-        /* Запобігаємо появі горизонтального скролу */
+        overflowY: "visible",
         overflowX: "clip",
         backgroundColor: "transparent",
       }}
     >
-      {/* 🔥 ГЛОБАЛЬНИЙ ФОН (ТЕПЕР ФІКСОВАНИЙ І НЕ СТРИБАЄ) 🔥 */}
-      <div
-        style={{
-          position: "fixed" /* прив'язуємо до екрану, а не до сторінки */,
-          top: 0,
-          left: 0,
-          width: "100vw" /* ширина рівно на весь екран */,
-          height: "100vh" /* висота рівно на весь екран */,
-          zIndex: -1 /* ховаємо під контент */,
-          pointerEvents: "none",
-          backgroundColor:
-            "#f9fafb" /* Суцільний колір під плямами, щоб не було швів перед футером */,
-        }}
-      >
-        <GlobalBackground isLayout={false} />
-      </div>
-
-      {/* Головна обгортка ДЛЯ ВСІХ секцій сторінки */}
       <div
         style={{
           position: "relative",
           zIndex: 1,
           width: "100%",
+          overflow: "visible",
           display: "flex",
           flexDirection: "column",
         }}
       >
-        {/* Твої секції спокійно скроляться ПОВЕРХ нерухомого фону */}
+        {/* 🔥 ФОН ПОВЕРНУТО ЯК БУЛО (Абсолютний, скролиться з контентом) 🔥 */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: "-1200px",
+            zIndex: -1,
+            pointerEvents: "none",
+          }}
+        >
+          <GlobalBackground isLayout={false} />
+        </div>
+
         <ServicesHero />
         <ServicesGrid />
         <FAQ />
