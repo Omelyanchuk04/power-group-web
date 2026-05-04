@@ -1,231 +1,231 @@
-@use "sass:color";
+// @use "sass:color";
 
-$primary-blue: #0056b3;
-$text-dark: #1d1d1f;
-$gray-text: #64748b;
-$white: #ffffff;
+// $primary-blue: #0056b3;
+// $text-dark: #1d1d1f;
+// $gray-text: #64748b;
+// $white: #ffffff;
 
-.ctaSection {
-  background-color: transparent; // Пропускаємо глобальні плями
-  padding: 80px 0 20px 0; // Знизу відступ менший, бо далі йде футер
-  position: relative;
-  z-index: 10;
-}
+// .ctaSection {
+//   background-color: transparent; // Пропускаємо глобальні плями
+//   padding: 80px 0 20px 0; // Знизу відступ менший, бо далі йде футер
+//   position: relative;
+//   z-index: 10;
+// }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
+// .container {
+//   max-width: 1200px;
+//   margin: 0 auto;
+//   padding: 0 20px;
+// }
 
-// 🔥 СКЛЯНА КАРТКА (Стилістика Хедера та Футера)
-.glassCard {
-  background: rgba(255, 255, 255, 0.5);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-  backdrop-filter: blur(24px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-  border-radius: 40px;
-  padding: 60px;
+// // 🔥 СКЛЯНА КАРТКА (Стилістика Хедера та Футера)
+// .glassCard {
+//   background: rgba(255, 255, 255, 0.5);
+//   -webkit-backdrop-filter: blur(24px) saturate(150%);
+//   backdrop-filter: blur(24px) saturate(150%);
+//   border: 1px solid rgba(255, 255, 255, 0.9);
+//   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+//   border-radius: 40px;
+//   padding: 60px;
 
-  display: grid;
-  grid-template-columns: 1fr 1fr; // Розділяємо на дві колонки
-  gap: 60px;
-  align-items: center;
-}
+//   display: grid;
+//   grid-template-columns: 1fr 1fr; // Розділяємо на дві колонки
+//   gap: 60px;
+//   align-items: center;
+// }
 
-// --- ЛІВА ЧАСТИНА (Текст) ---
-.textContent {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
+// // --- ЛІВА ЧАСТИНА (Текст) ---
+// .textContent {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: flex-start;
+// }
 
-.badge {
-  display: inline-block;
-  padding: 8px 20px;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 86, 179, 0.1),
-    rgba(0, 212, 255, 0.1)
-  );
-  color: $primary-blue;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  border-radius: 100px;
-  margin-bottom: 24px;
-  border: 1px solid rgba(0, 212, 255, 0.2);
-}
+// .badge {
+//   display: inline-block;
+//   padding: 8px 20px;
+//   background: linear-gradient(
+//     135deg,
+//     rgba(0, 86, 179, 0.1),
+//     rgba(0, 212, 255, 0.1)
+//   );
+//   color: $primary-blue;
+//   font-size: 11px;
+//   font-weight: 700;
+//   text-transform: uppercase;
+//   letter-spacing: 1.5px;
+//   border-radius: 100px;
+//   margin-bottom: 24px;
+//   border: 1px solid rgba(0, 212, 255, 0.2);
+// }
 
-.title {
-  font-size: 42px;
-  font-weight: 800;
-  color: $text-dark;
-  letter-spacing: -1.5px;
-  margin: 0 0 16px 0;
-  line-height: 1.1;
-}
+// .title {
+//   font-size: 42px;
+//   font-weight: 800;
+//   color: $text-dark;
+//   letter-spacing: -1.5px;
+//   margin: 0 0 16px 0;
+//   line-height: 1.1;
+// }
 
-.subtitle {
-  font-size: 16px;
-  color: $gray-text;
-  line-height: 1.6;
-  margin: 0 0 40px 0;
-  max-width: 90%;
-}
+// .subtitle {
+//   font-size: 16px;
+//   color: $gray-text;
+//   line-height: 1.6;
+//   margin: 0 0 40px 0;
+//   max-width: 90%;
+// }
 
-.directContacts {
-  padding-top: 30px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  width: 100%;
+// .directContacts {
+//   padding-top: 30px;
+//   border-top: 1px solid rgba(0, 0, 0, 0.1);
+//   width: 100%;
 
-  p {
-    font-size: 13px;
-    color: $gray-text;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 0 0 16px 0;
-  }
-}
+//   p {
+//     font-size: 13px;
+//     color: $gray-text;
+//     font-weight: 600;
+//     text-transform: uppercase;
+//     letter-spacing: 1px;
+//     margin: 0 0 16px 0;
+//   }
+// }
 
-.contactLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+// .contactLinks {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 12px;
 
-  .link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    color: $text-dark;
-    text-decoration: none;
-    transition: color 0.3s ease;
+//   .link {
+//     display: flex;
+//     align-items: center;
+//     gap: 12px;
+//     font-size: 16px;
+//     font-weight: 600;
+//     color: $text-dark;
+//     text-decoration: none;
+//     transition: color 0.3s ease;
 
-    svg {
-      width: 20px;
-      height: 20px;
-      color: $primary-blue;
-    }
+//     svg {
+//       width: 20px;
+//       height: 20px;
+//       color: $primary-blue;
+//     }
 
-    &:hover {
-      color: $primary-blue;
-    }
-  }
-}
+//     &:hover {
+//       color: $primary-blue;
+//     }
+//   }
+// }
 
-// --- ПРАВА ЧАСТИНА (Форма) ---
-.formWrapper {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(255, 255, 255, 1);
-  border-radius: 30px;
-  padding: 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-}
+// // --- ПРАВА ЧАСТИНА (Форма) ---
+// .formWrapper {
+//   background: rgba(255, 255, 255, 0.6);
+//   border: 1px solid rgba(255, 255, 255, 1);
+//   border-radius: 30px;
+//   padding: 40px;
+//   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+// }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+// .form {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 16px;
+// }
 
-.inputGroup {
-  width: 100%;
-}
+// .inputGroup {
+//   width: 100%;
+// }
 
-.input {
-  width: 100%;
-  padding: 16px 24px;
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.8);
-  font-family: inherit;
-  font-size: 15px;
-  color: $text-dark;
-  transition: all 0.3s ease;
+// .input {
+//   width: 100%;
+//   padding: 16px 24px;
+//   border-radius: 16px;
+//   border: 1px solid rgba(0, 0, 0, 0.1);
+//   background: rgba(255, 255, 255, 0.8);
+//   font-family: inherit;
+//   font-size: 15px;
+//   color: $text-dark;
+//   transition: all 0.3s ease;
 
-  &::placeholder {
-    color: #94a3b8;
-  }
+//   &::placeholder {
+//     color: #94a3b8;
+//   }
 
-  &:focus {
-    outline: none;
-    border-color: $primary-blue;
-    background: $white;
-    box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
-  }
-}
+//   &:focus {
+//     outline: none;
+//     border-color: $primary-blue;
+//     background: $white;
+//     box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+//   }
+// }
 
-.submitBtn {
-  width: 100%;
-  padding: 16px 32px;
-  font-size: 15px;
-  font-weight: 700;
-  color: #ffffff;
-  border-radius: 16px;
-  cursor: pointer;
-  border: none;
-  background-color: rgba(0, 86, 179, 0.9);
-  transition: all 0.3s ease;
-  margin-top: 8px;
+// .submitBtn {
+//   width: 100%;
+//   padding: 16px 32px;
+//   font-size: 15px;
+//   font-weight: 700;
+//   color: #ffffff;
+//   border-radius: 16px;
+//   cursor: pointer;
+//   border: none;
+//   background-color: rgba(0, 86, 179, 0.9);
+//   transition: all 0.3s ease;
+//   margin-top: 8px;
 
-  &:hover {
-    background-color: color.adjust($primary-blue, $lightness: 5%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.3);
-  }
+//   &:hover {
+//     background-color: color.adjust($primary-blue, $lightness: 5%);
+//     transform: translateY(-2px);
+//     box-shadow: 0 8px 20px rgba(0, 86, 179, 0.3);
+//   }
 
-  &:active {
-    transform: scale(0.98);
-  }
-}
+//   &:active {
+//     transform: scale(0.98);
+//   }
+// }
 
-.agreement {
-  font-size: 11px;
-  color: $gray-text;
-  text-align: center;
-  line-height: 1.5;
-  margin: 8px 0 0 0;
-}
+// .agreement {
+//   font-size: 11px;
+//   color: $gray-text;
+//   text-align: center;
+//   line-height: 1.5;
+//   margin: 8px 0 0 0;
+// }
 
-// --- АДАПТИВНІСТЬ ---
-@media (max-width: 1024px) {
-  .glassCard {
-    padding: 40px;
-    gap: 40px;
-  }
-  .title {
-    font-size: 36px;
-  }
-}
+// // --- АДАПТИВНІСТЬ ---
+// @media (max-width: 1024px) {
+//   .glassCard {
+//     padding: 40px;
+//     gap: 40px;
+//   }
+//   .title {
+//     font-size: 36px;
+//   }
+// }
 
-@media (max-width: 768px) {
-  .ctaSection {
-    padding: 60px 0 0 0;
-  }
+// @media (max-width: 768px) {
+//   .ctaSection {
+//     padding: 60px 0 0 0;
+//   }
 
-  .glassCard {
-    grid-template-columns: 1fr; // На мобайлі ставимо форму під текстом
-    padding: 30px 24px;
-    gap: 40px;
-    border-radius: 30px;
-  }
+//   .glassCard {
+//     grid-template-columns: 1fr; // На мобайлі ставимо форму під текстом
+//     padding: 30px 24px;
+//     gap: 40px;
+//     border-radius: 30px;
+//   }
 
-  .title {
-    font-size: 32px;
-  }
+//   .title {
+//     font-size: 32px;
+//   }
 
-  .subtitle {
-    max-width: 100%;
-  }
+//   .subtitle {
+//     max-width: 100%;
+//   }
 
-  .formWrapper {
-    padding: 30px 20px;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.4);
-  }
-}
+//   .formWrapper {
+//     padding: 30px 20px;
+//     border-radius: 24px;
+//     background: rgba(255, 255, 255, 0.4);
+//   }
+// }

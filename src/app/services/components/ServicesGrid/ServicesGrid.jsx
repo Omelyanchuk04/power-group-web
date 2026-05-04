@@ -9,7 +9,7 @@ import styles from "./ServicesGrid.module.scss";
 
 const servicesData = [
   {
-    category: "Інфраструктура",
+    category: "Електромонтаж",
     items: [
       {
         id: "s1",
