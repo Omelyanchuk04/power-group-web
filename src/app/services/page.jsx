@@ -5,53 +5,45 @@ import FAQ from "./components/FAQ/FAQ";
 import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 
-// Якщо ти використовуєш services.module.scss, можеш розкоментувати імпорт:
-// import styles from "./services.module.scss";
-
 export default function ServicesPage() {
   return (
     <main
-      // className={styles?.servicesPage || ""} // розкоментуй, якщо треба
       style={{
         position: "relative",
         width: "100%",
-        /* 🔥 ОСНОВНИЙ ФІКС МЕЖІ: дозволяємо фону вільно випадати вниз під футер 🔥 */
-        overflowY: "visible",
-        /* 🔥 Запобігаємо появі горизонтального скролу 🔥 */
+        /* Запобігаємо появі горизонтального скролу */
         overflowX: "clip",
         backgroundColor: "transparent",
       }}
     >
+      {/* 🔥 ГЛОБАЛЬНИЙ ФОН (ТЕПЕР ФІКСОВАНИЙ І НЕ СТРИБАЄ) 🔥 */}
+      <div
+        style={{
+          position: "fixed" /* прив'язуємо до екрану, а не до сторінки */,
+          top: 0,
+          left: 0,
+          width: "100vw" /* ширина рівно на весь екран */,
+          height: "100vh" /* висота рівно на весь екран */,
+          zIndex: -1 /* ховаємо під контент */,
+          pointerEvents: "none",
+          backgroundColor:
+            "#f9fafb" /* Суцільний колір під плямами, щоб не було швів перед футером */,
+        }}
+      >
+        <GlobalBackground isLayout={false} />
+      </div>
+
       {/* Головна обгортка ДЛЯ ВСІХ секцій сторінки */}
       <div
         style={{
           position: "relative",
           zIndex: 1,
           width: "100%",
-          /* Також гарантуємо, що обгортка нічого не ріже */
-          overflow: "visible",
-          /* Уникаємо злипання марджинів (margin collapse) нижньої секції */
           display: "flex",
           flexDirection: "column",
         }}
       >
-        {/* 🔥 ГЛОБАЛЬНИЙ ФОН (АБСОЛЮТНА ЗБРОЯ ПРОТИ ШВІВ) 🔥 */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            /* Пробиваємо дно. Збільшив до -1200px для 100% гарантії перекриття футера */
-            bottom: "-1200px",
-            zIndex: -1,
-            pointerEvents: "none",
-          }}
-        >
-          <GlobalBackground isLayout={false} />
-        </div>
-
-        {/* Твої секції спокійно лежать зверху на фоні */}
+        {/* Твої секції спокійно скроляться ПОВЕРХ нерухомого фону */}
         <ServicesHero />
         <ServicesGrid />
         <FAQ />

@@ -44,7 +44,6 @@ export default function FAQ() {
   const qRefs = useRef([]);
 
   const toggleQuestion = (index) => {
-    // Відкриваємо лише одне питання за раз
     setOpenIndex(openIndex === index ? null : index);
   };
 
@@ -90,9 +89,6 @@ export default function FAQ() {
 
   return (
     <section className={styles.faqSection} ref={sectionRef}>
-      <div className={styles.ambientGlow1}></div>
-      <div className={styles.ambientGlow2}></div>
-
       <div className={styles.container}>
         <div className={`faq-header ${styles.header}`}>
           <span className={styles.badge}>FAQ</span>
