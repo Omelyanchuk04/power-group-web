@@ -134,34 +134,30 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   🔥 НОВА СІТКА КАРТОК (FLEXBOX) 🔥
+   🔥 СІТКА КАРТОК (FLEXBOX) 🔥
    ========================================= */
 .grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; // Завдяки цьому 3 картки стають по центру
+  justify-content: center;
   gap: 20px;
   min-height: 480px;
 
   @media (max-width: 1200px) {
-    gap: 30px; // На планшеті робимо більший відступ між рядками
+    gap: 30px;
   }
 }
 
 .servicePanel {
-  // На десктопі 4 колонки: 25% ширини мінус частина відступу gap
   flex: 0 0 calc(25% - 15px);
   max-width: calc(25% - 15px);
   height: 520px;
   will-change: transform;
 
   @media (max-width: 1200px) {
-    // На планшеті 2 колонки: 50% мінус частина gap
     flex: 0 0 calc(50% - 15px);
     max-width: calc(50% - 15px);
     height: 440px;
-    // 🔥 МАГІЯ ДЛЯ 3-Ї КАРТКИ:
-    // Якщо елемент є останнім І він непарний, він займає 100%
     &:last-child:nth-child(odd) {
       flex: 0 0 100%;
       max-width: 100%;
@@ -169,7 +165,6 @@ $text-gray: #52637a;
   }
 
   @media (max-width: 768px) {
-    // На телефоні всі картки по 100%
     flex: 0 0 100%;
     max-width: 100%;
     max-height: 350px;
@@ -193,12 +188,18 @@ $text-gray: #52637a;
     box-shadow 0.4s ease;
 }
 
-/* ХОВЕРИ КАРТОК */
+/* =========================================
+   ХОВЕРИ КАРТОК (ТІЛЬКИ ДЛЯ МИШКИ)
+   ========================================= */
 @media (hover: hover) and (pointer: fine) {
   .themeBlue .servicePanel:hover .cardInner {
     box-shadow: 0 25px 60px rgba($primary, 0.45);
     border-color: rgba($primary, 0.9);
-    transform: translateY(-8px);
+
+    /* 🔥 Підняття працює ТІЛЬКИ на екранах більше 1200px */
+    @media (min-width: 1200px) {
+      transform: translateY(-8px);
+    }
 
     .bgImage {
       transform: scale(1.05);
@@ -214,7 +215,11 @@ $text-gray: #52637a;
   .themeGreen .servicePanel:hover .cardInner {
     box-shadow: 0 25px 60px rgba($green, 0.45);
     border-color: rgba($green, 0.9);
-    transform: translateY(-8px);
+
+    /* 🔥 Підняття працює ТІЛЬКИ на екранах більше 1200px */
+    @media (min-width: 1200px) {
+      transform: translateY(-8px);
+    }
 
     .bgImage {
       transform: scale(1.05);
@@ -224,6 +229,43 @@ $text-gray: #52637a;
       box-shadow: inset 0 0 0 2px $green;
       color: #ffffff;
       transform: scale(1.1) rotate(90deg);
+    }
+  }
+}
+
+/* =========================================
+   📱 ВІДГУК НА НАТИСКАННЯ (ДЛЯ СМАРТФОНІВ/ПЛАНШЕТІВ) 📱
+   ========================================= */
+@media (max-width: 1199px) {
+  /* Реакція Синьої Теми */
+  .themeBlue .servicePanel:active .cardInner {
+    transform: scale(0.97); // Картка м'яко "продавлюється"
+    border-color: rgba($primary, 0.9);
+    box-shadow: 0 10px 20px rgba($primary, 0.4);
+    transition: all 0.15s ease; // Миттєва реакція
+
+    .plusBtn {
+      background: $primary;
+      box-shadow: inset 0 0 0 2px $primary;
+      color: #ffffff;
+      transform: scale(0.9) rotate(45deg);
+      transition: all 0.15s ease;
+    }
+  }
+
+  /* Реакція Зеленої Теми */
+  .themeGreen .servicePanel:active .cardInner {
+    transform: scale(0.97);
+    border-color: rgba($green, 0.9);
+    box-shadow: 0 10px 20px rgba($green, 0.4);
+    transition: all 0.15s ease;
+
+    .plusBtn {
+      background: $green;
+      box-shadow: inset 0 0 0 2px $green;
+      color: #ffffff;
+      transform: scale(0.9) rotate(45deg);
+      transition: all 0.15s ease;
     }
   }
 }
