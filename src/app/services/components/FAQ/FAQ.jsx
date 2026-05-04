@@ -44,6 +44,7 @@ export default function FAQ() {
   const qRefs = useRef([]);
 
   const toggleQuestion = (index) => {
+    // Відкриваємо лише одне питання за раз
     setOpenIndex(openIndex === index ? null : index);
   };
 

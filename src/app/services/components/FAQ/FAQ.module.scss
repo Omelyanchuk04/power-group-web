@@ -15,7 +15,7 @@ $border-color: rgba(0, 0, 0, 0.12);
   }
 }
 
-/* --- ФОН ТЕПЕР НЕ СТРИБАЄ --- */
+/* ФОН ЗАФІКСОВАНИЙ І НЕ ВАЖКИЙ */
 .ambientGlow1,
 .ambientGlow2 {
   position: absolute;
@@ -26,7 +26,6 @@ $border-color: rgba(0, 0, 0, 0.12);
 }
 
 .ambientGlow1 {
-  // Прив'язано ЖОРСТКО ДО ВЕРХУ
   top: 50px;
   left: -15%;
   width: 600px;
@@ -39,8 +38,6 @@ $border-color: rgba(0, 0, 0, 0.12);
 }
 
 .ambientGlow2 {
-  // Було bottom: 0, тепер теж ЖОРСТКО ДО ВЕРХУ (400px від початку секції)
-  // Через це, коли секція тягнеться вниз, фон залишається на своєму місці!
   top: 400px;
   right: -10%;
   width: 500px;
@@ -61,7 +58,7 @@ $border-color: rgba(0, 0, 0, 0.12);
   z-index: 2;
 }
 
-/* --- ЗАГОЛОВОК --- */
+/* ЗАГОЛОВОК */
 .header {
   text-align: center;
   margin-bottom: 70px;
@@ -110,18 +107,25 @@ $border-color: rgba(0, 0, 0, 0.12);
   }
 }
 
-/* --- МІНІМАЛІСТИЧНИЙ СПИСОК "APPLE STYLE" --- */
+/* --- 🔥 РЕЗЕРВУЄМО ВИСОТУ 🔥 --- */
 .faqWrapper {
   display: flex;
   flex-direction: column;
   border-top: 1px solid $border-color;
+
+  // Резервуємо місце під список (закриті питання + 1 відкрите).
+  // Тепер висота секції статична і сторінка не буде розтягуватися/стрибати вниз.
+  min-height: 720px;
+
+  @media (max-width: 768px) {
+    // На мобільних текст займає більше рядків, тому резервуємо більше простору
+    min-height: 780px;
+  }
 }
 
 .faqItem {
   border-bottom: 1px solid $border-color;
   background: transparent;
-
-  // 🔥 ФІКС ФАНТОМНИХ ЛІНІЙ: Забороняємо браузеру розмивати межі блоку при зміні висоти
   transform: translateZ(0);
   backface-visibility: hidden;
 
@@ -201,12 +205,11 @@ $border-color: rgba(0, 0, 0, 0.12);
   }
 }
 
-/* --- МАГІЯ ПЛАВНОГО ВІДКРИТТЯ БЕЗ ЛАГІВ --- */
+/* МАГІЯ ПЛАВНОГО ВІДКРИТТЯ */
 .answerWrapper {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  // 🔥 ВИДАЛЕНО will-change: grid-template-rows; (саме він ламав лінії в Safari!)
 }
 
 .open .answerWrapper {
@@ -225,7 +228,6 @@ $border-color: rgba(0, 0, 0, 0.12);
   line-height: 1.6;
   font-weight: 400;
 
-  // Додаткова плавність: текст з'являється м'яко, приховуючи будь-які ривки
   opacity: 0;
   transition: opacity 0.2s ease;
 
@@ -237,5 +239,5 @@ $border-color: rgba(0, 0, 0, 0.12);
 
 .open .answerText {
   opacity: 1;
-  transition: opacity 0.4s ease 0.1s; // З'являється після початку розкриття блоку
+  transition: opacity 0.4s ease 0.1s;
 }
