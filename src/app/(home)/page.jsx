@@ -5,11 +5,8 @@ import Projects from "@/components/sections/Projects/Projects";
 import Process from "@/components/sections/Process/Process";
 
 // 🔥 Змінили назву імпорту, щоб не було конфлікту:
-import ContactsSection from "@/components/sections/Contacts/Contacts";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 
-// Цей залишаємо як є:
-import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 import Footer from "@/components/layout/Footer";
 
 export default function Home() {
@@ -36,10 +33,6 @@ export default function Home() {
           <Services />
           <Projects />
           <Process />
-
-          {/* 🔥 Тепер ти можеш використовувати їх обидва, якщо треба: */}
-          {/* <ContactsSection /> */}
-          <ContactCTA />
 
           {/* 🔥 Тут має бути ЄДИНИЙ виклик футера на цій сторінці */}
           <Footer />
