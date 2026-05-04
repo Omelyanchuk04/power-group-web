@@ -7,8 +7,7 @@ $border-color: rgba(0, 0, 0, 0.12);
   padding: 80px 0 120px;
   background-color: transparent;
   position: relative;
-  // Замість hidden використовуємо clip, щоб світіння не вилазило, але висота не ламалась
-  overflow: clip;
+  overflow: clip; // Запобігає обрізанню контенту, але ховає фонові світіння
   z-index: 5;
 
   @media (max-width: 768px) {
@@ -16,14 +15,16 @@ $border-color: rgba(0, 0, 0, 0.12);
   }
 }
 
+/* --- ОПТИМІЗОВАНІ ДЛЯ МОБІЛОК СВІТІННЯ (БЕЗ blur) --- */
 .ambientGlow1,
 .ambientGlow2 {
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.1;
+  // Апаратне прискорення
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .ambientGlow1 {
@@ -31,7 +32,11 @@ $border-color: rgba(0, 0, 0, 0.12);
   left: -15%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, #0056b3 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(0, 86, 179, 0.08) 0%,
+    rgba(0, 86, 179, 0) 60%
+  );
 }
 
 .ambientGlow2 {
@@ -39,7 +44,11 @@ $border-color: rgba(0, 0, 0, 0.12);
   right: -10%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, #ffd500 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 213, 0, 0.06) 0%,
+    rgba(255, 213, 0, 0) 60%
+  );
 }
 
 .container {
@@ -110,12 +119,12 @@ $border-color: rgba(0, 0, 0, 0.12);
 .faqItem {
   border-bottom: 1px solid $border-color;
   background: transparent;
-  // 🔥 ГОЛОВНИЙ ФІКС: Ми видалили transition: all, який конфліктував із GSAP-анімацією!
+  // Жодного transition: all тут, щоб не конфліктувати з GSAP
 
   &.open {
     .iconWrapper {
       color: $text-dark;
-      transform: rotate(45deg);
+      transform: rotate(45deg) translateZ(0); // Хрестик крутиться з апаратним прискоренням
     }
 
     .questionText {
@@ -159,7 +168,7 @@ $border-color: rgba(0, 0, 0, 0.12);
   color: $text-dark;
   line-height: 1.4;
   letter-spacing: -0.5px;
-  transition: color 0.3s ease; // Залишили транзишн ТІЛЬКИ на колір тексту
+  transition: color 0.3s ease;
 
   @media (max-width: 768px) {
     font-size: 18px;
@@ -172,7 +181,11 @@ $border-color: rgba(0, 0, 0, 0.12);
   align-items: center;
   color: #c8c8cc;
   flex-shrink: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); // Анімація крутіння хрестика
+
+  // Анімація плюсика і прискорення
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  transform: translateZ(0);
 
   .icon {
     width: 24px;
@@ -192,6 +205,10 @@ $border-color: rgba(0, 0, 0, 0.12);
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Прискорення відкриття на мобільних телефонах
+  will-change: grid-template-rows;
+  transform: translateZ(0);
 }
 
 .open .answerWrapper {
