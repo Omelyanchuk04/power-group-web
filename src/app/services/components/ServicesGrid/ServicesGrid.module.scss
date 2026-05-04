@@ -182,6 +182,8 @@ $text-gray: #52637a;
   justify-content: flex-end;
   border: 1px solid transparent;
   cursor: pointer;
+
+  /* Базова анімація з ефектом "пружинки" (для ПК) */
   transition:
     transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
     border-color 0.4s ease,
@@ -189,14 +191,13 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   ХОВЕРИ КАРТОК (ТІЛЬКИ ДЛЯ МИШКИ)
+   ХОВЕРИ КАРТОК (ТІЛЬКИ ДЛЯ ПК / МИШКИ)
    ========================================= */
 @media (hover: hover) and (pointer: fine) {
   .themeBlue .servicePanel:hover .cardInner {
     box-shadow: 0 25px 60px rgba($primary, 0.45);
     border-color: rgba($primary, 0.9);
 
-    /* 🔥 Підняття працює ТІЛЬКИ на екранах більше 1200px */
     @media (min-width: 1200px) {
       transform: translateY(-8px);
     }
@@ -216,7 +217,6 @@ $text-gray: #52637a;
     box-shadow: 0 25px 60px rgba($green, 0.45);
     border-color: rgba($green, 0.9);
 
-    /* 🔥 Підняття працює ТІЛЬКИ на екранах більше 1200px */
     @media (min-width: 1200px) {
       transform: translateY(-8px);
     }
@@ -234,38 +234,46 @@ $text-gray: #52637a;
 }
 
 /* =========================================
-   📱 ВІДГУК НА НАТИСКАННЯ (ДЛЯ СМАРТФОНІВ/ПЛАНШЕТІВ) 📱
+   📱 ІДЕАЛЬНО ПЛАВНИЙ ВІДГУК НА СМАРТФОНАХ 📱
    ========================================= */
 @media (max-width: 1199px) {
+  /* 🔥 ФІКС 1: Забираємо "пружинку" при відпусканні картки. 
+     Тепер вона повертається м'яко, як в iOS */
+  .cardInner,
+  .plusBtn {
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  }
+
   /* Реакція Синьої Теми */
   .themeBlue .servicePanel:active .cardInner {
-    transform: scale(0.97); // Картка м'яко "продавлюється"
-    border-color: rgba($primary, 0.9);
-    box-shadow: 0 10px 20px rgba($primary, 0.4);
-    transition: all 0.15s ease; // Миттєва реакція
+    transform: scale(0.96); // М'яке продавлювання
+    border-color: rgba($primary, 0.8);
+    box-shadow: 0 8px 25px rgba($primary, 0.3);
+    /* 🔥 ФІКС 2: Збільшено час натискання з 0.15s до 0.25s для плавності */
+    transition: all 0.25s ease-out !important;
 
     .plusBtn {
       background: $primary;
       box-shadow: inset 0 0 0 2px $primary;
       color: #ffffff;
       transform: scale(0.9) rotate(45deg);
-      transition: all 0.15s ease;
+      transition: all 0.25s ease-out !important;
     }
   }
 
   /* Реакція Зеленої Теми */
   .themeGreen .servicePanel:active .cardInner {
-    transform: scale(0.97);
-    border-color: rgba($green, 0.9);
-    box-shadow: 0 10px 20px rgba($green, 0.4);
-    transition: all 0.15s ease;
+    transform: scale(0.96);
+    border-color: rgba($green, 0.8);
+    box-shadow: 0 8px 25px rgba($green, 0.3);
+    transition: all 0.25s ease-out !important;
 
     .plusBtn {
       background: $green;
       box-shadow: inset 0 0 0 2px $green;
       color: #ffffff;
       transform: scale(0.9) rotate(45deg);
-      transition: all 0.15s ease;
+      transition: all 0.25s ease-out !important;
     }
   }
 }
