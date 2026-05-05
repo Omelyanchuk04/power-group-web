@@ -14,7 +14,7 @@ export default function ServicesHero() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
 
-      // 1. Анімація центрального тексту
+      // Плавна поява тексту
       tl.from(textContentRef.current.children, {
         y: 40,
         opacity: 0,
@@ -22,21 +22,22 @@ export default function ServicesHero() {
         stagger: 0.15,
         ease: "power3.out",
         delay: 0.1,
+        clearProps: "all",
       });
 
-      // 2. Ефектна поява "розкиданих" картинок
+      // Поява фотографій
       tl.from(
         imagesRef.current,
         {
           scale: 0.8,
           opacity: 0,
           y: 50,
-          rotation: () => gsap.utils.random(-15, 15), // Легкий нахил при появі
+          rotation: () => gsap.utils.random(-15, 15),
           duration: 1,
           stagger: 0.1,
           ease: "back.out(1.2)",
         },
-        "-=0.6", // Починаємо ще до того, як закінчиться текст
+        "-=0.6",
       );
     }, containerRef);
 
@@ -45,12 +46,10 @@ export default function ServicesHero() {
 
   return (
     <section className={styles.heroSection} ref={containerRef}>
-      {/* М'яке світіння під текстом, щоб він завжди легко читався */}
       <div className={styles.centerGlow}></div>
 
-      {/* РОЗКИДАНІ ФОТОГРАФІЇ */}
+      {/* Розкидані фотографії */}
       <div className={styles.scatteredGallery}>
-        {/* Фото 1: Зверху зліва */}
         <div
           className={`${styles.floatImg} ${styles.img1}`}
           ref={(el) => (imagesRef.current[0] = el)}
@@ -60,10 +59,9 @@ export default function ServicesHero() {
             alt="СЕС"
             fill
             className={styles.imgCover}
+            priority
           />
         </div>
-
-        {/* Фото 2: Зверху справа (Кругле/Квадратне) */}
         <div
           className={`${styles.floatImg} ${styles.img2}`}
           ref={(el) => (imagesRef.current[1] = el)}
@@ -73,10 +71,9 @@ export default function ServicesHero() {
             alt="Щитові"
             fill
             className={styles.imgCover}
+            priority
           />
         </div>
-
-        {/* Фото 3: Знизу зліва */}
         <div
           className={`${styles.floatImg} ${styles.img3}`}
           ref={(el) => (imagesRef.current[2] = el)}
@@ -86,10 +83,9 @@ export default function ServicesHero() {
             alt="Монтаж"
             fill
             className={styles.imgCover}
+            priority
           />
         </div>
-
-        {/* Фото 4: Знизу справа */}
         <div
           className={`${styles.floatImg} ${styles.img4}`}
           ref={(el) => (imagesRef.current[3] = el)}
@@ -99,10 +95,9 @@ export default function ServicesHero() {
             alt="Генератори"
             fill
             className={styles.imgCover}
+            priority
           />
         </div>
-
-        {/* Фото 5: Розмите на задньому фоні (додає глибини 3D) */}
         <div
           className={`${styles.floatImg} ${styles.img5}`}
           ref={(el) => (imagesRef.current[4] = el)}
@@ -120,9 +115,11 @@ export default function ServicesHero() {
         <div className={styles.content} ref={textContentRef}>
           <div className={styles.badge}>Наші послуги</div>
 
+          {/* 🔥 КЛАСИЧНИЙ ЗАГОЛОВОК (Без flex-column) 🔥 */}
           <h1 className={styles.title}>
             Комплексні <br />
-            <span className={styles.accent}>енергетичні</span> рішення
+            енергетичні <br />
+            рішення
           </h1>
 
           <p className={styles.description}>
@@ -131,16 +128,18 @@ export default function ServicesHero() {
             бюджету та ваших очікувань.
           </p>
 
-          <button
-            className={styles.primaryBtn}
-            onClick={() =>
-              document
-                .querySelector("#contact-cta")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            Отримати консультацію
-          </button>
+          <div className={styles.btnWrapper}>
+            <button
+              className={styles.primaryBtn}
+              onClick={() =>
+                document
+                  .querySelector("#contact-cta")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              Отримати консультацію
+            </button>
+          </div>
         </div>
       </div>
     </section>
