@@ -1,8 +1,14 @@
 "use client";
 
+// 🔥 1. Імпортуємо наш хук для модалки
+import { useModal } from "@/context/ModalContext";
 import styles from "./ContactCTA.module.scss";
 
-export default function ContactCTA({ onOpenModal }) {
+// 🔥 2. Прибираємо пропс onOpenModal, він більше не потрібен
+export default function ContactCTA() {
+  // 🔥 3. Дістаємо функцію відкриття з контексту
+  const { openModal } = useModal();
+
   return (
     <div className={`${styles.ctaContainer} gsap-step`}>
       <div className={styles.ctaCard}>
@@ -32,7 +38,8 @@ export default function ContactCTA({ onOpenModal }) {
             </p>
           </div>
 
-          <button className={styles.ctaButton} onClick={onOpenModal}>
+          {/* 🔥 4. Вішаємо виклик openModal на клік 🔥 */}
+          <button className={styles.ctaButton} onClick={openModal}>
             <span>Заповнити форму</span>
           </button>
         </div>
