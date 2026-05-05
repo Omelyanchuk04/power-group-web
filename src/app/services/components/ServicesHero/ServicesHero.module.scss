@@ -12,7 +12,11 @@ $text-gray: #52637a;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+
+  /* 🔥 ФІКС МЕЖІ: дозволяємо світінню спокійно виходити вниз без обрізки 🔥 */
+  overflow-x: clip;
+  overflow-y: visible;
+
   z-index: 2;
 
   @media (max-width: 768px) {
@@ -31,11 +35,13 @@ $text-gray: #52637a;
   height: 80vw;
   max-width: 800px;
   max-height: 800px;
+
+  /* 🔥 ФІКС КОЛЬОРУ: плавний перехід в абсолютно чистий прозорий колір 🔥 */
   background: radial-gradient(
     circle,
     rgba(255, 255, 255, 0.95) 0%,
     rgba(255, 255, 255, 0.85) 40%,
-    rgba(249, 250, 251, 0) 70%
+    rgba(255, 255, 255, 0) 70%
   );
   pointer-events: none;
   z-index: 1;
@@ -80,12 +86,7 @@ $text-gray: #52637a;
   object-fit: cover;
 }
 
-/* 
-   ПОЗИЦІЇ ТА РОЗМІРИ КАРТИНОК 
-   1. Базові - для Mac (до 1400px). 
-   2. 1400px+ - збільшені.
-   3. 1600px+ - величезні (ультра-широкі монітори).
-*/
+/* Збільшені розміри картинок для великих екранів */
 .img1 {
   top: 15%;
   left: 8%;
@@ -245,6 +246,7 @@ $text-gray: #52637a;
   max-width: 800px;
   margin: 0 auto;
 
+  /* Даємо заголовку простір на великих екранах, але контент залишаємо акуратним */
   @media (min-width: 1400px) {
     max-width: 1000px;
   }
@@ -253,6 +255,7 @@ $text-gray: #52637a;
   }
 }
 
+/* 🔥 ПОВЕРНУТО БАЗОВІ РОЗМІРИ ДЛЯ БЕЙДЖА 🔥 */
 .badge {
   display: inline-flex;
   padding: 8px 24px;
@@ -265,17 +268,6 @@ $text-gray: #52637a;
   border-radius: 100px;
   margin-bottom: 40px;
   box-shadow: 0 10px 20px rgba(0, 86, 179, 0.1);
-
-  @media (min-width: 1400px) {
-    font-size: 15px;
-    padding: 10px 28px;
-    margin-bottom: 50px;
-  }
-  @media (min-width: 1600px) {
-    font-size: 17px;
-    padding: 12px 32px;
-    margin-bottom: 60px;
-  }
 }
 
 .title {
@@ -285,7 +277,7 @@ $text-gray: #52637a;
   margin-bottom: 32px;
 }
 
-/* Звичайні слова */
+/* Звичайні слова (ЦЕЙ ШРИФТ ЗБІЛЬШУЄТЬСЯ) */
 .line {
   font-size: 80px;
   line-height: 1;
@@ -350,7 +342,7 @@ $text-gray: #52637a;
   }
 }
 
-/* Іконка всередині пігулки */
+/* Іконка всередині пігулки (ЗБІЛЬШУЄТЬСЯ) */
 .sparkleIcon {
   width: 64px;
   height: 64px;
@@ -406,7 +398,7 @@ $text-gray: #52637a;
   }
 }
 
-/* Текст всередині пігулки */
+/* Текст всередині пігулки (ЗБІЛЬШУЄТЬСЯ) */
 .accentText {
   background: linear-gradient(
     270deg,
@@ -441,6 +433,7 @@ $text-gray: #52637a;
   }
 }
 
+/* 🔥 ПОВЕРНУТО БАЗОВІ РОЗМІРИ ДЛЯ ОПИСУ 🔥 */
 .description {
   font-size: 20px;
   line-height: 1.6;
@@ -448,21 +441,12 @@ $text-gray: #52637a;
   max-width: 600px;
   margin-bottom: 40px;
 
-  @media (min-width: 1400px) {
-    font-size: 24px;
-    max-width: 750px;
-    margin-bottom: 50px;
-  }
-  @media (min-width: 1600px) {
-    font-size: 28px;
-    max-width: 900px;
-    margin-bottom: 60px;
-  }
   @media (max-width: 768px) {
     font-size: 17px;
   }
 }
 
+/* 🔥 ПОВЕРНУТО БАЗОВІ РОЗМІРИ ДЛЯ КНОПКИ 🔥 */
 .primaryBtn {
   background: linear-gradient(135deg, $primary 0%, darken($primary, 10%) 100%);
   color: #ffffff;
@@ -479,15 +463,6 @@ $text-gray: #52637a;
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 20px 40px rgba($primary, 0.35);
-  }
-
-  @media (min-width: 1400px) {
-    padding: 20px 56px;
-    font-size: 19px;
-  }
-  @media (min-width: 1600px) {
-    padding: 24px 68px;
-    font-size: 22px;
   }
 }
 
