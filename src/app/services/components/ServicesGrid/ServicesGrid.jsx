@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 import NextImage from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-// 🔥 Імпортуємо хук для головної модалки
 import { useModal } from "@/context/ModalContext";
 import styles from "./ServicesGrid.module.scss";
 
@@ -20,7 +19,7 @@ const servicesData = [
         description:
           "Виконуємо повний комплекс робіт для приватних та промислових об'єктів.",
         fullText:
-          "Ми забезпечуємо повний цикл електромонтажних робіт. Від початкового дослідження об'єкту та розробки проєкту до прокладання кабельних трас, встановлення освітлення та пусконалагоджувальних робіт. Гарантуємо відповідність усім нормам безпеки (ДБН, ПУЕ) та використання сертифікованих матеріалів. Ідеально підходить як для нових будівель, так і для капітального ремонту.",
+          "Ми забезпечуємо повний цикл електромонтажних робіт. Від початкового дослідження об'єкту та розробки проєкту до прокладання кабельних трас, встановлення освітлення та пусконалагоджувальних робіт. Гарантуємо відповідність усім нормам безпеки (ДБН, ПУЕ) та використання сертифікованих матеріалів.",
         img: "/images/El-work-key-img.jpg",
       },
       {
@@ -30,7 +29,7 @@ const servicesData = [
         description:
           "Проектування, збирання та професійний монтаж щитів управління.",
         fullText:
-          "Наші інженери збирають електрощитове обладнання будь-якої складності: ввідно-розподільчі пристрої (ВРП), щити автоматики, шафи управління насосами чи вентиляцією. Кожен щит проходить тестування під навантаженням перед відправкою на об'єкт. Використовуємо комплектуючі від перевірених світових брендів.",
+          "Наші інженери збирають електрощитове обладнання будь-якої складності: ввідно-розподільчі пристрої (ВРП), щити автоматики, шафи управління насосами чи вентиляцією. Використовуємо комплектуючі від перевірених світових брендів.",
         img: "/images/electric-box-img.jpg",
       },
       {
@@ -39,7 +38,7 @@ const servicesData = [
         title: "Реконструкція електроустановок",
         description: "Оновлення трансформаторних підстанцій та генераторів.",
         fullText:
-          "Проводимо модернізацію застарілих електромереж на підприємствах. Збільшуємо дозволену потужність, замінюємо старі автоматичні вимикачі та трансформатори на сучасні, більш надійні аналоги. Це дозволяє уникнути аварійних зупинок виробництва та зменшити втрати електроенергії.",
+          "Проводимо модернізацію застарілих електромереж на підприємствах. Збільшуємо дозволену потужність, замінюємо старі автоматичні вимикачі та трансформатори на сучасні аналоги.",
         img: "/images/reconstruction-img.jpg",
       },
       {
@@ -49,7 +48,7 @@ const servicesData = [
         description:
           "Кваліфікований монтаж та подальше сервісне обслуговування.",
         fullText:
-          "Не достатньо просто встановити обладнання — його потрібно правильно обслуговувати. Ми пропонуємо регулярний технічний огляд, тепловізійний контроль контактів, перевірку опору ізоляції та оперативний виїзд аварійної бригади у разі позаштатних ситуацій.",
+          "Ми пропонуємо регулярний технічний огляд, тепловізійний контроль контактів, перевірку опору ізоляції та оперативний виїзд аварійної бригади у разі позаштатних ситуацій.",
         img: "/images/installation-service-img.jpg",
       },
     ],
@@ -63,7 +62,7 @@ const servicesData = [
         title: "Сонячні електростанції",
         description: "Реалізація проєктів СЕС для дому та бізнесу.",
         fullText:
-          "Проєктуємо та будуємо сонячні електростанції (СЕС) під власне споживання або під «Зелений тариф». Встановлення СЕС на дахах підприємств дозволяє зафіксувати вартість електроенергії на роки вперед та суттєво знизити собівартість вашої продукції. Робимо повний розрахунок окупності перед стартом.",
+          "Проєктуємо та будуємо сонячні електростанції (СЕС) під власне споживання або під «Зелений тариф». Встановлення СЕС дозволяє суттєво знизити собівартість вашої продукції.",
         img: "/images/solar-panel-img.jpg",
       },
       {
@@ -73,7 +72,7 @@ const servicesData = [
         description:
           "Встановлення промислових та домашніх акумуляторних систем (BESS).",
         fullText:
-          "Накопичувачі енергії (BESS) — це ваш захист від блекаутів. Система заряджається вночі (за дешевим тарифом) або від сонячних панелей вдень, а віддає енергію в пікові години, коли мережа нестабільна або тариф найдорожчий. Забезпечує миттєве і безшовне перемикання.",
+          "Накопичувачі енергії (BESS) — це ваш захист від блекаутів. Система заряджається вночі або від сонця, а віддає енергію в пікові години.",
         img: "/images/backup-power-img.jpg",
       },
       {
@@ -83,7 +82,7 @@ const servicesData = [
         description:
           "Забезпечення безперебійної роботи за допомогою ДБЖ та генераторів.",
         fullText:
-          "Комплексні системи для критичної інфраструктури: серверних, лікарень, виробничих ліній. Синхронізуємо роботу дизельних/бензинових генераторів із потужними джерелами безперебійного живлення (ДБЖ), щоб ваш бізнес не зупинявся ні на секунду під час відключень світла.",
+          "Комплексні системи для критичної інфраструктури. Синхронізуємо роботу генераторів із потужними ДБЖ, щоб бізнес не зупинявся ні на секунду.",
         img: "/images/backup-power-img.jpg",
       },
     ],
@@ -96,12 +95,12 @@ export default function ServicesGrid() {
   const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // 🔥 Перейменовуємо функцію з контексту, щоб не було конфлікту з вашою локальною openModal
   const { openModal: openContactModal } = useModal();
 
   const sectionRef = useRef(null);
   const gridContentRef = useRef(null);
   const modalCardRef = useRef(null);
+  const backdropRef = useRef(null);
   const closeBtnRef = useRef(null);
 
   const isBlueTheme = activeTab === 0;
@@ -109,54 +108,16 @@ export default function ServicesGrid() {
 
   useEffect(() => {
     setMounted(true);
+    gsap.registerPlugin(ScrollTrigger);
   }, []);
 
   useEffect(() => {
     if (selectedService) {
       document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
   }, [selectedService]);
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
-      gsap.from(sectionRef.current, {
-        scrollTrigger: { trigger: sectionRef.current, start: "top 85%" },
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power3.out",
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    if (!gridContentRef.current) return;
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        gridContentRef.current.children,
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-          stagger: 0.1,
-          ease: "power2.out",
-          clearProps: "all",
-        },
-      );
-    }, gridContentRef);
-    return () => ctx.revert();
-  }, [activeTab]);
 
   const openModal = (service) => {
     setIsClosing(false);
@@ -166,62 +127,42 @@ export default function ServicesGrid() {
   const closeModal = () => {
     if (isClosing) return;
     setIsClosing(true);
-
-    if (modalCardRef.current) {
-      if (closeBtnRef.current) {
-        gsap.to(closeBtnRef.current, {
-          opacity: 0,
-          scale: 0.8,
-          duration: 0.2,
-          ease: "power2.in",
-        });
-      }
-
-      gsap.to(modalCardRef.current, {
-        y: 30,
-        opacity: 0,
-        scale: 0.98,
-        duration: 0.3,
-        ease: "power2.in",
-        onComplete: () => {
-          setSelectedService(null);
-          setIsClosing(false);
-        },
-      });
-    } else {
-      setSelectedService(null);
-      setIsClosing(false);
-    }
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setSelectedService(null);
+        setIsClosing(false);
+      },
+    });
+    tl.to(modalCardRef.current, {
+      y: 20,
+      opacity: 0,
+      scale: 0.95,
+      duration: 0.3,
+      ease: "power2.in",
+    });
+    tl.to(
+      backdropRef.current,
+      { opacity: 0, duration: 0.3, ease: "power2.in" },
+      "-=0.2",
+    );
   };
 
   useEffect(() => {
     if (selectedService && !isClosing && modalCardRef.current) {
-      gsap.fromTo(
+      const tl = gsap.timeline();
+      gsap.set(backdropRef.current, { opacity: 0 });
+      gsap.set(modalCardRef.current, { y: 50, opacity: 0, scale: 0.92 });
+      tl.to(backdropRef.current, { opacity: 1, duration: 0.4 });
+      tl.to(
         modalCardRef.current,
-        { y: 40, opacity: 0, scale: 0.98 },
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.5,
-          ease: "power3.out",
-          clearProps: "transform",
-        },
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" },
+        "-=0.3",
       );
-
-      if (closeBtnRef.current) {
-        gsap.fromTo(
-          closeBtnRef.current,
-          { opacity: 0, scale: 0.5 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.4,
-            delay: 0.1,
-            ease: "power3.out",
-          },
-        );
-      }
+      tl.to(
+        closeBtnRef.current,
+        { opacity: 1, scale: 1, duration: 0.4 },
+        "-=0.4",
+      );
     }
   }, [selectedService, isClosing]);
 
@@ -292,10 +233,10 @@ export default function ServicesGrid() {
         createPortal(
           <>
             <div
-              className={`${styles.backdropLayer} ${!isClosing ? styles.backdropVisible : ""}`}
+              className={styles.backdropLayer}
+              ref={backdropRef}
               onClick={closeModal}
             ></div>
-
             <div
               className={styles.modalScrollWrapper}
               onClick={closeModal}
@@ -344,15 +285,12 @@ export default function ServicesGrid() {
                 </div>
 
                 <div className={styles.modalFooter}>
-                  {/* 🔥 ТУТ МИ ВИКЛИКАЄМО openContactModal() 🔥 */}
+                  {/* 🔥 НОВА ЛОГІКА: Відкриваємо миттєво без затримок і зайвих рухів 🔥 */}
                   <button
                     className={styles.ctaButton}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      closeModal(); // Спочатку закриваємо модалку опису послуги
-                      setTimeout(() => {
-                        openContactModal(); // Через 400мс (після анімації закриття) відкриваємо головну форму
-                      }, 400);
+                    onClick={() => {
+                      openContactModal(); // Відкриваємо контакти відразу
+                      setSelectedService(null); // Просто прибираємо опис послуги без анімації
                     }}
                   >
                     Отримати консультацію
