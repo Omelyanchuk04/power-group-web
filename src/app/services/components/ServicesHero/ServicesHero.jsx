@@ -14,7 +14,6 @@ export default function ServicesHero() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
 
-      // Плавна поява тексту
       tl.from(textContentRef.current.children, {
         y: 40,
         opacity: 0,
@@ -25,7 +24,6 @@ export default function ServicesHero() {
         clearProps: "all",
       });
 
-      // Поява фотографій
       tl.from(
         imagesRef.current,
         {
@@ -48,66 +46,91 @@ export default function ServicesHero() {
     <section className={styles.heroSection} ref={containerRef}>
       <div className={styles.centerGlow}></div>
 
-      {/* Розкидані фотографії */}
+      {/* РОЗКИДАНІ ФОТОГРАФІЇ */}
       <div className={styles.scatteredGallery}>
+        {/* Фото 1 */}
         <div
           className={`${styles.floatImg} ${styles.img1}`}
           ref={(el) => (imagesRef.current[0] = el)}
         >
-          <NextImage
-            src="/images/solar-panel-img.jpg"
-            alt="СЕС"
-            fill
-            className={styles.imgCover}
-            priority
-          />
+          {/* ФІКС ДЛЯ NEXT.JS IMAGE */}
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <NextImage
+              src="/images/solar-panel-img.jpg"
+              alt="СЕС"
+              fill
+              sizes="(max-width: 768px) 150px, 300px"
+              className={styles.imgCover}
+              priority
+            />
+          </div>
         </div>
+
+        {/* Фото 2 */}
         <div
           className={`${styles.floatImg} ${styles.img2}`}
           ref={(el) => (imagesRef.current[1] = el)}
         >
-          <NextImage
-            src="/images/electric-box-img.jpg"
-            alt="Щитові"
-            fill
-            className={styles.imgCover}
-            priority
-          />
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <NextImage
+              src="/images/electric-box-img.jpg"
+              alt="Щитові"
+              fill
+              sizes="(max-width: 768px) 120px, 250px"
+              className={styles.imgCover}
+              priority
+            />
+          </div>
         </div>
+
+        {/* Фото 3 */}
         <div
           className={`${styles.floatImg} ${styles.img3}`}
           ref={(el) => (imagesRef.current[2] = el)}
         >
-          <NextImage
-            src="/images/installation-service-img.jpg"
-            alt="Монтаж"
-            fill
-            className={styles.imgCover}
-            priority
-          />
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <NextImage
+              src="/images/installation-service-img.jpg"
+              alt="Монтаж"
+              fill
+              sizes="(max-width: 768px) 150px, 300px"
+              className={styles.imgCover}
+              priority
+            />
+          </div>
         </div>
+
+        {/* Фото 4 */}
         <div
           className={`${styles.floatImg} ${styles.img4}`}
           ref={(el) => (imagesRef.current[3] = el)}
         >
-          <NextImage
-            src="/images/backup-power-img.jpg"
-            alt="Генератори"
-            fill
-            className={styles.imgCover}
-            priority
-          />
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <NextImage
+              src="/images/backup-power-img.jpg"
+              alt="Генератори"
+              fill
+              sizes="(max-width: 768px) 150px, 300px"
+              className={styles.imgCover}
+              priority
+            />
+          </div>
         </div>
+
+        {/* Фото 5 */}
         <div
           className={`${styles.floatImg} ${styles.img5}`}
           ref={(el) => (imagesRef.current[4] = el)}
         >
-          <NextImage
-            src="/images/reconstruction-img.jpg"
-            alt="Реконструкція"
-            fill
-            className={styles.imgCover}
-          />
+          <div style={{ position: "relative", width: "100%", height: "100%" }}>
+            <NextImage
+              src="/images/reconstruction-img.jpg"
+              alt="Реконструкція"
+              fill
+              sizes="(max-width: 768px) 100vw, 150px"
+              className={styles.imgCover}
+            />
+          </div>
         </div>
       </div>
 
@@ -115,7 +138,6 @@ export default function ServicesHero() {
         <div className={styles.content} ref={textContentRef}>
           <div className={styles.badge}>Наші послуги</div>
 
-          {/* 🔥 КЛАСИЧНИЙ ЗАГОЛОВОК (Без flex-column) 🔥 */}
           <h1 className={styles.title}>
             Комплексні <br />
             енергетичні <br />

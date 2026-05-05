@@ -1,6 +1,6 @@
 $primary: #0056b3;
 $primary-light: #00d4ff;
-$text-dark: #1e293b; /* М'який графітовий колір заголовка */
+$text-dark: #1e293b;
 $text-gray: #52637a;
 
 .heroSection {
@@ -20,7 +20,6 @@ $text-gray: #52637a;
 
   @media (max-width: 768px) {
     min-height: auto;
-    /* Трохи збільшили відступ знизу для мобілок, щоб нижні картинки мали простір */
     padding: calc(120px + env(safe-area-inset-top)) 0 140px;
   }
 }
@@ -75,7 +74,6 @@ $text-gray: #52637a;
   @media (max-width: 768px) {
     border-width: 2px;
     border-radius: 12px;
-    /* 🔥 ПОВЕРНУЛИ НАПІВПРОЗОРІСТЬ (Тьмяність) НА МОБІЛКАХ 🔥 */
     opacity: 0.4 !important;
   }
 }
@@ -84,133 +82,148 @@ $text-gray: #52637a;
   object-fit: cover;
 }
 
-/* 🔥 КАРТИНКИ РОЗСТАВЛЕНІ СУТО ПО КУТАХ НА МОБІЛКАХ 🔥 */
+/* 🔥 ЗБІЛЬШЕНІ АЛЕ БЕЗПЕЧНІ РОЗМІРИ КАРТИНОК 🔥 */
+
+/* 1. Ліва верхня (Сонячна панель) */
 .img1 {
-  top: 15%;
-  left: 8%;
+  top: 10%;
+  left: 4%;
   width: 220px;
   height: 280px;
   transform: rotate(-8deg);
   animation: floatA 7s infinite ease-in-out;
   @media (min-width: 1400px) {
+    width: 260px;
+    height: 340px;
+    left: 5%;
+  }
+  @media (min-width: 1600px) {
     width: 300px;
     height: 380px;
     left: 6%;
   }
-  @media (min-width: 1600px) {
-    width: 380px;
-    height: 480px;
-    left: 4%;
-  }
   @media (max-width: 1200px) {
     width: 160px;
     height: 200px;
-    left: -20px;
+    left: 0;
   }
   @media (max-width: 768px) {
-    width: 140px;
-    height: 190px;
-    top: 5%;
-    left: -30px;
-  } /* Лівий верхній кут */
+    width: 120px;
+    height: 160px;
+    top: 10px;
+    left: -20px;
+  }
 }
+
+/* 2. Права верхня (Щитова) */
 .img2 {
-  top: 20%;
-  right: 10%;
+  top: 12%;
+  right: 4%;
   width: 180px;
   height: 180px;
   border-radius: 40px;
   transform: rotate(12deg);
   animation: floatB 8s infinite ease-in-out reverse;
   @media (min-width: 1400px) {
-    width: 240px;
-    height: 240px;
-    right: 8%;
+    width: 220px;
+    height: 220px;
+    right: 5%;
+    border-radius: 50px;
   }
   @media (min-width: 1600px) {
-    width: 300px;
-    height: 300px;
+    width: 260px;
+    height: 260px;
     right: 6%;
+    border-radius: 60px;
   }
   @media (max-width: 1200px) {
     width: 140px;
     height: 140px;
-    right: -10px;
+    right: 0;
   }
   @media (max-width: 768px) {
-    width: 110px;
-    height: 110px;
-    top: 16%;
-    right: -30px;
+    width: 100px;
+    height: 100px;
+    top: 15%;
+    right: -20px;
     border-radius: 20px;
-  } /* Правий верхній кут */
+  }
 }
+
+/* 3. Ліва нижня (Монтажник) */
 .img3 {
-  bottom: 15%;
-  left: 12%;
+  bottom: 8%;
+  left: 6%;
   width: 260px;
   height: 180px;
   transform: rotate(6deg);
   animation: floatC 9s infinite ease-in-out;
   @media (min-width: 1400px) {
+    width: 300px;
+    height: 210px;
+    left: 8%;
+  }
+  @media (min-width: 1600px) {
     width: 340px;
     height: 240px;
     left: 10%;
   }
-  @media (min-width: 1600px) {
-    width: 440px;
-    height: 320px;
-    left: 8%;
-  }
   @media (max-width: 1200px) {
     width: 180px;
     height: 120px;
-    bottom: 5%;
+    left: 2%;
   }
   @media (max-width: 768px) {
-    width: 160px;
-    height: 110px;
-    bottom: 10%;
-    left: -30px;
-  } /* Лівий нижній кут */
+    width: 140px;
+    height: 100px;
+    bottom: 40px;
+    left: -20px;
+  }
 }
+
+/* 4. Права нижня (Будинок) */
 .img4 {
-  bottom: 10%;
-  right: 15%;
+  bottom: 6%;
+  right: 6%;
   width: 200px;
   height: 260px;
   transform: rotate(-5deg);
   animation: floatA 7.5s infinite ease-in-out reverse;
   @media (min-width: 1400px) {
-    width: 280px;
-    height: 340px;
-    right: 12%;
+    width: 240px;
+    height: 320px;
+    right: 8%;
   }
   @media (min-width: 1600px) {
-    width: 380px;
-    height: 460px;
-    right: 8%;
+    width: 280px;
+    height: 360px;
+    right: 10%;
   }
   @media (max-width: 1200px) {
     width: 150px;
     height: 200px;
-    right: -20px;
-    bottom: 5%;
+    right: 2%;
   }
   @media (max-width: 768px) {
-    width: 130px;
-    height: 180px;
-    bottom: 4%;
-    right: -30px;
-  } /* Правий нижній кут */
+    width: 120px;
+    height: 160px;
+    bottom: 20px;
+    right: -20px;
+  }
 }
+
+/* 5. Декоративна розмита */
 .img5 {
   top: 45%;
-  left: 2%;
-  width: 120px;
-  height: 120px;
+  left: 1%;
+  width: 100px;
+  height: 100px;
   filter: blur(4px);
   animation: floatB 10s infinite linear;
+  @media (min-width: 1400px) {
+    width: 120px;
+    height: 120px;
+  }
   @media (max-width: 768px) {
     display: none;
   }
@@ -254,12 +267,11 @@ $text-gray: #52637a;
   box-shadow: 0 10px 20px rgba(0, 86, 179, 0.1);
 }
 
-/* 🔥 ОНОВЛЕНИЙ ЗАГОЛОВОК: Менший розмір, легший шрифт 🔥 */
 .title {
   display: block;
   font-size: 56px;
   line-height: 1.15;
-  font-weight: 600; /* Зробили шрифт легшим (Semi-bold замість Extra-bold) */
+  font-weight: 600;
   color: $text-dark;
   margin-bottom: 24px;
   letter-spacing: -1px;
@@ -278,7 +290,7 @@ $text-gray: #52637a;
   @media (max-width: 768px) {
     font-size: 36px;
     letter-spacing: -0.5px;
-  } /* Акуратний розмір для телефонів */
+  }
 }
 
 .description {
@@ -298,7 +310,6 @@ $text-gray: #52637a;
   z-index: 10;
 }
 
-/* 🔥 СВІТЛО-СИНЯ СКЛЯНА КНОПКА (БЕЗ ПІДНЯТТЯ ПРИ НАВЕДЕННІ) 🔥 */
 .primaryBtn {
   background: rgba(0, 153, 255, 0.12);
   backdrop-filter: blur(12px);
@@ -314,7 +325,6 @@ $text-gray: #52637a;
   border-radius: 100px;
   cursor: pointer;
 
-  /* Транзиція БЕЗ transform (кнопка не підстрибує) */
   transition:
     background 0.3s ease,
     border-color 0.3s ease,
@@ -329,7 +339,6 @@ $text-gray: #52637a;
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
 
-  /* Легкий відгук на клік мишкою (протискається всередину) */
   &:active {
     transform: scale(0.98);
   }
