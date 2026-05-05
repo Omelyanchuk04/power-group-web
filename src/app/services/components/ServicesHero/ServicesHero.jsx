@@ -3,12 +3,17 @@
 import React, { useEffect, useRef } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
+// 🔥 Імпортуємо хук для модалки, як у хедері
+import { useModal } from "@/context/ModalContext";
 import styles from "./ServicesHero.module.scss";
 
 export default function ServicesHero() {
   const containerRef = useRef(null);
   const textContentRef = useRef(null);
   const imagesRef = useRef([]);
+
+  // 🔥 Дістаємо функцію відкриття модалки
+  const { openModal } = useModal();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -48,12 +53,10 @@ export default function ServicesHero() {
 
       {/* РОЗКИДАНІ ФОТОГРАФІЇ */}
       <div className={styles.scatteredGallery}>
-        {/* Фото 1 */}
         <div
           className={`${styles.floatImg} ${styles.img1}`}
           ref={(el) => (imagesRef.current[0] = el)}
         >
-          {/* ФІКС ДЛЯ NEXT.JS IMAGE */}
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
             <NextImage
               src="/images/solar-panel-img.jpg"
@@ -66,7 +69,6 @@ export default function ServicesHero() {
           </div>
         </div>
 
-        {/* Фото 2 */}
         <div
           className={`${styles.floatImg} ${styles.img2}`}
           ref={(el) => (imagesRef.current[1] = el)}
@@ -83,7 +85,6 @@ export default function ServicesHero() {
           </div>
         </div>
 
-        {/* Фото 3 */}
         <div
           className={`${styles.floatImg} ${styles.img3}`}
           ref={(el) => (imagesRef.current[2] = el)}
@@ -100,7 +101,6 @@ export default function ServicesHero() {
           </div>
         </div>
 
-        {/* Фото 4 */}
         <div
           className={`${styles.floatImg} ${styles.img4}`}
           ref={(el) => (imagesRef.current[3] = el)}
@@ -117,7 +117,6 @@ export default function ServicesHero() {
           </div>
         </div>
 
-        {/* Фото 5 */}
         <div
           className={`${styles.floatImg} ${styles.img5}`}
           ref={(el) => (imagesRef.current[4] = el)}
@@ -151,14 +150,8 @@ export default function ServicesHero() {
           </p>
 
           <div className={styles.btnWrapper}>
-            <button
-              className={styles.primaryBtn}
-              onClick={() =>
-                document
-                  .querySelector("#contact-cta")
-                  ?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
+            {/* 🔥 ТЕПЕР ТУТ ВИКЛИКАЄТЬСЯ openModal() 🔥 */}
+            <button className={styles.primaryBtn} onClick={openModal}>
               Отримати консультацію
             </button>
           </div>

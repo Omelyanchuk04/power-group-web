@@ -180,8 +180,6 @@ $text-gray: #52637a;
   justify-content: flex-end;
   border: 1px solid transparent;
   cursor: pointer;
-
-  /* 🔥 ФІКС ПЛАВНОСТІ: Прибрали різку "пружинку", тепер анімація ідеально гладка */
   transition:
     transform 0.3s ease,
     border-color 0.4s ease,
@@ -231,13 +229,9 @@ $text-gray: #52637a;
   }
 }
 
-/* =========================================
-   📱 ЕЛЕМЕНТАРНИЙ ВІДГУК НА СМАРТФОНАХ 📱
-   ========================================= */
 @media (max-width: 1199px) {
-  /* Завдяки transition: 0.15s при швидкому скролі картка не встигає зреагувати! */
   .servicePanel:active .cardInner {
-    transform: scale(0.98); // Легке і ненав'язливе зменшення
+    transform: scale(0.98);
     transition: transform 0.15s ease-out;
   }
 
@@ -506,26 +500,47 @@ $text-gray: #52637a;
   justify-content: flex-end;
 }
 
+/* 🔥 КНОПКА CTA У СТИЛІ СЕКЦІЇ HERO (Скляна та світло-синя) 🔥 */
 .ctaButton {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  padding: 18px 40px;
-  background-color: $primary;
-  color: #ffffff;
+  background: rgba(0, 153, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 153, 255, 0.35);
+  box-shadow:
+    0 10px 30px rgba(0, 153, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  color: $primary;
+  padding: 18px 52px;
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 100px;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.1s ease;
+  pointer-events: auto;
   text-decoration: none;
-  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(0, 153, 255, 0.22);
+    border-color: rgba(0, 153, 255, 0.5);
+    box-shadow:
+      0 15px 35px rgba(0, 153, 255, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 
   @media (max-width: 768px) {
     width: 100%;
-  }
-
-  &:hover {
-    background-color: darken(#0056b3, 10%);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 86, 179, 0.3);
+    padding: 16px 32px;
+    font-size: 16px;
   }
 }

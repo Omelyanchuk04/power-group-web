@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 import NextImage from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+// 🔥 Імпортуємо хук для головної модалки
+import { useModal } from "@/context/ModalContext";
 import styles from "./ServicesGrid.module.scss";
 
 const servicesData = [
@@ -94,6 +96,9 @@ export default function ServicesGrid() {
   const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // 🔥 Перейменовуємо функцію з контексту, щоб не було конфлікту з вашою локальною openModal
+  const { openModal: openContactModal } = useModal();
+
   const sectionRef = useRef(null);
   const gridContentRef = useRef(null);
   const modalCardRef = useRef(null);
@@ -153,7 +158,6 @@ export default function ServicesGrid() {
     return () => ctx.revert();
   }, [activeTab]);
 
-  // 🔥 Миттєве відкриття без жодних затримок
   const openModal = (service) => {
     setIsClosing(false);
     setSelectedService(service);
@@ -340,21 +344,19 @@ export default function ServicesGrid() {
                 </div>
 
                 <div className={styles.modalFooter}>
-                  <a
-                    href="#contact-cta"
+                  {/* 🔥 ТУТ МИ ВИКЛИКАЄМО openContactModal() 🔥 */}
+                  <button
                     className={styles.ctaButton}
                     onClick={(e) => {
                       e.preventDefault();
-                      closeModal();
+                      closeModal(); // Спочатку закриваємо модалку опису послуги
                       setTimeout(() => {
-                        document
-                          .querySelector("#contact-cta")
-                          ?.scrollIntoView({ behavior: "smooth" });
+                        openContactModal(); // Через 400мс (після анімації закриття) відкриваємо головну форму
                       }, 400);
                     }}
                   >
                     Отримати консультацію
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
