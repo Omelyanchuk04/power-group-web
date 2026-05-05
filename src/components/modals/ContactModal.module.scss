@@ -53,18 +53,19 @@ $bg-light: #f5f5f5;
   background: $yellow;
 }
 
+// === САМА ФОРМА (Стиль "Крижане скло" / Світло-синя, як кнопка) ===
 .modalContent {
   /* 🔥 Світло-синій градієнт замість просто білого. 
      Він достатньо щільний (85%), щоб текст ідеально читався 🔥 */
   background: linear-gradient(
     135deg,
-    rgba(230, 245, 255, 0.95) 0%,
-    rgba(240, 250, 255, 0.85) 100%
+    rgba(230, 245, 255, 0.85) 0%,
+    rgba(240, 250, 255, 0.75) 100%
   );
 
   /* Сильне розмиття фону */
-  backdrop-filter: blur(100px);
-  -webkit-backdrop-filter: blur(100px);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
 
   /* Тонка, чітка світло-синя рамка, точно як на вашому скріні */
   border: 1px solid rgba(0, 102, 255, 0.25);
