@@ -107,41 +107,10 @@ const ContactModal = ({ isOpen, onClose }) => {
               <input type="text" id="message" placeholder="Опишіть ваш запит" />
             </div>
 
+            {/* 🔥 КНОПКА ТОЧНО ЯК НА СКРІНШОТІ 🔥 */}
             <button type="submit" className={styles.submitButton}>
-              <span>Отримати консультацію</span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
+              Отримати консультацію
             </button>
-
-            <div className={styles.privacyPolicy}>
-              <label className={styles.checkboxContainer}>
-                <input type="checkbox" required defaultChecked />
-                <span className={styles.checkmark}>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                  >
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </span>
-                <span className={styles.policyText}>
-                  Я погоджуюся з умовами{" "}
-                  <a href="#">Політики конфіденційності</a> та{" "}
-                  <a href="#">Обробки персональних даних</a>
-                </span>
-              </label>
-            </div>
           </form>
         </div>
       </div>

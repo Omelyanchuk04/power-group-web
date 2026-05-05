@@ -1,9 +1,9 @@
-$primary: #0056b3;
+//$primary: #0056b3;
 $yellow: #ffd500; // Жовтий колір для кнопки та плями
 $text-dark: #1a1a1a;
 $text-gray: #6b7280;
 $border-color: #d1d5db;
-$bg-light: #f5f5f5; // Фон форми, який ви просили
+$bg-light: #f5f5f5;
 
 .modalOverlay {
   position: fixed;
@@ -34,7 +34,7 @@ $bg-light: #f5f5f5; // Фон форми, який ви просили
   filter: blur(60px);
   z-index: 0;
   pointer-events: none;
-  opacity: 0.6; // Напівпрозорі
+  opacity: 0.6;
 }
 
 .blobBlue {
@@ -42,7 +42,7 @@ $bg-light: #f5f5f5; // Фон форми, який ви просили
   left: -40px;
   width: 250px;
   height: 250px;
-  background: $primary;
+  background: #0056b3;
 }
 
 .blobYellow {
@@ -53,15 +53,32 @@ $bg-light: #f5f5f5; // Фон форми, який ви просили
   background: $yellow;
 }
 
-// === САМА ФОРМА ===
 .modalContent {
-  background: $bg-light; // #f5f5f5
+  /* 🔥 Світло-синій градієнт замість просто білого. 
+     Він достатньо щільний (85%), щоб текст ідеально читався 🔥 */
+  background: linear-gradient(
+    135deg,
+    rgba(230, 245, 255, 0.95) 0%,
+    rgba(240, 250, 255, 0.85) 100%
+  );
+
+  /* Сильне розмиття фону */
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+
+  /* Тонка, чітка світло-синя рамка, точно як на вашому скріні */
+  border: 1px solid rgba(0, 102, 255, 0.25);
+
+  /* Багатошаровий об'єм: ніжне синє світіння навколо форми + білий блік всередині зверху */
+  box-shadow:
+    0 24px 48px rgba(0, 102, 255, 0.12),
+    inset 0 2px 8px rgba(255, 255, 255, 1);
+
   width: 100%;
-  border-radius: 24px;
-  padding: 48px 40px;
+  border-radius: 40px;
+  padding: 48px;
   position: relative;
-  z-index: 2; // Щоб форма була поверх плям
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  z-index: 2;
 }
 
 .closeButton {
@@ -72,7 +89,7 @@ $bg-light: #f5f5f5; // Фон форми, який ви просили
   height: 36px;
   background: #ffffff;
   border: none;
-  border-radius: 10px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,21 +140,27 @@ $bg-light: #f5f5f5; // Фон форми, який ви просили
   text-align: left;
 
   label {
-    font-size: 12px;
-    color: $text-gray;
-    margin-bottom: 4px;
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 6px;
+    font-weight: 500;
   }
 
   input {
     width: 100%;
     border: none;
-    border-bottom: 1px solid $border-color;
+
+    /* 🔥 Зробили лінії полів вводу чіткими (використовуємо стабільний сіро-синій колір) 🔥 */
+    border-bottom: 1px solid #94a3b8;
+
     background: transparent;
     padding: 8px 0;
     font-size: 16px;
-    color: $text-dark;
+    color: #111827;
     outline: none;
-    transition: border-color 0.2s;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
     border-radius: 0;
 
     &::placeholder {
@@ -145,103 +168,69 @@ $bg-light: #f5f5f5; // Фон форми, який ви просили
     }
 
     &:focus {
-      border-bottom-color: $primary;
+      /* При кліку лінія стає яскраво-синьою */
+      border-bottom-color: #0056b3;
+      box-shadow: 0 1px 0 #0056b3;
     }
   }
 }
 
-// === КНОПКА ===
+// 🔥 ЖОВТА "СМАЧНА" СКЛЯНА КНОПКА (Ефект льодяника) 🔥
 .submitButton {
   margin-top: 16px;
   width: 100%;
-  background: $yellow; // Жовтий колір
-  color: $text-dark; // Темний текст для контрасту з жовтим
-  border: none;
-  border-radius: 50px;
-  padding: 16px;
+
+  /* Напівпрозорий, соковитий жовтий фон */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 213, 0, 0.75) 0%,
+    rgba(255, 213, 0, 0.62) 100%
+  );
+
+  /* Розмиття (матове скло) */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  /* Тонка жовта рамка */
+  border: 1px solid rgba(255, 213, 0, 0.4);
+
+  /* Ніжне світіння + яскравий білий блік зверху */
+  box-shadow:
+    0 8px 32px rgba(255, 213, 0, 0.2),
+    /* Жовте зовнішнє світіння */ inset 0 2px 4px rgba(255, 255, 255, 0.95),
+    /* "Льодяниковий" білий блік */ inset 0 -2px 4px rgba(255, 180, 0, 0.15); /* Темніший контур знизу для об'єму */
+
+  color: #0a2540; /* Темно-синій текст для гарного контрасту */
+  border-radius: 100px;
+
+  padding: 14px 24px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 800; /* Трохи жирніший для кращого читання */
+  letter-spacing: 0.3px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  transition: all 0.2s;
-
-  svg {
-    width: 20px;
-    height: 20px;
-    transition: transform 0.2s;
-  }
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   &:hover {
-    background: darken($yellow, 5%);
-    svg {
-      transform: translateX(4px); // Анімація стрілочки
-    }
+    /* Робимо скло яскравішим при наведенні */
+    background: linear-gradient(
+      135deg,
+      rgba(255, 213, 0, 0.65) 0%,
+      rgba(255, 213, 0, 0.55) 100%
+    );
+    border-color: rgba(255, 213, 0, 0.6);
+    box-shadow:
+      0 12px 36px rgba(255, 213, 0, 0.3),
+      inset 0 2px 4px rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 }
-
-.privacyPolicy {
-  margin-top: 8px;
-  text-align: left;
-
-  .checkboxContainer {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    cursor: pointer;
-    position: relative;
-
-    input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-
-      &:checked ~ .checkmark {
-        background: transparent;
-        border-color: $text-dark;
-        svg {
-          opacity: 1;
-          stroke: $text-dark;
-        }
-      }
-    }
-
-    .checkmark {
-      min-width: 18px;
-      height: 18px;
-      border: 1px solid $text-dark;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      margin-top: 2px;
-
-      svg {
-        width: 12px;
-        height: 12px;
-        opacity: 0;
-      }
-    }
-
-    .policyText {
-      font-size: 12px;
-      color: $text-gray;
-      line-height: 1.5;
-
-      a {
-        color: $text-gray;
-        text-decoration: underline;
-        &:hover {
-          color: $text-dark;
-        }
-      }
-    }
-  }
-}
-
 @media (max-width: 640px) {
   .modalContent {
     padding: 32px 24px;
@@ -251,6 +240,6 @@ $bg-light: #f5f5f5; // Фон форми, який ви просили
   }
   .blobBlue,
   .blobYellow {
-    display: none; // На мобільних краще ховати плями для швидкодії
+    display: none;
   }
 }
