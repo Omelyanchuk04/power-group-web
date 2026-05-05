@@ -5,44 +5,17 @@ $text-gray: #6b7280;
 $border-color: #d1d5db;
 $bg-light: #f5f5f5;
 
-// === ОБГОРТКА МОДАЛКИ (Фікс для Safari iOS) ===
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-
-  /* 🔥 100dvh автоматично адаптується під панель адреси Safari 🔥 */
-  height: 100dvh;
-  height: 100svh; /* Фолбек для найновіших браузерів */
-
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(100px);
-  -webkit-backdrop-filter: blur(100px);
+  backdrop-filter: blur(12px);
   z-index: 999999;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* 🔥 Додаємо env(safe-area-inset), щоб контент не залазив під "чубчик" і нижню смужку 🔥 */
-  padding: calc(16px + env(safe-area-inset-top)) 16px
-    calc(16px + env(safe-area-inset-bottom));
-
+  padding: 16px;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-
-  /* 🔥 Відключаємо ефект "гумки" (bounce), через який видно білий фон 🔥 */
-  overscroll-behavior: none;
-}
-
-/* Якщо на дуже маленьких екранах форма не влазить, вирівнюємо її по верху, щоб можна було скролити */
-@media (max-height: 800px) {
-  .modalOverlay {
-    align-items: flex-start;
-  }
 }
 
 // Обгортка потрібна, щоб кольорові плями були відносно форми
