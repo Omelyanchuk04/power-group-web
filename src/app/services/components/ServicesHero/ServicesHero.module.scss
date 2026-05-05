@@ -24,36 +24,33 @@ $text-gray: #52637a;
   }
 }
 
-/* 🔥 ВІДРЕМОНТОВАНЕ СВІТІННЯ (БЕЗ РІЗКИХ КРАЇВ) 🔥 */
+/* 🔥 ФІКС ВЕРТИКАЛЬНОЇ ЛІНІЇ: Зробили сам блок круглим 🔥 */
 .centerGlow {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* Робимо контейнер більшим, щоб градієнт мав багато місця для плавного згасання */
-  width: 70vw;
-  height: 70vw;
-  max-width: 800px;
-  max-height: 800px;
-
-  /* 'closest-side' гарантує, що градієнт ніколи не вийде за межі блоку і не створить лінію */
+  width: 100vw;
+  height: 100vw;
+  max-width: 1000px;
+  max-height: 1000px;
+  border-radius: 50%; /* Блок тепер круглий — ніяких прямих ліній на екрані! */
   background: radial-gradient(
     circle closest-side,
     rgba(255, 255, 255, 1) 0%,
-    rgba(255, 255, 255, 0.6) 35%,
-    rgba(255, 255, 255, 0) 90%
-      /* На 90% стає повністю прозорим, краї залишаються чистими */
+    rgba(255, 255, 255, 0.6) 40%,
+    rgba(255, 255, 255, 0) 85%
   );
   pointer-events: none;
   z-index: 1;
 
   @media (min-width: 1400px) {
-    max-width: 1000px;
-    max-height: 1000px;
+    max-width: 1200px;
+    max-height: 1200px;
   }
   @media (min-width: 1600px) {
-    max-width: 1100px;
-    max-height: 1100px;
+    max-width: 1400px;
+    max-height: 1400px;
   }
 }
 
