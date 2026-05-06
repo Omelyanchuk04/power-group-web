@@ -184,9 +184,19 @@ $white: #ffffff;
     border-radius: 0 40px 40px 0;
     border-left: none;
 
-    /* Ефект розчинення до прозорого (від 0% до 12% ширини зліва) */
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
-    mask-image: linear-gradient(to right, transparent 0%, black 12%);
+    /* 🔥 БІЛЬШИЙ ТА ПЛАВНІШИЙ ЕФЕКТ (розтягнуто на 35% ширини картки) */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 8%,
+      black 35%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 8%,
+      black 35%
+    );
 
     .cardContent {
       flex-direction: row-reverse;
@@ -201,9 +211,19 @@ $white: #ffffff;
     border-radius: 40px 0 0 40px;
     border-right: none;
 
-    /* Ефект розчинення до прозорого (від 0% до 12% ширини справа) */
-    -webkit-mask-image: linear-gradient(to left, transparent 0%, black 12%);
-    mask-image: linear-gradient(to left, transparent 0%, black 12%);
+    /* 🔥 БІЛЬШИЙ ТА ПЛАВНІШИЙ ЕФЕКТ (розтягнуто на 35% ширини картки) */
+    -webkit-mask-image: linear-gradient(
+      to left,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 8%,
+      black 35%
+    );
+    mask-image: linear-gradient(
+      to left,
+      transparent 0%,
+      rgba(0, 0, 0, 0.1) 8%,
+      black 35%
+    );
   }
 
   .targetIcon {
