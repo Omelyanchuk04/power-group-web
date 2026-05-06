@@ -271,18 +271,18 @@ $white: #ffffff;
    АДАПТИВНІСТЬ
    ========================================== */
 
-/* 🔥 ВЕЛИЧЕЗНІ ЕКРАНИ (>1600px) 🔥 */
+/* 🔥 ЕКРАНИ ШИРШЕ 1600px 🔥 */
 @media (min-width: 1600px) {
   .targetGrid {
     width: 100%;
-    /* 🔥 Збільшена максимальна ширина */
-    max-width: 1680px;
-    /* 🔥 Збільшена відстань між картками */
-    gap: 80px;
+    /* 🔥 Ще більша ширина, щоб бути ближче до країв */
+    max-width: 1760px;
+    /* 🔥 Комфортна відстань */
+    gap: 60px;
     left: auto;
     transform: none;
     margin: 0 auto;
-    padding: 0 60px;
+    padding: 0 40px;
   }
 
   .targetCard {
@@ -291,38 +291,36 @@ $white: #ffffff;
     &:nth-child(1) {
       border-radius: 40px;
       border-left: 1px solid rgba(255, 255, 255, 0.6);
+      /* 🔥 МІНІМАЛЬНЕ РОЗМИТТЯ: тільки самий край */
       -webkit-mask-image: linear-gradient(
         to right,
         transparent 0%,
-        rgba(0, 0, 0, 0.05) 15%,
-        rgba(0, 0, 0, 0.8) 35%,
-        black 55%
+        rgba(0, 0, 0, 0.1) 5%,
+        black 20%
       );
       mask-image: linear-gradient(
         to right,
         transparent 0%,
-        rgba(0, 0, 0, 0.05) 15%,
-        rgba(0, 0, 0, 0.8) 35%,
-        black 55%
+        rgba(0, 0, 0, 0.1) 5%,
+        black 20%
       );
     }
 
     &:nth-child(2) {
       border-radius: 40px;
       border-right: 1px solid rgba(255, 255, 255, 0.6);
+      /* 🔥 МІНІМАЛЬНЕ РОЗМИТТЯ: тільки самий край */
       -webkit-mask-image: linear-gradient(
         to left,
         transparent 0%,
-        rgba(0, 0, 0, 0.05) 15%,
-        rgba(0, 0, 0, 0.8) 35%,
-        black 55%
+        rgba(0, 0, 0, 0.1) 5%,
+        black 20%
       );
       mask-image: linear-gradient(
         to left,
         transparent 0%,
-        rgba(0, 0, 0, 0.05) 15%,
-        rgba(0, 0, 0, 0.8) 35%,
-        black 55%
+        rgba(0, 0, 0, 0.1) 5%,
+        black 20%
       );
     }
   }
