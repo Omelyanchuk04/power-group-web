@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import NextImage from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import { useModal } from "@/context/ModalContext";
 import styles from "./Services.module.scss";
 
 if (typeof window !== "undefined") {
@@ -11,47 +14,72 @@ if (typeof window !== "undefined") {
 }
 
 export default function Services() {
+  const [selectedService, setSelectedService] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const { openModal: openContactModal } = useModal();
+
   const wrapperRef = useRef(null);
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
-  const progressRef = useRef(null); // 🔥 Новий реф для прогрес-бару
+  const progressRef = useRef(null);
   const autoScrollTimer = useRef(null);
   const isUserInteracting = useRef(false);
+
+  // 🔥 Реф для відслідковування модалки БЕЗ перезапуску useEffect 🔥
+  const isModalOpenRef = useRef(false);
+
+  const modalCardRef = useRef(null);
+  const backdropRef = useRef(null);
+  const closeBtnRef = useRef(null);
 
   const services = [
     {
       title: 'Електромонтажні роботи "під ключ"',
       desc: "Комплексні рішення для приватних та промислових об'єктів. Від проєктування до повної здачі в експлуатацію.",
+      fullText:
+        "Ми забезпечуємо повний цикл електромонтажних робіт. Від початкового дослідження об'єкту та розробки проєкту до прокладання кабельних трас, встановлення освітлення та пусконалагоджувальних робіт. Гарантуємо відповідність усім нормам безпеки (ДБН, ПУЕ) та використання сертифікованих матеріалів.",
       img: "/images/El-work-key-img.jpg",
       num: "01",
     },
     {
       title: "Монтаж та обслуговування",
       desc: "Надійне встановлення та регулярний професійний сервіс електрообладнання будь-якої складності.",
+      fullText:
+        "Ми пропонуємо регулярний технічний огляд, тепловізійний контроль контактів, перевірку опору ізоляції та оперативний виїзд аварійної бригади у разі позаштатних ситуацій.",
       img: "/images/installation-service-img.jpg",
       num: "02",
     },
     {
       title: "Електрощитове обладнання",
       desc: "Власне виробництво, точна збірка та сертифікований монтаж обладнання.",
+      fullText:
+        "Наші інженери збирають електрощитове обладнання будь-якої складності: ввідно-розподільчі пристрої (ВРП), щити автоматики, шафи управління насосами чи вентиляцією. Використовуємо комплектуючі від перевірених світових брендів.",
       img: "/images/electric-box-img.jpg",
       num: "03",
     },
     {
       title: "Реконструкція електроустановок",
       desc: "Оновлення розподільчих пристроїв, трансформаторних підстанцій та підключення генераторів.",
+      fullText:
+        "Проводимо модернізацію застарілих електромереж на підприємствах. Збільшуємо дозволену потужність, замінюємо старі автоматичні вимикачі та трансформатори на сучасні аналоги.",
       img: "/images/reconstruction-img.jpg",
       num: "04",
     },
     {
       title: "Сонячні електростанції",
       desc: "Повна реалізація проєктів з будівництва СЕС для вашої автономії та фінансової вигоди.",
+      fullText:
+        "Проєктуємо та будуємо сонячні електростанції (СЕС) під власне споживання або під «Зелений тариф». Встановлення СЕС дозволяє суттєво знизити собівартість вашої продукції.",
       img: "/images/solar-panel-img.jpg",
       num: "05",
     },
     {
       title: "Резервне живлення та ESS",
       desc: "Встановлення сучасних акумуляторних систем та джерел безперебійного живлення.",
+      fullText:
+        "Накопичувачі енергії (BESS) — це ваш захист від блекаутів. Система заряджається вночі або від сонця, а віддає енергію в пікові години. Синхронізуємо роботу генераторів із потужними ДБЖ.",
       img: "/images/backup-power-img.jpg",
       num: "06",
     },
@@ -72,12 +100,14 @@ export default function Services() {
     }, timeout);
   };
 
+  // 🔥 Цей useEffect більше НЕ залежить від selectedService 🔥
+  // Анімація відпрацює лише 1 раз при першому завантаженні
   useEffect(() => {
+    setMounted(true);
     let ctx = gsap.context(() => {
       const track = trackRef.current;
       const panels = gsap.utils.toArray(`.${styles.servicePanel}`);
 
-      // Запуск автоскролу тільки коли секція на екрані
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: "top 80%",
@@ -88,7 +118,6 @@ export default function Services() {
         onLeaveBack: () => stopAutoScroll(),
       });
 
-      // Анімація появи секції
       gsap.from(
         [
           `.${styles.staticHeader}`,
@@ -105,12 +134,11 @@ export default function Services() {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 70%",
-            toggleActions: "play none none none",
+            toggleActions: "play none none none", // Грає 1 раз і залишається
           },
         },
       );
 
-      // Анімація карток
       panels.forEach((panel) => {
         const inner = panel.querySelector(`.${styles.cardInner}`);
         const tl = gsap.timeline({
@@ -137,7 +165,6 @@ export default function Services() {
         });
       });
 
-      // Анімація прогрес-бару
       gsap.to(`.${styles.progressBarFill}`, {
         width: "100%",
         ease: "none",
@@ -152,7 +179,6 @@ export default function Services() {
       });
     }, wrapperRef);
 
-    // Оптимізовані обробники подій
     const track = trackRef.current;
 
     const handleTouchStart = () => {
@@ -161,7 +187,9 @@ export default function Services() {
     };
 
     const handleTouchEnd = () => {
-      resetAutoScroll();
+      if (!isModalOpenRef.current) {
+        resetAutoScroll();
+      }
       setTimeout(() => {
         isUserInteracting.current = false;
       }, 1000);
@@ -169,7 +197,7 @@ export default function Services() {
 
     const handleWheel = () => {
       isUserInteracting.current = true;
-      resetAutoScroll();
+      if (!isModalOpenRef.current) resetAutoScroll();
       clearTimeout(track.wheelTimeout);
       track.wheelTimeout = setTimeout(() => {
         isUserInteracting.current = false;
@@ -191,7 +219,17 @@ export default function Services() {
       }
       ctx.revert();
     };
-  }, []);
+  }, []); // Порожній масив залежностей!
+
+  // Синхронізуємо стан модалки з рефом та overflow
+  useEffect(() => {
+    isModalOpenRef.current = !!selectedService;
+    if (selectedService) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [selectedService]);
 
   const handleScroll = (direction, isAuto = false) => {
     if (!trackRef.current) return;
@@ -220,7 +258,7 @@ export default function Services() {
       behavior: "smooth",
     });
 
-    if (!isAuto) {
+    if (!isAuto && !isModalOpenRef.current) {
       isUserInteracting.current = true;
       resetAutoScroll();
       setTimeout(() => {
@@ -229,7 +267,6 @@ export default function Services() {
     }
   };
 
-  // 🔥 ЛОГІКА ПЕРЕТЯГУВАННЯ ПОВЗУНКА 🔥
   const handleProgressDrag = (e) => {
     isUserInteracting.current = true;
     stopAutoScroll();
@@ -238,24 +275,18 @@ export default function Services() {
     const progress = progressRef.current;
     if (!track || !progress) return;
 
-    // Забороняємо виділення тексту під час перетягування
     document.body.style.userSelect = "none";
 
     const updateScroll = (clientX) => {
       const rect = progress.getBoundingClientRect();
       let x = clientX - rect.left;
-
-      // Обмежуємо значення від 0 до ширини прогрес-бару
       x = Math.max(0, Math.min(x, rect.width));
 
       const percentage = x / rect.width;
       const maxScroll = track.scrollWidth - track.clientWidth;
-
-      // Одразу скролимо трек, а GSAP сам оновить дизайн прогрес-бару!
       track.scrollLeft = percentage * maxScroll;
     };
 
-    // Стрибок на місце кліку
     updateScroll(e.clientX);
 
     const onPointerMove = (moveEvent) => {
@@ -268,24 +299,93 @@ export default function Services() {
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
 
-      resetAutoScroll();
+      if (!isModalOpenRef.current) resetAutoScroll();
       setTimeout(() => {
         isUserInteracting.current = false;
       }, 1000);
     };
 
-    // Слухаємо рух мишки/пальця по всьому вікну
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerup", onPointerUp);
     window.addEventListener("pointercancel", onPointerUp);
   };
 
+  const openModal = (service) => {
+    isUserInteracting.current = true;
+    stopAutoScroll();
+    setIsClosing(false);
+    setSelectedService(service);
+  };
+
+  const closeModal = () => {
+    if (isClosing) return;
+    setIsClosing(true);
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setSelectedService(null);
+        setIsClosing(false);
+        resetAutoScroll();
+        isUserInteracting.current = false;
+      },
+    });
+    tl.to(modalCardRef.current, {
+      y: 20,
+      opacity: 0,
+      scale: 0.95,
+      duration: 0.3,
+      ease: "power2.in",
+    });
+    tl.to(
+      backdropRef.current,
+      { opacity: 0, duration: 0.3, ease: "power2.in" },
+      "-=0.2",
+    );
+  };
+
+  useEffect(() => {
+    if (selectedService && !isClosing && modalCardRef.current) {
+      const tl = gsap.timeline();
+      gsap.set(backdropRef.current, { opacity: 0 });
+      gsap.set(modalCardRef.current, { y: 50, opacity: 0, scale: 0.92 });
+      tl.to(backdropRef.current, { opacity: 1, duration: 0.4 });
+      tl.to(
+        modalCardRef.current,
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" },
+        "-=0.3",
+      );
+      tl.to(
+        closeBtnRef.current,
+        { opacity: 1, scale: 1, duration: 0.4 },
+        "-=0.4",
+      );
+    }
+  }, [selectedService, isClosing]);
+
   return (
     <div ref={wrapperRef}>
       <section className={styles.servicesSection} ref={sectionRef}>
+        {/* 🔥 Відцентрований Header 🔥 */}
         <div className={styles.staticHeader}>
-          <span className={styles.badge}>Послуги</span>
-          <h2 className={styles.title}>Що ми пропонуємо</h2>
+          <div className={styles.headerCenter}>
+            <span className={styles.badge}>Послуги</span>
+            <h2 className={styles.title}>Що ми пропонуємо</h2>
+          </div>
+          <div className={styles.headerRight}>
+            <Link href="/services" className={styles.viewAllBtn}>
+              Всі послуги
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </Link>
+          </div>
         </div>
 
         <div className={styles.horizontalTrack} ref={trackRef}>
@@ -293,7 +393,10 @@ export default function Services() {
 
           {services.map((service, index) => (
             <div className={styles.servicePanel} key={index}>
-              <div className={styles.cardInner}>
+              <div
+                className={styles.cardInner}
+                onClick={() => openModal(service)}
+              >
                 <NextImage
                   src={service.img}
                   alt={service.title}
@@ -309,6 +412,20 @@ export default function Services() {
                   <h3 className={styles.cardTitle}>{service.title}</h3>
                   <p className={styles.cardDesc}>{service.desc}</p>
                 </div>
+
+                <button className={styles.plusBtn} aria-label="Детальніше">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
               </div>
             </div>
           ))}
@@ -354,7 +471,6 @@ export default function Services() {
         </div>
 
         <div className={styles.progressContainer}>
-          {/* 🔥 Додали реф та обробник натискання (pointerdown працює і для миші, і для пальців) 🔥 */}
           <div
             className={styles.progressBar}
             ref={progressRef}
@@ -370,6 +486,80 @@ export default function Services() {
           </div>
         </div>
       </section>
+
+      {mounted &&
+        selectedService &&
+        createPortal(
+          <>
+            <div
+              className={styles.backdropLayer}
+              ref={backdropRef}
+              onClick={closeModal}
+            ></div>
+            <div
+              className={styles.modalScrollWrapper}
+              onClick={closeModal}
+              data-lenis-prevent="true"
+            >
+              <div className={styles.fixedCloseWrapper} ref={closeBtnRef}>
+                <button className={styles.closeBtn} onClick={closeModal}>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <div
+                className={styles.modalContent}
+                ref={modalCardRef}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles.modalHeader}>
+                  <span className={styles.modalNum}>
+                    Послуга {selectedService.num}
+                  </span>
+                  <h2 className={styles.modalTitle}>{selectedService.title}</h2>
+                </div>
+
+                <div className={styles.modalRichContent}>
+                  <div className={styles.modalBody}>
+                    <p>{selectedService.fullText}</p>
+                  </div>
+                  <div className={styles.modalImageWrapper}>
+                    <NextImage
+                      src={selectedService.img}
+                      alt={selectedService.title}
+                      fill
+                      className={styles.modalImage}
+                      sizes="(max-width: 768px) 100vw, 800px"
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.modalFooter}>
+                  <button
+                    className={styles.ctaButton}
+                    onClick={() => {
+                      openContactModal();
+                      setSelectedService(null);
+                      resetAutoScroll();
+                    }}
+                  >
+                    Отримати консультацію
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>,
+          document.body,
+        )}
     </div>
   );
 }
