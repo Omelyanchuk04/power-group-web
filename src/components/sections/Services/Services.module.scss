@@ -34,7 +34,7 @@ $primary: #0056b3;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px; // Відстань між бейджем та заголовком
+  gap: 12px;
 }
 
 .headerRight {
@@ -665,7 +665,7 @@ $primary: #0056b3;
     grid-column: unset;
   }
   .headerCenter {
-    gap: 8px; // Тісніший відступ між бейджем та заголовком
+    gap: 8px;
   }
   .headerRight {
     padding-bottom: 0;
@@ -683,7 +683,7 @@ $primary: #0056b3;
   }
   .servicePanel {
     width: 340px;
-    margin: 70px 12px 0; // 🔥 Опускаємо картки нижче заголовка 🔥
+    margin: 20px 12px 0; // 🔥 Оптимальна висота для планшетів 🔥
     height: clamp(360px, 55vh, 480px);
   }
   .spacer,
@@ -725,8 +725,10 @@ $primary: #0056b3;
   }
   .servicePanel {
     width: 280px;
-    margin: 100px 8px 0; // 🔥 Опускаємо картки ще нижче на смартфонах 🔥
-    height: calc(100svh - 270px);
+    margin: 30px 8px 0; // 🔥 Ідеально по центру між кнопкою і стрілочками 🔥
+    height: calc(
+      100svh - 280px
+    ); // 🔥 Картка стала трохи нижчою, щоб відступи були помітнішими 🔥
     min-height: 320px;
     max-height: 440px;
   }
