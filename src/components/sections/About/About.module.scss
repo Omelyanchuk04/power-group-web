@@ -11,7 +11,8 @@ $white: #ffffff;
   position: relative;
   z-index: 2;
   padding: 40px 0 0;
-  overflow-x: clip; /* 🔥 БУЛО overflow: clip; СТАЛО overflow-x: clip; */
+  /* 🔥 clip замість hidden усуває "залипання" при скролі на телефонах */
+  overflow-x: clip;
 }
 
 .container {
@@ -183,18 +184,22 @@ $white: #ffffff;
     border-radius: 0 40px 40px 0;
     border-left: none;
 
-    /* 🔥 БІЛЬШИЙ ТА ПЛАВНІШИЙ ЕФЕКТ (розтягнуто на 35% ширини картки) */
+    /* 🔥 ДУЖЕ СИЛЬНЕ РОЗСІЮВАННЯ: перші 12% повністю прозорі, далі плавний перехід аж до 60% */
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0%,
-      rgba(0, 0, 0, 0.1) 8%,
-      black 35%
+      transparent 12%,
+      rgba(0, 0, 0, 0.1) 25%,
+      rgba(0, 0, 0, 0.6) 40%,
+      black 60%
     );
     mask-image: linear-gradient(
       to right,
       transparent 0%,
-      rgba(0, 0, 0, 0.1) 8%,
-      black 35%
+      transparent 12%,
+      rgba(0, 0, 0, 0.1) 25%,
+      rgba(0, 0, 0, 0.6) 40%,
+      black 60%
     );
 
     .cardContent {
@@ -210,18 +215,22 @@ $white: #ffffff;
     border-radius: 40px 0 0 40px;
     border-right: none;
 
-    /* 🔥 БІЛЬШИЙ ТА ПЛАВНІШИЙ ЕФЕКТ (розтягнуто на 35% ширини картки) */
+    /* 🔥 ДУЖЕ СИЛЬНЕ РОЗСІЮВАННЯ: останні 12% повністю прозорі, далі плавний перехід аж до 60% */
     -webkit-mask-image: linear-gradient(
       to left,
       transparent 0%,
-      rgba(0, 0, 0, 0.1) 8%,
-      black 35%
+      transparent 12%,
+      rgba(0, 0, 0, 0.1) 25%,
+      rgba(0, 0, 0, 0.6) 40%,
+      black 60%
     );
     mask-image: linear-gradient(
       to left,
       transparent 0%,
-      rgba(0, 0, 0, 0.1) 8%,
-      black 35%
+      transparent 12%,
+      rgba(0, 0, 0, 0.1) 25%,
+      rgba(0, 0, 0, 0.6) 40%,
+      black 60%
     );
   }
 
@@ -307,7 +316,7 @@ $white: #ffffff;
 /* ВЕЛИКІ ЕКРАНИ */
 @media (min-width: 1600px) {
   .targetCard {
-    height: 650px;
+    height: 600px;
   }
 }
 
@@ -424,7 +433,6 @@ $white: #ffffff;
 @media (hover: none) and (pointer: coarse) {
   .targetCard {
     cursor: default;
-    /* Повністю відключаємо реакцію на натискання */
     pointer-events: none;
   }
 }
