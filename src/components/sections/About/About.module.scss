@@ -114,7 +114,6 @@ $white: #ffffff;
 
 .targetCard {
   position: relative;
-  /* border-radius: 40px; — ВИДАЛЕНО ЗВІДСИ, перенесено в nth-child */
   overflow: hidden;
   height: 500px;
   display: flex;
@@ -176,8 +175,8 @@ $white: #ffffff;
 
   /* 🔥 ПЕРША КАРТКА: Прямі кути зліва (де вона виходить за екран) */
   &:nth-child(1) {
-    border-radius: 0 40px 40px 0; /* Верх-ліво: 0, Верх-право: 40, Низ-право: 40, Низ-ліво: 0 */
-    border-left: none; /* Ховаємо рамку на обрізаному краї */
+    border-radius: 0 40px 40px 0;
+    border-left: none;
     .cardContent {
       flex-direction: row-reverse;
     }
@@ -188,7 +187,7 @@ $white: #ffffff;
 
   /* 🔥 ДРУГА КАРТКА: Прямі кути справа */
   &:nth-child(2) {
-    border-radius: 40px 0 0 40px; /* Заокруглення лише зліва */
+    border-radius: 40px 0 0 40px;
     border-right: none;
   }
 
@@ -271,6 +270,12 @@ $white: #ffffff;
    АДАПТИВНІСТЬ
    ========================================== */
 
+@media (min-width: 1500px) {
+  .targetCard {
+    height: 600px;
+  }
+}
+
 @media (max-width: 1024px) {
   .sectionHeader h2 {
     font-size: 34px;
@@ -305,9 +310,8 @@ $white: #ffffff;
     padding: 32px;
   }
 
-  /* 🔹 Перша картка (виїжджає за лівий край) */
   .targetCard:nth-child(1) {
-    border-radius: 0 32px 32px 0; /* Гострі кути зліва на мобільному */
+    border-radius: 0 32px 32px 0;
     align-self: flex-start;
     margin-left: -8vw;
 
@@ -317,9 +321,8 @@ $white: #ffffff;
     }
   }
 
-  /* 🔹 Друга картка (виїжджає за правий край) */
   .targetCard:nth-child(2) {
-    border-radius: 32px 0 0 32px; /* Гострі кути справа на мобільному */
+    border-radius: 32px 0 0 32px;
     align-self: flex-end;
     margin-right: -8vw;
 
@@ -353,7 +356,7 @@ $white: #ffffff;
   }
 
   .targetCard:nth-child(1) {
-    border-radius: 0 24px 24px 0; /* Пропорційно менше заокруглення для телефонів */
+    border-radius: 0 24px 24px 0;
     margin-left: -6vw;
     .cardContent {
       gap: 16px;
@@ -361,7 +364,7 @@ $white: #ffffff;
   }
 
   .targetCard:nth-child(2) {
-    border-radius: 24px 0 0 24px; /* Пропорційно менше заокруглення для телефонів */
+    border-radius: 24px 0 0 24px;
     margin-right: -6vw;
     .cardContent {
       gap: 16px;
@@ -376,5 +379,13 @@ $white: #ffffff;
     p {
       font-size: 16px;
     }
+  }
+}
+
+/* 🔥 ВІДКЛЮЧЕННЯ КЛІКІВ ТА ХОВЕРІВ НА СЕНСОРНИХ ЕКРАНАХ */
+@media (hover: none) and (pointer: coarse) {
+  .targetCard {
+    cursor: default;
+    pointer-events: none; /* Забороняє будь-яку взаємодію з карткою (кліки, ховери) */
   }
 }
