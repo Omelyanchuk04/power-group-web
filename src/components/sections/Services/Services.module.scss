@@ -7,7 +7,7 @@ $primary: #0056b3;
   height: 100vh;
   height: 100svh;
   min-height: 480px;
-  overflow: hidden;
+  overflow-x: clip; /* 🔥 БУЛО overflow: hidden; СТАЛО overflow-x: clip; */
   color: #0f172a;
   display: flex;
   align-items: center;

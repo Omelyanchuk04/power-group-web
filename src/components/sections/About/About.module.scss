@@ -11,8 +11,7 @@ $white: #ffffff;
   position: relative;
   z-index: 2;
   padding: 40px 0 0;
-  /* 🔥 clip замість hidden усуває "залипання" при скролі на телефонах */
-  overflow: clip;
+  overflow-x: clip; /* 🔥 БУЛО overflow: clip; СТАЛО overflow-x: clip; */
 }
 
 .container {
