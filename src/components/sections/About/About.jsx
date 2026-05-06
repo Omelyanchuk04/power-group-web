@@ -103,32 +103,27 @@ export default function About() {
         },
       );
 
-      // 🔥 СТВОРЮЄМО MATCHMEDIA ДЛЯ ПАРАЛАКСУ (Тільки Десктоп та Планшети)
-      let mm = gsap.matchMedia();
+      // 🔥 ПАРАЛАКС ДЛЯ ВСІХ ЕКРАНІВ БЕЗ ОБМЕЖЕНЬ
+      const parallaxWrappers = gsap.utils.toArray(
+        `.${styles.imgParallaxWrapper}`,
+      );
 
-      mm.add("(min-width: 768px)", () => {
-        const parallaxWrappers = gsap.utils.toArray(
-          `.${styles.imgParallaxWrapper}`,
-        );
-        parallaxWrappers.forEach((wrapper) => {
-          gsap.fromTo(
-            wrapper,
-            { yPercent: -15 },
-            {
-              yPercent: 15,
-              ease: "none",
-              scrollTrigger: {
-                trigger: wrapper.parentNode,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 1,
-              },
+      parallaxWrappers.forEach((wrapper) => {
+        gsap.fromTo(
+          wrapper,
+          { yPercent: -15 },
+          {
+            yPercent: 15,
+            ease: "none",
+            scrollTrigger: {
+              trigger: wrapper.parentNode,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1, // Плавний паралакс
             },
-          );
-        });
+          },
+        );
       });
-
-      return () => mm.revert(); // Очищення при розмонтуванні
     },
     { scope: sectionRef, dependencies: [] },
   );
