@@ -176,15 +176,11 @@ $white: #ffffff;
     width: 100%;
   }
 
-  /* ПЕРША КАРТКА: Прямі кути зліва, вирівнювання вправо */
   &:nth-child(1) {
     border-radius: 0 40px 40px 0;
     border-left: none;
-
-    /* Звичайне легке розсіювання для екранів до 1600px */
     -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
     mask-image: linear-gradient(to right, transparent 0%, black 12%);
-
     .cardContent {
       flex-direction: row-reverse;
     }
@@ -193,12 +189,9 @@ $white: #ffffff;
     }
   }
 
-  /* ДРУГА КАРТКА: Прямі кути справа, вирівнювання вліво */
   &:nth-child(2) {
     border-radius: 40px 0 0 40px;
     border-right: none;
-
-    /* Звичайне легке розсіювання для екранів до 1600px */
     -webkit-mask-image: linear-gradient(to left, transparent 0%, black 12%);
     mask-image: linear-gradient(to left, transparent 0%, black 12%);
   }
@@ -217,7 +210,6 @@ $white: #ffffff;
     flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.4s ease;
-
     svg {
       width: 30px;
       height: 30px;
@@ -232,7 +224,6 @@ $white: #ffffff;
       color: $white;
       letter-spacing: -0.5px;
     }
-
     p {
       margin: 0;
       font-size: 16px;
@@ -261,7 +252,6 @@ $white: #ffffff;
   margin: 0 auto;
   text-align: center;
   padding: 80px 20px 0;
-
   h3 {
     font-size: 28px;
     font-weight: 700;
@@ -269,7 +259,6 @@ $white: #ffffff;
     margin: 0 0 16px 0;
     letter-spacing: -0.5px;
   }
-
   p {
     font-size: 18px;
     color: $text-gray;
@@ -286,12 +275,14 @@ $white: #ffffff;
 @media (min-width: 1600px) {
   .targetGrid {
     width: 100%;
-    /* 🔥 Більша максимальна ширина, щоб картинки були ближче до країв екрана */
-    max-width: 1560px;
+    /* 🔥 Збільшена максимальна ширина */
+    max-width: 1680px;
+    /* 🔥 Збільшена відстань між картками */
+    gap: 80px;
     left: auto;
     transform: none;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 60px;
   }
 
   .targetCard {
@@ -300,48 +291,43 @@ $white: #ffffff;
     &:nth-child(1) {
       border-radius: 40px;
       border-left: 1px solid rgba(255, 255, 255, 0.6);
-
-      /* 🔥 Зменшена зона розмиття (тепер 45% замість 80%). Більше картинки залишається чіткою */
       -webkit-mask-image: linear-gradient(
         to right,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 10%,
-        rgba(0, 0, 0, 0.8) 30%,
-        black 45%
+        rgba(0, 0, 0, 0.05) 15%,
+        rgba(0, 0, 0, 0.8) 35%,
+        black 55%
       );
       mask-image: linear-gradient(
         to right,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 10%,
-        rgba(0, 0, 0, 0.8) 30%,
-        black 45%
+        rgba(0, 0, 0, 0.05) 15%,
+        rgba(0, 0, 0, 0.8) 35%,
+        black 55%
       );
     }
 
     &:nth-child(2) {
       border-radius: 40px;
       border-right: 1px solid rgba(255, 255, 255, 0.6);
-
-      /* 🔥 Зменшена зона розмиття (тепер 45% замість 80%). Більше картинки залишається чіткою */
       -webkit-mask-image: linear-gradient(
         to left,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 10%,
-        rgba(0, 0, 0, 0.8) 30%,
-        black 45%
+        rgba(0, 0, 0, 0.05) 15%,
+        rgba(0, 0, 0, 0.8) 35%,
+        black 55%
       );
       mask-image: linear-gradient(
         to left,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 10%,
-        rgba(0, 0, 0, 0.8) 30%,
-        black 45%
+        rgba(0, 0, 0, 0.05) 15%,
+        rgba(0, 0, 0, 0.8) 35%,
+        black 55%
       );
     }
   }
 }
 
-/* ПЛАНШЕТИ */
 @media (max-width: 1024px) {
   .sectionHeader h2 {
     font-size: 34px;
@@ -356,7 +342,6 @@ $white: #ffffff;
   }
 }
 
-/* МОБІЛЬНІ (Шаховий порядок) */
 @media (max-width: 768px) {
   .targetGrid {
     display: flex;
@@ -366,33 +351,27 @@ $white: #ffffff;
     transform: translateX(-50%);
     gap: 32px;
   }
-
   .lightSection {
     padding: 30px 0 0;
   }
-
   .targetCard {
     height: 380px;
     width: 90vw;
     padding: 32px;
   }
-
   .targetCard:nth-child(1) {
     border-radius: 0 32px 32px 0;
     align-self: flex-start;
     margin-left: -8vw;
-
     .cardContent {
       flex-direction: column;
       align-items: flex-end;
     }
   }
-
   .targetCard:nth-child(2) {
     border-radius: 32px 0 0 32px;
     align-self: flex-end;
     margin-right: -8vw;
-
     .cardContent {
       flex-direction: column;
       align-items: flex-start;
@@ -400,7 +379,6 @@ $white: #ffffff;
   }
 }
 
-/* МАЛІ ЕКРАНИ (ТЕЛЕФОНИ) */
 @media (max-width: 576px) {
   .sectionHeader {
     margin-bottom: 40px;
@@ -408,21 +386,17 @@ $white: #ffffff;
       font-size: 26px;
     }
   }
-
   .offerHeader h3 {
     font-size: 22px;
   }
-
   .targetCard {
     height: 340px;
     width: 92vw;
     padding: 24px;
-
     .targetText h4 {
       font-size: 22px;
     }
   }
-
   .targetCard:nth-child(1) {
     border-radius: 0 24px 24px 0;
     margin-left: -6vw;
@@ -430,7 +404,6 @@ $white: #ffffff;
       gap: 16px;
     }
   }
-
   .targetCard:nth-child(2) {
     border-radius: 24px 0 0 24px;
     margin-right: -6vw;
@@ -438,7 +411,6 @@ $white: #ffffff;
       gap: 16px;
     }
   }
-
   .transitionBlock {
     padding: 60px 0 0;
     h3 {
@@ -450,7 +422,6 @@ $white: #ffffff;
   }
 }
 
-/* 🔥 ВІДКЛЮЧЕННЯ КЛІКІВ ТА ХОВЕРІВ НА СЕНСОРНИХ ЕКРАНАХ */
 @media (hover: none) and (pointer: coarse) {
   .targetCard {
     cursor: default;
