@@ -101,14 +101,16 @@ $white: #ffffff;
   overflow: visible;
 }
 
+/* 🔥 БАЗА (до 1600px): Картки виходять за межі екрана */
 .targetGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  width: 100%;
+
+  width: 108vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .targetCard {
@@ -174,28 +176,14 @@ $white: #ffffff;
     width: 100%;
   }
 
-  /* 🔥 ПЕРША КАРТКА: Прямі кути зліва + Дуже плавне розчинення */
+  /* ПЕРША КАРТКА: Прямі кути зліва, вирівнювання вправо */
   &:nth-child(1) {
-    border-radius: 0 40px 40px 0; /* Зліва кути гострі */
-    border-left: none; /* Прибрали рамку зліва */
+    border-radius: 0 40px 40px 0;
+    border-left: none;
 
-    /* Дуже довгий і м'який перехід аж до 80% ширини */
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      transparent 5%,
-      rgba(0, 0, 0, 0.05) 25%,
-      rgba(0, 0, 0, 0.5) 55%,
-      black 80%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      transparent 5%,
-      rgba(0, 0, 0, 0.05) 25%,
-      rgba(0, 0, 0, 0.5) 55%,
-      black 80%
-    );
+    /* Звичайне легке розсіювання для екранів до 1600px */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
+    mask-image: linear-gradient(to right, transparent 0%, black 12%);
 
     .cardContent {
       flex-direction: row-reverse;
@@ -205,28 +193,14 @@ $white: #ffffff;
     }
   }
 
-  /* 🔥 ДРУГА КАРТКА: Прямі кути справа + Дуже плавне розчинення */
+  /* ДРУГА КАРТКА: Прямі кути справа, вирівнювання вліво */
   &:nth-child(2) {
-    border-radius: 40px 0 0 40px; /* Справа кути гострі */
-    border-right: none; /* Прибрали рамку справа */
+    border-radius: 40px 0 0 40px;
+    border-right: none;
 
-    /* Дуже довгий і м'який перехід аж до 80% ширини */
-    -webkit-mask-image: linear-gradient(
-      to left,
-      transparent 0%,
-      transparent 5%,
-      rgba(0, 0, 0, 0.05) 25%,
-      rgba(0, 0, 0, 0.5) 55%,
-      black 80%
-    );
-    mask-image: linear-gradient(
-      to left,
-      transparent 0%,
-      transparent 5%,
-      rgba(0, 0, 0, 0.05) 25%,
-      rgba(0, 0, 0, 0.5) 55%,
-      black 80%
-    );
+    /* Звичайне легке розсіювання для екранів до 1600px */
+    -webkit-mask-image: linear-gradient(to left, transparent 0%, black 12%);
+    mask-image: linear-gradient(to left, transparent 0%, black 12%);
   }
 
   .targetIcon {
@@ -308,10 +282,66 @@ $white: #ffffff;
    АДАПТИВНІСТЬ
    ========================================== */
 
-/* ВЕЛИКІ ЕКРАНИ */
-@media (min-width: 1500px) {
+/* 🔥 ВЕЛИЧЕЗНІ ЕКРАНИ (>1600px) 🔥 */
+/* Повертаємо картки у рамки контейнера та робимо дуже сильне розмиття */
+@media (min-width: 1600px) {
+  .targetGrid {
+    width: 100%;
+    max-width: 1200px;
+    left: auto;
+    transform: none;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
   .targetCard {
     height: 600px;
+
+    &:nth-child(1) {
+      border-radius: 40px; /* Повертаємо заокруглення */
+      border-left: 1px solid rgba(255, 255, 255, 0.6); /* Повертаємо рамку */
+
+      /* 🔥 ДУЖЕ СИЛЬНЕ РОЗСІЮВАННЯ */
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 5%,
+        rgba(0, 0, 0, 0.05) 25%,
+        rgba(0, 0, 0, 0.5) 55%,
+        black 80%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 5%,
+        rgba(0, 0, 0, 0.05) 25%,
+        rgba(0, 0, 0, 0.5) 55%,
+        black 80%
+      );
+    }
+
+    &:nth-child(2) {
+      border-radius: 40px; /* Повертаємо заокруглення */
+      border-right: 1px solid rgba(255, 255, 255, 0.6); /* Повертаємо рамку */
+
+      /* 🔥 ДУЖЕ СИЛЬНЕ РОЗСІЮВАННЯ */
+      -webkit-mask-image: linear-gradient(
+        to left,
+        transparent 0%,
+        transparent 5%,
+        rgba(0, 0, 0, 0.05) 25%,
+        rgba(0, 0, 0, 0.5) 55%,
+        black 80%
+      );
+      mask-image: linear-gradient(
+        to left,
+        transparent 0%,
+        transparent 5%,
+        rgba(0, 0, 0, 0.05) 25%,
+        rgba(0, 0, 0, 0.5) 55%,
+        black 80%
+      );
+    }
   }
 }
 
@@ -320,26 +350,13 @@ $white: #ffffff;
   .sectionHeader h2 {
     font-size: 34px;
   }
-  .targetGrid {
-    max-width: none;
-    padding: 0;
-    width: 104vw;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    gap: 30px;
-  }
   .targetCard {
     height: 420px;
     padding: 36px;
   }
-  .targetCard:nth-child(1) {
-    border-radius: 0 40px 40px 0;
-    border-left: none;
-  }
-  .targetCard:nth-child(2) {
-    border-radius: 40px 0 0 40px;
-    border-right: none;
+  .targetGrid {
+    width: 104vw;
+    gap: 30px;
   }
 }
 
