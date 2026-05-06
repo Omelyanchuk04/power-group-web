@@ -179,8 +179,20 @@ $white: #ffffff;
   &:nth-child(1) {
     border-radius: 0 40px 40px 0;
     border-left: none;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
-    mask-image: linear-gradient(to right, transparent 0%, black 12%);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 10%,
+      rgba(0, 0, 0, 0.6) 20%,
+      black 35%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 10%,
+      rgba(0, 0, 0, 0.6) 20%,
+      black 35%
+    );
     .cardContent {
       flex-direction: row-reverse;
     }
@@ -192,8 +204,20 @@ $white: #ffffff;
   &:nth-child(2) {
     border-radius: 40px 0 0 40px;
     border-right: none;
-    -webkit-mask-image: linear-gradient(to left, transparent 0%, black 12%);
-    mask-image: linear-gradient(to left, transparent 0%, black 12%);
+    -webkit-mask-image: linear-gradient(
+      to left,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 10%,
+      rgba(0, 0, 0, 0.6) 20%,
+      black 35%
+    );
+    mask-image: linear-gradient(
+      to left,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 10%,
+      rgba(0, 0, 0, 0.6) 20%,
+      black 35%
+    );
   }
 
   .targetIcon {
@@ -275,9 +299,7 @@ $white: #ffffff;
 @media (min-width: 1600px) {
   .targetGrid {
     width: 100%;
-    /* 🔥 Ще більша ширина, щоб бути ближче до країв */
     max-width: 1760px;
-    /* 🔥 Комфортна відстань */
     gap: 60px;
     left: auto;
     transform: none;
@@ -289,38 +311,42 @@ $white: #ffffff;
     height: 600px;
 
     &:nth-child(1) {
-      border-radius: 40px;
-      border-left: 1px solid rgba(255, 255, 255, 0.6);
-      /* 🔥 МІНІМАЛЬНЕ РОЗМИТТЯ: тільки самий край */
+      border-radius: 0 40px 40px 0; /* 🔥 Прибрали заокруглення зліва (біля краю) */
+      border-left: none;
+      /* 🔥 Рівномірний плавний перехід */
       -webkit-mask-image: linear-gradient(
         to right,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 5%,
-        black 20%
+        rgba(0, 0, 0, 0.2) 10%,
+        rgba(0, 0, 0, 0.6) 20%,
+        black 35%
       );
       mask-image: linear-gradient(
         to right,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 5%,
-        black 20%
+        rgba(0, 0, 0, 0.2) 10%,
+        rgba(0, 0, 0, 0.6) 20%,
+        black 35%
       );
     }
 
     &:nth-child(2) {
-      border-radius: 40px;
-      border-right: 1px solid rgba(255, 255, 255, 0.6);
-      /* 🔥 МІНІМАЛЬНЕ РОЗМИТТЯ: тільки самий край */
+      border-radius: 40px 0 0 40px; /* 🔥 Прибрали заокруглення справа (біля краю) */
+      border-right: none;
+      /* 🔥 Рівномірний плавний перехід */
       -webkit-mask-image: linear-gradient(
         to left,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 5%,
-        black 20%
+        rgba(0, 0, 0, 0.2) 10%,
+        rgba(0, 0, 0, 0.6) 20%,
+        black 35%
       );
       mask-image: linear-gradient(
         to left,
         transparent 0%,
-        rgba(0, 0, 0, 0.1) 5%,
-        black 20%
+        rgba(0, 0, 0, 0.2) 10%,
+        rgba(0, 0, 0, 0.6) 20%,
+        black 35%
       );
     }
   }
