@@ -34,13 +34,14 @@ $primary: #0056b3;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  gap: 12px; // Відстань між бейджем та заголовком
 }
 
 .headerRight {
   grid-column: 3;
   display: flex;
   justify-content: flex-end;
-  padding-bottom: 6px; // Щоб кнопка візуально була на одній лінії з текстом
+  padding-bottom: 6px;
 }
 
 .badge {
@@ -53,7 +54,6 @@ $primary: #0056b3;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   border-radius: 100px;
-  margin-bottom: 12px;
   border: 1px solid rgba(0, 86, 179, 0.15);
   backdrop-filter: blur(10px);
 }
@@ -78,7 +78,6 @@ $primary: #0056b3;
   filter: drop-shadow(0 4px 10px rgba(0, 86, 179, 0.15));
 }
 
-/* 🔥 Компактна кнопка 🔥 */
 .viewAllBtn {
   pointer-events: auto;
   display: inline-flex;
@@ -228,7 +227,7 @@ $primary: #0056b3;
   position: relative;
   z-index: 2;
   padding: 36px;
-  padding-right: 85px; // Місце для плюсика
+  padding-right: 85px;
   color: #ffffff;
 
   @media (max-width: 768px) {
@@ -654,7 +653,7 @@ $primary: #0056b3;
 
 @media (max-width: 768px) {
   .staticHeader {
-    top: clamp(30px, 5vh, 60px);
+    top: clamp(20px, 4vh, 40px);
     padding: 0 20px;
     display: flex;
     flex-direction: column;
@@ -665,24 +664,27 @@ $primary: #0056b3;
   .headerRight {
     grid-column: unset;
   }
+  .headerCenter {
+    gap: 8px; // Тісніший відступ між бейджем та заголовком
+  }
   .headerRight {
     padding-bottom: 0;
   }
   .viewAllBtn {
     margin-bottom: 0;
-    padding: 8px 16px;
+    padding: 8px 18px;
     font-size: 13px;
   }
   .title {
     font-size: 28px;
   }
   .horizontalTrack {
-    margin-top: 2vh;
+    margin-top: 0;
   }
   .servicePanel {
     width: 340px;
-    margin: 0 12px;
-    height: clamp(380px, 58vh, 520px);
+    margin: 70px 12px 0; // 🔥 Опускаємо картки нижче заголовка 🔥
+    height: clamp(360px, 55vh, 480px);
   }
   .spacer,
   .spacerEnd {
@@ -715,20 +717,18 @@ $primary: #0056b3;
 
 @media (max-width: 480px) {
   .staticHeader {
-    top: 30px;
+    top: 20px;
+    gap: 10px;
   }
   .title {
     font-size: 24px;
   }
-  .horizontalTrack {
-    margin-top: 0;
-  }
   .servicePanel {
     width: 280px;
-    margin: 0 8px;
-    height: calc(100svh - 240px);
+    margin: 100px 8px 0; // 🔥 Опускаємо картки ще нижче на смартфонах 🔥
+    height: calc(100svh - 270px);
     min-height: 320px;
-    max-height: 480px;
+    max-height: 440px;
   }
   .spacer,
   .spacerEnd {
@@ -746,8 +746,7 @@ $primary: #0056b3;
     line-height: 1.4;
   }
   .navControls {
-    bottom: 65px;
-    gap: 12px;
+    bottom: 60px;
   }
   .navBtn {
     width: 44px;
@@ -755,6 +754,5 @@ $primary: #0056b3;
   }
   .progressContainer {
     bottom: 15px;
-    padding: 0 24px 20px;
   }
 }

@@ -27,7 +27,6 @@ export default function Services() {
   const autoScrollTimer = useRef(null);
   const isUserInteracting = useRef(false);
 
-  // 🔥 Реф для відслідковування модалки БЕЗ перезапуску useEffect 🔥
   const isModalOpenRef = useRef(false);
 
   const modalCardRef = useRef(null);
@@ -100,8 +99,6 @@ export default function Services() {
     }, timeout);
   };
 
-  // 🔥 Цей useEffect більше НЕ залежить від selectedService 🔥
-  // Анімація відпрацює лише 1 раз при першому завантаженні
   useEffect(() => {
     setMounted(true);
     let ctx = gsap.context(() => {
@@ -134,7 +131,7 @@ export default function Services() {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 70%",
-            toggleActions: "play none none none", // Грає 1 раз і залишається
+            toggleActions: "play none none none",
           },
         },
       );
@@ -219,9 +216,8 @@ export default function Services() {
       }
       ctx.revert();
     };
-  }, []); // Порожній масив залежностей!
+  }, []);
 
-  // Синхронізуємо стан модалки з рефом та overflow
   useEffect(() => {
     isModalOpenRef.current = !!selectedService;
     if (selectedService) {
@@ -364,7 +360,6 @@ export default function Services() {
   return (
     <div ref={wrapperRef}>
       <section className={styles.servicesSection} ref={sectionRef}>
-        {/* 🔥 Відцентрований Header 🔥 */}
         <div className={styles.staticHeader}>
           <div className={styles.headerCenter}>
             <span className={styles.badge}>Послуги</span>
