@@ -384,7 +384,7 @@ $white: #ffffff;
     padding: 32px;
   }
   .targetCard:nth-child(1) {
-    border-radius: 0 32px 32px 0;
+    // border-radius: 0 32px 32px 0;
     align-self: flex-start;
     margin-left: -8vw;
     .cardContent {
@@ -393,7 +393,7 @@ $white: #ffffff;
     }
   }
   .targetCard:nth-child(2) {
-    border-radius: 32px 0 0 32px;
+    // border-radius: 32px 0 0 32px;
     align-self: flex-end;
     margin-right: -8vw;
     .cardContent {
@@ -422,14 +422,14 @@ $white: #ffffff;
     }
   }
   .targetCard:nth-child(1) {
-    border-radius: 0 24px 24px 0;
+    border-radius: 0 32px 32px 0;
     margin-left: -6vw;
     .cardContent {
       gap: 16px;
     }
   }
   .targetCard:nth-child(2) {
-    border-radius: 24px 0 0 24px;
+    border-radius: 32px 0 0 32px;
     margin-right: -6vw;
     .cardContent {
       gap: 16px;
