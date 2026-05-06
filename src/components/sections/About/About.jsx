@@ -103,26 +103,32 @@ export default function About() {
         },
       );
 
-      // 🔥 ПОКРАЩЕНИЙ ПАРАЛАКС ДЛЯ КАРТИНОК
-      const parallaxWrappers = gsap.utils.toArray(
-        `.${styles.imgParallaxWrapper}`,
-      );
-      parallaxWrappers.forEach((wrapper) => {
-        gsap.fromTo(
-          wrapper,
-          { yPercent: -15 }, // Починаємо вище
-          {
-            yPercent: 15, // Опускаємо нижче під час скролу
-            ease: "none",
-            scrollTrigger: {
-              trigger: wrapper.parentNode, // Тригером є сама картка
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1, // Додає плавну інерцію (було просто true)
-            },
-          },
+      // 🔥 СТВОРЮЄМО MATCHMEDIA ДЛЯ ПАРАЛАКСУ (Тільки Десктоп та Планшети)
+      let mm = gsap.matchMedia();
+
+      mm.add("(min-width: 768px)", () => {
+        const parallaxWrappers = gsap.utils.toArray(
+          `.${styles.imgParallaxWrapper}`,
         );
+        parallaxWrappers.forEach((wrapper) => {
+          gsap.fromTo(
+            wrapper,
+            { yPercent: -15 },
+            {
+              yPercent: 15,
+              ease: "none",
+              scrollTrigger: {
+                trigger: wrapper.parentNode,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1,
+              },
+            },
+          );
+        });
       });
+
+      return () => mm.revert(); // Очищення при розмонтуванні
     },
     { scope: sectionRef, dependencies: [] },
   );

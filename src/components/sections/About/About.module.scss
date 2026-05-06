@@ -11,7 +11,8 @@ $white: #ffffff;
   position: relative;
   z-index: 2;
   padding: 40px 0 0;
-  overflow-x: hidden;
+  /* 🔥 clip замість hidden усуває "залипання" при скролі на телефонах */
+  overflow: clip;
 }
 
 .container {
@@ -124,6 +125,9 @@ $white: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.6);
   transform: translateZ(0);
 
+  /* 🔥 Каже телефону ігнорувати свайпи вбік і просто плавно скролити вниз */
+  touch-action: pan-y;
+
   .imgParallaxWrapper {
     position: absolute;
     top: -15%;
@@ -131,6 +135,8 @@ $white: #ffffff;
     width: 100%;
     height: 130%;
     z-index: 0;
+    /* Апаратне прискорення для плавності паралаксу */
+    transform: translateZ(0);
     will-change: transform;
   }
 
@@ -173,10 +179,15 @@ $white: #ffffff;
     width: 100%;
   }
 
-  /* 🔥 ПЕРША КАРТКА: Прямі кути зліва (де вона виходить за екран) */
+  /* 🔥 ПЕРША КАРТКА: Прямі кути зліва, вирівнювання вправо та плавне розчинення лівого краю */
   &:nth-child(1) {
     border-radius: 0 40px 40px 0;
     border-left: none;
+
+    /* Ефект розчинення до прозорого (від 0% до 12% ширини зліва) */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
+    mask-image: linear-gradient(to right, transparent 0%, black 12%);
+
     .cardContent {
       flex-direction: row-reverse;
     }
@@ -185,10 +196,14 @@ $white: #ffffff;
     }
   }
 
-  /* 🔥 ДРУГА КАРТКА: Прямі кути справа */
+  /* 🔥 ДРУГА КАРТКА: Прямі кути справа, вирівнювання вліво та плавне розчинення правого краю */
   &:nth-child(2) {
     border-radius: 40px 0 0 40px;
     border-right: none;
+
+    /* Ефект розчинення до прозорого (від 0% до 12% ширини справа) */
+    -webkit-mask-image: linear-gradient(to left, transparent 0%, black 12%);
+    mask-image: linear-gradient(to left, transparent 0%, black 12%);
   }
 
   .targetIcon {
@@ -270,12 +285,14 @@ $white: #ffffff;
    АДАПТИВНІСТЬ
    ========================================== */
 
+/* ВЕЛИКІ ЕКРАНИ */
 @media (min-width: 1600px) {
   .targetCard {
     height: 600px;
   }
 }
 
+/* ПЛАНШЕТИ */
 @media (max-width: 1024px) {
   .sectionHeader h2 {
     font-size: 34px;
@@ -290,6 +307,7 @@ $white: #ffffff;
   }
 }
 
+/* МОБІЛЬНІ (Шаховий порядок) */
 @media (max-width: 768px) {
   .targetGrid {
     display: flex;
@@ -333,6 +351,7 @@ $white: #ffffff;
   }
 }
 
+/* МАЛІ ЕКРАНИ (ТЕЛЕФОНИ) */
 @media (max-width: 576px) {
   .sectionHeader {
     margin-bottom: 40px;
@@ -386,6 +405,7 @@ $white: #ffffff;
 @media (hover: none) and (pointer: coarse) {
   .targetCard {
     cursor: default;
-    pointer-events: none; /* Забороняє будь-яку взаємодію з карткою (кліки, ховери) */
+    /* Повністю відключаємо реакцію на натискання */
+    pointer-events: none;
   }
 }
