@@ -6,7 +6,7 @@ import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import styles from "./About.module.scss";
-import CompanyStats from "@/components/shared/CompanyStats/CompanyStats"; // 🔥 ІМПОРТУЄМО БЛОК
+import CompanyStats from "@/components/shared/CompanyStats/CompanyStats";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -103,21 +103,22 @@ export default function About() {
         },
       );
 
+      // 🔥 ПОКРАЩЕНИЙ ПАРАЛАКС ДЛЯ КАРТИНОК
       const parallaxWrappers = gsap.utils.toArray(
         `.${styles.imgParallaxWrapper}`,
       );
       parallaxWrappers.forEach((wrapper) => {
         gsap.fromTo(
           wrapper,
-          { yPercent: -10 },
+          { yPercent: -15 }, // Починаємо вище
           {
-            yPercent: 10,
+            yPercent: 15, // Опускаємо нижче під час скролу
             ease: "none",
             scrollTrigger: {
-              trigger: wrapper.parentNode,
+              trigger: wrapper.parentNode, // Тригером є сама картка
               start: "top bottom",
               end: "bottom top",
-              scrub: true,
+              scrub: 1, // Додає плавну інерцію (було просто true)
             },
           },
         );
@@ -138,8 +139,10 @@ export default function About() {
             забезпечуючи надійний результат.
           </p>
         </div>
+      </div>
 
-        <div className={styles.offerWrapper}>
+      <div className={styles.offerWrapper}>
+        <div className={styles.container}>
           <div className={styles.offerHeader}>
             <h3>Що ми пропонуємо</h3>
             <p>
@@ -147,7 +150,9 @@ export default function About() {
               приватних клієнтів, так і великого бізнесу.
             </p>
           </div>
+        </div>
 
+        <div className={styles.targetGridWrapper}>
           <div className={styles.targetGrid}>
             <div className={styles.targetCard}>
               <div className={styles.imgParallaxWrapper}>
@@ -222,7 +227,9 @@ export default function About() {
             </div>
           </div>
         </div>
+      </div>
 
+      <div className={styles.container}>
         <div className={styles.transitionBlock}>
           <h3>Надійність на кожному етапі</h3>
           <p>

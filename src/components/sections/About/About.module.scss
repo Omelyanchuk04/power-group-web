@@ -10,12 +10,14 @@ $white: #ffffff;
   background-color: transparent;
   position: relative;
   z-index: 2;
-  padding: 40px 20px 0;
+  padding: 40px 0 0;
+  overflow-x: hidden;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px;
 }
 
 .sectionHeader {
@@ -68,9 +70,14 @@ $white: #ffffff;
   }
 }
 
+.offerWrapper {
+  width: 100%;
+  margin-bottom: 60px;
+}
+
 .offerHeader {
-  margin-bottom: 40px;
   max-width: 600px;
+  margin-bottom: 40px;
 
   h3 {
     font-size: 32px;
@@ -88,31 +95,44 @@ $white: #ffffff;
   }
 }
 
+.targetGridWrapper {
+  width: 100%;
+  position: relative;
+  overflow: visible;
+}
+
 .targetGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: 40px;
+
+  width: 108vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .targetCard {
   position: relative;
-  border-radius: 32px;
+  /* border-radius: 40px; — ВИДАЛЕНО ЗВІДСИ, перенесено в nth-child */
   overflow: hidden;
-  height: 380px;
+  height: 500px;
   display: flex;
   align-items: flex-end;
-  padding: 36px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 48px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.6);
+  transform: translateZ(0);
 
   .imgParallaxWrapper {
     position: absolute;
-    top: -20%;
+    top: -15%;
     left: 0;
     width: 100%;
-    height: 140%;
+    height: 130%;
     z-index: 0;
+    will-change: transform;
   }
 
   .bgImage {
@@ -126,8 +146,9 @@ $white: #ffffff;
     z-index: 1;
     background: linear-gradient(
       to bottom,
-      rgba(15, 23, 42, 0.1) 0%,
-      rgba(15, 23, 42, 0.9) 100%
+      rgba(15, 23, 42, 0) 0%,
+      rgba(15, 23, 42, 0.8) 60%,
+      rgba(15, 23, 42, 0.95) 100%
     );
 
     &::after {
@@ -151,6 +172,24 @@ $white: #ffffff;
     align-items: flex-end;
     gap: 24px;
     width: 100%;
+  }
+
+  /* 🔥 ПЕРША КАРТКА: Прямі кути зліва (де вона виходить за екран) */
+  &:nth-child(1) {
+    border-radius: 0 40px 40px 0; /* Верх-ліво: 0, Верх-право: 40, Низ-право: 40, Низ-ліво: 0 */
+    border-left: none; /* Ховаємо рамку на обрізаному краї */
+    .cardContent {
+      flex-direction: row-reverse;
+    }
+    .targetText {
+      text-align: right;
+    }
+  }
+
+  /* 🔥 ДРУГА КАРТКА: Прямі кути справа */
+  &:nth-child(2) {
+    border-radius: 40px 0 0 40px; /* Заокруглення лише зліва */
+    border-right: none;
   }
 
   .targetIcon {
@@ -210,7 +249,6 @@ $white: #ffffff;
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
-  /* 🔥 Тут залишаємо 0 знизу, щоб не сумувалося з відступом статистики */
   padding: 80px 20px 0;
 
   h3 {
@@ -232,50 +270,108 @@ $white: #ffffff;
 /* ==========================================
    АДАПТИВНІСТЬ
    ========================================== */
+
 @media (max-width: 1024px) {
   .sectionHeader h2 {
     font-size: 34px;
   }
-  .targetGrid {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
   .targetCard {
-    height: 320px;
+    height: 420px;
+    padding: 36px;
+  }
+  .targetGrid {
+    width: 104vw;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .targetGrid {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 32px;
+  }
+
+  .lightSection {
+    padding: 30px 0 0;
+  }
+
+  .targetCard {
+    height: 380px;
+    width: 90vw;
+    padding: 32px;
+  }
+
+  /* 🔹 Перша картка (виїжджає за лівий край) */
+  .targetCard:nth-child(1) {
+    border-radius: 0 32px 32px 0; /* Гострі кути зліва на мобільному */
+    align-self: flex-start;
+    margin-left: -8vw;
+
+    .cardContent {
+      flex-direction: column;
+      align-items: flex-end;
+    }
+  }
+
+  /* 🔹 Друга картка (виїжджає за правий край) */
+  .targetCard:nth-child(2) {
+    border-radius: 32px 0 0 32px; /* Гострі кути справа на мобільному */
+    align-self: flex-end;
+    margin-right: -8vw;
+
+    .cardContent {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 }
 
 @media (max-width: 576px) {
-  .lightSection {
-    padding: 30px 10px;
-  }
   .sectionHeader {
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     h2 {
-      font-size: 24px;
+      font-size: 26px;
     }
   }
+
   .offerHeader h3 {
-    font-size: 20px;
+    font-size: 22px;
   }
+
   .targetCard {
-    pointer-events: none;
-    height: 280px;
+    height: 340px;
+    width: 92vw;
     padding: 24px;
-    .cardContent {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-    }
+
     .targetText h4 {
       font-size: 22px;
     }
   }
+
+  .targetCard:nth-child(1) {
+    border-radius: 0 24px 24px 0; /* Пропорційно менше заокруглення для телефонів */
+    margin-left: -6vw;
+    .cardContent {
+      gap: 16px;
+    }
+  }
+
+  .targetCard:nth-child(2) {
+    border-radius: 24px 0 0 24px; /* Пропорційно менше заокруглення для телефонів */
+    margin-right: -6vw;
+    .cardContent {
+      gap: 16px;
+    }
+  }
+
   .transitionBlock {
-    /* 🔥 І на мобільному залишаємо 0 знизу */
-    padding: 50px 0 0;
+    padding: 60px 0 0;
     h3 {
-      font-size: 22px;
+      font-size: 24px;
     }
     p {
       font-size: 16px;
