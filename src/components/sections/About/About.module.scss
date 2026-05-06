@@ -11,7 +11,6 @@ $white: #ffffff;
   position: relative;
   z-index: 2;
   padding: 40px 0 0;
-  /* 🔥 clip замість hidden усуває "залипання" при скролі на телефонах */
   overflow-x: clip;
 }
 
@@ -106,11 +105,10 @@ $white: #ffffff;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-
-  width: 108vw;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
 }
 
 .targetCard {
@@ -124,8 +122,6 @@ $white: #ffffff;
   cursor: pointer;
   border: 1px solid rgba(255, 255, 255, 0.6);
   transform: translateZ(0);
-
-  /* 🔥 Каже телефону ігнорувати свайпи вбік і просто плавно скролити вниз */
   touch-action: pan-y;
 
   .imgParallaxWrapper {
@@ -135,7 +131,6 @@ $white: #ffffff;
     width: 100%;
     height: 130%;
     z-index: 0;
-    /* Апаратне прискорення для плавності паралаксу */
     transform: translateZ(0);
     will-change: transform;
   }
@@ -179,27 +174,27 @@ $white: #ffffff;
     width: 100%;
   }
 
-  /* 🔥 ПЕРША КАРТКА: Прямі кути зліва, вирівнювання вправо та плавне розчинення лівого краю */
+  /* 🔥 ПЕРША КАРТКА: Прямі кути зліва + Дуже плавне розчинення */
   &:nth-child(1) {
-    border-radius: 0 40px 40px 0;
-    border-left: none;
+    border-radius: 0 40px 40px 0; /* Зліва кути гострі */
+    border-left: none; /* Прибрали рамку зліва */
 
-    /* 🔥 ДУЖЕ СИЛЬНЕ РОЗСІЮВАННЯ: перші 12% повністю прозорі, далі плавний перехід аж до 60% */
+    /* Дуже довгий і м'який перехід аж до 80% ширини */
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0%,
-      transparent 12%,
-      rgba(0, 0, 0, 0.1) 25%,
-      rgba(0, 0, 0, 0.6) 40%,
-      black 60%
+      transparent 5%,
+      rgba(0, 0, 0, 0.05) 25%,
+      rgba(0, 0, 0, 0.5) 55%,
+      black 80%
     );
     mask-image: linear-gradient(
       to right,
       transparent 0%,
-      transparent 12%,
-      rgba(0, 0, 0, 0.1) 25%,
-      rgba(0, 0, 0, 0.6) 40%,
-      black 60%
+      transparent 5%,
+      rgba(0, 0, 0, 0.05) 25%,
+      rgba(0, 0, 0, 0.5) 55%,
+      black 80%
     );
 
     .cardContent {
@@ -210,27 +205,27 @@ $white: #ffffff;
     }
   }
 
-  /* 🔥 ДРУГА КАРТКА: Прямі кути справа, вирівнювання вліво та плавне розчинення правого краю */
+  /* 🔥 ДРУГА КАРТКА: Прямі кути справа + Дуже плавне розчинення */
   &:nth-child(2) {
-    border-radius: 40px 0 0 40px;
-    border-right: none;
+    border-radius: 40px 0 0 40px; /* Справа кути гострі */
+    border-right: none; /* Прибрали рамку справа */
 
-    /* 🔥 ДУЖЕ СИЛЬНЕ РОЗСІЮВАННЯ: останні 12% повністю прозорі, далі плавний перехід аж до 60% */
+    /* Дуже довгий і м'який перехід аж до 80% ширини */
     -webkit-mask-image: linear-gradient(
       to left,
       transparent 0%,
-      transparent 12%,
-      rgba(0, 0, 0, 0.1) 25%,
-      rgba(0, 0, 0, 0.6) 40%,
-      black 60%
+      transparent 5%,
+      rgba(0, 0, 0, 0.05) 25%,
+      rgba(0, 0, 0, 0.5) 55%,
+      black 80%
     );
     mask-image: linear-gradient(
       to left,
       transparent 0%,
-      transparent 12%,
-      rgba(0, 0, 0, 0.1) 25%,
-      rgba(0, 0, 0, 0.6) 40%,
-      black 60%
+      transparent 5%,
+      rgba(0, 0, 0, 0.05) 25%,
+      rgba(0, 0, 0, 0.5) 55%,
+      black 80%
     );
   }
 
@@ -314,7 +309,7 @@ $white: #ffffff;
    ========================================== */
 
 /* ВЕЛИКІ ЕКРАНИ */
-@media (min-width: 1600px) {
+@media (min-width: 1500px) {
   .targetCard {
     height: 600px;
   }
@@ -325,13 +320,26 @@ $white: #ffffff;
   .sectionHeader h2 {
     font-size: 34px;
   }
+  .targetGrid {
+    max-width: none;
+    padding: 0;
+    width: 104vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 30px;
+  }
   .targetCard {
     height: 420px;
     padding: 36px;
   }
-  .targetGrid {
-    width: 104vw;
-    gap: 30px;
+  .targetCard:nth-child(1) {
+    border-radius: 0 40px 40px 0;
+    border-left: none;
+  }
+  .targetCard:nth-child(2) {
+    border-radius: 40px 0 0 40px;
+    border-right: none;
   }
 }
 
