@@ -1,0 +1,450 @@
+"use client";
+
+import React, { useState, useRef } from "react";
+import NextImage from "next/image";
+import gsap from "gsap";
+import styles from "./ProjectsGrid.module.scss";
+
+// --- SVG ІКОНКИ ---
+const IconHouse = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" />
+    <polyline points="9 22 9 12 15 12 15 22" />
+  </svg>
+);
+const IconFactory = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4H2v16Z" />
+    <path d="M17 18h1" />
+    <path d="M12 18h1" />
+    <path d="M7 18h1" />
+  </svg>
+);
+const IconSolar = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2" />
+    <path d="M12 20v2" />
+    <path d="M4.93 4.93l1.41 1.41" />
+    <path d="M17.66 17.66l1.41 1.41" />
+    <path d="M2 12h2" />
+    <path d="M20 12h2" />
+    <path d="M6.34 17.66l-1.41 1.41" />
+    <path d="M19.07 4.93l-1.41 1.41" />
+  </svg>
+);
+const IconBattery = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="7" width="16" height="10" rx="2" ry="2" />
+    <line x1="22" y1="11" x2="22" y2="13" />
+    <polyline points="6 11 8 13 12 9" />
+  </svg>
+);
+const IconPlug = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 22v-5" />
+    <path d="M9 8V2" />
+    <path d="M15 8V2" />
+    <path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z" />
+  </svg>
+);
+const IconAll = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="7" height="7" />
+    <rect x="14" y="3" width="7" height="7" />
+    <rect x="14" y="14" width="7" height="7" />
+    <rect x="3" y="14" width="7" height="7" />
+  </svg>
+);
+
+const mockProjects = [
+  {
+    id: 1,
+    title: "Мережева СЕС для дому",
+    clientType: "b2c",
+    serviceType: "solar",
+    power: 30,
+    powerLabel: "30 кВт",
+    location: "Київська обл.",
+    image: "/images/about-b2c.jpg",
+  },
+  {
+    id: 2,
+    title: "Резервне живлення заводу",
+    clientType: "b2b",
+    serviceType: "backup",
+    power: 500,
+    powerLabel: "500 кВт",
+    location: "м. Львів",
+    image: "/images/about-b2b.jpg",
+  },
+  {
+    id: 3,
+    title: "Гібридна СЕС котеджу",
+    clientType: "b2c",
+    serviceType: "solar",
+    power: 15,
+    powerLabel: "15 кВт",
+    location: "м. Одеса",
+    image: "/images/about-b2c.jpg",
+  },
+  {
+    id: 4,
+    title: "Мережева СЕС агрокомплексу",
+    clientType: "b2b",
+    serviceType: "solar",
+    power: 1200,
+    powerLabel: "1.2 МВт",
+    location: "Вінницька обл.",
+    image: "/images/about-b2b.jpg",
+  },
+  {
+    id: 5,
+    title: "Електромонтаж цеху",
+    clientType: "b2b",
+    serviceType: "electro",
+    power: 250,
+    powerLabel: "250 кВт",
+    location: "Київська обл.",
+    image: "/images/about-b2b.jpg",
+  },
+  {
+    id: 6,
+    title: "Промисловий Storage",
+    clientType: "b2b",
+    serviceType: "storage",
+    power: 1000,
+    powerLabel: "1 МВт",
+    location: "Полтавська обл.",
+    image: "/images/about-b2c.jpg",
+  },
+];
+
+export default function ProjectsGrid() {
+  const [activeFilters, setActiveFilters] = useState({
+    clientType: "all", // 🔥 Одиничний вибір (рядок)
+    serviceType: ["all"], // 🔥 Множинний вибір (масив)
+  });
+
+  const MAX_POWER = 2000;
+  const [powerLimit, setPowerLimit] = useState(MAX_POWER);
+  const gridRef = useRef(null);
+
+  const filteredProjects = mockProjects.filter((p) => {
+    // Для клієнтів: точний збіг або "all"
+    const matchClient =
+      activeFilters.clientType === "all" ||
+      activeFilters.clientType === p.clientType;
+    // Для послуг: перевірка чи масив містить тип або "all"
+    const matchService =
+      activeFilters.serviceType.includes("all") ||
+      activeFilters.serviceType.includes(p.serviceType);
+
+    const matchPower = p.power <= powerLimit;
+    return matchClient && matchService && matchPower;
+  });
+
+  const animateGrid = (updateStateCallback) => {
+    gsap.to(`.${styles.projectCard}`, {
+      opacity: 0,
+      scale: 0.96,
+      y: 15,
+      duration: 0.2,
+      stagger: 0.02,
+      ease: "power2.in",
+      onComplete: () => {
+        updateStateCallback();
+        setTimeout(() => {
+          gsap.fromTo(
+            `.${styles.projectCard}`,
+            { opacity: 0, scale: 0.96, y: 15 },
+            {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              duration: 0.4,
+              stagger: 0.04,
+              ease: "power3.out",
+              clearProps: "all",
+            },
+          );
+        }, 10);
+      },
+    });
+  };
+
+  const handleFilterClick = (groupKey, filterId) => {
+    animateGrid(() => {
+      setActiveFilters((prev) => {
+        // 🔥 ЛОГІКА ДЛЯ ТИПУ ОБ'ЄКТА (Одиничний вибір) 🔥
+        if (groupKey === "clientType") {
+          if (prev.clientType === filterId) return prev; // Вже обрано
+          return { ...prev, clientType: filterId };
+        }
+
+        // 🔥 ЛОГІКА ДЛЯ ПОСЛУГ (Множинний вибір - вмикання/вимикання) 🔥
+        else if (groupKey === "serviceType") {
+          const currentGroup = [...prev.serviceType];
+
+          // Якщо натиснули "Усі рішення"
+          if (filterId === "all") {
+            return { ...prev, serviceType: ["all"] };
+          }
+
+          let newGroup;
+          if (currentGroup.includes(filterId)) {
+            // Вимикаємо фільтр
+            newGroup = currentGroup.filter((id) => id !== filterId);
+            // Якщо нічого не залишилось - вмикаємо "Усі"
+            if (newGroup.length === 0) newGroup = ["all"];
+          } else {
+            // Вмикаємо фільтр (і прибираємо "all")
+            newGroup = currentGroup.filter((id) => id !== "all");
+            newGroup.push(filterId);
+          }
+          return { ...prev, serviceType: newGroup };
+        }
+
+        return prev;
+      });
+    });
+  };
+
+  const resetFilters = () => {
+    animateGrid(() => {
+      setActiveFilters({ clientType: "all", serviceType: ["all"] });
+      setPowerLimit(MAX_POWER);
+    });
+  };
+
+  const sliderFillPercentage = (powerLimit / MAX_POWER) * 100;
+
+  return (
+    <section className={styles.gridSection}>
+      <div className={styles.container}>
+        <div className={styles.mainLayout}>
+          <aside className={styles.sidebar}>
+            <div className={styles.sidebarSticky}>
+              {/* --- ТИП ОБ'ЄКТА (Одиничний вибір, 2 рядки) --- */}
+              <div className={styles.filterGroup}>
+                <h4 className={styles.groupTitle}>Тип об'єкта</h4>
+                <div className={styles.segmentedControl}>
+                  <button
+                    className={`${styles.segmentBtn} ${activeFilters.clientType === "all" ? styles.active : ""}`}
+                    onClick={() => handleFilterClick("clientType", "all")}
+                  >
+                    Усі
+                  </button>
+                  <button
+                    className={`${styles.segmentBtn} ${activeFilters.clientType === "b2c" ? styles.active : ""}`}
+                    onClick={() => handleFilterClick("clientType", "b2c")}
+                  >
+                    <IconHouse /> Для
+                    <br />
+                    дому
+                  </button>
+                  <button
+                    className={`${styles.segmentBtn} ${activeFilters.clientType === "b2b" ? styles.active : ""}`}
+                    onClick={() => handleFilterClick("clientType", "b2b")}
+                  >
+                    <IconFactory /> Для
+                    <br />
+                    бізнесу
+                  </button>
+                </div>
+              </div>
+
+              {/* --- ПОСЛУГИ (Множинний вибір) --- */}
+              <div className={styles.filterGroup}>
+                <h4 className={styles.groupTitle}>Послуги та рішення</h4>
+                <div className={styles.iconList}>
+                  {[
+                    { id: "all", label: "Усі рішення", icon: <IconAll /> },
+                    {
+                      id: "solar",
+                      label: "Будівництво СЕС",
+                      icon: <IconSolar />,
+                    },
+                    {
+                      id: "backup",
+                      label: "Резервне живлення",
+                      icon: <IconBattery />,
+                    },
+                    {
+                      id: "storage",
+                      label: "Зберігання енергії",
+                      icon: <IconBattery />,
+                    },
+                    {
+                      id: "electro",
+                      label: "Електромонтаж",
+                      icon: <IconPlug />,
+                    },
+                  ].map((service) => (
+                    <button
+                      key={service.id}
+                      className={`${styles.iconOptionBtn} ${activeFilters.serviceType.includes(service.id) ? styles.active : ""}`}
+                      onClick={() =>
+                        handleFilterClick("serviceType", service.id)
+                      }
+                    >
+                      <span className={styles.iconWrapper}>{service.icon}</span>
+                      {service.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* --- ПОТУЖНІСТЬ --- */}
+              <div className={styles.filterGroup}>
+                <div className={styles.sliderHeader}>
+                  <h4 className={styles.groupTitle}>Потужність СЕС</h4>
+                  <span className={styles.powerValue}>
+                    {powerLimit === MAX_POWER
+                      ? "Макс."
+                      : `до ${powerLimit} кВт`}
+                  </span>
+                </div>
+                <div className={styles.sliderWrapper}>
+                  <input
+                    type="range"
+                    min="0"
+                    max={MAX_POWER}
+                    step="50"
+                    value={powerLimit}
+                    onChange={(e) => setPowerLimit(Number(e.target.value))}
+                    className={styles.glassSlider}
+                    style={{
+                      background: `linear-gradient(to right, #0056b3 ${sliderFillPercentage}%, rgba(0,86,179,0.15) ${sliderFillPercentage}%)`,
+                    }}
+                  />
+                  <div className={styles.sliderLabels}>
+                    <span>0</span>
+                    <span>2 МВт+</span>
+                  </div>
+                </div>
+              </div>
+
+              <button className={styles.sidebarResetBtn} onClick={resetFilters}>
+                Скинути все
+              </button>
+            </div>
+          </aside>
+
+          <div className={styles.content}>
+            {filteredProjects.length === 0 && (
+              <div className={styles.noResults}>
+                <div className={styles.noResultsIcon}>🔍</div>
+                <h3>Немає таких проектів</h3>
+                <p>Змініть критерії пошуку або скиньте фільтри.</p>
+              </div>
+            )}
+
+            <div className={styles.grid} ref={gridRef}>
+              {filteredProjects.map((project) => (
+                <div key={project.id} className={styles.projectCard}>
+                  <div className={styles.imageWrapper}>
+                    <NextImage
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className={styles.img}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                    <div className={styles.overlay}></div>
+                    <div className={styles.tags}>
+                      <span className={styles.tagPower}>
+                        {project.powerLabel}
+                      </span>
+                      <span className={styles.tagClient}>
+                        {project.clientType === "b2c"
+                          ? "Для дому"
+                          : "Для бізнесу"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className={styles.cardInfo}>
+                    <div className={styles.cardText}>
+                      <h4>{project.title}</h4>
+                      <p className={styles.location}>
+                        <svg
+                          className={styles.locIcon}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        {project.location}
+                      </p>
+                    </div>
+                    <div className={styles.arrowBtn}>
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
