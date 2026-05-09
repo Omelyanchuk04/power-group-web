@@ -90,7 +90,6 @@ $text-gray: #52637a;
   display: flex;
   background: rgba(255, 255, 255, 0.6);
   padding: 6px;
-  /* 🔥 ВИПРАВЛЕННЯ: Повністю кругла форма (капсула) 🔥 */
   border-radius: 100px;
   border: 1px solid rgba(255, 255, 255, 0.8);
   gap: 4px;
@@ -120,9 +119,10 @@ $text-gray: #52637a;
   line-height: 1.2;
 
   font-weight: 600;
-  /* 🔥 ВИПРАВЛЕННЯ: Кнопка всередині також повністю кругла 🔥 */
   border-radius: 100px;
   cursor: pointer;
+  /* 🔥 Оптимізація кліків на сенсорах 🔥 */
+  touch-action: manipulation;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   svg {
@@ -183,6 +183,8 @@ $text-gray: #52637a;
   padding: 8px;
   border-radius: 100px;
   cursor: pointer;
+  /* 🔥 Оптимізація кліків на сенсорах 🔥 */
+  touch-action: manipulation;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
   text-align: left;
@@ -317,6 +319,8 @@ $text-gray: #52637a;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
+  /* 🔥 Оптимізація кліків на сенсорах 🔥 */
+  touch-action: manipulation;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
   &:hover {
@@ -381,6 +385,7 @@ $text-gray: #52637a;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   cursor: pointer;
+  touch-action: manipulation; /* 🔥 Додає стабільності табам */
   transition: box-shadow 0.4s ease;
   border: 1px solid rgba(255, 255, 255, 0.8);
   display: flex;
@@ -511,6 +516,7 @@ $text-gray: #52637a;
     height: 22px;
   }
 
+  /* Виправлена опечатка з буквою "ч" тут! */
   @media (max-width: 768px) {
     width: 40px;
     height: 40px;
@@ -518,5 +524,54 @@ $text-gray: #52637a;
       width: 18px;
       height: 18px;
     }
+  }
+}
+
+/* =========================================
+   🔥 БЛОК ПАГІНАЦІЇ 🔥
+   ========================================= */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 60px;
+}
+
+.pageBtn {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 86, 179, 0.15);
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  color: $text-gray;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  /* 🔥 Оптимізація кліків на сенсорах 🔥 */
+  touch-action: manipulation;
+
+  &:hover {
+    background: #ffffff;
+    color: $text-dark;
+    border-color: rgba(0, 86, 179, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &.pageActive {
+    background: $primary;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(0, 86, 179, 0.25);
+    border-color: $primary;
+    transform: none;
   }
 }

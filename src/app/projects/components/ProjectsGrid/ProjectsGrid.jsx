@@ -164,27 +164,37 @@ const mockProjects = [
 
 export default function ProjectsGrid() {
   const [activeFilters, setActiveFilters] = useState({
-    clientType: "all", // 🔥 Одиничний вибір (рядок)
-    serviceType: ["all"], // 🔥 Множинний вибір (масив)
+    clientType: "all",
+    serviceType: ["all"],
   });
 
   const MAX_POWER = 2000;
   const [powerLimit, setPowerLimit] = useState(MAX_POWER);
   const gridRef = useRef(null);
 
+  // 🔥 Пагінація: поточна сторінка та ліміт на сторінці
+  const [currentPage, setCurrentPage] = useState(1);
+  const projectsPerPage = 4; // Можете змінити на 6, 8, 10 тощо
+
   const filteredProjects = mockProjects.filter((p) => {
-    // Для клієнтів: точний збіг або "all"
     const matchClient =
       activeFilters.clientType === "all" ||
       activeFilters.clientType === p.clientType;
-    // Для послуг: перевірка чи масив містить тип або "all"
     const matchService =
       activeFilters.serviceType.includes("all") ||
       activeFilters.serviceType.includes(p.serviceType);
-
     const matchPower = p.power <= powerLimit;
     return matchClient && matchService && matchPower;
   });
+
+  // 🔥 Розрахунок проектів для поточної сторінки
+  const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
+  const indexOfLastProject = currentPage * projectsPerPage;
+  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+  const currentProjects = filteredProjects.slice(
+    indexOfFirstProject,
+    indexOfLastProject,
+  );
 
   const animateGrid = (updateStateCallback) => {
     gsap.to(`.${styles.projectCard}`, {
@@ -217,36 +227,26 @@ export default function ProjectsGrid() {
 
   const handleFilterClick = (groupKey, filterId) => {
     animateGrid(() => {
+      setCurrentPage(1); // При зміні фільтра повертаємось на 1-шу сторінку
+
       setActiveFilters((prev) => {
-        // 🔥 ЛОГІКА ДЛЯ ТИПУ ОБ'ЄКТА (Одиничний вибір) 🔥
         if (groupKey === "clientType") {
-          if (prev.clientType === filterId) return prev; // Вже обрано
+          if (prev.clientType === filterId) return prev;
           return { ...prev, clientType: filterId };
-        }
-
-        // 🔥 ЛОГІКА ДЛЯ ПОСЛУГ (Множинний вибір - вмикання/вимикання) 🔥
-        else if (groupKey === "serviceType") {
+        } else if (groupKey === "serviceType") {
           const currentGroup = [...prev.serviceType];
-
-          // Якщо натиснули "Усі рішення"
-          if (filterId === "all") {
-            return { ...prev, serviceType: ["all"] };
-          }
+          if (filterId === "all") return { ...prev, serviceType: ["all"] };
 
           let newGroup;
           if (currentGroup.includes(filterId)) {
-            // Вимикаємо фільтр
             newGroup = currentGroup.filter((id) => id !== filterId);
-            // Якщо нічого не залишилось - вмикаємо "Усі"
             if (newGroup.length === 0) newGroup = ["all"];
           } else {
-            // Вмикаємо фільтр (і прибираємо "all")
             newGroup = currentGroup.filter((id) => id !== "all");
             newGroup.push(filterId);
           }
           return { ...prev, serviceType: newGroup };
         }
-
         return prev;
       });
     });
@@ -256,6 +256,20 @@ export default function ProjectsGrid() {
     animateGrid(() => {
       setActiveFilters({ clientType: "all", serviceType: ["all"] });
       setPowerLimit(MAX_POWER);
+      setCurrentPage(1);
+    });
+  };
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber === currentPage) return;
+    animateGrid(() => {
+      setCurrentPage(pageNumber);
+      // Плавний скрол до початку сітки при зміні сторінки
+      if (gridRef.current) {
+        const yOffset =
+          gridRef.current.getBoundingClientRect().top + window.scrollY - 150;
+        window.scrollTo({ top: yOffset, behavior: "smooth" });
+      }
     });
   };
 
@@ -267,7 +281,6 @@ export default function ProjectsGrid() {
         <div className={styles.mainLayout}>
           <aside className={styles.sidebar}>
             <div className={styles.sidebarSticky}>
-              {/* --- ТИП ОБ'ЄКТА (Одиничний вибір, 2 рядки) --- */}
               <div className={styles.filterGroup}>
                 <h4 className={styles.groupTitle}>Тип об'єкта</h4>
                 <div className={styles.segmentedControl}>
@@ -296,7 +309,6 @@ export default function ProjectsGrid() {
                 </div>
               </div>
 
-              {/* --- ПОСЛУГИ (Множинний вибір) --- */}
               <div className={styles.filterGroup}>
                 <h4 className={styles.groupTitle}>Послуги та рішення</h4>
                 <div className={styles.iconList}>
@@ -337,7 +349,6 @@ export default function ProjectsGrid() {
                 </div>
               </div>
 
-              {/* --- ПОТУЖНІСТЬ --- */}
               <div className={styles.filterGroup}>
                 <div className={styles.sliderHeader}>
                   <h4 className={styles.groupTitle}>Потужність СЕС</h4>
@@ -354,7 +365,10 @@ export default function ProjectsGrid() {
                     max={MAX_POWER}
                     step="50"
                     value={powerLimit}
-                    onChange={(e) => setPowerLimit(Number(e.target.value))}
+                    onChange={(e) => {
+                      setPowerLimit(Number(e.target.value));
+                      setCurrentPage(1); // При зміні повзунка теж на першу сторінку
+                    }}
                     className={styles.glassSlider}
                     style={{
                       background: `linear-gradient(to right, #0056b3 ${sliderFillPercentage}%, rgba(0,86,179,0.15) ${sliderFillPercentage}%)`,
@@ -382,8 +396,9 @@ export default function ProjectsGrid() {
               </div>
             )}
 
+            {/* 🔥 Рендеримо поточні проекти (currentProjects) 🔥 */}
             <div className={styles.grid} ref={gridRef}>
-              {filteredProjects.map((project) => (
+              {currentProjects.map((project) => (
                 <div key={project.id} className={styles.projectCard}>
                   <div className={styles.imageWrapper}>
                     <NextImage
@@ -442,6 +457,21 @@ export default function ProjectsGrid() {
                 </div>
               ))}
             </div>
+
+            {/* 🔥 БЛОК ПАГІНАЦІЇ ЗНИЗУ 🔥 */}
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i + 1}
+                    className={`${styles.pageBtn} ${currentPage === i + 1 ? styles.pageActive : ""}`}
+                    onClick={() => handlePageChange(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
