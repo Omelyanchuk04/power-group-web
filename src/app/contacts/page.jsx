@@ -173,15 +173,11 @@ export default function ContactsPage() {
                   <div className={styles.scheduleBox}>
                     <div className={styles.scheduleRow}>
                       <span className={styles.scheduleDay}>Пн-Пт:</span>
-                      <span className={styles.scheduleTime}>
-                        8:30 – 17:30[cite: 1]
-                      </span>
+                      <span className={styles.scheduleTime}>8:30 – 17:30</span>
                     </div>
                     <div className={styles.scheduleRow}>
                       <span className={styles.scheduleDay}>Сб-Нд:</span>
-                      <span className={styles.scheduleTime}>
-                        Вихідні[cite: 1]
-                      </span>
+                      <span className={styles.scheduleTime}>Вихідні</span>
                     </div>
                   </div>
                 </div>
@@ -319,7 +315,7 @@ export default function ContactsPage() {
                   </div>
                   <div>
                     <h4>Головний офіс</h4>
-                    <p>м. Вінниця, вул. Київська, 14[cite: 1]</p>
+                    <p>м. Вінниця, вул. Київська, 14</p>
                   </div>
                 </div>
               </div>
