@@ -145,35 +145,6 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 2. Графік роботи (ОКРЕМО) */}
-              <div
-                className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
-              >
-                <div className={styles.innerGlow}></div>
-                <div className={styles.cardHeader}>
-                  <div className={styles.iconCircle}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                  </div>
-                  <h3>Графік роботи</h3>
-                </div>
-                <div className={styles.cardDivider}></div>
-                <div className={styles.cardBody}>
-                  <div className={styles.scheduleBox}>
-                    <div className={styles.scheduleRow}>
-                      <span className={styles.scheduleDay}>Пн-Пт:</span>
-                      <span className={styles.scheduleTime}>8:30 – 17:30</span>
-                    </div>
-                    <div className={styles.scheduleRow}>
-                      <span className={styles.scheduleDay}>Сб-Нд:</span>
-                      <span className={styles.scheduleTime}>Вихідні</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* 3. Соцмережі */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
@@ -284,6 +255,35 @@ export default function ContactsPage() {
                       </svg>
                       <span>Telegram (099)</span>
                     </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Графік роботи (ОКРЕМО) */}
+              <div
+                className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
+              >
+                <div className={styles.innerGlow}></div>
+                <div className={styles.cardHeader}>
+                  <div className={styles.iconCircle}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <h3>Графік роботи</h3>
+                </div>
+                <div className={styles.cardDivider}></div>
+                <div className={styles.cardBody}>
+                  <div className={styles.scheduleBox}>
+                    <div className={styles.scheduleRow}>
+                      <span className={styles.scheduleDay}>Пн-Пт:</span>
+                      <span className={styles.scheduleTime}>8:30 – 17:30</span>
+                    </div>
+                    <div className={styles.scheduleRow}>
+                      <span className={styles.scheduleDay}>Сб-Нд:</span>
+                      <span className={styles.scheduleTime}>Вихідні</span>
+                    </div>
                   </div>
                 </div>
               </div>
