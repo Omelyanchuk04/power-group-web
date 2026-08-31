@@ -227,7 +227,7 @@ export default function ContactsPage() {
                       <span>Instagram</span>
                     </a>
                     <a
-                      href="#"
+                      href="https://wa.me/380672671477"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.socialBtn}
