@@ -50,6 +50,7 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
+      // Ідеально плавна анімація без конфліктів CSS
       const cards = gsap.utils.toArray(`.${styles.animBento}`);
       gsap.fromTo(
         cards,
@@ -57,7 +58,7 @@ export default function ContactsPage() {
         {
           opacity: 1,
           y: 0,
-          duration: 0.7,
+          duration: 0.8,
           stagger: 0.1,
           ease: "power2.out",
           scrollTrigger: {
@@ -145,7 +146,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 3. Соцмережі */}
+              {/* 2. Соцмережі */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -215,7 +216,6 @@ export default function ContactsPage() {
                       </svg>
                       <span>WhatsApp</span>
                     </a>
-                    {/* ДОДАНО ПОСИЛАННЯ НА TELEGRAM ДЛЯ 067 267 14 77[cite: 1] */}
                     <a
                       href="https://t.me/+380672671477"
                       target="_blank"
@@ -235,7 +235,6 @@ export default function ContactsPage() {
                       </svg>
                       <span>Telegram (067)</span>
                     </a>
-                    {/* ДОДАНО ПОСИЛАННЯ НА TELEGRAM ДЛЯ 099 267 14 77[cite: 1] */}
                     <a
                       href="https://t.me/+380992671477"
                       target="_blank"
@@ -259,7 +258,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 2. Графік роботи (ОКРЕМО) */}
+              {/* 3. Графік роботи */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
