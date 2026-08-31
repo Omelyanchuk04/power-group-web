@@ -11,7 +11,7 @@ if (typeof window !== "undefined") {
 }
 
 export default function ContactsPage() {
-  const containerRef = useRef(null); // Посилання на всю сторінку
+  const containerRef = useRef(null);
   const bannerWrapperRef = useRef(null);
   const bannerRef = useRef(null);
 
@@ -20,22 +20,23 @@ export default function ContactsPage() {
       // 1. Анімація появи тексту на банері
       gsap.fromTo(
         `.${styles.heroContent}`,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: "power3.out" },
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: "power2.out" },
       );
 
-      // 2. Розширення обгортки банера ОДРАЗУ з першого міліметра скролу
+      // 2. Розширення обгортки банера (Оптимізовано з інерцією scrub: 0.5)
       gsap.to(bannerWrapperRef.current, {
         maxWidth: "100%",
         paddingLeft: "0px",
         paddingRight: "0px",
         ease: "none",
         scrollTrigger: {
-          trigger: containerRef.current, // Прив'язка до верху всієї сторінки
-          start: "top top", // Анімація стартує миттєво, коли починаємо скролити
-          end: "+=350", // Плавно розтягується протягом 350px скролу
-          scrub: true,
+          trigger: containerRef.current,
+          start: "top top",
+          end: "+=350",
+          scrub: 0.5, // Дає маслянисту плавність при скролі
         },
+        immediateRender: false,
       });
 
       // 3. Прибирання заокруглень самого банера
@@ -45,24 +46,24 @@ export default function ContactsPage() {
         ease: "none",
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top top", // Стартує миттєво
+          start: "top top",
           end: "+=350",
-          scrub: true,
+          scrub: 0.5,
         },
+        immediateRender: false,
       });
 
-      // 4. Поява карток знизу
+      // 4. Ідеально плавна поява карток знизу (Без ривків і конфліктів scale)
       const cards = gsap.utils.toArray(`.${styles.animBento}`);
       gsap.fromTo(
         cards,
-        { opacity: 0, y: 40, scale: 0.95 },
+        { opacity: 0, y: 40 }, // Тільки прозорість і рух по Y
         {
           opacity: 1,
           y: 0,
-          scale: 1,
-          duration: 0.6,
+          duration: 0.7,
           stagger: 0.1,
-          ease: "power3.out",
+          ease: "power2.out", // М'якший і плавніший графік анімації
           scrollTrigger: {
             trigger: `.${styles.bentoGrid}`,
             start: "top 85%",
@@ -96,13 +97,14 @@ export default function ContactsPage() {
 
         <div style={{ position: "relative", zIndex: 2 }}>
           <div className={styles.pageTopPadding}>
-            {/* ОБГОРТКА БАНЕРА (Рівно 1200px із внутрішніми відступами по 20px) */}
+            {/* ОБГОРТКА БАНЕРА */}
             <div className={styles.bannerWrapper} ref={bannerWrapperRef}>
               <div className={styles.heroBanner} ref={bannerRef}>
                 <img
                   src="/images/contacts/contacts-img.jpg"
                   alt="Контакти"
                   className={styles.heroImg}
+                  fetchPriority="high" /* Прискорює завантаження головного фото */
                 />
                 <div className={styles.heroOverlay}></div>
 
@@ -121,12 +123,10 @@ export default function ContactsPage() {
             <div className={styles.bentoGrid}>
               {/* РЯД 1: ТРИ КАРТКИ */}
 
-              {/* 1. Телефони */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
                 <div className={styles.innerGlow}></div>
-
                 <div className={styles.cardHeader}>
                   <div className={styles.iconCircle}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -135,9 +135,7 @@ export default function ContactsPage() {
                   </div>
                   <h3>Телефони</h3>
                 </div>
-
                 <div className={styles.cardDivider}></div>
-
                 <div className={styles.cardBody}>
                   <div className={styles.linksGroup}>
                     <a href="tel:+380672671477">067 267 14 77</a>
@@ -146,12 +144,10 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 2. Email та графік */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
                 <div className={styles.innerGlow}></div>
-
                 <div className={styles.cardHeader}>
                   <div className={styles.iconCircle}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -161,9 +157,7 @@ export default function ContactsPage() {
                   </div>
                   <h3>Email та Графік</h3>
                 </div>
-
                 <div className={styles.cardDivider}></div>
-
                 <div className={styles.cardBody}>
                   <a
                     href="mailto:powergroup.vin@gmail.com"
@@ -179,12 +173,10 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 3. Соцмережі */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
                 <div className={styles.innerGlow}></div>
-
                 <div className={styles.cardHeader}>
                   <div className={styles.iconCircle}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -202,9 +194,7 @@ export default function ContactsPage() {
                   </div>
                   <h3>Соцмережі</h3>
                 </div>
-
                 <div className={styles.cardDivider}></div>
-
                 <div className={styles.cardBody}>
                   <div className={styles.socialRow}>
                     <a
@@ -277,7 +267,6 @@ export default function ContactsPage() {
 
               {/* РЯД 2: КАРТА ТА ФОРМА */}
 
-              {/* 4. Карта */}
               <div
                 className={`${styles.bentoItem} ${styles.mapSpan} ${styles.animBento}`}
               >
@@ -301,7 +290,6 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 5. Форма */}
               <div
                 className={`${styles.bentoItem} ${styles.formSpan} ${styles.animBento}`}
               >
@@ -322,19 +310,16 @@ export default function ContactsPage() {
                       placeholder="Введіть ваше ім'я"
                     />
                   </div>
-
                   <div className={styles.inputGroup}>
                     <label>
                       Номер телефону <span>*</span>
                     </label>
                     <input type="tel" required placeholder="380________" />
                   </div>
-
                   <div className={styles.inputGroup}>
                     <label>Ваш Email</label>
                     <input type="email" placeholder="example@mail.com" />
                   </div>
-
                   <div className={styles.inputGroup}>
                     <label>Компанія</label>
                     <input
@@ -342,12 +327,10 @@ export default function ContactsPage() {
                       placeholder="Назва вашого підприємства"
                     />
                   </div>
-
                   <div className={styles.inputGroup}>
                     <label>Що вас цікавить?</label>
                     <input type="text" placeholder="Опишіть ваш запит" />
                   </div>
-
                   <button type="submit" className={styles.submitBtn}>
                     Отримати консультацію
                   </button>
