@@ -244,8 +244,9 @@ export default function ContactsPage() {
                       </svg>
                       <span>WhatsApp</span>
                     </a>
+                    {/* ДОДАНО ПОСИЛАННЯ НА TELEGRAM ДЛЯ 067 267 14 77[cite: 1] */}
                     <a
-                      href="#"
+                      href="https://t.me/+380672671477"
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.socialBtn}
@@ -261,7 +262,27 @@ export default function ContactsPage() {
                         <line x1="22" y1="2" x2="11" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                       </svg>
-                      <span>Telegram</span>
+                      <span>Telegram (067)</span>
+                    </a>
+                    {/* ДОДАНО ПОСИЛАННЯ НА TELEGRAM ДЛЯ 099 267 14 77[cite: 1] */}
+                    <a
+                      href="https://t.me/+380992671477"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.socialBtn}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                      </svg>
+                      <span>Telegram (099)</span>
                     </a>
                   </div>
                 </div>
