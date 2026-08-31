@@ -34,7 +34,7 @@ export default function ContactsPage() {
           trigger: containerRef.current,
           start: "top top",
           end: "+=350",
-          scrub: 0.5, // Дає маслянисту плавність при скролі
+          scrub: 0.5,
         },
         immediateRender: false,
       });
@@ -53,17 +53,17 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
-      // 4. Ідеально плавна поява карток знизу (Без ривків і конфліктів scale)
+      // 4. Ідеально плавна поява карток знизу
       const cards = gsap.utils.toArray(`.${styles.animBento}`);
       gsap.fromTo(
         cards,
-        { opacity: 0, y: 40 }, // Тільки прозорість і рух по Y
+        { opacity: 0, y: 40 },
         {
           opacity: 1,
           y: 0,
           duration: 0.7,
           stagger: 0.1,
-          ease: "power2.out", // М'якший і плавніший графік анімації
+          ease: "power2.out",
           scrollTrigger: {
             trigger: `.${styles.bentoGrid}`,
             start: "top 85%",
@@ -104,7 +104,7 @@ export default function ContactsPage() {
                   src="/images/contacts/contacts-img.jpg"
                   alt="Контакти"
                   className={styles.heroImg}
-                  fetchPriority="high" /* Прискорює завантаження головного фото */
+                  fetchPriority="high"
                 />
                 <div className={styles.heroOverlay}></div>
 
@@ -123,6 +123,7 @@ export default function ContactsPage() {
             <div className={styles.bentoGrid}>
               {/* РЯД 1: ТРИ КАРТКИ */}
 
+              {/* 1. Телефони */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -144,6 +145,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
+              {/* 2. Email та графік */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -173,6 +175,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
+              {/* 3. Соцмережі */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -224,6 +227,8 @@ export default function ContactsPage() {
                       </svg>
                       <span>Instagram</span>
                     </a>
+
+                    {/* ЗАМІНЕНО FACEBOOK НА WHATSAPP */}
                     <a
                       href="#"
                       target="_blank"
@@ -238,10 +243,11 @@ export default function ContactsPage() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       >
-                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                       </svg>
-                      <span>Facebook</span>
+                      <span>WhatsApp</span>
                     </a>
+
                     <a
                       href="#"
                       target="_blank"
