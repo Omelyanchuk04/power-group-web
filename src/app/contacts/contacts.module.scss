@@ -163,9 +163,8 @@ $white: #ffffff;
   flex-direction: column;
   justify-content: flex-start;
 
-  transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
+  /* 🔥 ТІЛЬКИ box-shadow, ЖОДНИХ transform, щоб не конфліктувало з GSAP 🔥 */
+  transition: box-shadow 0.3s ease;
   will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -180,7 +179,8 @@ $white: #ffffff;
       box-shadow:
         0 25px 50px rgba(0, 86, 179, 0.08),
         inset 0 0 0 1px rgba(255, 255, 255, 1);
-      transform: translateY(-2px);
+
+      /* 🔥 Прибрано translateY, щоб картка не стрибала при наведенні 🔥 */
 
       .innerGlow {
         transform: translate(-10px, 10px) scale(1.1);
@@ -385,7 +385,7 @@ $white: #ffffff;
 
   .emailLink {
     font-size: 16px;
-    font-weight: 600; /* Зробив пошту трохи тоншою за телефони для ієрархії */
+    font-weight: 600;
     margin-top: 4px;
   }
 }

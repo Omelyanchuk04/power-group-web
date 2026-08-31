@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 import styles from "./contacts.module.scss";
 import GlobalBackground from "../../components/layout/GlobalBackground";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
 export default function ContactsPage() {
@@ -15,14 +16,21 @@ export default function ContactsPage() {
   const bannerWrapperRef = useRef(null);
   const bannerRef = useRef(null);
 
-  useEffect(() => {
-    let ctx = gsap.context(() => {
+  useGSAP(
+    () => {
+      // 1. Анімація для тексту на банері
       gsap.fromTo(
         `.${styles.heroContent}`,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: "power2.out" },
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+        },
       );
 
+      // 2. Розширення обгортки банера
       gsap.to(bannerWrapperRef.current, {
         maxWidth: "100%",
         paddingLeft: "0px",
@@ -37,6 +45,7 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
+      // 3. Прибирання заокруглень банера
       gsap.to(bannerRef.current, {
         borderRadius: "0px",
         borderWidth: "0px",
@@ -50,27 +59,26 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
-      // Ідеально плавна анімація без конфліктів CSS
-      const cards = gsap.utils.toArray(`.${styles.animBento}`);
+      // 4. Ідеально плавна анімація карток (ТОЧНО як у AboutExperience)
       gsap.fromTo(
-        cards,
-        { opacity: 0, y: 40 },
+        `.${styles.animBento}`,
+        { opacity: 0, scale: 0.95, y: 40 },
         {
           opacity: 1,
+          scale: 1,
           y: 0,
+          stagger: 0.15,
           duration: 0.8,
-          stagger: 0.1,
-          ease: "power2.out",
+          ease: "power3.out",
           scrollTrigger: {
             trigger: `.${styles.bentoGrid}`,
-            start: "top 85%",
+            start: "top 80%",
           },
         },
       );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
+    },
+    { scope: containerRef },
+  );
 
   return (
     <main className={styles.contactsPage} ref={containerRef}>
@@ -146,7 +154,40 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 2. Соцмережі */}
+              {/* 2. Графік роботи (Тепер на другому місці) */}
+              <div
+                className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
+              >
+                <div className={styles.innerGlow}></div>
+                <div className={styles.cardHeader}>
+                  <div className={styles.iconCircle}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <h3>Графік роботи</h3>
+                </div>
+                <div className={styles.cardDivider}></div>
+                <div className={styles.cardBody}>
+                  <div className={styles.scheduleBox}>
+                    <div className={styles.scheduleRow}>
+                      <span className={styles.scheduleDay}>Пн-Пт:</span>
+                      <span className={styles.scheduleTime}>
+                        8:30 – 17:30[cite: 1]
+                      </span>
+                    </div>
+                    <div className={styles.scheduleRow}>
+                      <span className={styles.scheduleDay}>Сб-Нд:</span>
+                      <span className={styles.scheduleTime}>
+                        Вихідні[cite: 1]
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Соцмережі (Тепер на третьому місці) */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -258,35 +299,6 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* 3. Графік роботи */}
-              <div
-                className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
-              >
-                <div className={styles.innerGlow}></div>
-                <div className={styles.cardHeader}>
-                  <div className={styles.iconCircle}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                  </div>
-                  <h3>Графік роботи</h3>
-                </div>
-                <div className={styles.cardDivider}></div>
-                <div className={styles.cardBody}>
-                  <div className={styles.scheduleBox}>
-                    <div className={styles.scheduleRow}>
-                      <span className={styles.scheduleDay}>Пн-Пт:</span>
-                      <span className={styles.scheduleTime}>8:30 – 17:30</span>
-                    </div>
-                    <div className={styles.scheduleRow}>
-                      <span className={styles.scheduleDay}>Сб-Нд:</span>
-                      <span className={styles.scheduleTime}>Вихідні</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* РЯД 2: КАРТА ТА ФОРМА */}
 
               <div
@@ -307,7 +319,7 @@ export default function ContactsPage() {
                   </div>
                   <div>
                     <h4>Головний офіс</h4>
-                    <p>м. Вінниця, вул. Київська, 14</p>
+                    <p>м. Вінниця, вул. Київська, 14[cite: 1]</p>
                   </div>
                 </div>
               </div>
