@@ -45,9 +45,8 @@ export default function RootLayout({ children }) {
         <link rel="preload" href="/frames/frame-004.jpg" as="image" />
         <link rel="preload" href="/frames/frame-005.jpg" as="image" />
       </head>
-      <body
-        style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
-      >
+      {/* 🔥 Видалили style і додали suppressHydrationWarning для надійності */}
+      <body suppressHydrationWarning>
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>

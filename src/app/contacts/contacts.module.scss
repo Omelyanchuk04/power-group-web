@@ -1,0 +1,521 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$cyan: #00d4ff;
+$text-dark: #111827;
+$text-gray: #4b5563;
+$white: #ffffff;
+
+.contactsPage {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  padding-bottom: 100px;
+  overflow-x: clip;
+  z-index: 10;
+}
+
+/* ==========================================
+   ОБГОРТКА ДЛЯ БАНЕРА (Ідеально точна ширина)
+   ========================================== */
+.pageTopPadding {
+  padding-top: calc(140px + env(safe-area-inset-top));
+  @media (max-width: 768px) {
+    padding-top: calc(120px + env(safe-area-inset-top));
+  }
+}
+
+.bannerWrapper {
+  max-width: 1200px; /* ТОЧНО ЯК У .container ЗНИЗУ */
+  margin: 0 auto;
+  padding: 0 20px; /* ТОЧНО ЯК У .container ЗНИЗУ */
+  margin-bottom: 40px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    margin-bottom: 30px;
+  }
+}
+
+.heroBanner {
+  position: relative;
+  width: 100%; /* Внутрішня ширина адаптується під обгортку (1160px) */
+  height: 380px;
+  border-radius: 40px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 40px 0;
+  z-index: 2;
+  transform: translateZ(0);
+
+  @media (max-width: 768px) {
+    height: 280px;
+    border-radius: 30px;
+    padding: 24px 0;
+  }
+}
+
+.heroImg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.heroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(17, 24, 39, 0.85) 0%,
+    rgba(17, 24, 39, 0.3) 50%,
+    transparent 100%
+  );
+  z-index: 2;
+}
+
+/* Контент залишається по ширині сітки (1160px) незалежно від того, як розтягнеться банер */
+.heroContent {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 32px; /* Ідеально вирівняно з padding карток (32px) знизу */
+
+  @media (max-width: 768px) {
+    padding: 0 24px;
+  }
+}
+
+.title {
+  font-size: 56px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 16px;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 768px) {
+    font-size: 40px;
+  }
+}
+
+.subtitle {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 650px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+/* ==========================================
+   КОНТЕЙНЕР ДЛЯ СІТКИ КАРТОК
+   ========================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+  align-items: stretch;
+
+  @media (max-width: 992px) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.bentoItem {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 30px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  transition:
+    box-shadow 0.4s ease,
+    transform 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  &:hover {
+    box-shadow:
+      0 25px 50px rgba(0, 86, 179, 0.08),
+      inset 0 0 0 1px rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+
+    .innerGlow {
+      transform: translate(-10px, 10px) scale(1.1);
+      opacity: 0.8;
+    }
+    .iconCircle {
+      transform: scale(1.05) rotate(5deg);
+      box-shadow:
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.4),
+        0 15px 30px rgba(0, 86, 179, 0.3);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 24px;
+    border-radius: 24px;
+  }
+}
+
+.innerGlow {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle,
+    rgba(0, 212, 255, 0.15) 0%,
+    rgba(0, 86, 179, 0.05) 50%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  transition: all 0.6s ease;
+}
+
+/* --- РОЗПОДІЛ ПО КОЛОНКАХ --- */
+
+.topCardSpan {
+  grid-column: span 4;
+  @media (max-width: 992px) {
+    grid-column: span 12;
+  }
+}
+
+.mapSpan {
+  grid-column: span 7;
+  padding: 0;
+  min-height: 400px;
+  @media (max-width: 992px) {
+    grid-column: span 12;
+    min-height: 350px;
+  }
+
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    filter: grayscale(0.1) contrast(1.05);
+  }
+
+  .mapOverlay {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    padding: 14px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    pointer-events: none;
+
+    h4 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+      color: $text-dark;
+    }
+    p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: $text-gray;
+      font-weight: 500;
+    }
+  }
+}
+
+.formSpan {
+  grid-column: span 5;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 40px;
+  @media (max-width: 992px) {
+    grid-column: span 12;
+  }
+  @media (max-width: 768px) {
+    padding: 24px;
+  }
+}
+
+/* ==========================================
+   ВНУТРІШНІЙ МАКЕТ КАРТОК
+   ========================================== */
+.cardHeader {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0;
+    line-height: 1.2;
+  }
+}
+
+.iconCircle {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #4facfe 0%, $primary 100%);
+  color: $white;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.3),
+    0 10px 20px rgba($primary, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2px;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+  }
+
+  @media (max-width: 560px) {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.cardDivider {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.08);
+  margin: 20px 0;
+}
+
+.cardBody {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.linksGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  a {
+    font-size: 20px;
+    font-weight: 800;
+    color: $text-dark;
+    text-decoration: none;
+    transition: color 0.2s;
+    &:hover {
+      color: $primary;
+    }
+  }
+}
+
+.emailLink {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-dark;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 6px;
+  transition: color 0.2s;
+  &:hover {
+    color: $primary;
+  }
+}
+
+.scheduleText {
+  font-size: 14px;
+  color: $text-gray;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.socialRow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .socialBtn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-dark;
+    text-decoration: none;
+    transition:
+      transform 0.2s,
+      color 0.2s;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      color: $primary;
+      transition: color 0.2s;
+    }
+
+    &:hover {
+      color: $primary;
+      transform: translateX(4px);
+    }
+  }
+}
+
+.iconCircleMap {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #4facfe 0%, $primary 100%);
+  color: white;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 8px 16px rgba($primary, 0.3);
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2px;
+  }
+}
+
+/* ==========================================
+   ФОРМА
+   ========================================== */
+.formHeader {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 24px;
+  h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0 0 6px;
+  }
+  p {
+    font-size: 14px;
+    color: $text-gray;
+    margin: 0;
+  }
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+  height: 100%;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  label {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-gray;
+    span {
+      color: #ef4444;
+    }
+  }
+  input {
+    width: 100%;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    background: transparent;
+    font-size: 15px;
+    color: $text-dark;
+    transition: border-color 0.3s ease;
+    &::placeholder {
+      color: #9ca3af;
+    }
+    &:focus {
+      outline: none;
+      border-bottom: 2px solid $primary;
+    }
+  }
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: auto;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-dark;
+  background: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(255, 204, 0, 0.45);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}

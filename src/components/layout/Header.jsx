@@ -55,7 +55,7 @@ export default function Header() {
     { name: "ПРО НАС", link: "/about" },
     { name: "РЕАЛІЗОВАНІ ПРОЄКТИ", link: "/projects" },
     { name: "КОНТАКТИ", link: "/contacts" },
-    { name: "CПІВПРАЦЯ", link: "/cooperation" },
+    // { name: "CПІВПРАЦЯ", link: "/cooperation" },
   ];
 
   const handleMouseEnter = (e) => {
