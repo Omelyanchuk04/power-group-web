@@ -17,14 +17,12 @@ export default function ContactsPage() {
 
   useEffect(() => {
     let ctx = gsap.context(() => {
-      // 1. Анімація появи тексту на банері
       gsap.fromTo(
         `.${styles.heroContent}`,
         { opacity: 0, y: 20 },
         { opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: "power2.out" },
       );
 
-      // 2. Розширення обгортки банера (Оптимізовано з інерцією scrub: 0.5)
       gsap.to(bannerWrapperRef.current, {
         maxWidth: "100%",
         paddingLeft: "0px",
@@ -39,7 +37,6 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
-      // 3. Прибирання заокруглень самого банера
       gsap.to(bannerRef.current, {
         borderRadius: "0px",
         borderWidth: "0px",
@@ -53,7 +50,6 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
-      // 4. Ідеально плавна поява карток знизу
       const cards = gsap.utils.toArray(`.${styles.animBento}`);
       gsap.fromTo(
         cards,
@@ -78,7 +74,6 @@ export default function ContactsPage() {
   return (
     <main className={styles.contactsPage} ref={containerRef}>
       <div style={{ position: "relative", zIndex: 1, width: "100%" }}>
-        {/* ФОН СТОРІНКИ */}
         <div
           style={{
             position: "absolute",
@@ -97,7 +92,6 @@ export default function ContactsPage() {
 
         <div style={{ position: "relative", zIndex: 2 }}>
           <div className={styles.pageTopPadding}>
-            {/* ОБГОРТКА БАНЕРА */}
             <div className={styles.bannerWrapper} ref={bannerWrapperRef}>
               <div className={styles.heroBanner} ref={bannerRef}>
                 <img
@@ -123,55 +117,32 @@ export default function ContactsPage() {
             <div className={styles.bentoGrid}>
               {/* РЯД 1: ТРИ КАРТКИ */}
 
-              {/* 1. Телефони */}
+              {/* 1. Телефони та Пошта */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
                 <div className={styles.innerGlow}></div>
                 <div className={styles.cardHeader}>
                   <div className={styles.iconCircle}>
+                    {/* Іконка телефону */}
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                   </div>
-                  <h3>Телефони</h3>
+                  <h3>Зв'язок</h3>
                 </div>
                 <div className={styles.cardDivider}></div>
                 <div className={styles.cardBody}>
                   <div className={styles.linksGroup}>
                     <a href="tel:+380672671477">067 267 14 77</a>
                     <a href="tel:+380992671477">099 267 14 77</a>
+                    <a
+                      href="mailto:powergroup.vin@gmail.com"
+                      className={styles.emailLink}
+                    >
+                      powergroup.vin@gmail.com
+                    </a>
                   </div>
-                </div>
-              </div>
-
-              {/* 2. Email та графік */}
-              <div
-                className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
-              >
-                <div className={styles.innerGlow}></div>
-                <div className={styles.cardHeader}>
-                  <div className={styles.iconCircle}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                      <polyline points="22,6 12,13 2,6" />
-                    </svg>
-                  </div>
-                  <h3>Email та Графік</h3>
-                </div>
-                <div className={styles.cardDivider}></div>
-                <div className={styles.cardBody}>
-                  <a
-                    href="mailto:powergroup.vin@gmail.com"
-                    className={styles.emailLink}
-                  >
-                    powergroup.vin@gmail.com
-                  </a>
-                  <p className={styles.scheduleText}>
-                    Пн-Пт: 8:30 - 17:30
-                    <br />
-                    Сб-Нд: Вихідні
-                  </p>
                 </div>
               </div>
 
@@ -227,8 +198,6 @@ export default function ContactsPage() {
                       </svg>
                       <span>Instagram</span>
                     </a>
-
-                    {/* ЗАМІНЕНО FACEBOOK НА WHATSAPP */}
                     <a
                       href="#"
                       target="_blank"
@@ -247,7 +216,6 @@ export default function ContactsPage() {
                       </svg>
                       <span>WhatsApp</span>
                     </a>
-
                     <a
                       href="#"
                       target="_blank"
@@ -267,6 +235,36 @@ export default function ContactsPage() {
                       </svg>
                       <span>Telegram</span>
                     </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Графік роботи (ОКРЕМО) */}
+              <div
+                className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
+              >
+                <div className={styles.innerGlow}></div>
+                <div className={styles.cardHeader}>
+                  <div className={styles.iconCircle}>
+                    {/* Іконка годинника */}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                  </div>
+                  <h3>Графік роботи</h3>
+                </div>
+                <div className={styles.cardDivider}></div>
+                <div className={styles.cardBody}>
+                  <div className={styles.scheduleBox}>
+                    <div className={styles.scheduleRow}>
+                      <span className={styles.scheduleDay}>Пн-Пт:</span>
+                      <span className={styles.scheduleTime}>8:30 – 17:30</span>
+                    </div>
+                    <div className={styles.scheduleRow}>
+                      <span className={styles.scheduleDay}>Сб-Нд:</span>
+                      <span className={styles.scheduleTime}>Вихідні</span>
+                    </div>
                   </div>
                 </div>
               </div>

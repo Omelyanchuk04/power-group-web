@@ -16,7 +16,7 @@ $white: #ffffff;
 }
 
 /* ==========================================
-   ОБГОРТКА ДЛЯ БАНЕРА (Ідеальна ширина)
+   ОБГОРТКА ДЛЯ БАНЕРА
    ========================================== */
 .pageTopPadding {
   padding-top: calc(140px + env(safe-area-inset-top));
@@ -51,7 +51,6 @@ $white: #ffffff;
   padding: 40px 0;
   z-index: 2;
 
-  /* ОПТИМІЗАЦІЯ ДЛЯ GPU (прибирає лаги) */
   transform: translateZ(0);
   will-change: width, max-width, border-radius;
   backface-visibility: hidden;
@@ -164,31 +163,35 @@ $white: #ffffff;
   flex-direction: column;
   justify-content: flex-start;
 
-  /* ОПТИМІЗАЦІЯ АНІМАЦІЇ: Транзишн ТІЛЬКИ на тінь (без transform) */
-  transition: box-shadow 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
   will-change: transform, opacity;
   transform: translateZ(0);
   backface-visibility: hidden;
 
-  /* Легка тінь за замовчуванням */
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.04),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
 
-  &:hover {
-    box-shadow:
-      0 25px 50px rgba(0, 86, 179, 0.08),
-      inset 0 0 0 1px rgba(255, 255, 255, 1);
-
-    .innerGlow {
-      transform: translate(-10px, 10px) scale(1.1);
-      opacity: 0.8;
-    }
-    .iconCircle {
-      transform: scale(1.05) rotate(5deg);
+  /* ЕФЕКТИ HOVER ДІЮТЬ ТІЛЬКИ НА ДЕСКТОПАХ (там де є мишка) */
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
       box-shadow:
-        inset 0 0 0 1.5px rgba(255, 255, 255, 0.4),
-        0 15px 30px rgba(0, 86, 179, 0.3);
+        0 25px 50px rgba(0, 86, 179, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 1);
+      transform: translateY(-2px);
+
+      .innerGlow {
+        transform: translate(-10px, 10px) scale(1.1);
+        opacity: 0.8;
+      }
+      .iconCircle {
+        transform: scale(1.05) rotate(5deg);
+        box-shadow:
+          inset 0 0 0 1.5px rgba(255, 255, 255, 0.4),
+          0 15px 30px rgba(0, 86, 179, 0.3);
+      }
     }
   }
 
@@ -357,42 +360,73 @@ $white: #ffffff;
   flex-grow: 1;
 }
 
+/* ==========================================
+   ПОСИЛАННЯ (ПІДКРЕСЛЕННЯ ПРИ НАВЕДЕННІ)
+   ========================================== */
 .linksGroup {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+
   a {
     font-size: 20px;
     font-weight: 800;
     color: $text-dark;
     text-decoration: none;
-    transition: color 0.2s;
+    text-underline-offset: 4px;
+    transition: color 0.2s ease;
+    width: fit-content;
+
     &:hover {
       color: $primary;
+      text-decoration: underline;
     }
   }
-}
 
-.emailLink {
-  font-size: 16px;
-  font-weight: 700;
-  color: $text-dark;
-  text-decoration: none;
-  display: inline-block;
-  margin-bottom: 6px;
-  transition: color 0.2s;
-  &:hover {
-    color: $primary;
+  .emailLink {
+    font-size: 16px;
+    font-weight: 600; /* Зробив пошту трохи тоншою за телефони для ієрархії */
+    margin-top: 4px;
   }
 }
 
-.scheduleText {
-  font-size: 14px;
-  color: $text-gray;
-  margin: 0;
-  line-height: 1.5;
+/* ==========================================
+   ГРАФІК РОБОТИ
+   ========================================== */
+.scheduleBox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
+.scheduleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+  padding-bottom: 8px;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.scheduleDay {
+  font-size: 15px;
+  font-weight: 700;
+  color: $text-dark;
+}
+
+.scheduleTime {
+  font-size: 15px;
+  color: $text-gray;
+  font-weight: 500;
+}
+
+/* ==========================================
+   СОЦМЕРЕЖІ
+   ========================================== */
 .socialRow {
   display: flex;
   flex-direction: column;
@@ -406,20 +440,25 @@ $white: #ffffff;
     font-weight: 700;
     color: $text-dark;
     text-decoration: none;
-    transition:
-      transform 0.2s,
-      color 0.2s;
+    transition: color 0.2s ease;
+    width: fit-content;
+
+    span {
+      text-underline-offset: 4px;
+    }
 
     svg {
       width: 20px;
       height: 20px;
       color: $primary;
-      transition: color 0.2s;
+      transition: color 0.2s ease;
     }
 
     &:hover {
       color: $primary;
-      transform: translateX(4px);
+      span {
+        text-decoration: underline;
+      }
     }
   }
 }
@@ -517,10 +556,14 @@ $white: #ffffff;
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(255, 204, 0, 0.45);
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(255, 204, 0, 0.45);
+    }
   }
+
   &:active {
     transform: translateY(0);
   }
