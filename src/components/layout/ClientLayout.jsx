@@ -16,8 +16,17 @@ export default function ClientLayout({ children }) {
 
   if (!mounted) return null;
 
+  // 🔥 Додаємо перевірку: чи це адмінка АБО сторінка логіну
+  const isAuthPage =
+    pathname.startsWith("/admin") || pathname.startsWith("/login");
   const isHome = pathname === "/";
 
+  // 🔥 Якщо це адмінка або логін — малюємо тільки контент сторінки (без хедера/футера)
+  if (isAuthPage) {
+    return <ModalProvider>{children}</ModalProvider>;
+  }
+
+  // Для всіх публічних сторінок сайту залишається твій стандартний макет
   return (
     <ModalProvider>
       <div

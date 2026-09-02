@@ -99,110 +99,28 @@ const IconAll = () => (
   </svg>
 );
 
-const mockProjects = [
-  {
-    id: 1,
-    title: "Мережева СЕС для дому",
-    clientType: "b2c",
-    serviceType: "solar",
-    power: 30,
-    powerLabel: "30 кВт",
-    location: "Київська обл.",
-    image: "/images/about-b2c.jpg",
-  },
-  {
-    id: 2,
-    title: "Резервне живлення заводу",
-    clientType: "b2b",
-    serviceType: "backup",
-    power: 500,
-    powerLabel: "500 кВт",
-    location: "м. Львів",
-    image: "/images/about-b2b.jpg",
-  },
-  {
-    id: 3,
-    title: "Гібридна СЕС котеджу",
-    clientType: "b2c",
-    serviceType: "solar",
-    power: 15,
-    powerLabel: "15 кВт",
-    location: "м. Одеса",
-    image: "/images/about-b2c.jpg",
-  },
-  {
-    id: 4,
-    title: "Мережева СЕС агрокомплексу",
-    clientType: "b2b",
-    serviceType: "solar",
-    power: 1200,
-    powerLabel: "1.2 МВт",
-    location: "Вінницька обл.",
-    image: "/images/about-b2b.jpg",
-  },
-  {
-    id: 5,
-    title: "Електромонтаж цеху",
-    clientType: "b2b",
-    serviceType: "electro",
-    power: 250,
-    powerLabel: "250 кВт",
-    location: "Київська обл.",
-    image: "/images/about-b2b.jpg",
-  },
-  {
-    id: 6,
-    title: "Промисловий Storage",
-    clientType: "b2b",
-    serviceType: "storage",
-    power: 1000,
-    powerLabel: "1 МВт",
-    location: "Полтавська обл.",
-    image: "/images/about-b2c.jpg",
-  },
-  {
-    id: 7,
-    title: "Мережева СЕС для дому",
-    clientType: "b2c",
-    serviceType: "solar",
-    power: 30,
-    powerLabel: "30 кВт",
-    location: "Київська обл.",
-    image: "/images/about-b2c.jpg",
-  },
-  {
-    id: 8,
-    title: "Резервне живлення заводу",
-    clientType: "b2b",
-    serviceType: "backup",
-    power: 500,
-    powerLabel: "500 кВт",
-    location: "м. Львів",
-    image: "/images/about-b2b.jpg",
-  },
-  {
-    id: 9,
-    title: "Гібридна СЕС котеджу",
-    clientType: "b2c",
-    serviceType: "solar",
-    power: 15,
-    powerLabel: "15 кВт",
-    location: "м. Одеса",
-    image: "/images/about-b2c.jpg",
-  },
-  {
-    id: 10,
-    title: "Мережева СЕС агрокомплексу",
-    clientType: "b2b",
-    serviceType: "solar",
-    power: 1200,
-    powerLabel: "1.2 МВт",
-    location: "Вінницька обл.",
-    image: "/images/about-b2b.jpg",
-  },
-];
+export default function ProjectsGrid({ initialProjects = [] }) {
+  // Функція для автоматичної конвертації кВт -> МВт
+  const formatPower = (kw) => {
+    if (!kw) return "0 кВт";
+    if (kw >= 1000) {
+      return (kw / 1000).toFixed(1).replace(/\.0$/, "") + " МВт";
+    }
+    return kw + " кВт";
+  };
 
-export default function ProjectsGrid() {
+  // Адаптуємо дані з БД і автоматично генеруємо powerLabel
+  const mappedProjects = initialProjects.map((p) => ({
+    id: p._id,
+    title: p.title,
+    clientType: p.clientType,
+    serviceType: p.serviceType,
+    power: p.power,
+    powerLabel: formatPower(p.power), // 🔥 Генерується на клієнті
+    location: p.client || "Локація не вказана",
+    image: p.mainImage,
+  }));
+
   const [activeFilters, setActiveFilters] = useState({
     clientType: "all",
     serviceType: ["all"],
@@ -212,11 +130,10 @@ export default function ProjectsGrid() {
   const [powerLimit, setPowerLimit] = useState(MAX_POWER);
   const gridRef = useRef(null);
 
-  // 🔥 Пагінація: поточна сторінка та ліміт на сторінці
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 4; // Можете змінити на 6, 8, 10 тощо
+  const projectsPerPage = 4;
 
-  const filteredProjects = mockProjects.filter((p) => {
+  const filteredProjects = mappedProjects.filter((p) => {
     const matchClient =
       activeFilters.clientType === "all" ||
       activeFilters.clientType === p.clientType;
@@ -227,7 +144,6 @@ export default function ProjectsGrid() {
     return matchClient && matchService && matchPower;
   });
 
-  // 🔥 Розрахунок проектів для поточної сторінки
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
   const indexOfLastProject = currentPage * projectsPerPage;
   const indexOfFirstProject = indexOfLastProject - projectsPerPage;
@@ -267,7 +183,7 @@ export default function ProjectsGrid() {
 
   const handleFilterClick = (groupKey, filterId) => {
     animateGrid(() => {
-      setCurrentPage(1); // При зміні фільтра повертаємось на 1-шу сторінку
+      setCurrentPage(1);
 
       setActiveFilters((prev) => {
         if (groupKey === "clientType") {
@@ -304,7 +220,6 @@ export default function ProjectsGrid() {
     if (pageNumber === currentPage) return;
     animateGrid(() => {
       setCurrentPage(pageNumber);
-      // Плавний скрол до початку сітки при зміні сторінки
       if (gridRef.current) {
         const yOffset =
           gridRef.current.getBoundingClientRect().top + window.scrollY - 150;
@@ -407,7 +322,7 @@ export default function ProjectsGrid() {
                     value={powerLimit}
                     onChange={(e) => {
                       setPowerLimit(Number(e.target.value));
-                      setCurrentPage(1); // При зміні повзунка теж на першу сторінку
+                      setCurrentPage(1);
                     }}
                     className={styles.glassSlider}
                     style={{
@@ -436,7 +351,6 @@ export default function ProjectsGrid() {
               </div>
             )}
 
-            {/* 🔥 Рендеримо поточні проекти (currentProjects) 🔥 */}
             <div className={styles.grid} ref={gridRef}>
               {currentProjects.map((project) => (
                 <div key={project.id} className={styles.projectCard}>
@@ -498,7 +412,6 @@ export default function ProjectsGrid() {
               ))}
             </div>
 
-            {/* 🔥 БЛОК ПАГІНАЦІЇ ЗНИЗУ 🔥 */}
             {totalPages > 1 && (
               <div className={styles.pagination}>
                 {Array.from({ length: totalPages }).map((_, i) => (

@@ -1,0 +1,639 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$cyan: #00d4ff;
+$text-dark: #111827;
+$text-gray: #4b5563;
+$white: #ffffff;
+$yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
+
+.dashboardWrapper {
+  position: relative;
+  min-height: 100vh;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+
+  @media (max-width: 992px) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* ================== GLASS PANELS ================== */
+.glassPanel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 30px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  transition: box-shadow 0.3s ease;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    border-radius: 20px;
+  }
+}
+
+/* ================== SIDEBAR (МЕНЮ) ================== */
+.sidebar {
+  @extend .glassPanel;
+  width: 280px;
+  margin: 20px;
+  height: calc(100vh - 40px);
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  flex-shrink: 0;
+  z-index: 50;
+
+  @media (max-width: 992px) {
+    width: 100%;
+    height: 64px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    margin: 0;
+    top: 0;
+    border-radius: 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  position: relative;
+
+  .logoImg {
+    width: auto;
+    height: 44px;
+    object-fit: contain;
+  }
+
+  @media (max-width: 992px) {
+    margin-bottom: 0;
+    .logoImg {
+      height: 28px;
+    }
+  }
+}
+
+.navContainer {
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 992px) {
+    flex-direction: row;
+    gap: 8px;
+  }
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 14px 16px;
+  background-color: transparent;
+  color: $text-gray;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+
+  svg {
+    color: $text-gray;
+    transition: color 0.2s ease;
+  }
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    color: $text-dark;
+  }
+  &.active {
+    background: $white;
+    color: $text-dark;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+    svg {
+      color: $primary;
+    }
+  }
+
+  @media (max-width: 992px) {
+    margin-bottom: 0;
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  @media (max-width: 480px) {
+    span {
+      display: none;
+    }
+  }
+}
+
+/* ================== MAIN CONTENT ================== */
+.mainContent {
+  flex: 1;
+  padding: 20px 40px 20px 10px;
+  min-height: 100vh;
+
+  @media (max-width: 992px) {
+    padding: 16px 12px;
+    min-height: auto;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.containerForm {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+
+  @media (max-width: 640px) {
+    margin-bottom: 16px;
+    h1 {
+      font-size: 18px;
+    }
+  }
+}
+
+/* ================== BUTTONS ================== */
+.primaryBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  color: $text-dark;
+  background: $yellow-grad;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+  transition:
+    box-shadow 0.2s,
+    filter 0.2s;
+
+  &:hover {
+    box-shadow: 0 12px 28px rgba(255, 204, 0, 0.5);
+    filter: brightness(1.05);
+  }
+  &:active {
+    box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+    filter: brightness(0.95);
+  }
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    filter: none;
+  }
+
+  @media (max-width: 640px) {
+    padding: 8px 12px;
+    font-size: 13px;
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+    .btnText {
+      display: none;
+    }
+  }
+}
+
+.submitFormBtn {
+  @extend .primaryBtn;
+  @media (max-width: 640px) {
+    width: 100%;
+    .btnText {
+      display: inline;
+    }
+  }
+}
+
+.backBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: $text-gray;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 15px;
+  transition: color 0.2s;
+  &:hover {
+    color: $primary;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  @media (max-width: 640px) {
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+}
+
+.cancelBtn {
+  font-size: 15px;
+  font-weight: 700;
+  color: $text-gray;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 16px 24px;
+  transition: color 0.2s;
+  &:hover {
+    color: $text-dark;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  @media (max-width: 640px) {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 100px;
+  }
+}
+
+/* 🔥 ГАРАНТОВАНИЙ ВІДСТУП МІЖ КНОПКАМИ ДІЙ 🔥 */
+.actionBtn {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0; /* Не дає кнопці стискатися */
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px; /* Відстань між кнопками на десктопі */
+
+  &:last-child {
+    margin-right: 0 !important;
+  }
+
+  &.edit {
+    background: rgba(255, 255, 255, 0.8);
+    color: $primary;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  &.delete {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px !important; /* 🔥 Жорсткий відступ на мобільному */
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+/* ================== ТАБЛИЦЯ -> КАРТКИ ================== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 16px 20px;
+    font-weight: 600;
+    text-align: left;
+    color: $text-gray;
+    font-size: 13px;
+    text-transform: uppercase;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+  }
+  td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    vertical-align: middle;
+  }
+  tr {
+    transition: background 0.2s;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+    thead {
+      display: none;
+    }
+    tbody {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    tr {
+      display: grid;
+      grid-template-columns: 75px 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 12px;
+      row-gap: 4px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+      align-items: center;
+    }
+    td {
+      display: block;
+      padding: 0;
+      border: none;
+    }
+  }
+}
+
+.projectImg {
+  width: 80px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    width: 75px !important;
+    min-width: 75px !important;
+    max-width: 75px !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    border-radius: 8px;
+  }
+}
+
+.cellImg {
+  @media (max-width: 768px) {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    align-self: start;
+  }
+}
+
+.cellTitle {
+  font-weight: 700;
+  color: $text-dark;
+  font-size: 16px;
+  @media (max-width: 768px) {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 14px;
+    line-height: 1.2;
+    align-self: end;
+  }
+}
+
+.cellClient {
+  color: $text-gray;
+  font-weight: 600;
+  @media (max-width: 768px) {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 12px;
+  }
+}
+
+.cellPower {
+  color: $primary;
+  font-weight: 800;
+  @media (max-width: 768px) {
+    grid-column: 2;
+    grid-row: 3;
+    font-size: 13px;
+    align-self: start;
+  }
+}
+
+/* 🔥 КОМІРКА КНОПОК ДІЙ 🔥 */
+.cellActions {
+  text-align: right;
+  white-space: nowrap; /* Не даємо перенестися на новий рядок */
+
+  @media (max-width: 768px) {
+    grid-column: 3;
+    grid-row: 1 / 4;
+    display: flex !important;
+    flex-direction: row !important; /* Суворо в один ряд на мобільному */
+    align-items: center;
+    justify-content: flex-end;
+  }
+}
+
+/* ================== ФОРМИ ================== */
+.formTitle {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0 0 24px 0;
+  color: $text-dark;
+  @media (max-width: 640px) {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+}
+
+.formLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  z-index: 2;
+  @media (max-width: 640px) {
+    gap: 16px;
+  }
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .grid2,
+  .grid3 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-gray;
+    span {
+      color: #ef4444;
+    }
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    background: transparent;
+    font-size: 15px;
+    color: $text-dark;
+    transition: border-color 0.2s ease;
+    border-radius: 0;
+    &::placeholder {
+      color: #9ca3af;
+    }
+    &:focus {
+      outline: none;
+      border-bottom: 2px solid $primary;
+    }
+  }
+}
+
+.fileInputWrapper {
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  input {
+    width: 100%;
+    border: none;
+    padding: 0;
+  }
+}
+
+.previewImg {
+  display: block;
+  height: 80px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  @media (max-width: 640px) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+  }
+}
+
+/* ================== MODAL ================== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modalContent {
+  @extend .glassPanel;
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.95);
+  h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0 0 8px 0;
+  }
+  p {
+    color: $text-gray;
+    font-size: 14px;
+    margin: 0 0 20px 0;
+    line-height: 1.4;
+  }
+}
+
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btnCancel {
+    background: rgba(0, 0, 0, 0.05);
+    color: $text-gray;
+  }
+  .btnDelete {
+    background: #ef4444;
+    color: white;
+    &:hover {
+      background: #dc2626;
+    }
+  }
+}
