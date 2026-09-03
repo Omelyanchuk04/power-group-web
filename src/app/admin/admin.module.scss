@@ -36,7 +36,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
   @media (max-width: 768px) {
     padding: 16px;
-    border-radius: 20px;
+    border-radius: 28px; /* Збільшений радіус для мобільного */
   }
 }
 
@@ -71,6 +71,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
+/* 🔥 ЛОГОТИПИ (ЗМІНА НА ІКОНКУ ДЛЯ МОБІЛЬНОГО) */
 .brand {
   display: flex;
   align-items: center;
@@ -78,16 +79,26 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   margin-bottom: 40px;
   position: relative;
 
-  .logoImg {
+  .logoDesktop {
+    display: block;
     width: auto;
     height: 44px;
     object-fit: contain;
   }
+  .logoMobile {
+    display: none;
+  }
 
   @media (max-width: 992px) {
     margin-bottom: 0;
-    .logoImg {
-      height: 28px;
+    .logoDesktop {
+      display: none;
+    }
+    .logoMobile {
+      display: block;
+      width: auto;
+      height: 34px;
+      object-fit: contain;
     }
   }
 }
@@ -149,6 +160,13 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     span {
       display: none;
     }
+  }
+}
+
+/* 🔥 Клас для приховування зайвої кнопки на мобільному */
+.hideOnMobile {
+  @media (max-width: 992px) {
+    display: none !important;
   }
 }
 
@@ -296,11 +314,10 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* 🔥 ГАРАНТОВАНИЙ ВІДСТУП МІЖ КНОПКАМИ ДІЙ 🔥 */
 .actionBtn {
   width: 40px;
   height: 40px;
-  flex-shrink: 0; /* Не дає кнопці стискатися */
+  flex-shrink: 0;
   border: none;
   border-radius: 12px;
   cursor: pointer;
@@ -308,7 +325,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 12px; /* Відстань між кнопками на десктопі */
+  margin-right: 12px;
 
   &:last-child {
     margin-right: 0 !important;
@@ -327,7 +344,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   @media (max-width: 768px) {
     width: 40px;
     height: 40px;
-    margin-right: 10px !important; /* 🔥 Жорсткий відступ на мобільному */
+    margin-right: 10px !important;
     svg {
       width: 18px;
       height: 18px;
@@ -379,7 +396,8 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       row-gap: 4px;
       padding: 12px;
       background: rgba(255, 255, 255, 0.6);
-      border-radius: 16px;
+      /* 🔥 ПРАВИЛЬНИЙ ВНУТРІШНІЙ РАДІУС (28 зовнішній - 16 відступ) */
+      border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.9);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
       align-items: center;
@@ -451,16 +469,15 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* 🔥 КОМІРКА КНОПОК ДІЙ 🔥 */
 .cellActions {
   text-align: right;
-  white-space: nowrap; /* Не даємо перенестися на новий рядок */
+  white-space: nowrap;
 
   @media (max-width: 768px) {
     grid-column: 3;
     grid-row: 1 / 4;
     display: flex !important;
-    flex-direction: row !important; /* Суворо в один ряд на мобільному */
+    flex-direction: row !important;
     align-items: center;
     justify-content: flex-end;
   }

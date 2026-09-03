@@ -247,7 +247,17 @@ export default function AdminDashboard() {
       >
         <aside className={styles.sidebar}>
           <div className={styles.brand}>
-            <img src="/logo.svg" alt="Vin Power" className={styles.logoImg} />
+            {/* 🔥 Показуємо повне лого на десктопі і тільки іконку на телефоні */}
+            <img
+              src="/logo.svg"
+              alt="Vin Power"
+              className={styles.logoDesktop}
+            />
+            <img
+              src="/Logo-icon.svg"
+              alt="Vin Power"
+              className={styles.logoMobile}
+            />
           </div>
 
           <div className={styles.navContainer}>
@@ -259,17 +269,6 @@ export default function AdminDashboard() {
               className={`${styles.navBtn} ${view === "list" ? styles.active : ""}`}
             >
               <IconProjects /> <span>Усі проєкти</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setFormData(initialForm);
-                setFile(null);
-                setView("add");
-              }}
-              className={`${styles.navBtn} ${view === "add" ? styles.active : ""}`}
-            >
-              <IconPlus /> <span>Додати проєкт</span>
             </button>
           </div>
         </aside>
