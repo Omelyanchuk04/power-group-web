@@ -36,7 +36,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
   @media (max-width: 768px) {
     padding: 16px;
-    border-radius: 28px; /* Збільшений радіус для мобільного */
+    border-radius: 28px;
   }
 }
 
@@ -62,7 +62,9 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     justify-content: space-between;
     padding: 0 16px;
     margin: 0;
+    position: sticky;
     top: 0;
+    z-index: 100;
     border-radius: 0;
     border-top: none;
     border-left: none;
@@ -71,7 +73,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* 🔥 ЛОГОТИПИ (ЗМІНА НА ІКОНКУ ДЛЯ МОБІЛЬНОГО) */
+/* ЛОГОТИПИ */
 .brand {
   display: flex;
   align-items: center;
@@ -163,7 +165,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* 🔥 Клас для приховування зайвої кнопки на мобільному */
 .hideOnMobile {
   @media (max-width: 992px) {
     display: none !important;
@@ -390,17 +391,17 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     }
     tr {
       display: grid;
-      grid-template-columns: 75px 1fr auto;
+      grid-template-columns: 85px 1fr auto;
       grid-template-rows: auto auto auto;
       column-gap: 12px;
       row-gap: 4px;
-      padding: 12px;
+      /* 🔥 Однаковий і зменшений відступ з усіх боків */
+      padding: 8px;
       background: rgba(255, 255, 255, 0.6);
-      /* 🔥 ПРАВИЛЬНИЙ ВНУТРІШНІЙ РАДІУС (28 зовнішній - 16 відступ) */
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.9);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-      align-items: center;
+      /* Прибрано align-items: center, щоб фото могло розтягнутися */
     }
     td {
       display: block;
@@ -418,12 +419,14 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    width: 75px !important;
-    min-width: 75px !important;
-    max-width: 75px !important;
-    height: 50px !important;
-    min-height: 50px !important;
-    border-radius: 8px;
+    width: 85px !important;
+    min-width: 85px !important;
+    max-width: 85px !important;
+    /* 🔥 Фото тягнеться на всю висоту контенту, зберігаючи відступи рівно по 8px */
+    height: 100% !important;
+    min-height: 74px !important;
+    /* 🔥 Ідеальний внутрішній радіус (14 зовнішній - 8 відступ = 6) */
+    border-radius: 6px !important;
   }
 }
 
@@ -431,7 +434,9 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   @media (max-width: 768px) {
     grid-column: 1;
     grid-row: 1 / 4;
-    align-self: start;
+    /* 🔥 Дозволяє фото розтягнутися від верху до низу картки */
+    align-self: stretch;
+    display: flex;
   }
 }
 
@@ -455,6 +460,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     grid-column: 2;
     grid-row: 2;
     font-size: 12px;
+    align-self: center;
   }
 }
 
