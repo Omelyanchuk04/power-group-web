@@ -49,7 +49,7 @@ const IconTrash = () => (
     strokeLinejoin="round"
   >
     <polyline points="3 6 5 6 21 6"></polyline>
-    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2v2"></path>
   </svg>
 );
 const IconArrowLeft = () => (
@@ -149,6 +149,7 @@ const IconX = () => (
 const CLOUD_NAME = "umg8kma4";
 const UPLOAD_PRESET = "vin_power_group_projects";
 
+// 🔥 Додали поле date
 const initialForm = {
   title: "",
   shortDescription: "",
@@ -156,6 +157,7 @@ const initialForm = {
   clientType: "b2c",
   serviceType: "solar",
   power: "",
+  date: "",
 };
 
 export default function AdminDashboard() {
@@ -167,7 +169,7 @@ export default function AdminDashboard() {
   const [editingId, setEditingId] = useState(null);
 
   const [images, setImages] = useState([]);
-  const [isDragging, setIsDragging] = useState(false); // 🔥 Стан для Drag-and-Drop
+  const [isDragging, setIsDragging] = useState(false);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState(null);
@@ -179,7 +181,7 @@ export default function AdminDashboard() {
       const data = await res.json();
       setProjects(data);
     } catch (error) {
-      console.error("Помилка завантаження", error);
+      console.error("Помилка", error);
     } finally {
       setIsLoading(false);
     }
@@ -197,27 +199,27 @@ export default function AdminDashboard() {
       clientType: project.clientType,
       serviceType: project.serviceType,
       power: project.power,
+      date: project.date || "", // Підтягуємо існуючу дату
     });
     setEditingId(project._id);
 
     const existingImages = [];
-    if (project.mainImage) {
+    if (project.mainImage)
       existingImages.push({
         id: "main_old",
         url: project.mainImage,
         file: null,
         isMain: true,
       });
-    }
-    if (project.gallery && project.gallery.length > 0) {
-      project.gallery.forEach((url, index) => {
+    if (project.gallery?.length) {
+      project.gallery.forEach((url, i) =>
         existingImages.push({
-          id: `gal_old_${index}`,
+          id: `gal_old_${i}`,
           url,
           file: null,
           isMain: false,
-        });
-      });
+        }),
+      );
     }
     setImages(existingImages);
     setView("edit");
@@ -234,79 +236,58 @@ export default function AdminDashboard() {
       const res = await fetch(`/api/projects/${projectToDelete}`, {
         method: "DELETE",
       });
-      if (res.ok) {
+      if (res.ok)
         setProjects((prev) => prev.filter((p) => p._id !== projectToDelete));
-      } else {
-        alert("Помилка видалення");
-      }
-    } catch (error) {
-      alert("Помилка з'єднання");
     } finally {
       setIsDeleteModalOpen(false);
       setProjectToDelete(null);
     }
   };
 
-  // 🔥 Спільна функція для обробки файлів (і з інпуту, і з drag-and-drop)
   const processFiles = (fileList) => {
     const files = Array.from(fileList);
     if (!files.length) return;
-
     const newImages = files.map((f, i) => ({
       id: `new_${Date.now()}_${i}`,
       url: URL.createObjectURL(f),
       file: f,
       isMain: false,
     }));
-
     setImages((prev) => {
       const combined = [...prev, ...newImages];
-      if (combined.length > 0 && !combined.some((img) => img.isMain)) {
+      if (combined.length > 0 && !combined.some((img) => img.isMain))
         combined[0].isMain = true;
-      }
       return combined;
     });
   };
 
-  // 🔥 Обробники Drag-and-Drop
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
   };
-
   const handleDragLeave = (e) => {
     e.preventDefault();
     setIsDragging(false);
   };
-
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      processFiles(e.dataTransfer.files);
-    }
+    if (e.dataTransfer.files?.length) processFiles(e.dataTransfer.files);
   };
 
-  const setMainImage = (id) => {
+  const setMainImage = (id) =>
     setImages((prev) => prev.map((img) => ({ ...img, isMain: img.id === id })));
-  };
-
-  const removeImage = (id) => {
+  const removeImage = (id) =>
     setImages((prev) => {
       const filtered = prev.filter((img) => img.id !== id);
-      if (filtered.length > 0 && !filtered.some((img) => img.isMain)) {
+      if (filtered.length > 0 && !filtered.some((img) => img.isMain))
         filtered[0].isMain = true;
-      }
       return filtered;
     });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (images.length === 0) {
-      alert("Додайте хоча б одну фотографію!");
-      return;
-    }
+    if (!images.length) return alert("Додайте фотографію!");
     setIsUploading(true);
 
     try {
@@ -318,13 +299,9 @@ export default function AdminDashboard() {
             formData.append("upload_preset", UPLOAD_PRESET);
             const res = await fetch(
               `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-              {
-                method: "POST",
-                body: formData,
-              },
+              { method: "POST", body: formData },
             );
             const data = await res.json();
-            if (!res.ok) throw new Error("Помилка завантаження фото");
             return { url: data.secure_url, isMain: img.isMain };
           }
           return { url: img.url, isMain: img.isMain };
@@ -344,23 +321,19 @@ export default function AdminDashboard() {
         gallery: finalGallery,
       };
 
-      const method = view === "edit" ? "PUT" : "POST";
       const url =
         view === "edit" ? `/api/projects/${editingId}` : "/api/projects";
-
-      const dbRes = await fetch(url, {
-        method,
+      const res = await fetch(url, {
+        method: view === "edit" ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(projectData),
       });
 
-      if (dbRes.ok) {
+      if (res.ok) {
         fetchProjects();
         setView("list");
         setImages([]);
-      } else {
-        throw new Error("Помилка збереження в БД");
-      }
+      } else throw new Error("Помилка збереження");
     } catch (error) {
       alert(error.message);
     } finally {
@@ -384,7 +357,6 @@ export default function AdminDashboard() {
       >
         <GlobalBackground isLayout={false} />
       </div>
-
       <div className={styles.mobileClientHeader}>
         <Header />
       </div>
@@ -406,7 +378,6 @@ export default function AdminDashboard() {
               className={styles.logoDesktop}
             />
           </div>
-
           <div className={styles.navContainer}>
             <button
               onClick={() => {
@@ -428,7 +399,6 @@ export default function AdminDashboard() {
               <IconPlus /> <span>Додати проєкт</span>
             </button>
           </div>
-
           <div className={styles.sidebarFooter}>
             <Link href="/" className={styles.navBtn}>
               <IconExternal /> <span>Повернутися на сайт</span>
@@ -463,25 +433,16 @@ export default function AdminDashboard() {
                       color: "#4b5563",
                     }}
                   >
-                    Завантаження даних...
+                    Завантаження...
                   </div>
                 ) : projects.length === 0 ? (
                   <div style={{ padding: "40px", textAlign: "center" }}>
                     <div style={{ fontSize: "40px", marginBottom: "16px" }}>
                       📂
                     </div>
-                    <h3
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "800",
-                        color: "#111827",
-                      }}
-                    >
-                      Проєктів ще немає
+                    <h3 style={{ fontSize: "18px", fontWeight: "800" }}>
+                      Немає проєктів
                     </h3>
-                    <p style={{ color: "#4b5563", fontSize: "14px" }}>
-                      Додайте свій перший об'єкт.
-                    </p>
                   </div>
                 ) : (
                   <div className={styles.tableContainer}>
@@ -501,7 +462,6 @@ export default function AdminDashboard() {
                             <td className={styles.cellImg}>
                               <img
                                 src={p.mainImage}
-                                alt={p.title}
                                 className={styles.projectImg}
                               />
                             </td>
@@ -514,14 +474,12 @@ export default function AdminDashboard() {
                               <button
                                 onClick={() => handleEditClick(p)}
                                 className={`${styles.actionBtn} ${styles.edit}`}
-                                title="Редагувати"
                               >
                                 <IconEdit />
                               </button>
                               <button
                                 onClick={() => handleDeleteClick(p._id)}
                                 className={`${styles.actionBtn} ${styles.delete}`}
-                                title="Видалити"
                               >
                                 <IconTrash />
                               </button>
@@ -551,14 +509,14 @@ export default function AdminDashboard() {
                 </h2>
 
                 <form onSubmit={handleSubmit} className={styles.formLayout}>
-                  <div className={styles.grid2}>
+                  {/* 🔥 ТЕПЕР ТУТ 3 КОЛОНКИ (Назва, Локація, Дата) 🔥 */}
+                  <div className={styles.grid3}>
                     <div className={styles.inputGroup}>
                       <label>
                         Назва <span>*</span>
                       </label>
                       <input
                         type="text"
-                        name="title"
                         value={formData.title}
                         onChange={(e) =>
                           setFormData({ ...formData, title: e.target.value })
@@ -570,10 +528,19 @@ export default function AdminDashboard() {
                       <label>Локація</label>
                       <input
                         type="text"
-                        name="client"
                         value={formData.client}
                         onChange={(e) =>
                           setFormData({ ...formData, client: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className={styles.inputGroup}>
+                      <label>Дата реалізації</label>
+                      <input
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) =>
+                          setFormData({ ...formData, date: e.target.value })
                         }
                       />
                     </div>
@@ -583,7 +550,6 @@ export default function AdminDashboard() {
                     <div className={styles.inputGroup}>
                       <label>Тип об'єкта</label>
                       <select
-                        name="clientType"
                         value={formData.clientType}
                         onChange={(e) =>
                           setFormData({
@@ -599,7 +565,6 @@ export default function AdminDashboard() {
                     <div className={styles.inputGroup}>
                       <label>Рішення</label>
                       <select
-                        name="serviceType"
                         value={formData.serviceType}
                         onChange={(e) =>
                           setFormData({
@@ -620,7 +585,6 @@ export default function AdminDashboard() {
                       </label>
                       <input
                         type="number"
-                        name="power"
                         value={formData.power}
                         onChange={(e) =>
                           setFormData({ ...formData, power: e.target.value })
@@ -630,13 +594,11 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* 🔥 Оновлене поле опису (фіксована висота, скрол всередині) */}
                   <div className={styles.inputGroup}>
                     <label>
                       Короткий опис <span>*</span>
                     </label>
                     <textarea
-                      name="shortDescription"
                       value={formData.shortDescription}
                       onChange={(e) =>
                         setFormData({
@@ -649,10 +611,8 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* 🔥 Зона завантаження з підтримкою Drag-and-Drop */}
                   <div className={styles.inputGroup}>
                     <label>Фотографії проєкту (Головне фото та Галерея)</label>
-
                     <label
                       className={`${styles.unifiedUploadZone} ${isDragging ? styles.dragging : ""}`}
                       onDragOver={handleDragOver}
@@ -672,13 +632,11 @@ export default function AdminDashboard() {
                           Натисніть або перетягніть фото сюди
                         </span>
                         <span className={styles.uploadHint}>
-                          Можна обрати декілька файлів. Перше фото автоматично
-                          стане головним.
+                          Перше фото автоматично стане головним.
                         </span>
                       </div>
                     </label>
 
-                    {/* 🔥 Оновлена сітка фотографій (мінімалістична) */}
                     {images.length > 0 && (
                       <div className={styles.imageGrid}>
                         {images.map((img) => (
@@ -687,16 +645,13 @@ export default function AdminDashboard() {
                             className={`${styles.imageCard} ${img.isMain ? styles.isMain : ""}`}
                           >
                             <img src={img.url} alt="preview" />
-
                             <button
                               type="button"
                               className={styles.removeBtn}
                               onClick={() => removeImage(img.id)}
-                              title="Видалити"
                             >
                               <IconX />
                             </button>
-
                             {img.isMain ? (
                               <div className={styles.mainBadge}>
                                 <IconStar /> Головна
@@ -744,16 +699,12 @@ export default function AdminDashboard() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <h3>Видалити проєкт?</h3>
-            <p>
-              Ви впевнені, що хочете видалити цей проєкт? Цю дію неможливо буде
-              скасувати.
-            </p>
             <div className={styles.modalActions}>
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
                 className={styles.btnCancel}
               >
-                Скасувати
+                Скасування
               </button>
               <button onClick={confirmDelete} className={styles.btnDelete}>
                 Видалити

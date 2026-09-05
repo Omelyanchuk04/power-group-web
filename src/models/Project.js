@@ -10,9 +10,10 @@ const ProjectSchema = new mongoose.Schema(
     serviceType: { type: String },
     power: { type: Number },
     mainImage: { type: String, required: true },
-
-    // 🔥 ДОДАЄМО ЦЕЙ РЯДОК:
     gallery: [{ type: String }],
+
+    // 🔥 ДОДАЄМО ПОЛЕ ДАТИ
+    date: { type: String },
   },
   { timestamps: true },
 );
