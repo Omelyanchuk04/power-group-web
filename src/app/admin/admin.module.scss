@@ -19,7 +19,15 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* ================== GLASS PANELS ================== */
+.mobileClientHeader {
+  display: none;
+  @media (max-width: 992px) {
+    display: block;
+    position: relative;
+    z-index: 100;
+  }
+}
+
 .glassPanel {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
@@ -40,7 +48,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* ================== SIDEBAR (МЕНЮ) ================== */
 .sidebar {
   @extend .glassPanel;
   width: 280px;
@@ -55,25 +62,10 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   z-index: 50;
 
   @media (max-width: 992px) {
-    width: 100%;
-    height: 64px;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    margin: 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-radius: 0;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    background: rgba(255, 255, 255, 0.85);
+    display: none;
   }
 }
 
-/* ЛОГОТИПИ */
 .brand {
   display: flex;
   align-items: center;
@@ -87,31 +79,19 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     height: 44px;
     object-fit: contain;
   }
-  .logoMobile {
-    display: none;
-  }
-
-  @media (max-width: 992px) {
-    margin-bottom: 0;
-    .logoDesktop {
-      display: none;
-    }
-    .logoMobile {
-      display: block;
-      width: auto;
-      height: 34px;
-      object-fit: contain;
-    }
-  }
 }
 
 .navContainer {
   display: flex;
   flex-direction: column;
+}
 
-  @media (max-width: 992px) {
-    flex-direction: row;
-    gap: 8px;
+.sidebarFooter {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  a {
+    text-decoration: none;
   }
 }
 
@@ -147,38 +127,19 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       color: $primary;
     }
   }
-
-  @media (max-width: 992px) {
-    margin-bottom: 0;
-    padding: 8px 12px;
-    font-size: 13px;
-    border-radius: 10px;
-    svg {
-      width: 18px;
-      height: 18px;
-    }
-  }
-  @media (max-width: 480px) {
-    span {
-      display: none;
-    }
-  }
 }
 
-.hideOnMobile {
-  @media (max-width: 992px) {
-    display: none !important;
-  }
-}
-
-/* ================== MAIN CONTENT ================== */
 .mainContent {
   flex: 1;
+  min-width: 0;
   padding: 20px 40px 20px 10px;
   min-height: 100vh;
 
+  @media (max-width: 1200px) {
+    padding: 20px 20px 20px 10px;
+  }
   @media (max-width: 992px) {
-    padding: 16px 12px;
+    padding: 100px 12px 32px 12px;
     min-height: auto;
   }
 }
@@ -205,7 +166,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     margin: 0;
     letter-spacing: -0.5px;
   }
-
   @media (max-width: 640px) {
     margin-bottom: 16px;
     h1 {
@@ -214,7 +174,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* ================== BUTTONS ================== */
 .primaryBtn {
   display: flex;
   align-items: center;
@@ -229,6 +188,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   border-radius: 100px;
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(255, 204, 0, 0.3);
+  flex-shrink: 0;
   transition:
     box-shadow 0.2s,
     filter 0.2s;
@@ -331,7 +291,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   &:last-child {
     margin-right: 0 !important;
   }
-
   &.edit {
     background: rgba(255, 255, 255, 0.8);
     color: $primary;
@@ -353,10 +312,23 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* ================== ТАБЛИЦЯ -> КАРТКИ ================== */
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+  }
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
 
   th {
     padding: 16px 20px;
@@ -381,6 +353,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
   @media (max-width: 768px) {
     display: block;
+    min-width: auto;
     thead {
       display: none;
     }
@@ -395,13 +368,11 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       grid-template-rows: auto auto auto;
       column-gap: 12px;
       row-gap: 4px;
-      /* 🔥 Однаковий і зменшений відступ з усіх боків */
       padding: 8px;
       background: rgba(255, 255, 255, 0.6);
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.9);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-      /* Прибрано align-items: center, щоб фото могло розтягнутися */
     }
     td {
       display: block;
@@ -422,10 +393,8 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     width: 85px !important;
     min-width: 85px !important;
     max-width: 85px !important;
-    /* 🔥 Фото тягнеться на всю висоту контенту, зберігаючи відступи рівно по 8px */
     height: 100% !important;
     min-height: 74px !important;
-    /* 🔥 Ідеальний внутрішній радіус (14 зовнішній - 8 відступ = 6) */
     border-radius: 6px !important;
   }
 }
@@ -434,12 +403,10 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   @media (max-width: 768px) {
     grid-column: 1;
     grid-row: 1 / 4;
-    /* 🔥 Дозволяє фото розтягнутися від верху до низу картки */
     align-self: stretch;
     display: flex;
   }
 }
-
 .cellTitle {
   font-weight: 700;
   color: $text-dark;
@@ -452,7 +419,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     align-self: end;
   }
 }
-
 .cellClient {
   color: $text-gray;
   font-weight: 600;
@@ -463,7 +429,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     align-self: center;
   }
 }
-
 .cellPower {
   color: $primary;
   font-weight: 800;
@@ -474,11 +439,9 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     align-self: start;
   }
 }
-
 .cellActions {
   text-align: right;
   white-space: nowrap;
-
   @media (max-width: 768px) {
     grid-column: 3;
     grid-row: 1 / 4;
@@ -489,7 +452,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* ================== ФОРМИ ================== */
 .formTitle {
   font-size: 24px;
   font-weight: 800;
@@ -500,7 +462,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     margin-bottom: 16px;
   }
 }
-
 .formLayout {
   display: flex;
   flex-direction: column;
@@ -511,7 +472,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     gap: 16px;
   }
 }
-
 .grid2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -522,7 +482,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
 }
-
 @media (max-width: 640px) {
   .grid2,
   .grid3 {
@@ -563,27 +522,200 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       border-bottom: 2px solid $primary;
     }
   }
-}
 
-.fileInputWrapper {
-  border: 1px dashed rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.5);
-  input {
-    width: 100%;
-    border: none;
-    padding: 0;
+  /* 🔥 ОНОВЛЕНЕ ПОЛЕ ОПИСУ 🔥 */
+  .fixedTextarea {
+    height: 120px; /* Зробили вищим */
+    resize: none; /* Заборонили ручне масштабування */
+    overflow-y: auto; /* Додали скрол, якщо тексту багато */
+    line-height: 1.5;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+
+    &:focus {
+      background: rgba(255, 255, 255, 0.8);
+      border-color: $primary;
+      outline: none;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+    }
   }
 }
 
-.previewImg {
-  display: block;
-  height: 80px;
-  border-radius: 10px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  object-fit: cover;
+.hiddenFileInput {
+  display: none;
+}
+
+/* 🔥 ЗОНА ЗАВАНТАЖЕННЯ (З ПІДТРИМКОЮ DRAG-AND-DROP) 🔥 */
+.unifiedUploadZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(0, 86, 179, 0.25);
+  border-radius: 16px;
+  padding: 32px 16px;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  width: 100%;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: $primary;
+  }
+
+  &.dragging {
+    background: rgba(0, 86, 179, 0.08);
+    border-color: $primary;
+    transform: scale(1.02);
+  }
+
+  .uploadContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none; /* Щоб drag events не глючили об дочірні елементи */
+
+    svg {
+      color: $primary;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+    .uploadText {
+      font-size: 15px;
+      font-weight: 700;
+      color: $text-dark;
+    }
+    .uploadHint {
+      font-size: 13px;
+      color: #9ca3af;
+      max-width: 300px;
+      line-height: 1.4;
+    }
+  }
+}
+
+/* 🔥 СІТКА ФОТОГРАФІЙ (МІНІМАЛІСТИЧНИЙ СТИЛЬ) 🔥 */
+.imageGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.imageCard {
+  width: 140px;
+  height: 100px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+
+  @media (max-width: 640px) {
+    width: 110px;
+    height: 80px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.isMain {
+    border-color: rgba(0, 0, 0, 0.1); /* Менш помітна рамка */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .mainBadge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: rgba(
+      0,
+      0,
+      0,
+      0.5
+    ); /* Напівпрозоре темне скло замість яскравого синього */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+    pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .removeBtn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.4); /* Сіре скло за замовчуванням */
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(
+        239,
+        68,
+        68,
+        0.9
+      ); /* Стає червоним ТІЛЬКИ при наведенні */
+      transform: scale(1.1);
+    }
+  }
+
+  .setMainOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    z-index: 1;
+    text-align: center;
+    padding: 10px;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 .formActions {
@@ -599,7 +731,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* ================== MODAL ================== */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -612,7 +743,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   justify-content: center;
   padding: 16px;
 }
-
 .modalContent {
   @extend .glassPanel;
   width: 100%;
@@ -633,7 +763,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     line-height: 1.4;
   }
 }
-
 .modalActions {
   display: flex;
   gap: 8px;

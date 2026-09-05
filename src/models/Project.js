@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
+// models/Project.js
 const ProjectSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     shortDescription: { type: String, required: true },
     client: { type: String },
+    clientType: { type: String },
+    serviceType: { type: String },
+    power: { type: Number },
     mainImage: { type: String, required: true },
-    clientType: { type: String, required: true, default: "b2c" },
-    serviceType: { type: String, required: true, default: "solar" },
-    power: { type: Number, required: true, default: 0 },
-    // Поле powerLabel видалено
+
+    // 🔥 ДОДАЄМО ЦЕЙ РЯДОК:
+    gallery: [{ type: String }],
   },
   { timestamps: true },
 );

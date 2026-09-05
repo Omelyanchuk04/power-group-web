@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import GlobalBackground from "@/components/layout/GlobalBackground";
+import Header from "@/components/layout/Header";
 import styles from "./admin.module.scss";
 
 // --- SVG Іконки ---
@@ -82,6 +84,67 @@ const IconProjects = () => (
     <rect x="3" y="14" width="7" height="7"></rect>
   </svg>
 );
+const IconUpload = () => (
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="17 8 12 3 7 8"></polyline>
+    <line x1="12" y1="3" x2="12" y2="15"></line>
+  </svg>
+);
+const IconExternal = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+    <polyline points="15 3 21 3 21 9"></polyline>
+    <line x1="10" y1="14" x2="21" y2="3"></line>
+  </svg>
+);
+const IconStar = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+  </svg>
+);
+const IconX = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
 
 const CLOUD_NAME = "umg8kma4";
 const UPLOAD_PRESET = "vin_power_group_projects";
@@ -99,10 +162,12 @@ export default function AdminDashboard() {
   const [projects, setProjects] = useState([]);
   const [view, setView] = useState("list");
   const [formData, setFormData] = useState(initialForm);
-  const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [editingId, setEditingId] = useState(null);
+
+  const [images, setImages] = useState([]);
+  const [isDragging, setIsDragging] = useState(false); // 🔥 Стан для Drag-and-Drop
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState(null);
@@ -132,10 +197,29 @@ export default function AdminDashboard() {
       clientType: project.clientType,
       serviceType: project.serviceType,
       power: project.power,
-      mainImage: project.mainImage,
     });
     setEditingId(project._id);
-    setFile(null);
+
+    const existingImages = [];
+    if (project.mainImage) {
+      existingImages.push({
+        id: "main_old",
+        url: project.mainImage,
+        file: null,
+        isMain: true,
+      });
+    }
+    if (project.gallery && project.gallery.length > 0) {
+      project.gallery.forEach((url, index) => {
+        existingImages.push({
+          id: `gal_old_${index}`,
+          url,
+          file: null,
+          isMain: false,
+        });
+      });
+    }
+    setImages(existingImages);
     setView("edit");
   };
 
@@ -163,36 +247,101 @@ export default function AdminDashboard() {
     }
   };
 
+  // 🔥 Спільна функція для обробки файлів (і з інпуту, і з drag-and-drop)
+  const processFiles = (fileList) => {
+    const files = Array.from(fileList);
+    if (!files.length) return;
+
+    const newImages = files.map((f, i) => ({
+      id: `new_${Date.now()}_${i}`,
+      url: URL.createObjectURL(f),
+      file: f,
+      isMain: false,
+    }));
+
+    setImages((prev) => {
+      const combined = [...prev, ...newImages];
+      if (combined.length > 0 && !combined.some((img) => img.isMain)) {
+        combined[0].isMain = true;
+      }
+      return combined;
+    });
+  };
+
+  // 🔥 Обробники Drag-and-Drop
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
+    }
+  };
+
+  const setMainImage = (id) => {
+    setImages((prev) => prev.map((img) => ({ ...img, isMain: img.id === id })));
+  };
+
+  const removeImage = (id) => {
+    setImages((prev) => {
+      const filtered = prev.filter((img) => img.id !== id);
+      if (filtered.length > 0 && !filtered.some((img) => img.isMain)) {
+        filtered[0].isMain = true;
+      }
+      return filtered;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (images.length === 0) {
+      alert("Додайте хоча б одну фотографію!");
+      return;
+    }
     setIsUploading(true);
 
     try {
-      let imageUrl = formData.mainImage;
+      const uploadedImages = await Promise.all(
+        images.map(async (img) => {
+          if (img.file) {
+            const formData = new FormData();
+            formData.append("file", img.file);
+            formData.append("upload_preset", UPLOAD_PRESET);
+            const res = await fetch(
+              `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+              {
+                method: "POST",
+                body: formData,
+              },
+            );
+            const data = await res.json();
+            if (!res.ok) throw new Error("Помилка завантаження фото");
+            return { url: data.secure_url, isMain: img.isMain };
+          }
+          return { url: img.url, isMain: img.isMain };
+        }),
+      );
 
-      if (file) {
-        const imageFormData = new FormData();
-        imageFormData.append("file", file);
-        imageFormData.append("upload_preset", UPLOAD_PRESET);
-
-        const cloudinaryRes = await fetch(
-          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-          {
-            method: "POST",
-            body: imageFormData,
-          },
-        );
-        const cloudinaryData = await cloudinaryRes.json();
-        if (!cloudinaryRes.ok) throw new Error("Помилка завантаження фото");
-        imageUrl = cloudinaryData.secure_url;
-      } else if (view === "add") {
-        throw new Error("Будь ласка, оберіть фотографію!");
-      }
+      const finalMainImage =
+        uploadedImages.find((u) => u.isMain)?.url || uploadedImages[0].url;
+      const finalGallery = uploadedImages
+        .filter((u) => !u.isMain)
+        .map((u) => u.url);
 
       const projectData = {
         ...formData,
         power: Number(formData.power) || 0,
-        mainImage: imageUrl,
+        mainImage: finalMainImage,
+        gallery: finalGallery,
       };
 
       const method = view === "edit" ? "PUT" : "POST";
@@ -208,6 +357,7 @@ export default function AdminDashboard() {
       if (dbRes.ok) {
         fetchProjects();
         setView("list");
+        setImages([]);
       } else {
         throw new Error("Помилка збереження в БД");
       }
@@ -235,6 +385,10 @@ export default function AdminDashboard() {
         <GlobalBackground isLayout={false} />
       </div>
 
+      <div className={styles.mobileClientHeader}>
+        <Header />
+      </div>
+
       <div
         style={{
           position: "relative",
@@ -251,11 +405,6 @@ export default function AdminDashboard() {
               alt="Vin Power"
               className={styles.logoDesktop}
             />
-            <img
-              src="/Logo-icon.svg"
-              alt="Vin Power"
-              className={styles.logoMobile}
-            />
           </div>
 
           <div className={styles.navContainer}>
@@ -268,17 +417,22 @@ export default function AdminDashboard() {
             >
               <IconProjects /> <span>Усі проєкти</span>
             </button>
-
             <button
               onClick={() => {
                 setFormData(initialForm);
-                setFile(null);
+                setImages([]);
                 setView("add");
               }}
-              className={`${styles.navBtn} ${view === "add" ? styles.active : ""} ${styles.hideOnMobile}`}
+              className={`${styles.navBtn} ${view === "add" ? styles.active : ""}`}
             >
               <IconPlus /> <span>Додати проєкт</span>
             </button>
+          </div>
+
+          <div className={styles.sidebarFooter}>
+            <Link href="/" className={styles.navBtn}>
+              <IconExternal /> <span>Повернутися на сайт</span>
+            </Link>
           </div>
         </aside>
 
@@ -290,7 +444,7 @@ export default function AdminDashboard() {
                 <button
                   onClick={() => {
                     setFormData(initialForm);
-                    setFile(null);
+                    setImages([]);
                     setView("add");
                   }}
                   className={styles.primaryBtn}
@@ -476,6 +630,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
+                  {/* 🔥 Оновлене поле опису (фіксована висота, скрол всередині) */}
                   <div className={styles.inputGroup}>
                     <label>
                       Короткий опис <span>*</span>
@@ -490,28 +645,74 @@ export default function AdminDashboard() {
                         })
                       }
                       required
-                      rows="2"
-                      style={{ resize: "vertical" }}
+                      className={styles.fixedTextarea}
                     />
                   </div>
 
+                  {/* 🔥 Зона завантаження з підтримкою Drag-and-Drop */}
                   <div className={styles.inputGroup}>
-                    <label>Головне фото</label>
-                    {view === "edit" && formData.mainImage && (
-                      <img
-                        src={formData.mainImage}
-                        alt="Current"
-                        className={styles.previewImg}
-                      />
-                    )}
-                    <div className={styles.fileInputWrapper}>
+                    <label>Фотографії проєкту (Головне фото та Галерея)</label>
+
+                    <label
+                      className={`${styles.unifiedUploadZone} ${isDragging ? styles.dragging : ""}`}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                    >
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => setFile(e.target.files[0])}
-                        required={view === "add"}
+                        multiple
+                        className={styles.hiddenFileInput}
+                        onChange={(e) => processFiles(e.target.files)}
                       />
-                    </div>
+                      <div className={styles.uploadContent}>
+                        <IconUpload />
+                        <span className={styles.uploadText}>
+                          Натисніть або перетягніть фото сюди
+                        </span>
+                        <span className={styles.uploadHint}>
+                          Можна обрати декілька файлів. Перше фото автоматично
+                          стане головним.
+                        </span>
+                      </div>
+                    </label>
+
+                    {/* 🔥 Оновлена сітка фотографій (мінімалістична) */}
+                    {images.length > 0 && (
+                      <div className={styles.imageGrid}>
+                        {images.map((img) => (
+                          <div
+                            key={img.id}
+                            className={`${styles.imageCard} ${img.isMain ? styles.isMain : ""}`}
+                          >
+                            <img src={img.url} alt="preview" />
+
+                            <button
+                              type="button"
+                              className={styles.removeBtn}
+                              onClick={() => removeImage(img.id)}
+                              title="Видалити"
+                            >
+                              <IconX />
+                            </button>
+
+                            {img.isMain ? (
+                              <div className={styles.mainBadge}>
+                                <IconStar /> Головна
+                              </div>
+                            ) : (
+                              <div
+                                className={styles.setMainOverlay}
+                                onClick={() => setMainImage(img.id)}
+                              >
+                                Зробити головною
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className={styles.formActions}>
