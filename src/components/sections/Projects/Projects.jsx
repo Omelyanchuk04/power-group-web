@@ -63,7 +63,7 @@ export default function Projects() {
     fetchProjects();
   }, []);
 
-  // Анімація появи (тільки після завантаження даних)
+  // Анімація появи
   useEffect(() => {
     if (isLoading || projects.length === 0) return;
 
@@ -164,7 +164,6 @@ export default function Projects() {
     });
   };
 
-  // Форматування дати для модалки
   const formatDate = (dateStr) => {
     if (!dateStr) return "Не вказано";
     const d = new Date(dateStr);
@@ -281,7 +280,23 @@ export default function Projects() {
                       {project.year}
                     </div>
 
-                    <div className={styles.projectCard}>
+                    {/* 🔥 Зробили ВСЮ картку клікабельною для телефонів 🔥 */}
+                    <div
+                      className={styles.projectCard}
+                      style={{ cursor: "pointer", touchAction: "manipulation" }}
+                      onClick={() => {
+                        openModal("project", {
+                          title: project.title,
+                          image: project.img,
+                          gallery: project.gallery,
+                          powerLabel: project.powerLabel,
+                          location: project.location,
+                          date: formatDate(project.date),
+                          clientType: project.clientType,
+                          description: project.description,
+                        });
+                      }}
+                    >
                       <div className={styles.imagePanel}>
                         <NextImage
                           src={project.img}
@@ -306,10 +321,12 @@ export default function Projects() {
                           </span>
                         </div>
 
-                        {/* 🔥 Відкриваємо глобальну модалку проєкту 🔥 */}
+                        {/* Кнопка також має onClick, але з e.stopPropagation() */}
                         <button
                           className={styles.detailBtn}
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation(); // Запобігає подвійному спрацюванню події
                             openModal("project", {
                               title: project.title,
                               image: project.img,
