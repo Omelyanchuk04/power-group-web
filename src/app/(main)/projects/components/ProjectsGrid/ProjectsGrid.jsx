@@ -129,7 +129,6 @@ const IconPin = () => (
     <circle cx="12" cy="10" r="3"></circle>
   </svg>
 );
-// Стрілки для слайдера
 const IconChevronLeft = () => (
   <svg
     width="24"
@@ -199,7 +198,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Стан та ref для слайдера
   const [currentSlide, setCurrentSlide] = useState(0);
   const galleryRef = useRef(null);
 
@@ -222,7 +220,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const openProjectModal = (project) => {
     setIsClosing(false);
     setSelectedProject(project);
-    setCurrentSlide(0); // Скидаємо слайдер на перше фото при відкритті
+    setCurrentSlide(0);
   };
 
   const closeProjectModal = () => {
@@ -253,6 +251,12 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       const tl = gsap.timeline();
       gsap.set(backdropRef.current, { opacity: 0 });
       gsap.set(modalCardRef.current, { y: 50, opacity: 0, scale: 0.92 });
+
+      // Анімація для кнопки закриття
+      if (closeBtnRef.current) {
+        gsap.set(closeBtnRef.current, { opacity: 0, scale: 0.8 });
+      }
+
       tl.to(backdropRef.current, { opacity: 1, duration: 0.4 });
       tl.to(
         modalCardRef.current,
@@ -262,7 +266,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       if (closeBtnRef.current) {
         tl.to(
           closeBtnRef.current,
-          { opacity: 1, scale: 1, duration: 0.4 },
+          { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" },
           "-=0.4",
         );
       }
@@ -365,7 +369,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
 
   const sliderFillPercentage = (powerLimit / MAX_POWER) * 100;
 
-  // 🔥 Логіка для слайдера всередині модалки 🔥
   const allModalImages = selectedProject
     ? [selectedProject.image, ...(selectedProject.gallery || [])]
     : [];
@@ -598,7 +601,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
         </div>
       </section>
 
-      {/* 🔥 МОДАЛКА ЗІ СЛАЙДЕРОМ ФОТОГРАФІЙ 🔥 */}
+      {/* 🔥 ОНОВЛЕНА ШИРОКА МОДАЛКА З EDGE-TO-EDGE ФОТО 🔥 */}
       {mounted &&
         selectedProject &&
         createPortal(
@@ -613,27 +616,31 @@ export default function ProjectsGrid({ initialProjects = [] }) {
               onClick={closeProjectModal}
               data-lenis-prevent="true"
             >
-              <div className={styles.fixedCloseWrapper} ref={closeBtnRef}>
-                <button className={styles.closeBtn} onClick={closeProjectModal}>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                </button>
-              </div>
-
               <div
                 className={styles.modalContent}
                 ref={modalCardRef}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* 1. ГАЛЕРЕЯ-СЛАЙДЕР */}
+                {/* 🔥 Кнопка закриття тепер ВРЕДИНІ модалки, поверх фото 🔥 */}
+                <div className={styles.absoluteCloseWrapper} ref={closeBtnRef}>
+                  <button
+                    className={styles.closeBtn}
+                    onClick={closeProjectModal}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+
+                {/* 1. ГАЛЕРЕЯ-СЛАЙДЕР НА ВСЮ ШИРИНУ */}
                 <div className={styles.galleryWrapper}>
                   <div
                     className={styles.modalGallery}
@@ -647,13 +654,12 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                           alt={`${selectedProject.title} - фото ${index + 1}`}
                           fill
                           className={styles.modalImg}
-                          sizes="(max-width: 768px) 100vw, 900px"
+                          sizes="(max-width: 1000px) 100vw, 1000px"
                         />
                       </div>
                     ))}
                   </div>
 
-                  {/* Кнопки перемикання (якщо фото більше одного) */}
                   {allModalImages.length > 1 && (
                     <>
                       <button
@@ -669,7 +675,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                         <IconChevronRight />
                       </button>
 
-                      {/* Крапки (dots) внизу */}
                       <div className={styles.sliderDots}>
                         {allModalImages.map((_, idx) => (
                           <button
@@ -684,11 +689,10 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                   )}
                 </div>
 
+                {/* КОНТЕНТ З ВІДСТУПАМИ */}
                 <div className={styles.modalBodyContainer}>
-                  {/* 2. ЗАГОЛОВОК */}
                   <h2 className={styles.modalTitle}>{selectedProject.title}</h2>
 
-                  {/* 3. РЯДОК ХАРАКТЕРИСТИК */}
                   <div className={styles.statsHorizontalRow}>
                     <div className={styles.statHItem}>
                       <div className={styles.iconBox}>
@@ -739,7 +743,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     </div>
                   </div>
 
-                  {/* 4. ОПИС ТА КНОПКА */}
                   <div className={styles.modalDescBlock}>
                     <h3>Про проєкт</h3>
                     <p>{selectedProject.description}</p>
