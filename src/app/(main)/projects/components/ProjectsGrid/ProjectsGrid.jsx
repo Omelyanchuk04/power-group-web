@@ -157,6 +157,39 @@ const IconChevronRight = () => (
     <polyline points="9 18 15 12 9 6"></polyline>
   </svg>
 );
+// 🔥 НОВІ ІКОНКИ ДЛЯ FULLSCREEN 🔥
+const IconExpand = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="15 3 21 3 21 9"></polyline>
+    <polyline points="9 21 3 21 3 15"></polyline>
+    <line x1="21" y1="3" x2="14" y2="10"></line>
+    <line x1="3" y1="21" x2="10" y2="14"></line>
+  </svg>
+);
+const IconX = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
 
 export default function ProjectsGrid({ initialProjects = [] }) {
   const { openModal: openContactModal } = useModal();
@@ -198,8 +231,13 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Слайдер в модалці
   const [currentSlide, setCurrentSlide] = useState(0);
   const galleryRef = useRef(null);
+
+  // 🔥 Стан та ref для Fullscreen режиму
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const fullscreenRef = useRef(null);
 
   const modalCardRef = useRef(null);
   const backdropRef = useRef(null);
@@ -221,11 +259,13 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     setIsClosing(false);
     setSelectedProject(project);
     setCurrentSlide(0);
+    setIsFullscreen(false);
   };
 
   const closeProjectModal = () => {
     if (isClosing) return;
     setIsClosing(true);
+    setIsFullscreen(false);
     const tl = gsap.timeline({
       onComplete: () => {
         setSelectedProject(null);
@@ -252,7 +292,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       gsap.set(backdropRef.current, { opacity: 0 });
       gsap.set(modalCardRef.current, { y: 50, opacity: 0, scale: 0.92 });
 
-      // Анімація для кнопки закриття
       if (closeBtnRef.current) {
         gsap.set(closeBtnRef.current, { opacity: 0, scale: 0.8 });
       }
@@ -373,33 +412,53 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     ? [selectedProject.image, ...(selectedProject.gallery || [])]
     : [];
 
-  const handleGalleryScroll = () => {
-    if (!galleryRef.current) return;
-    const scrollPosition = galleryRef.current.scrollLeft;
-    const slideWidth = galleryRef.current.offsetWidth;
+  const handleGalleryScroll = (e, isFullscreenMode = false) => {
+    const ref = isFullscreenMode ? fullscreenRef : galleryRef;
+    if (!ref.current) return;
+    const scrollPosition = ref.current.scrollLeft;
+    const slideWidth = ref.current.offsetWidth;
     const newIndex = Math.round(scrollPosition / slideWidth);
     if (newIndex !== currentSlide) {
       setCurrentSlide(newIndex);
     }
   };
 
-  const scrollToSlide = (index) => {
-    if (!galleryRef.current) return;
-    const slideWidth = galleryRef.current.offsetWidth;
-    galleryRef.current.scrollTo({
+  const scrollToSlide = (index, isFullscreenMode = false) => {
+    const ref = isFullscreenMode ? fullscreenRef : galleryRef;
+    if (!ref.current) return;
+    const slideWidth = ref.current.offsetWidth;
+    ref.current.scrollTo({
       left: index * slideWidth,
       behavior: "smooth",
     });
     setCurrentSlide(index);
   };
 
-  const nextSlide = () => {
-    if (currentSlide < allModalImages.length - 1)
-      scrollToSlide(currentSlide + 1);
+  // Відкриття фулскріну і фокус на поточному слайді
+  const openFullscreen = () => {
+    setIsFullscreen(true);
   };
 
-  const prevSlide = () => {
-    if (currentSlide > 0) scrollToSlide(currentSlide - 1);
+  // Синхронізація фулскріну зі звичайним слайдером при відкритті/закритті
+  useEffect(() => {
+    if (isFullscreen && fullscreenRef.current) {
+      const slideWidth = fullscreenRef.current.offsetWidth;
+      fullscreenRef.current.scrollLeft = currentSlide * slideWidth;
+    }
+  }, [isFullscreen]);
+
+  const closeFullscreen = () => {
+    setIsFullscreen(false);
+    // Після закриття фулскріну, підтягуємо маленьку галерею до потрібного слайду
+    setTimeout(() => {
+      if (galleryRef.current) {
+        const slideWidth = galleryRef.current.offsetWidth;
+        galleryRef.current.scrollTo({
+          left: currentSlide * slideWidth,
+          behavior: "instant",
+        });
+      }
+    }, 50);
   };
 
   return (
@@ -601,7 +660,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
         </div>
       </section>
 
-      {/* 🔥 ОНОВЛЕНА ШИРОКА МОДАЛКА З EDGE-TO-EDGE ФОТО 🔥 */}
+      {/* 🔥 ШИРОКА МОДАЛКА ЗІ СЛАЙДЕРОМ ТА FULLSCREEN 🔥 */}
       {mounted &&
         selectedProject &&
         createPortal(
@@ -621,31 +680,21 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                 ref={modalCardRef}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* 🔥 Кнопка закриття тепер ВРЕДИНІ модалки, поверх фото 🔥 */}
                 <div className={styles.absoluteCloseWrapper} ref={closeBtnRef}>
                   <button
                     className={styles.closeBtn}
                     onClick={closeProjectModal}
                   >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+                    <IconX />
                   </button>
                 </div>
 
-                {/* 1. ГАЛЕРЕЯ-СЛАЙДЕР НА ВСЮ ШИРИНУ */}
+                {/* ГАЛЕРЕЯ-СЛАЙДЕР В МОДАЛЦІ */}
                 <div className={styles.galleryWrapper}>
                   <div
                     className={styles.modalGallery}
                     ref={galleryRef}
-                    onScroll={handleGalleryScroll}
+                    onScroll={(e) => handleGalleryScroll(e, false)}
                   >
                     {allModalImages.map((imgUrl, index) => (
                       <div key={index} className={styles.gallerySlide}>
@@ -660,17 +709,26 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     ))}
                   </div>
 
+                  {/* 🔥 Кнопка розгортання на весь екран 🔥 */}
+                  <button
+                    className={styles.expandBtn}
+                    onClick={openFullscreen}
+                    title="На весь екран"
+                  >
+                    <IconExpand />
+                  </button>
+
                   {allModalImages.length > 1 && (
                     <>
                       <button
                         className={`${styles.sliderArrow} ${styles.arrowLeft} ${currentSlide === 0 ? styles.disabled : ""}`}
-                        onClick={prevSlide}
+                        onClick={() => scrollToSlide(currentSlide - 1, false)}
                       >
                         <IconChevronLeft />
                       </button>
                       <button
                         className={`${styles.sliderArrow} ${styles.arrowRight} ${currentSlide === allModalImages.length - 1 ? styles.disabled : ""}`}
-                        onClick={nextSlide}
+                        onClick={() => scrollToSlide(currentSlide + 1, false)}
                       >
                         <IconChevronRight />
                       </button>
@@ -680,7 +738,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                           <button
                             key={idx}
                             className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ""}`}
-                            onClick={() => scrollToSlide(idx)}
+                            onClick={() => scrollToSlide(idx, false)}
                             aria-label={`Слайд ${idx + 1}`}
                           />
                         ))}
@@ -689,7 +747,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                   )}
                 </div>
 
-                {/* КОНТЕНТ З ВІДСТУПАМИ */}
                 <div className={styles.modalBodyContainer}>
                   <h2 className={styles.modalTitle}>{selectedProject.title}</h2>
 
@@ -762,6 +819,71 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                 </div>
               </div>
             </div>
+
+            {/* 🔥 ПОВНОЕКРАННИЙ РЕЖИМ (LIGHTBOX) 🔥 */}
+            {isFullscreen && (
+              <div
+                className={styles.fullscreenOverlay}
+                onClick={closeFullscreen}
+              >
+                <div className={styles.fullscreenHeader}>
+                  <div className={styles.imageCounter}>
+                    {currentSlide + 1} / {allModalImages.length}
+                  </div>
+                  <button
+                    className={styles.fullscreenClose}
+                    onClick={closeFullscreen}
+                  >
+                    <IconX />
+                  </button>
+                </div>
+
+                <div
+                  className={styles.fullscreenGallery}
+                  ref={fullscreenRef}
+                  onScroll={(e) => handleGalleryScroll(e, true)}
+                  onClick={(e) =>
+                    e.stopPropagation()
+                  } /* Щоб не закривалось при кліку на фото */
+                >
+                  {allModalImages.map((imgUrl, index) => (
+                    <div key={index} className={styles.fullscreenSlide}>
+                      <NextImage
+                        src={imgUrl}
+                        alt={`Fullscreen фото ${index + 1}`}
+                        fill
+                        className={styles.fullscreenImg}
+                        sizes="100vw"
+                        quality={100}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {allModalImages.length > 1 && (
+                  <>
+                    <button
+                      className={`${styles.fullscreenArrow} ${styles.arrowLeft} ${currentSlide === 0 ? styles.disabled : ""}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        scrollToSlide(currentSlide - 1, true);
+                      }}
+                    >
+                      <IconChevronLeft />
+                    </button>
+                    <button
+                      className={`${styles.fullscreenArrow} ${styles.arrowRight} ${currentSlide === allModalImages.length - 1 ? styles.disabled : ""}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        scrollToSlide(currentSlide + 1, true);
+                      }}
+                    >
+                      <IconChevronRight />
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </>,
           document.body,
         )}
