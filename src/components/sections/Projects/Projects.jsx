@@ -27,7 +27,10 @@ export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Отримуємо проєкти з БД
+  // 🔥 Захист від помилкових кліків під час свайпу 🔥
+  const isSwiping = useRef(false);
+  const touchStartPos = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -63,7 +66,6 @@ export default function Projects() {
     fetchProjects();
   }, []);
 
-  // Анімація появи
   useEffect(() => {
     if (isLoading || projects.length === 0) return;
 
@@ -174,6 +176,25 @@ export default function Projects() {
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   };
 
+  // 🔥 Залізобетонна функція для обробки кліків/тапів по картці 🔥
+  const handleCardClick = (e, project) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isSwiping.current) return; // Якщо це був свайп - ігноруємо клік
+
+    openModal("project", {
+      title: project.title,
+      image: project.img,
+      gallery: project.gallery,
+      powerLabel: project.powerLabel,
+      location: project.location,
+      date: formatDate(project.date),
+      clientType: project.clientType,
+      description: project.description,
+    });
+  };
+
   return (
     <section
       className={styles.projectsSection}
@@ -280,23 +301,39 @@ export default function Projects() {
                       {project.year}
                     </div>
 
-                    {/* 🔥 Зробили ВСЮ картку клікабельною для телефонів 🔥 */}
                     <div
                       className={styles.projectCard}
-                      style={{ cursor: "pointer", touchAction: "manipulation" }}
-                      onClick={() => {
-                        openModal("project", {
-                          title: project.title,
-                          image: project.img,
-                          gallery: project.gallery,
-                          powerLabel: project.powerLabel,
-                          location: project.location,
-                          date: formatDate(project.date),
-                          clientType: project.clientType,
-                          description: project.description,
-                        });
+                      style={{ position: "relative" }}
+                      onTouchStart={(e) => {
+                        isSwiping.current = false;
+                        touchStartPos.current = {
+                          x: e.touches[0].clientX,
+                          y: e.touches[0].clientY,
+                        };
+                      }}
+                      onTouchMove={(e) => {
+                        const deltaX = Math.abs(
+                          e.touches[0].clientX - touchStartPos.current.x,
+                        );
+                        const deltaY = Math.abs(
+                          e.touches[0].clientY - touchStartPos.current.y,
+                        );
+                        if (deltaX > 10 || deltaY > 10)
+                          isSwiping.current = true; // Визначаємо свайп
                       }}
                     >
+                      {/* 🔥 АБСОЛЮТНИЙ ПРОЗОРИЙ ШАР ДЛЯ КЛІКУ ПО КАРТЦІ 🔥 */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          zIndex: 10,
+                          cursor: "pointer",
+                          touchAction: "manipulation",
+                        }}
+                        onClick={(e) => handleCardClick(e, project)}
+                      />
+
                       <div className={styles.imagePanel}>
                         <NextImage
                           src={project.img}
@@ -321,23 +358,16 @@ export default function Projects() {
                           </span>
                         </div>
 
-                        {/* Кнопка також має onClick, але з e.stopPropagation() */}
+                        {/* Кнопка "Детальніше" має найвищий z-index */}
                         <button
                           className={styles.detailBtn}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation(); // Запобігає подвійному спрацюванню події
-                            openModal("project", {
-                              title: project.title,
-                              image: project.img,
-                              gallery: project.gallery,
-                              powerLabel: project.powerLabel,
-                              location: project.location,
-                              date: formatDate(project.date),
-                              clientType: project.clientType,
-                              description: project.description,
-                            });
+                          style={{
+                            position: "relative",
+                            zIndex: 20,
+                            cursor: "pointer",
+                            pointerEvents: "auto",
                           }}
+                          onClick={(e) => handleCardClick(e, project)}
                         >
                           Детальніше
                         </button>
@@ -351,7 +381,11 @@ export default function Projects() {
         </div>
       </div>
 
-      <div className={styles.progressContainer}>
+      {/* Якщо ця лінія лежить поверх кнопок — ми вимикаємо їй перехоплення кліків */}
+      <div
+        className={styles.progressContainer}
+        style={{ pointerEvents: "none" }}
+      >
         <div className={styles.progressBar} ref={progressBarRef}></div>
       </div>
     </section>
