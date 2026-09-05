@@ -129,6 +129,35 @@ const IconPin = () => (
     <circle cx="12" cy="10" r="3"></circle>
   </svg>
 );
+// Стрілки для слайдера
+const IconChevronLeft = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="15 18 9 12 15 6"></polyline>
+  </svg>
+);
+const IconChevronRight = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+);
 
 export default function ProjectsGrid({ initialProjects = [] }) {
   const { openModal: openContactModal } = useModal();
@@ -151,7 +180,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     location: p.client || "Локація не вказана",
     description: p.shortDescription || "Опис відсутній",
     image: p.mainImage,
-    gallery: p.gallery || [], // 🔥 Підтягуємо галерею
+    gallery: p.gallery || [],
   }));
 
   const [activeFilters, setActiveFilters] = useState({
@@ -169,6 +198,10 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Стан та ref для слайдера
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const galleryRef = useRef(null);
 
   const modalCardRef = useRef(null);
   const backdropRef = useRef(null);
@@ -189,6 +222,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const openProjectModal = (project) => {
     setIsClosing(false);
     setSelectedProject(project);
+    setCurrentSlide(0); // Скидаємо слайдер на перше фото при відкритті
   };
 
   const closeProjectModal = () => {
@@ -331,10 +365,39 @@ export default function ProjectsGrid({ initialProjects = [] }) {
 
   const sliderFillPercentage = (powerLimit / MAX_POWER) * 100;
 
-  // 🔥 Формуємо масив усіх картинок для модалки (головна + галерея)
+  // 🔥 Логіка для слайдера всередині модалки 🔥
   const allModalImages = selectedProject
     ? [selectedProject.image, ...(selectedProject.gallery || [])]
     : [];
+
+  const handleGalleryScroll = () => {
+    if (!galleryRef.current) return;
+    const scrollPosition = galleryRef.current.scrollLeft;
+    const slideWidth = galleryRef.current.offsetWidth;
+    const newIndex = Math.round(scrollPosition / slideWidth);
+    if (newIndex !== currentSlide) {
+      setCurrentSlide(newIndex);
+    }
+  };
+
+  const scrollToSlide = (index) => {
+    if (!galleryRef.current) return;
+    const slideWidth = galleryRef.current.offsetWidth;
+    galleryRef.current.scrollTo({
+      left: index * slideWidth,
+      behavior: "smooth",
+    });
+    setCurrentSlide(index);
+  };
+
+  const nextSlide = () => {
+    if (currentSlide < allModalImages.length - 1)
+      scrollToSlide(currentSlide + 1);
+  };
+
+  const prevSlide = () => {
+    if (currentSlide > 0) scrollToSlide(currentSlide - 1);
+  };
 
   return (
     <>
@@ -570,19 +633,55 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                 ref={modalCardRef}
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* 1. ГАЛЕРЕЯ ФОТОГРАФІЙ (CSS Scroll Snap) */}
-                <div className={styles.modalGallery}>
-                  {allModalImages.map((imgUrl, index) => (
-                    <div key={index} className={styles.gallerySlide}>
-                      <NextImage
-                        src={imgUrl}
-                        alt={`${selectedProject.title} - фото ${index + 1}`}
-                        fill
-                        className={styles.modalImg}
-                        sizes="(max-width: 768px) 100vw, 900px"
-                      />
-                    </div>
-                  ))}
+                {/* 1. ГАЛЕРЕЯ-СЛАЙДЕР */}
+                <div className={styles.galleryWrapper}>
+                  <div
+                    className={styles.modalGallery}
+                    ref={galleryRef}
+                    onScroll={handleGalleryScroll}
+                  >
+                    {allModalImages.map((imgUrl, index) => (
+                      <div key={index} className={styles.gallerySlide}>
+                        <NextImage
+                          src={imgUrl}
+                          alt={`${selectedProject.title} - фото ${index + 1}`}
+                          fill
+                          className={styles.modalImg}
+                          sizes="(max-width: 768px) 100vw, 900px"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Кнопки перемикання (якщо фото більше одного) */}
+                  {allModalImages.length > 1 && (
+                    <>
+                      <button
+                        className={`${styles.sliderArrow} ${styles.arrowLeft} ${currentSlide === 0 ? styles.disabled : ""}`}
+                        onClick={prevSlide}
+                      >
+                        <IconChevronLeft />
+                      </button>
+                      <button
+                        className={`${styles.sliderArrow} ${styles.arrowRight} ${currentSlide === allModalImages.length - 1 ? styles.disabled : ""}`}
+                        onClick={nextSlide}
+                      >
+                        <IconChevronRight />
+                      </button>
+
+                      {/* Крапки (dots) внизу */}
+                      <div className={styles.sliderDots}>
+                        {allModalImages.map((_, idx) => (
+                          <button
+                            key={idx}
+                            className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ""}`}
+                            onClick={() => scrollToSlide(idx)}
+                            aria-label={`Слайд ${idx + 1}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <div className={styles.modalBodyContainer}>
