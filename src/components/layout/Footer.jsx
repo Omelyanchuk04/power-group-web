@@ -90,6 +90,10 @@ export default function Footer() {
               <a href="tel:0672671477" className={styles.phone}>
                 067 267 14 77
               </a>
+              <a href="tel:0992671477" className={styles.phone}>
+                099 267 14 77
+              </a>
+
               <a
                 href="mailto:powergroup.vin@gmail.com"
                 className={styles.email}
