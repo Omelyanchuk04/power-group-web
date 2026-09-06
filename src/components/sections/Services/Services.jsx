@@ -119,7 +119,7 @@ export default function Services() {
         [
           `.${styles.staticHeader}`,
           `.${styles.horizontalTrack}`,
-          `.${styles.navControls}`,
+          `.${styles.bottomControls}`,
           `.${styles.progressContainer}`,
         ],
         {
@@ -275,10 +275,14 @@ export default function Services() {
 
     const updateScroll = (clientX) => {
       const rect = progress.getBoundingClientRect();
-      let x = clientX - rect.left;
-      x = Math.max(0, Math.min(x, rect.width));
+      // Віднімаємо 20px (радіус кружечка), щоб мишка керувала його центром
+      let x = clientX - rect.left - 20;
+      // Віднімаємо 40px (повну ширину кружечка), щоб він не виходив за межі
+      let effectiveWidth = rect.width - 40;
 
-      const percentage = x / rect.width;
+      x = Math.max(0, Math.min(x, effectiveWidth));
+
+      const percentage = effectiveWidth > 0 ? x / effectiveWidth : 0;
       const maxScroll = track.scrollWidth - track.clientWidth;
       track.scrollLeft = percentage * maxScroll;
     };
@@ -365,22 +369,6 @@ export default function Services() {
             <span className={styles.badge}>Послуги</span>
             <h2 className={styles.title}>Що ми пропонуємо</h2>
           </div>
-          <div className={styles.headerRight}>
-            <Link href="/services" className={styles.viewAllBtn}>
-              Всі послуги
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </Link>
-          </div>
         </div>
 
         <div className={styles.horizontalTrack} ref={trackRef}>
@@ -428,29 +416,9 @@ export default function Services() {
           <div className={styles.spacerEnd}></div>
         </div>
 
-        <div className={styles.navControls}>
-          <button
-            className={styles.navBtn}
-            onClick={() => handleScroll("prev")}
-            aria-label="Назад"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-          </button>
-          <button
-            className={styles.navBtn}
-            onClick={() => handleScroll("next")}
-            aria-label="Вперед"
-          >
+        <div className={styles.bottomControls}>
+          <Link href="/services" className={styles.viewAllBtn}>
+            Всі послуги
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -462,7 +430,43 @@ export default function Services() {
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
-          </button>
+          </Link>
+          <div className={styles.arrowGroup}>
+            <button
+              className={styles.navBtn}
+              onClick={() => handleScroll("prev")}
+              aria-label="Назад"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
+            <button
+              className={styles.navBtn}
+              onClick={() => handleScroll("next")}
+              aria-label="Вперед"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className={styles.progressContainer}>
