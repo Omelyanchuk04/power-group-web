@@ -37,23 +37,31 @@ export default function Projects() {
         const res = await fetch("/api/projects");
         const data = await res.json();
 
-        const formattedProjects = data.map((p) => ({
-          id: p._id,
-          title: p.title,
-          location: p.client || "Локація не вказана",
-          power: p.power,
-          powerLabel:
-            p.power >= 1000
-              ? `${(p.power / 1000).toFixed(1)} МВт`
-              : `${p.power} кВт`,
-          img: p.mainImage,
-          year: p.date ? new Date(p.date).getFullYear() : "2024",
-          date: p.date,
-          clientType: p.clientType,
-          serviceType: p.serviceType,
-          description: p.shortDescription || "Опис відсутній",
-          gallery: p.gallery || [],
-        }));
+        const formattedProjects = data
+          .map((p) => ({
+            id: p._id,
+            title: p.title,
+            location: p.client || "Локація не вказана",
+            power: p.power,
+            powerLabel:
+              p.power >= 1000
+                ? `${(p.power / 1000).toFixed(1)} МВт`
+                : `${p.power} кВт`,
+            img: p.mainImage,
+            year: p.date ? new Date(p.date).getFullYear() : "2024",
+            date: p.date,
+            clientType: p.clientType,
+            serviceType: p.serviceType,
+            description: p.shortDescription || "Опис відсутній",
+            gallery: p.gallery || [],
+          }))
+          .sort((a, b) => {
+            // Найновіші проєкти — спочатку, старіші — далі; без дати — в кінець
+            if (!a.date && !b.date) return 0;
+            if (!a.date) return 1;
+            if (!b.date) return -1;
+            return new Date(b.date) - new Date(a.date);
+          });
 
         setProjects(formattedProjects);
       } catch (error) {
