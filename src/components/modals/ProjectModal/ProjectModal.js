@@ -141,7 +141,7 @@ const IconX = () => (
 );
 
 export default function ProjectModal({ project, onClose }) {
-  const { openModal } = useModal(); // Для відкриття форми контактів
+  const { openModal } = useModal();
 
   const [isClosing, setIsClosing] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -161,7 +161,7 @@ export default function ProjectModal({ project, onClose }) {
     };
   }, []);
 
-  // Анімація ПОЯВИ
+  // Анімація ПОЯВИ модалки
   useEffect(() => {
     const tl = gsap.timeline();
     gsap.set(backdropRef.current, { opacity: 0 });
@@ -208,42 +208,60 @@ export default function ProjectModal({ project, onClose }) {
     ? [project.image, ...(project.gallery || [])]
     : [];
 
+  // Оновлення стану крапок під час гортання пальцем
   const handleGalleryScroll = (e, isFullscreenMode = false) => {
     const ref = isFullscreenMode ? fullscreenRef : galleryRef;
     if (!ref.current) return;
+
+    // Обчислюємо поточний слайд на основі позиції скролу
     const newIndex = Math.round(
       ref.current.scrollLeft / ref.current.offsetWidth,
     );
-    if (newIndex !== currentSlide) setCurrentSlide(newIndex);
+    if (newIndex !== currentSlide) {
+      setCurrentSlide(newIndex);
+    }
   };
 
+  // 🔥 НАДІЙНА ФУНКЦІЯ ПРОКРУТКИ КНОПКАМИ 🔥
   const scrollToSlide = (index, isFullscreenMode = false) => {
     const ref = isFullscreenMode ? fullscreenRef : galleryRef;
     if (!ref.current) return;
+
+    // Використовуємо нативний скрол браузера, який ідеально працює зі scroll-snap
     ref.current.scrollTo({
       left: index * ref.current.offsetWidth,
       behavior: "smooth",
     });
+
     setCurrentSlide(index);
   };
 
-  const openFullscreen = () => setIsFullscreen(true);
+  // Відкриття фулскріну
+  const openFullscreen = () => {
+    setIsFullscreen(true);
+  };
 
+  // Синхронізація фулскріну з поточним слайдом при його відкритті
   useEffect(() => {
     if (isFullscreen && fullscreenRef.current) {
-      fullscreenRef.current.scrollLeft =
-        currentSlide * fullscreenRef.current.offsetWidth;
+      // Використовуємо instant, щоб воно одразу відкрилося на потрібній картинці
+      fullscreenRef.current.scrollTo({
+        left: currentSlide * fullscreenRef.current.offsetWidth,
+        behavior: "instant",
+      });
     }
   }, [isFullscreen, currentSlide]);
 
+  // Закриття фулскріну і синхронізація маленької галереї
   const closeFullscreen = () => {
     setIsFullscreen(false);
     setTimeout(() => {
-      if (galleryRef.current)
+      if (galleryRef.current) {
         galleryRef.current.scrollTo({
           left: currentSlide * galleryRef.current.offsetWidth,
           behavior: "instant",
         });
+      }
     }, 50);
   };
 
@@ -302,13 +320,21 @@ export default function ProjectModal({ project, onClose }) {
               <>
                 <button
                   className={`${styles.sliderArrow} ${styles.arrowLeft} ${currentSlide === 0 ? styles.disabled : ""}`}
-                  onClick={() => scrollToSlide(currentSlide - 1, false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    scrollToSlide(currentSlide - 1, false);
+                  }}
                 >
                   <IconChevronLeft />
                 </button>
                 <button
                   className={`${styles.sliderArrow} ${styles.arrowRight} ${currentSlide === allModalImages.length - 1 ? styles.disabled : ""}`}
-                  onClick={() => scrollToSlide(currentSlide + 1, false)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    scrollToSlide(currentSlide + 1, false);
+                  }}
                 >
                   <IconChevronRight />
                 </button>
@@ -317,7 +343,11 @@ export default function ProjectModal({ project, onClose }) {
                     <button
                       key={idx}
                       className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ""}`}
-                      onClick={() => scrollToSlide(idx, false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        scrollToSlide(idx, false);
+                      }}
                       aria-label={`Слайд ${idx + 1}`}
                     />
                   ))}
@@ -412,6 +442,7 @@ export default function ProjectModal({ project, onClose }) {
               <IconX />
             </button>
           </div>
+
           <div
             className={styles.fullscreenGallery}
             ref={fullscreenRef}
@@ -431,11 +462,13 @@ export default function ProjectModal({ project, onClose }) {
               </div>
             ))}
           </div>
+
           {allModalImages.length > 1 && (
             <>
               <button
                 className={`${styles.fullscreenArrow} ${styles.arrowLeft} ${currentSlide === 0 ? styles.disabled : ""}`}
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   scrollToSlide(currentSlide - 1, true);
                 }}
@@ -445,6 +478,7 @@ export default function ProjectModal({ project, onClose }) {
               <button
                 className={`${styles.fullscreenArrow} ${styles.arrowRight} ${currentSlide === allModalImages.length - 1 ? styles.disabled : ""}`}
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   scrollToSlide(currentSlide + 1, true);
                 }}

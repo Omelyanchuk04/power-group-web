@@ -26,6 +26,7 @@ $text-gray: #64748b;
   -webkit-overflow-scrolling: touch;
   padding: calc(60px + env(safe-area-inset-top)) 20px
     calc(80px + env(safe-area-inset-bottom));
+
   @media (max-width: 768px) {
     padding: calc(40px + env(safe-area-inset-top)) 10px
       calc(60px + env(safe-area-inset-bottom));
@@ -45,6 +46,7 @@ $text-gray: #64748b;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
   @media (max-width: 768px) {
     border-radius: 24px;
   }
@@ -55,6 +57,7 @@ $text-gray: #64748b;
   z-index: 100;
   top: 24px;
   right: 24px;
+
   @media (max-width: 768px) {
     top: 16px;
     right: 16px;
@@ -76,10 +79,12 @@ $text-gray: #64748b;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
   svg {
     width: 20px;
     height: 20px;
   }
+
   &:hover {
     background: #ffffff;
     transform: scale(1.05);
@@ -91,6 +96,7 @@ $text-gray: #64748b;
   width: 100%;
   margin-bottom: 0;
 }
+
 .modalGallery {
   display: flex;
   overflow-x: auto;
@@ -102,15 +108,18 @@ $text-gray: #64748b;
     display: none;
   }
 }
+
 .gallerySlide {
   flex: 0 0 100%;
   scroll-snap-align: center;
   position: relative;
   aspect-ratio: 16 / 7;
   background: #f1f5f9;
+
   @media (max-width: 768px) {
     aspect-ratio: 4 / 3;
   }
+
   .modalImg {
     object-fit: cover;
     width: 100%;
@@ -135,14 +144,17 @@ $text-gray: #64748b;
   cursor: pointer;
   z-index: 10;
   transition: all 0.2s ease;
+
   &:hover {
     background: rgba(0, 0, 0, 0.7);
     transform: scale(1.05);
   }
+
   svg {
     width: 20px;
     height: 20px;
   }
+
   @media (max-width: 768px) {
     bottom: 16px;
     right: 16px;
@@ -170,35 +182,39 @@ $text-gray: #64748b;
   align-items: center;
   color: #0f172a;
   cursor: pointer;
-  z-index: 10;
+  z-index: 100; /* 🔥 Гарантує, що стрілка завжди над фото 🔥 */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
+
   &:hover:not(.disabled) {
     background: #ffffff;
     transform: translateY(-50%) scale(1.05);
   }
+
   &.disabled {
     opacity: 0;
     pointer-events: none;
   }
+
   &.arrowLeft {
     left: 24px;
   }
   &.arrowRight {
     right: 24px;
   }
+
   @media (max-width: 768px) {
     width: 36px;
     height: 36px;
     &.arrowLeft {
-      left: 16px;
+      left: 12px;
     }
     &.arrowRight {
-      right: 16px;
+      right: 12px;
     }
     svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
   }
 }
@@ -214,6 +230,7 @@ $text-gray: #64748b;
   gap: 8px;
   z-index: 10;
 }
+
 .dot {
   width: 8px;
   height: 8px;
@@ -224,9 +241,11 @@ $text-gray: #64748b;
   padding: 0;
   transition: all 0.3s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+
   &:hover {
     background: rgba(255, 255, 255, 0.9);
   }
+
   &.activeDot {
     background: #ffffff;
     width: 24px;
@@ -236,8 +255,13 @@ $text-gray: #64748b;
 
 .modalBodyContainer {
   padding: 40px 48px;
+
   @media (max-width: 768px) {
-    padding: 24px;
+    padding: 24px 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 16px;
   }
 }
 
@@ -248,12 +272,19 @@ $text-gray: #64748b;
   line-height: 1.2;
   letter-spacing: -0.5px;
   margin: 0 0 24px 0;
+
   @media (max-width: 768px) {
-    font-size: 26px;
+    font-size: 24px;
     margin-bottom: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 22px;
+    margin-bottom: 16px;
   }
 }
 
+/* 🔥 ОПТИМІЗОВАНИЙ БЛОК ХАРАКТЕРИСТИК ДЛЯ МОБАЙЛУ 🔥 */
 .statsHorizontalRow {
   display: flex;
   align-items: center;
@@ -263,17 +294,52 @@ $text-gray: #64748b;
   border-radius: 50px;
   padding: 20px 24px;
   margin-bottom: 32px;
-  @media (max-width: 768px) {
+
+  /* 🔥 Сітка 2 на 2 активується вже на планшетах 🔥 */
+  @media (max-width: 1024px) {
+    border-radius: 40px;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    padding: 20px;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  @media (max-width: 768px) {
+    gap: 16px;
+    padding: 16px;
+    border-radius: 30px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 12px;
+    padding: 12px;
   }
 }
+
+.statDivider {
+  width: 1px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.06);
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
 .statHItem {
   display: flex;
   align-items: center;
   gap: 16px;
+
+  @media (max-width: 1024px) {
+    align-items: flex-start;
+  }
+
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+
   .iconBox {
     width: 44px;
     height: 44px;
@@ -285,39 +351,80 @@ $text-gray: #64748b;
     align-items: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
     flex-shrink: 0;
+
     svg {
       width: 22px;
       height: 22px;
     }
+
+    @media (max-width: 768px) {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
   }
+
   .statHText {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 1;
+    min-width: 0;
+
+    @media (max-width: 768px) {
+      gap: 2px;
+      padding-top: 2px;
+    }
+
     .statHLabel {
       font-size: 13px;
       color: $text-gray;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       font-weight: 600;
+
+      @media (max-width: 768px) {
+        font-size: 11px;
+        letter-spacing: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      @media (max-width: 480px) {
+        font-size: 10px;
+      }
     }
+
     .statHValue {
       font-size: 16px;
       font-weight: 800;
       color: #0f172a;
+
+      /* Дозволяємо нормальне перенесення для довгих слів */
+      overflow-wrap: break-word;
+      word-break: normal;
+
+      @media (max-width: 768px) {
+        font-size: 14px;
+        line-height: 1.2;
+      }
+      @media (max-width: 480px) {
+        font-size: 13px;
+      }
+
       &.highlight {
         color: $primary;
         font-size: 18px;
+
+        @media (max-width: 768px) {
+          font-size: 15px;
+        }
       }
     }
-  }
-}
-.statDivider {
-  width: 1px;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.06);
-  @media (max-width: 768px) {
-    display: none;
   }
 }
 
@@ -327,13 +434,23 @@ $text-gray: #64748b;
     font-weight: 700;
     color: #0f172a;
     margin: 0 0 12px 0;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
   }
+
   p {
     font-size: 16px;
     line-height: 1.7;
     color: #475569;
     margin: 0;
     white-space: pre-wrap;
+
+    @media (max-width: 768px) {
+      font-size: 15px;
+      line-height: 1.6;
+    }
   }
 }
 
@@ -343,9 +460,10 @@ $text-gray: #64748b;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   padding-top: 32px;
   margin-top: 32px;
+
   @media (max-width: 768px) {
-    padding-top: 24px;
-    margin-top: 24px;
+    padding-top: 20px;
+    margin-top: 20px;
   }
 }
 
@@ -366,6 +484,7 @@ $text-gray: #64748b;
   border-radius: 100px;
   cursor: pointer;
   transition: all 0.3s ease;
+
   &:hover {
     background: rgba(0, 153, 255, 0.22);
     border-color: rgba(0, 153, 255, 0.5);
@@ -373,16 +492,19 @@ $text-gray: #64748b;
       0 15px 35px rgba(0, 153, 255, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.8);
   }
+
   &:active {
     transform: scale(0.98);
   }
+
   @media (max-width: 768px) {
     width: 100%;
-    padding: 16px 32px;
-    font-size: 16px;
+    padding: 14px 24px;
+    font-size: 15px;
   }
 }
 
+/* ================= FULLSCREEN РЕЖИМ ================= */
 .fullscreenOverlay {
   position: fixed;
   inset: 0;
@@ -393,6 +515,7 @@ $text-gray: #64748b;
   flex-direction: column;
   animation: fadeIn 0.3s ease;
 }
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -401,6 +524,7 @@ $text-gray: #64748b;
     opacity: 1;
   }
 }
+
 .fullscreenHeader {
   display: flex;
   justify-content: space-between;
@@ -412,6 +536,7 @@ $text-gray: #64748b;
   right: 0;
   z-index: 10;
 }
+
 .imageCounter {
   color: white;
   font-size: 16px;
@@ -421,6 +546,7 @@ $text-gray: #64748b;
   border-radius: 100px;
   backdrop-filter: blur(4px);
 }
+
 .fullscreenClose {
   width: 44px;
   height: 44px;
@@ -438,6 +564,7 @@ $text-gray: #64748b;
     background: rgba(255, 255, 255, 0.25);
   }
 }
+
 .fullscreenGallery {
   flex: 1;
   display: flex;
@@ -450,6 +577,7 @@ $text-gray: #64748b;
     display: none;
   }
 }
+
 .fullscreenSlide {
   flex: 0 0 100%;
   width: 100vw;
@@ -460,11 +588,13 @@ $text-gray: #64748b;
   justify-content: center;
   align-items: center;
 }
+
 .fullscreenImg {
   object-fit: contain;
   width: 100%;
   height: 100%;
 }
+
 .fullscreenArrow {
   position: absolute;
   top: 50%;
@@ -481,20 +611,26 @@ $text-gray: #64748b;
   cursor: pointer;
   backdrop-filter: blur(4px);
   transition: all 0.2s;
+  z-index: 100; /* 🔥 Гарантує клікабельність кнопок у фулскріні 🔥 */
+
   &:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.25);
     transform: translateY(-50%) scale(1.1);
   }
+
   &.disabled {
     opacity: 0.2;
     cursor: default;
+    pointer-events: none;
   }
+
   &.arrowLeft {
     left: 24px;
   }
   &.arrowRight {
     right: 24px;
   }
+
   @media (max-width: 768px) {
     width: 44px;
     height: 44px;
