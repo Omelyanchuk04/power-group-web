@@ -150,9 +150,6 @@ export default function Footer() {
         {/* НИЖНЯ ЧАСТИНА: КОПІРАЙТ */}
         <div className={styles.bottomRow}>
           <p>© {currentYear} Vin Power Group. Всі права захищені.</p>
-          <div className={styles.legalLinks}>
-            <Link href="/privacy">Політика конфіденційності</Link>
-          </div>
         </div>
       </div>
     </footer>

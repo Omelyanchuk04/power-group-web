@@ -1,7 +1,13 @@
+"use client";
+
 import { useRef } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const FRAME_COUNT = 152;
 const DESKTOP_MIN_WIDTH = "(min-width: 1025px)";
@@ -22,8 +28,10 @@ export const useCanvasSequence = ({
 
       // ДЕСКТОП (Canvas + секвенція з пінінгом)
       mm.add(DESKTOP_MIN_WIDTH, () => {
-        const canvas = canvasRef.current;
-        const context = canvas?.getContext("2d", {
+        const canvas = canvasRef?.current;
+        if (!canvas) return; // Запобіжник
+
+        const context = canvas.getContext("2d", {
           alpha: false,
           desynchronized: true,
         });
@@ -158,13 +166,19 @@ export const useCanvasSequence = ({
           },
           0,
         );
-        tl.to(contentRef.current, { y: -50, opacity: 0, duration: 0.3 }, 1.7);
-        tl.fromTo(
-          overlayRef.current,
-          { opacity: 0 },
-          { opacity: 0.2, duration: 1, ease: "none" },
-          2,
-        );
+
+        if (contentRef?.current) {
+          tl.to(contentRef.current, { y: -50, opacity: 0, duration: 0.3 }, 1.7);
+        }
+
+        if (overlayRef?.current) {
+          tl.fromTo(
+            overlayRef.current,
+            { opacity: 0 },
+            { opacity: 0.2, duration: 1, ease: "none" },
+            2,
+          );
+        }
 
         let lastWidth = window.innerWidth;
         const handleResize = () => {
@@ -180,9 +194,16 @@ export const useCanvasSequence = ({
 
       // МОБАЙЛ
       mm.add(MOBILE_MAX_WIDTH, () => {
-        gsap.set([heroRef.current, canvasRef.current, contentRef.current], {
-          clearProps: "all",
-        });
+        const targets = [
+          heroRef?.current,
+          canvasRef?.current,
+          contentRef?.current,
+        ].filter(Boolean);
+        if (targets.length > 0) {
+          gsap.set(targets, {
+            clearProps: "all",
+          });
+        }
         return () => {};
       });
     },

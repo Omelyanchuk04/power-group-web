@@ -5,11 +5,15 @@ import ClientLayout from "@/components/layout/ClientLayout";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  // display: "swap" - рекомендовано для плавного завантаження
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: false, // 🔥 ДОДАНО: вимикає примусовий прілоад, щоб не було помилки в консолі
 });
 
 export const metadata = {
@@ -40,12 +44,10 @@ export default function RootLayout({ children }) {
           as="image"
           fetchPriority="high"
         />
+        {/* Залишаємо прілоад тільки для перших 2-3 кадрів, щоб не перевантажувати мережу */}
         <link rel="preload" href="/frames/frame-002.jpg" as="image" />
         <link rel="preload" href="/frames/frame-003.jpg" as="image" />
-        <link rel="preload" href="/frames/frame-004.jpg" as="image" />
-        <link rel="preload" href="/frames/frame-005.jpg" as="image" />
       </head>
-      {/* 🔥 Видалили style і додали suppressHydrationWarning для надійності */}
       <body suppressHydrationWarning>
         <ClientLayout>{children}</ClientLayout>
       </body>

@@ -13,6 +13,7 @@ export default function HeaderLogo({ closeMobileMenu }) {
           alt="ВІН ПАУЕР ГРУП логотип"
           width={200}
           height={43}
+          style={{ height: "auto", maxWidth: "100%" }}
           className={styles.logoDesktop}
         />
 
@@ -21,6 +22,7 @@ export default function HeaderLogo({ closeMobileMenu }) {
           alt="ВІН ПАУЕР ГРУП логотип"
           width={32}
           height={32}
+          style={{ height: "auto", maxWidth: "100%" }}
           className={styles.logoMobile}
         />
 

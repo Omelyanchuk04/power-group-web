@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -15,34 +15,10 @@ if (typeof window !== "undefined") {
 export default function About() {
   const sectionRef = useRef(null);
 
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            console.log(
-              `🎯 [OBSERVER] Секція About з'явилася на екрані! Видимість: ${(entry.intersectionRatio * 100).toFixed(0)}%`,
-            );
-          }
-        });
-      },
-      { threshold: [0, 0.1, 0.5] },
-    );
-
-    observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
-
   useGSAP(
     () => {
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top bottom",
-        onEnter: () => console.log("🔥 [TRIGGER] About: onEnter"),
-        onLeaveBack: () => console.log("⬅️ [TRIGGER] About: onLeaveBack"),
-      });
+      // Запобіжник: зупиняємо виконання, якщо DOM-елемент ще не готовий
+      if (!sectionRef.current) return;
 
       gsap.fromTo(
         `.${styles.sectionHeader}`,
@@ -103,9 +79,10 @@ export default function About() {
         },
       );
 
-      // 🔥 ПАРАЛАКС ДЛЯ ВСІХ ЕКРАНІВ БЕЗ ОБМЕЖЕНЬ
+      // Явно вказуємо sectionRef.current як контекст пошуку, щоб уникнути "target not found"
       const parallaxWrappers = gsap.utils.toArray(
         `.${styles.imgParallaxWrapper}`,
+        sectionRef.current,
       );
 
       parallaxWrappers.forEach((wrapper) => {
@@ -119,7 +96,7 @@ export default function About() {
               trigger: wrapper.parentNode,
               start: "top bottom",
               end: "bottom top",
-              scrub: 1, // Плавний паралакс
+              scrub: 1,
             },
           },
         );

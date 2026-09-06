@@ -1,3 +1,5 @@
+"use client";
+
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import styles from "../HeroVideo.module.scss";
@@ -5,7 +7,7 @@ import styles from "../HeroVideo.module.scss";
 export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
   useGSAP(
     () => {
-      if (!logoRef.current || !contentRef.current) return;
+      if (!logoRef?.current || !contentRef?.current) return;
 
       const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
       const text = logoRef.current.querySelector(`.${styles.animText}`);
@@ -20,19 +22,24 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
       const contentButtonWrapper = contentRef.current.querySelector(
         `.${styles.animButtonWrapper}`,
       );
-      const contentCards =
-        contentRef.current.querySelectorAll(".animCardWrapper");
 
-      // --- ДОДАНО: Визначаємо затримку залежно від розміру екрана ---
-      const isMobile = window.matchMedia("(max-width: 768px)").matches;
+      // 🔥 Виправлено: використовуємо styles.animCardWrapper
+      const contentCards = contentRef.current.querySelectorAll(
+        `.${styles.animCardWrapper}`,
+      );
+
+      // 🔥 Виправлено: безпечна перевірка об'єкта window для Next.js
+      const isMobile =
+        typeof window !== "undefined"
+          ? window.matchMedia("(max-width: 768px)").matches
+          : false;
       const initialDelay = isMobile ? 0.8 : 0.6;
 
-      // Передаємо динамічне значення у таймлайн
       const entranceTl = gsap.timeline({ delay: initialDelay });
 
-      // Далі йде ваша анімація без змін
-      entranceTl
-        .fromTo(
+      // 🔥 Виправлено: анімуємо тільки ті елементи, які реально знайдені
+      if (icon) {
+        entranceTl.fromTo(
           icon,
           { y: 30, autoAlpha: 0 },
           {
@@ -43,8 +50,10 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           0,
-        )
-        .fromTo(
+        );
+      }
+      if (text) {
+        entranceTl.fromTo(
           text,
           { y: 30, autoAlpha: 0 },
           {
@@ -55,8 +64,10 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           0.1,
-        )
-        .fromTo(
+        );
+      }
+      if (line) {
+        entranceTl.fromTo(
           line,
           { scaleX: 0, autoAlpha: 0 },
           {
@@ -67,8 +78,10 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           0.4,
-        )
-        .fromTo(
+        );
+      }
+      if (slogan) {
+        entranceTl.fromTo(
           slogan,
           { y: 15, autoAlpha: 0 },
           {
@@ -79,9 +92,14 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           0.6,
-        )
-        .to(
-          [icon, text, line, slogan],
+        );
+      }
+
+      // Масив для зникнення логотипу
+      const logoElements = [icon, text, line, slogan].filter(Boolean);
+      if (logoElements.length > 0) {
+        entranceTl.to(
+          logoElements,
           {
             y: -20,
             autoAlpha: 0,
@@ -91,8 +109,11 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           "+=0.3",
-        )
-        .fromTo(
+        );
+      }
+
+      if (contentTitle) {
+        entranceTl.fromTo(
           contentTitle,
           { y: 20, autoAlpha: 0 },
           {
@@ -103,8 +124,10 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           "-=0.1",
-        )
-        .fromTo(
+        );
+      }
+      if (contentSubtitle) {
+        entranceTl.fromTo(
           contentSubtitle,
           { y: 20, autoAlpha: 0 },
           {
@@ -115,8 +138,10 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           "-=0.4",
-        )
-        .fromTo(
+        );
+      }
+      if (contentButtonWrapper) {
+        entranceTl.fromTo(
           contentButtonWrapper,
           { y: 20, autoAlpha: 0 },
           {
@@ -127,8 +152,12 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
             force3D: true,
           },
           "-=0.4",
-        )
-        .fromTo(
+        );
+      }
+
+      // 🔥 Запобіжник: якщо карток немає, не запускаємо анімацію NodeList, щоб уникнути помилки
+      if (contentCards && contentCards.length > 0) {
+        entranceTl.fromTo(
           contentCards,
           { y: 50, autoAlpha: 0 },
           {
@@ -141,6 +170,7 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
           },
           "-=0.4",
         );
+      }
     },
     { scope: heroRef },
   );
