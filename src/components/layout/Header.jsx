@@ -50,6 +50,20 @@ const ClockIcon = () => (
   </svg>
 );
 
+const MapPinIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+    <circle cx="12" cy="10" r="3"></circle>
+  </svg>
+);
+
 const ChevronDownIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -63,7 +77,7 @@ const ChevronDownIcon = () => (
   </svg>
 );
 
-// 🔥 Універсальний компонент вмісту дропдауну (використовується і на десктопі, і на мобільному)
+// 🔥 Універсальний компонент вмісту дропдауну
 const ContactDropdownContent = ({ onOpenModal }) => (
   <>
     <div className={styles.dropdownGlass}></div>
@@ -118,6 +132,14 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         <div className={styles.scheduleBlock}>
           <span>Пн-Пт: 8:30 - 17:30</span>
           <span className={styles.weekendText}>Сб-Нд: Вихідні</span>
+        </div>
+      </div>
+
+      {/* Локація */}
+      <div className={styles.dropdownText}>
+        <MapPinIcon />
+        <div className={styles.scheduleBlock}>
+          <span>м. Вінниця, вул. Київська, 14</span>
         </div>
       </div>
 
@@ -182,12 +204,11 @@ export default function Header() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isMobileContactOpen, setIsMobileContactOpen] = useState(false); // 🔥 Стан для мобільного дропдауну
+  const [isMobileContactOpen, setIsMobileContactOpen] = useState(false);
 
   const searchInputRef = useRef(null);
-  const mobileContactRef = useRef(null); // 🔥 Реф для закриття по кліку поза вікном
+  const mobileContactRef = useRef(null);
 
-  // Блокування скролу при відкритому бургер-меню
   useEffect(() => {
     if (!isMobileMenuOpen) return;
     const scrollY = window.scrollY;
@@ -203,14 +224,12 @@ export default function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  // Фокус на пошуку
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
     }
   }, [isSearchOpen]);
 
-  // 🔥 Закриття мобільного дропдауну при кліку поза ним 🔥
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -254,7 +273,7 @@ export default function Header() {
 
   const handleOpenModal = () => {
     openModal();
-    setIsMobileContactOpen(false); // Ховаємо меню при відкритті модалки
+    setIsMobileContactOpen(false);
   };
 
   return (
@@ -339,14 +358,13 @@ export default function Header() {
 
         {/* КОНТРОЛИ ДЛЯ МОБІЛЬНОГО */}
         <div className={styles.mobileControls}>
-          {/* 🔥 Нова кнопка виклику меню з телефоном і стрілочкою 🔥 */}
           <div className={styles.mobileContactWrapper} ref={mobileContactRef}>
             <button
               className={`${styles.actionIconBtn} ${styles.mobilePhoneBtn} ${isMobileContactOpen ? styles.active : ""}`}
               aria-label="Контакти"
               onClick={() => {
                 setIsMobileContactOpen(!isMobileContactOpen);
-                setIsSearchOpen(false); // Закриваємо пошук, якщо відкритий
+                setIsSearchOpen(false);
               }}
             >
               <svg
@@ -375,7 +393,7 @@ export default function Header() {
             aria-label="Відкрити пошук"
             onClick={() => {
               setIsSearchOpen(true);
-              setIsMobileContactOpen(false); // Закриваємо меню контактів
+              setIsMobileContactOpen(false);
             }}
           >
             <svg
@@ -468,8 +486,8 @@ export default function Header() {
             </a>
 
             <div className={styles.mobileSchedule}>
+              <p>м. Вінниця, вул. Київська, 14</p>
               <p>Пн-Пт: 8:30 - 17:30</p>
-              <p>Сб-Нд: Вихідні</p>
             </div>
 
             <div className={styles.mobileSocials}>

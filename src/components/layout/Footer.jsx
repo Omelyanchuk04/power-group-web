@@ -12,7 +12,6 @@ export default function Footer() {
   const pathname = usePathname();
   const currentYear = new Date().getFullYear();
 
-  // Перевіряємо, чи ми зараз на Головній сторінці
   const isHome = pathname === "/";
 
   // --- SVG Іконки ---
@@ -47,14 +46,12 @@ export default function Footer() {
 
   return (
     <footer className={styles.footerWrapper}>
-      {/* Обгортка для фону, щоб приглушити його */}
       {!isHome && (
         <div className={styles.footerBgWrapper}>
           <GlobalBackground isLayout={false} />
         </div>
       )}
 
-      {/* Головна картка футера (Прозоре скло) */}
       <div
         className={styles.footerCard}
         style={{ position: "relative", zIndex: 1 }}
@@ -93,7 +90,6 @@ export default function Footer() {
               <a href="tel:0992671477" className={styles.phone}>
                 099 267 14 77
               </a>
-
               <a
                 href="mailto:powergroup.vin@gmail.com"
                 className={styles.email}
@@ -104,12 +100,13 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* КОЛОНКА 4: КНОПКА ТА СОЦМЕРЕЖІ */}
+          {/* КОЛОНКА 4: КНОПКА ТА ВСІ СОЦМЕРЕЖІ В ОДНІЙ СІТЦІ */}
           <div className={styles.actionCol}>
             <button className={styles.ctaBtn} onClick={openModal}>
               Замовити консультацію
             </button>
             <div className={styles.socials}>
+              {/* Ідеальна сітка 2х2. Телеграм іде з номерами, щоб було зрозуміло */}
               <a
                 href="https://t.me/+380672671477"
                 target="_blank"
@@ -117,7 +114,7 @@ export default function Footer() {
                 className={`${styles.socialLink} ${styles.telegram}`}
               >
                 <TelegramIcon />
-                <span>TG (067)</span>
+                <span>067 267 14 77</span>
               </a>
               <a
                 href="https://t.me/+380992671477"
@@ -126,7 +123,7 @@ export default function Footer() {
                 className={`${styles.socialLink} ${styles.telegram}`}
               >
                 <TelegramIcon />
-                <span>TG (099)</span>
+                <span>099 267 14 77</span>
               </a>
               <a
                 href="https://wa.me/380672671477"
