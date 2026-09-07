@@ -789,3 +789,109 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     }
   }
 }
+
+/* =========================================
+   🔥 ДОДАНО: СТИЛІ ДЛЯ СТОРІНКИ ЗАЯВОК 🔥
+   ========================================= */
+
+.clientInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .clientName {
+    font-weight: 700;
+    color: $text-dark;
+    font-size: 15px;
+  }
+  .clientPhone {
+    font-size: 13px;
+    color: $primary;
+    font-family: var(--font-geist-mono), monospace;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s;
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+  .clientEmail {
+    font-size: 12px;
+    color: $text-gray;
+  }
+}
+
+.leadRequest {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 300px; /* Щоб таблиця не розтягувалась надто сильно */
+
+  strong {
+    font-size: 13px;
+    color: $text-dark;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
+  }
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: $text-gray;
+    line-height: 1.4;
+    white-space: normal; /* Дозволяє перенесення тексту */
+  }
+}
+
+.cellDate {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-dark;
+  white-space: nowrap;
+}
+
+/* Кольоровий Select для статусів */
+.statusSelect {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%236b7280" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position-x: 95%;
+  background-position-y: center;
+  padding-right: 28px;
+
+  /* Варіанти кольорів залежно від обраного статусу */
+  &.nova {
+    background-color: rgba(0, 212, 255, 0.1);
+    color: #0088cc;
+    border-color: rgba(0, 136, 204, 0.2);
+  }
+  &.work {
+    background-color: rgba(255, 204, 0, 0.2);
+    color: #b38f00;
+    border-color: rgba(179, 143, 0, 0.2);
+  }
+  &.success {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+    border-color: rgba(22, 163, 74, 0.2);
+  }
+  &.reject {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.2);
+  }
+
+  &:hover {
+    filter: brightness(0.95);
+  }
+}

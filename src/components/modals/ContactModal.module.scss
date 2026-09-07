@@ -232,6 +232,7 @@ $bg-light: #f5f5f5;
     transform: scale(0.98);
   }
 }
+
 @media (max-width: 640px) {
   .modalContent {
     padding: 32px 24px;
@@ -242,5 +243,77 @@ $bg-light: #f5f5f5;
   .blobBlue,
   .blobYellow {
     display: none;
+  }
+}
+
+/* --- СТИЛІ ДЛЯ МАЛЕНЬКОГО ВІКНА (TOAST У СТИЛІ GLASSMORPHISM) --- */
+.toastModalContent {
+  /* Той самий ефект скла, що і в основній формі */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 24px;
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
+  animation: toastScaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0a2540;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #4a5568;
+  }
+}
+
+.iconSuccess,
+.iconError {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.iconSuccess {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.iconError {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+@keyframes toastScaleIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }

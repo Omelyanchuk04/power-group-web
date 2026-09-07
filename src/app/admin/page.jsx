@@ -145,11 +145,26 @@ const IconX = () => (
     <line x1="6" y1="6" x2="18" y2="18"></line>
   </svg>
 );
+// 🔥 Нова іконка для Заявок
+const IconInbox = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+  </svg>
+);
 
 const CLOUD_NAME = "umg8kma4";
 const UPLOAD_PRESET = "vin_power_group_projects";
 
-// 🔥 Додали поле date
 const initialForm = {
   title: "",
   shortDescription: "",
@@ -162,7 +177,8 @@ const initialForm = {
 
 export default function AdminDashboard() {
   const [projects, setProjects] = useState([]);
-  const [view, setView] = useState("list");
+  const [leads, setLeads] = useState([]); // 🔥 Стан для заявок
+  const [view, setView] = useState("list"); // list, add, edit, leads
   const [formData, setFormData] = useState(initialForm);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -172,14 +188,32 @@ export default function AdminDashboard() {
   const [isDragging, setIsDragging] = useState(false);
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState(null);
+  // 🔥 Оновлено стан для видалення, щоб розуміти що видаляти (проєкт чи заявку)
+  const [itemToDelete, setItemToDelete] = useState({ id: null, type: null });
 
+  // --- Завантаження Проєктів ---
   const fetchProjects = async () => {
     setIsLoading(true);
     try {
       const res = await fetch("/api/projects");
       const data = await res.json();
       setProjects(data);
+    } catch (error) {
+      console.error("Помилка", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- Завантаження Заявок ---
+  const fetchLeads = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/leads");
+      if (res.ok) {
+        const data = await res.json();
+        setLeads(data);
+      }
     } catch (error) {
       console.error("Помилка", error);
     } finally {
@@ -199,7 +233,7 @@ export default function AdminDashboard() {
       clientType: project.clientType,
       serviceType: project.serviceType,
       power: project.power,
-      date: project.date || "", // Підтягуємо існуючу дату
+      date: project.date || "",
     });
     setEditingId(project._id);
 
@@ -225,22 +259,52 @@ export default function AdminDashboard() {
     setView("edit");
   };
 
-  const handleDeleteClick = (id) => {
-    setProjectToDelete(id);
+  // Універсальна функція для відкриття модалки видалення
+  const handleDeleteClick = (id, type) => {
+    setItemToDelete({ id, type });
     setIsDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (!projectToDelete) return;
+    if (!itemToDelete.id) return;
     try {
-      const res = await fetch(`/api/projects/${projectToDelete}`, {
-        method: "DELETE",
-      });
-      if (res.ok)
-        setProjects((prev) => prev.filter((p) => p._id !== projectToDelete));
+      const endpoint =
+        itemToDelete.type === "project"
+          ? `/api/projects/${itemToDelete.id}`
+          : `/api/leads/${itemToDelete.id}`;
+
+      const res = await fetch(endpoint, { method: "DELETE" });
+
+      if (res.ok) {
+        if (itemToDelete.type === "project") {
+          setProjects((prev) => prev.filter((p) => p._id !== itemToDelete.id));
+        } else {
+          setLeads((prev) => prev.filter((l) => l._id !== itemToDelete.id));
+        }
+      }
     } finally {
       setIsDeleteModalOpen(false);
-      setProjectToDelete(null);
+      setItemToDelete({ id: null, type: null });
+    }
+  };
+
+  // 🔥 Зміна статусу заявки
+  const handleStatusChange = async (id, newStatus) => {
+    // Одразу міняємо локально для миттєвої реакції UI
+    setLeads((prev) =>
+      prev.map((lead) =>
+        lead._id === id ? { ...lead, status: newStatus } : lead,
+      ),
+    );
+
+    try {
+      await fetch(`/api/leads/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+    } catch (error) {
+      console.error("Помилка оновлення статусу:", error);
     }
   };
 
@@ -370,6 +434,7 @@ export default function AdminDashboard() {
           flexDirection: "inherit",
         }}
       >
+        {/* --- САЙДБАР --- */}
         <aside className={styles.sidebar}>
           <div className={styles.brand}>
             <img
@@ -379,6 +444,15 @@ export default function AdminDashboard() {
             />
           </div>
           <div className={styles.navContainer}>
+            <button
+              onClick={() => {
+                setView("leads");
+                fetchLeads();
+              }}
+              className={`${styles.navBtn} ${view === "leads" ? styles.active : ""}`}
+            >
+              <IconInbox /> <span>Заявки з сайту</span>
+            </button>
             <button
               onClick={() => {
                 setView("list");
@@ -407,6 +481,123 @@ export default function AdminDashboard() {
         </aside>
 
         <main className={styles.mainContent}>
+          {/* --- ПАНЕЛЬ ЗАЯВОК (LEADS) --- */}
+          {view === "leads" && (
+            <div className={styles.container}>
+              <div className={styles.header}>
+                <h1>Вхідні заявки</h1>
+              </div>
+
+              <div className={styles.glassPanel}>
+                {isLoading ? (
+                  <div
+                    style={{
+                      padding: "40px",
+                      textAlign: "center",
+                      color: "#4b5563",
+                    }}
+                  >
+                    Завантаження...
+                  </div>
+                ) : leads.length === 0 ? (
+                  <div style={{ padding: "40px", textAlign: "center" }}>
+                    <div style={{ fontSize: "40px", marginBottom: "16px" }}>
+                      📬
+                    </div>
+                    <h3 style={{ fontSize: "18px", fontWeight: "800" }}>
+                      Немає нових заявок
+                    </h3>
+                  </div>
+                ) : (
+                  <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                      <thead>
+                        <tr>
+                          <th>Дата</th>
+                          <th>Клієнт</th>
+                          <th>Компанія / Запит</th>
+                          <th>Статус</th>
+                          <th style={{ textAlign: "right" }}>Дії</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {leads.map((lead) => (
+                          <tr key={lead._id}>
+                            <td className={styles.cellDate}>
+                              {new Date(lead.createdAt).toLocaleDateString(
+                                "uk-UA",
+                              )}
+                              <br />
+                              <span
+                                style={{ fontSize: "11px", color: "#6b7280" }}
+                              >
+                                {new Date(lead.createdAt).toLocaleTimeString(
+                                  "uk-UA",
+                                  { hour: "2-digit", minute: "2-digit" },
+                                )}
+                              </span>
+                            </td>
+                            <td>
+                              <div className={styles.clientInfo}>
+                                <span className={styles.clientName}>
+                                  {lead.name}
+                                </span>
+                                <a
+                                  href={`tel:${lead.phone}`}
+                                  className={styles.clientPhone}
+                                >
+                                  {lead.phone}
+                                </a>
+                                {lead.email && (
+                                  <span className={styles.clientEmail}>
+                                    {lead.email}
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td>
+                              <div className={styles.leadRequest}>
+                                {lead.company && (
+                                  <strong>{lead.company}</strong>
+                                )}
+                                <p>{lead.message || "—"}</p>
+                              </div>
+                            </td>
+                            <td>
+                              <select
+                                value={lead.status || "Нова"}
+                                onChange={(e) =>
+                                  handleStatusChange(lead._id, e.target.value)
+                                }
+                                className={`${styles.statusSelect} ${styles[lead.status === "Успіх" ? "success" : lead.status === "Відмова" ? "reject" : lead.status === "В роботі" ? "work" : "nova"]}`}
+                              >
+                                <option value="Нова">Нова</option>
+                                <option value="В роботі">В роботі</option>
+                                <option value="Успіх">Успіх</option>
+                                <option value="Відмова">Відмова</option>
+                              </select>
+                            </td>
+                            <td className={styles.cellActions}>
+                              <button
+                                onClick={() =>
+                                  handleDeleteClick(lead._id, "lead")
+                                }
+                                className={`${styles.actionBtn} ${styles.delete}`}
+                              >
+                                <IconTrash />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* --- ПАНЕЛЬ ПРОЄКТІВ --- */}
           {view === "list" && (
             <div className={styles.container}>
               <div className={styles.header}>
@@ -478,7 +669,9 @@ export default function AdminDashboard() {
                                 <IconEdit />
                               </button>
                               <button
-                                onClick={() => handleDeleteClick(p._id)}
+                                onClick={() =>
+                                  handleDeleteClick(p._id, "project")
+                                }
                                 className={`${styles.actionBtn} ${styles.delete}`}
                               >
                                 <IconTrash />
@@ -494,6 +687,7 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {/* --- ПАНЕЛЬ ДОДАВАННЯ / РЕДАГУВАННЯ ПРОЄКТУ --- */}
           {(view === "add" || view === "edit") && (
             <div className={styles.containerForm}>
               <button
@@ -507,9 +701,7 @@ export default function AdminDashboard() {
                 <h2 className={styles.formTitle}>
                   {view === "edit" ? "Редагування проєкту" : "Створення нового"}
                 </h2>
-
                 <form onSubmit={handleSubmit} className={styles.formLayout}>
-                  {/* 🔥 ТЕПЕР ТУТ 3 КОЛОНКИ (Назва, Локація, Дата) 🔥 */}
                   <div className={styles.grid3}>
                     <div className={styles.inputGroup}>
                       <label>
@@ -695,10 +887,16 @@ export default function AdminDashboard() {
         </main>
       </div>
 
+      {/* --- МОДАЛЬНЕ ВІКНО ВИДАЛЕННЯ --- */}
       {isDeleteModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
-            <h3>Видалити проєкт?</h3>
+            <h3>
+              {itemToDelete.type === "project"
+                ? "Видалити проєкт?"
+                : "Видалити заявку?"}
+            </h3>
+            <p>Цю дію неможливо буде скасувати.</p>
             <div className={styles.modalActions}>
               <button
                 onClick={() => setIsDeleteModalOpen(false)}
