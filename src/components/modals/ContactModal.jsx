@@ -13,15 +13,16 @@ const ContactModal = ({ isOpen, onClose }) => {
     email: "",
     company: "",
     message: "",
-    _gotcha: "", // 🔥 Перейменована пастка для ботів
+    _gotcha: "",
   });
-  const [status, setStatus] = useState("idle"); // idle | loading | success | error
+
+  const [errors, setErrors] = useState({}); // Стан для помилок валідації
+  const [status, setStatus] = useState("idle");
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Блокування скролу
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -29,7 +30,8 @@ const ContactModal = ({ isOpen, onClose }) => {
     } else {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
-      setStatus("idle"); // Скидаємо статус при закритті
+      setStatus("idle");
+      setErrors({}); // Скидаємо помилки при закритті
     }
     return () => {
       document.body.style.overflow = "";
@@ -39,13 +41,69 @@ const ContactModal = ({ isOpen, onClose }) => {
 
   if (!isOpen || !mounted) return null;
 
+  // 🔥 Функція для створення строгої маски телефону під час вводу
+  const formatPhoneInput = (value) => {
+    const digits = value.replace(/\D/g, ""); // Залишаємо тільки цифри
+    if (!digits) return "";
+
+    let phone = digits;
+    // Автоматично підставляємо код України
+    if (phone.startsWith("0")) phone = "38" + phone;
+    else if (!phone.startsWith("3") && phone.length > 0) phone = "380" + phone;
+
+    // Формуємо маску: +38 (0XX) XXX-XX-XX
+    let formatted = "+38";
+    if (phone.length > 2) formatted += ` (${phone.substring(2, 5)}`;
+    if (phone.length > 5) formatted += `) ${phone.substring(5, 8)}`;
+    if (phone.length > 8) formatted += `-${phone.substring(8, 10)}`;
+    if (phone.length > 10) formatted += `-${phone.substring(10, 12)}`;
+
+    return formatted;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Якщо змінюється телефон, застосовуємо маску
+    if (name === "phone") {
+      setFormData((prev) => ({ ...prev, [name]: formatPhoneInput(value) }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
+    // Прибираємо підсвітку помилки, коли користувач починає вводити текст
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+  };
+
+  // 🔥 Строга перевірка полів перед відправкою
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Введіть ваше ім'я";
+    }
+
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+    if (phoneDigits.length < 12) {
+      newErrors.phone = "Введіть повний номер телефону";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Будь ласка, опишіть ваш запит";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0; // Повертає true, якщо помилок немає
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Зупиняємо відправку, якщо форма не пройшла валідацію
+    if (!validateForm()) return;
+
     setStatus("loading");
 
     try {
@@ -63,36 +121,25 @@ const ContactModal = ({ isOpen, onClose }) => {
           email: "",
           company: "",
           message: "",
-          _gotcha: "", // Скидаємо пастку
+          _gotcha: "",
         });
-
-        // Вікно успіху висить 4 секунди, потім повністю закривається
-        setTimeout(() => {
-          onClose();
-        }, 4000);
+        setTimeout(() => onClose(), 4000);
       } else {
         setStatus("error");
-        setTimeout(() => {
-          onClose();
-        }, 4000);
+        setTimeout(() => onClose(), 4000);
       }
     } catch (error) {
-      console.error("Помилка відправки:", error);
       setStatus("error");
-      setTimeout(() => {
-        onClose();
-      }, 2500);
+      setTimeout(() => onClose(), 2500);
     }
   };
 
-  // 🔥 ЯКЩО УСПІХ АБО ПОМИЛКА — ПОКАЗУЄМО СТИЛІЗОВАНЕ ВІКНО 🔥
   if (status === "success" || status === "error") {
     return createPortal(
       <div className={styles.modalOverlay}>
         <div className={styles.modalWrapper}>
           <div className={styles.blobBlue}></div>
           <div className={styles.blobYellow}></div>
-
           <div className={styles.toastModalContent}>
             {status === "success" ? (
               <>
@@ -145,13 +192,11 @@ const ContactModal = ({ isOpen, onClose }) => {
     );
   }
 
-  // 🔥 ЯКЩО IDLE АБО LOADING — ПОКАЗУЄМО ФОРМУ 🔥
   return createPortal(
     <div className={styles.modalOverlay} onPointerDown={onClose}>
       <div className={styles.modalWrapper}>
         <div className={styles.blobBlue}></div>
         <div className={styles.blobYellow}></div>
-
         <div
           className={styles.modalContent}
           onPointerDown={(e) => e.stopPropagation()}
@@ -173,21 +218,24 @@ const ContactModal = ({ isOpen, onClose }) => {
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
-
           <div className={styles.modalHeader}>
             <h3>Залиште заявку</h3>
             <p>І ми допоможемо підібрати найкраще рішення для вас</p>
           </div>
 
-          <form className={styles.contactForm} onSubmit={handleSubmit}>
-            {/* 🔥 HONEYPOT: Приховане поле від спам-ботів 🔥 */}
+          {/* 🔥 Видалили атрибут required у полів, бо тепер у нас власна красива валідація 🔥 */}
+          <form
+            className={styles.contactForm}
+            onSubmit={handleSubmit}
+            noValidate
+          >
             <input
               type="text"
               name="_gotcha"
               value={formData._gotcha}
               onChange={handleChange}
               tabIndex="-1"
-              autoComplete="new-password" // Забороняємо браузеру автозаповнення
+              autoComplete="new-password"
               style={{
                 position: "absolute",
                 opacity: 0,
@@ -196,7 +244,9 @@ const ContactModal = ({ isOpen, onClose }) => {
               }}
             />
 
-            <div className={styles.inputGroup}>
+            <div
+              className={`${styles.inputGroup} ${errors.name ? styles.hasError : ""}`}
+            >
               <label htmlFor="name">Ваше ім'я *</label>
               <input
                 type="text"
@@ -205,11 +255,15 @@ const ContactModal = ({ isOpen, onClose }) => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Введіть ваше ім'я"
-                required
               />
+              {errors.name && (
+                <span className={styles.errorText}>{errors.name}</span>
+              )}
             </div>
 
-            <div className={styles.inputGroup}>
+            <div
+              className={`${styles.inputGroup} ${errors.phone ? styles.hasError : ""}`}
+            >
               <label htmlFor="phone">Номер телефону *</label>
               <input
                 type="tel"
@@ -217,9 +271,11 @@ const ContactModal = ({ isOpen, onClose }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="380_________"
-                required
+                placeholder="+38 (0__) ___-__-__"
               />
+              {errors.phone && (
+                <span className={styles.errorText}>{errors.phone}</span>
+              )}
             </div>
 
             <div className={styles.inputGroup}>
@@ -246,8 +302,10 @@ const ContactModal = ({ isOpen, onClose }) => {
               />
             </div>
 
-            <div className={styles.inputGroup}>
-              <label htmlFor="message">Що вас цікавить?</label>
+            <div
+              className={`${styles.inputGroup} ${errors.message ? styles.hasError : ""}`}
+            >
+              <label htmlFor="message">Що вас цікавить? *</label>
               <input
                 type="text"
                 id="message"
@@ -256,6 +314,9 @@ const ContactModal = ({ isOpen, onClose }) => {
                 onChange={handleChange}
                 placeholder="Опишіть ваш запит"
               />
+              {errors.message && (
+                <span className={styles.errorText}>{errors.message}</span>
+              )}
             </div>
 
             <button

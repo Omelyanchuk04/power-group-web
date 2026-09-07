@@ -1,0 +1,550 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$text-dark: #111827;
+$text-gray: #4b5563;
+$white: #ffffff;
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: calc(100vh - 120px); /* Враховуємо мобільний хедер */
+  }
+}
+
+.header {
+  margin-bottom: 20px;
+  flex-shrink: 0;
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+    h1 {
+      font-size: 24px;
+    }
+  }
+}
+
+/* =========================================
+   РОЗКЛАДКА MAIL APP (SPLIT VIEW)
+   ========================================= */
+
+.mailApp {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 500px;
+  position: relative; /* Важливо для мобільного позиціонування */
+
+  @media (max-width: 768px) {
+    border-radius: 20px;
+    min-height: 600px; /* На мобільному даємо більше висоти для читання */
+  }
+}
+
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .emptyIcon {
+    font-size: 40px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0 0 8px 0;
+  }
+  p {
+    color: $text-gray;
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.emptyContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* Клас для приховування колонок ТІЛЬКИ на мобільному */
+.hideOnMobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+/* =========================================
+   ЛІВА КОЛОНКА (СПИСОК)
+   ========================================= */
+
+.mailSidebar {
+  width: 340px;
+  min-width: 340px;
+  background: rgba(255, 255, 255, 0.4);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
+  }
+}
+
+.sidebarHeader {
+  padding: 16px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+}
+
+.mailList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+}
+
+.mailItem {
+  padding: 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: all 0.1s ease;
+
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  &.active {
+    background: $primary;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+
+    .itemName {
+      color: white;
+    }
+    .itemDate {
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .itemPhone {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .itemSnippet {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .statusDot {
+      background-color: white !important;
+      box-shadow: none;
+    }
+  }
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.itemName {
+  font-size: 15px;
+  font-weight: 700;
+  color: $text-dark;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.itemDate {
+  font-size: 12px;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.itemSub {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.itemPhone {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-gray;
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  &.nova {
+    background: #0ea5e9;
+  }
+  &.work {
+    background: #eab308;
+  }
+  &.success {
+    background: #22c55e;
+  }
+  &.reject {
+    background: #ef4444;
+  }
+}
+
+.itemSnippet {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =========================================
+   ПРАВА КОЛОНКА (ДЕТАЛІ ЗАЯВКИ)
+   ========================================= */
+
+.mailContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.85);
+
+  @media (max-width: 768px) {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    background: #ffffff; /* На телефоні робимо фон суцільним білим, щоб текст не змішувався */
+  }
+}
+
+.contentToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px; /* Зменшуємо відступи на телефоні */
+  }
+}
+
+/* Кнопка "Назад" тільки для мобільного */
+.backBtnMobile {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    color: $text-gray;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 8px 0;
+    margin-right: auto;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    svg {
+      color: $text-gray;
+      transition: color 0.2s;
+    }
+    &:hover {
+      color: $primary;
+      svg {
+        color: $primary;
+      }
+    }
+  }
+}
+
+.statusControl {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* На мобільному притисне статус вправо */
+  margin-right: 12px;
+}
+
+.customSelect {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 6px 32px 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%234b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="14" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+  }
+  &.nova {
+    color: #0284c7;
+    background-color: rgba(2, 132, 199, 0.05);
+  }
+  &.work {
+    color: #ca8a04;
+    background-color: rgba(202, 138, 4, 0.05);
+  }
+  &.success {
+    color: #16a34a;
+    background-color: rgba(22, 163, 74, 0.05);
+  }
+  &.reject {
+    color: #dc2626;
+    background-color: rgba(220, 38, 38, 0.05);
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px 28px 6px 10px;
+    font-size: 12px;
+  }
+}
+
+.deleteBtn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background: #fef2f2;
+    color: #ef4444;
+  }
+}
+
+.contentScrollArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px 48px;
+
+  @media (max-width: 768px) {
+    padding: 24px 20px; /* Зменшуємо відступи на телефоні */
+  }
+}
+
+.emailHeader {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.emailAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: $primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+.emailMeta {
+  h2 {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: $text-dark;
+    letter-spacing: -0.5px;
+  }
+  .emailDate {
+    font-size: 13px;
+    color: #6b7280;
+  }
+
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 20px;
+    }
+  }
+}
+
+.emailContacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  .contactPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #f3f4f6;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-dark;
+    text-decoration: none;
+
+    svg {
+      color: #6b7280;
+    }
+    &[href^="tel:"] {
+      font-family: var(--font-geist-mono), monospace;
+      color: $primary;
+      background: rgba(0, 86, 179, 0.05);
+      svg {
+        color: $primary;
+      }
+    }
+    &[href]:hover {
+      background: #e5e7eb;
+    }
+  }
+}
+
+.emailBody {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2937;
+  white-space: pre-wrap;
+
+  .emptyText {
+    color: #9ca3af;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 15px; /* Трохи менший текст для зручності читання з телефона */
+  }
+}
+
+/* =========================================
+   МОДАЛКА ВИДАЛЕННЯ
+   ========================================= */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modalContent {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 32px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    color: $text-dark;
+  }
+  p {
+    color: $text-gray;
+    margin-bottom: 24px;
+    font-size: 15px;
+  }
+}
+.modalActions {
+  display: flex;
+  gap: 12px;
+  button {
+    flex: 1;
+    padding: 14px;
+    border-radius: 16px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.2s;
+  }
+  .btnCancel {
+    background: rgba(0, 0, 0, 0.05);
+    color: $text-dark;
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+  .btnDelete {
+    background: #ef4444;
+    color: white;
+    &:hover {
+      background: #dc2626;
+    }
+  }
+}

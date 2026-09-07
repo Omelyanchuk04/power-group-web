@@ -1,149 +1,13 @@
 @use "sass:color";
 
 $primary: #0056b3;
-$cyan: #00d4ff;
 $text-dark: #111827;
 $text-gray: #4b5563;
-$white: #ffffff;
 $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
-.dashboardWrapper {
-  position: relative;
-  min-height: 100vh;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-  overflow-x: hidden;
-
-  @media (max-width: 992px) {
-    display: flex;
-    flex-direction: column;
-  }
-}
-
-.mobileClientHeader {
-  display: none;
-  @media (max-width: 992px) {
-    display: block;
-    position: relative;
-    z-index: 100;
-  }
-}
-
-.glassPanel {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 30px;
-  padding: 32px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.04),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  transition: box-shadow 0.3s ease;
-
-  @media (max-width: 768px) {
-    padding: 16px;
-    border-radius: 28px;
-  }
-}
-
-.sidebar {
-  @extend .glassPanel;
-  width: 280px;
-  margin: 20px;
-  height: calc(100vh - 40px);
-  position: sticky;
-  top: 20px;
-  display: flex;
-  flex-direction: column;
-  padding: 32px 24px;
-  flex-shrink: 0;
-  z-index: 50;
-
-  @media (max-width: 992px) {
-    display: none;
-  }
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 40px;
-  position: relative;
-
-  .logoDesktop {
-    display: block;
-    width: auto;
-    height: 44px;
-    object-fit: contain;
-  }
-}
-
-.navContainer {
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebarFooter {
-  margin-top: auto;
-  padding-top: 24px;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  a {
-    text-decoration: none;
-  }
-}
-
-.navBtn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-align: left;
-  padding: 14px 16px;
-  background-color: transparent;
-  color: $text-gray;
-  border: none;
-  border-radius: 16px;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  transition: all 0.2s ease;
-
-  svg {
-    color: $text-gray;
-    transition: color 0.2s ease;
-  }
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.6);
-    color: $text-dark;
-  }
-  &.active {
-    background: $white;
-    color: $text-dark;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
-    svg {
-      color: $primary;
-    }
-  }
-}
-
-.mainContent {
-  flex: 1;
-  min-width: 0;
-  padding: 20px 40px 20px 10px;
-  min-height: 100vh;
-
-  @media (max-width: 1200px) {
-    padding: 20px 20px 20px 10px;
-  }
-  @media (max-width: 992px) {
-    padding: 100px 12px 32px 12px;
-    min-height: auto;
-  }
-}
-
+/* =========================================
+   БАЗОВІ КОНТЕЙНЕРИ
+   ========================================= */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -166,6 +30,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     margin: 0;
     letter-spacing: -0.5px;
   }
+
   @media (max-width: 640px) {
     margin-bottom: 16px;
     h1 {
@@ -174,6 +39,26 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
+.glassPanel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 30px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.04),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    border-radius: 28px;
+  }
+}
+
+/* =========================================
+   КНОПКИ
+   ========================================= */
 .primaryBtn {
   display: flex;
   align-items: center;
@@ -204,7 +89,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;
-    filter: none;
   }
 
   @media (max-width: 640px) {
@@ -242,11 +126,13 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   font-weight: 700;
   font-size: 15px;
   transition: color 0.2s;
+
   &:hover {
     color: $primary;
     text-decoration: underline;
     text-underline-offset: 4px;
   }
+
   @media (max-width: 640px) {
     margin-bottom: 12px;
     font-size: 13px;
@@ -262,11 +148,13 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   cursor: pointer;
   padding: 16px 24px;
   transition: color 0.2s;
+
   &:hover {
     color: $text-dark;
     text-decoration: underline;
     text-underline-offset: 4px;
   }
+
   @media (max-width: 640px) {
     width: 100%;
     padding: 12px;
@@ -291,6 +179,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   &:last-child {
     margin-right: 0 !important;
   }
+
   &.edit {
     background: rgba(255, 255, 255, 0.8);
     color: $primary;
@@ -312,10 +201,14 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
+/* =========================================
+   ТАБЛИЦЯ ПРОЄКТІВ
+   ========================================= */
 .tableContainer {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+
   &::-webkit-scrollbar {
     height: 6px;
   }
@@ -415,7 +308,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     grid-column: 2;
     grid-row: 1;
     font-size: 14px;
-    line-height: 1.2;
     align-self: end;
   }
 }
@@ -446,12 +338,14 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     grid-column: 3;
     grid-row: 1 / 4;
     display: flex !important;
-    flex-direction: row !important;
     align-items: center;
     justify-content: flex-end;
   }
 }
 
+/* =========================================
+   ФОРМА ДОДАВАННЯ / РЕДАГУВАННЯ
+   ========================================= */
 .formTitle {
   font-size: 24px;
   font-weight: 800;
@@ -462,29 +356,21 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     margin-bottom: 16px;
   }
 }
+
 .formLayout {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  position: relative;
-  z-index: 2;
   @media (max-width: 640px) {
     gap: 16px;
   }
 }
-.grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
+
 .grid3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-}
-@media (max-width: 640px) {
-  .grid2,
-  .grid3 {
+  @media (max-width: 640px) {
     grid-template-columns: 1fr;
     gap: 16px;
   }
@@ -494,6 +380,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   display: flex;
   flex-direction: column;
   gap: 6px;
+
   label {
     font-size: 13px;
     font-weight: 600;
@@ -502,6 +389,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       color: #ef4444;
     }
   }
+
   input,
   select,
   textarea {
@@ -514,6 +402,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     color: $text-dark;
     transition: border-color 0.2s ease;
     border-radius: 0;
+
     &::placeholder {
       color: #9ca3af;
     }
@@ -523,11 +412,10 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     }
   }
 
-  /* 🔥 ОНОВЛЕНЕ ПОЛЕ ОПИСУ 🔥 */
   .fixedTextarea {
-    height: 120px; /* Зробили вищим */
-    resize: none; /* Заборонили ручне масштабування */
-    overflow-y: auto; /* Додали скрол, якщо тексту багато */
+    height: 120px;
+    resize: none;
+    overflow-y: auto;
     line-height: 1.5;
     padding: 12px;
     background: rgba(255, 255, 255, 0.4);
@@ -539,22 +427,29 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       border-color: $primary;
       outline: none;
     }
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.15);
-      border-radius: 10px;
-    }
   }
 }
 
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  @media (max-width: 640px) {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+  }
+}
+
+/* =========================================
+   ЗОНА ЗАВАНТАЖЕННЯ ФОТО (DRAG & DROP)
+   ========================================= */
 .hiddenFileInput {
   display: none;
 }
 
-/* 🔥 ЗОНА ЗАВАНТАЖЕННЯ (З ПІДТРИМКОЮ DRAG-AND-DROP) 🔥 */
 .unifiedUploadZone {
   display: flex;
   flex-direction: column;
@@ -573,7 +468,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     background: rgba(255, 255, 255, 0.9);
     border-color: $primary;
   }
-
   &.dragging {
     background: rgba(0, 86, 179, 0.08);
     border-color: $primary;
@@ -585,7 +479,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    pointer-events: none; /* Щоб drag events не глючили об дочірні елементи */
+    pointer-events: none;
 
     svg {
       color: $primary;
@@ -606,7 +500,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* 🔥 СІТКА ФОТОГРАФІЙ (МІНІМАЛІСТИЧНИЙ СТИЛЬ) 🔥 */
+/* СІТКА ФОТОГРАФІЙ */
 .imageGrid {
   display: flex;
   flex-wrap: wrap;
@@ -636,7 +530,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 
   &.isMain {
-    border-color: rgba(0, 0, 0, 0.1); /* Менш помітна рамка */
+    border-color: rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
@@ -644,14 +538,8 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     position: absolute;
     top: 6px;
     left: 6px;
-    background: rgba(
-      0,
-      0,
-      0,
-      0.5
-    ); /* Напівпрозоре темне скло замість яскравого синього */
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
     color: white;
     padding: 4px 8px;
     border-radius: 6px;
@@ -662,7 +550,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     gap: 4px;
     z-index: 2;
     pointer-events: none;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 
   .removeBtn {
@@ -672,9 +559,8 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.4); /* Сіре скло за замовчуванням */
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
     color: white;
     border: none;
     display: flex;
@@ -685,12 +571,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     transition: all 0.2s ease;
 
     &:hover {
-      background: rgba(
-        239,
-        68,
-        68,
-        0.9
-      ); /* Стає червоним ТІЛЬКИ при наведенні */
+      background: rgba(239, 68, 68, 0.9);
       transform: scale(1.1);
     }
   }
@@ -718,25 +599,14 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-.formActions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 16px;
-  margin-top: 8px;
-  @media (max-width: 640px) {
-    flex-direction: column-reverse;
-    align-items: stretch;
-    gap: 10px;
-  }
-}
-
+/* =========================================
+   МОДАЛЬНЕ ВІКНО ВИДАЛЕННЯ
+   ========================================= */
 .modalOverlay {
   position: fixed;
   inset: 0;
   background: rgba(17, 24, 39, 0.65);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -750,6 +620,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   padding: 24px;
   text-align: center;
   background: rgba(255, 255, 255, 0.95);
+
   h3 {
     font-size: 18px;
     font-weight: 800;
@@ -767,6 +638,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   display: flex;
   gap: 8px;
   justify-content: center;
+
   button {
     flex: 1;
     padding: 12px;
@@ -787,111 +659,5 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     &:hover {
       background: #dc2626;
     }
-  }
-}
-
-/* =========================================
-   🔥 ДОДАНО: СТИЛІ ДЛЯ СТОРІНКИ ЗАЯВОК 🔥
-   ========================================= */
-
-.clientInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  .clientName {
-    font-weight: 700;
-    color: $text-dark;
-    font-size: 15px;
-  }
-  .clientPhone {
-    font-size: 13px;
-    color: $primary;
-    font-family: var(--font-geist-mono), monospace;
-    text-decoration: none;
-    font-weight: 600;
-    transition: opacity 0.2s;
-    &:hover {
-      opacity: 0.7;
-    }
-  }
-  .clientEmail {
-    font-size: 12px;
-    color: $text-gray;
-  }
-}
-
-.leadRequest {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-width: 300px; /* Щоб таблиця не розтягувалась надто сильно */
-
-  strong {
-    font-size: 13px;
-    color: $text-dark;
-    background: rgba(0, 0, 0, 0.05);
-    padding: 2px 6px;
-    border-radius: 4px;
-    align-self: flex-start;
-  }
-  p {
-    margin: 0;
-    font-size: 14px;
-    color: $text-gray;
-    line-height: 1.4;
-    white-space: normal; /* Дозволяє перенесення тексту */
-  }
-}
-
-.cellDate {
-  font-size: 14px;
-  font-weight: 600;
-  color: $text-dark;
-  white-space: nowrap;
-}
-
-/* Кольоровий Select для статусів */
-.statusSelect {
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: transparent;
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 13px;
-  font-weight: 700;
-  outline: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  appearance: none;
-  background-image: url('data:image/svg+xml;utf8,<svg fill="%236b7280" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position-x: 95%;
-  background-position-y: center;
-  padding-right: 28px;
-
-  /* Варіанти кольорів залежно від обраного статусу */
-  &.nova {
-    background-color: rgba(0, 212, 255, 0.1);
-    color: #0088cc;
-    border-color: rgba(0, 136, 204, 0.2);
-  }
-  &.work {
-    background-color: rgba(255, 204, 0, 0.2);
-    color: #b38f00;
-    border-color: rgba(179, 143, 0, 0.2);
-  }
-  &.success {
-    background-color: rgba(34, 197, 94, 0.1);
-    color: #16a34a;
-    border-color: rgba(22, 163, 74, 0.2);
-  }
-  &.reject {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: #dc2626;
-    border-color: rgba(220, 38, 38, 0.2);
-  }
-
-  &:hover {
-    filter: brightness(0.95);
   }
 }
