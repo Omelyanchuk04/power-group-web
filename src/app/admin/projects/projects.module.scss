@@ -106,16 +106,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
   &:active {
     transform: scale(0.92);
-    background: rgba(0, 0, 0, 0.9);
-  }
-
-  @media (max-width: 640px) {
-    width: 38px;
-    height: 38px;
-    svg {
-      width: 18px;
-      height: 18px;
-    }
+    background: rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -152,7 +143,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
   &:active {
     transform: scale(0.95);
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.4);
   }
 
   @media (max-width: 640px) {
@@ -231,7 +222,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 }
 
 /* =========================================
-   ТАБЛИЦЯ ПРОЄКТІВ (З ОДНАКОВОЮ ВИСОТОЮ КАРТОК)
+   ТАБЛИЦЯ ПРОЄКТІВ 
    ========================================= */
 .tableContainer {
   width: 100%;
@@ -266,10 +257,40 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     vertical-align: middle;
   }
-  tr {
+
+  .projectRow {
+    cursor: pointer;
     transition: background 0.2s;
     &:hover {
       background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* 🔥 МОБІЛЬНИЙ ВИГЛЯД (Без рамок, автовисота, розділювачі) 🔥 */
+    @media (max-width: 768px) {
+      display: grid;
+      grid-template-columns: 85px 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 12px;
+      row-gap: 4px;
+      padding: 16px 8px;
+
+      background: transparent; /* Без білого фону */
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* Лише лінія знизу */
+      border-radius: 0;
+      box-shadow: none;
+      height: auto; /* Контент більше не буде обрізатися */
+      -webkit-tap-highlight-color: transparent;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:active {
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 12px;
+        border-bottom-color: transparent;
+      }
     }
   }
 
@@ -282,23 +303,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     tbody {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-    }
-
-    /* 🔥 Фіксована висота карток для ідеального вирівнювання 🔥 */
-    tr {
-      display: grid;
-      grid-template-columns: 85px 1fr auto;
-      grid-template-rows: auto auto auto;
-      column-gap: 12px;
-      row-gap: 4px;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
-      height: 110px; /* Суворо фіксована висота */
-      box-sizing: border-box;
     }
     td {
       display: block;
@@ -343,13 +347,8 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     grid-row: 1;
     font-size: 14px;
     align-self: end;
-    /* 🔥 Обрізаємо задовгі заголовки після 2-го рядка 🔥 */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.25;
+    display: block;
+    line-height: 1.3;
   }
 }
 .cellClient {
@@ -384,6 +383,11 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     display: flex !important;
     align-items: center;
     justify-content: flex-end;
+
+    /* 🔥 Ховаємо кнопку "Редагувати" на мобільному, бо вся картка клікабельна */
+    .edit {
+      display: none;
+    }
   }
 }
 
@@ -472,7 +476,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* 🔥 ІДЕНТИЧНІ КНОПКИ В ФОРМІ 🔥 */
 .formActions {
   display: flex;
   justify-content: flex-end;
@@ -481,7 +484,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   margin-top: 8px;
 
   button {
-    height: 50px; /* Суворо фіксована висота */
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -525,7 +528,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     flex-direction: column-reverse;
     gap: 12px;
     button {
-      width: 100%; /* На мобільному розтягуються на всю ширину */
+      width: 100%;
     }
   }
 }

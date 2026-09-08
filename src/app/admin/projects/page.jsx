@@ -53,7 +53,6 @@ const IconTrash = () => (
     <line x1="14" y1="11" x2="14" y2="17" />
   </svg>
 );
-// 🔥 Оновлена іконка-шеврон
 const IconArrowLeft = () => (
   <svg
     width="24"
@@ -318,7 +317,6 @@ export default function ProjectsPage() {
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.headerTitleGroup}>
-              {/* 🔥 Кнопка "Назад" (Liquid Glass) */}
               <Link
                 href="/admin"
                 className={styles.backToAdminBtn}
@@ -329,7 +327,6 @@ export default function ProjectsPage() {
               <h1>Реалізовані проєкти</h1>
             </div>
 
-            {/* 🔥 Кнопка "Новий проєкт" (Liquid Glass) */}
             <button
               onClick={() => {
                 setFormData(initialForm);
@@ -380,7 +377,11 @@ export default function ProjectsPage() {
                   </thead>
                   <tbody>
                     {projects.map((p) => (
-                      <tr key={p._id}>
+                      <tr
+                        key={p._id}
+                        className={styles.projectRow}
+                        onClick={() => handleEditClick(p)} // 🔥 Робимо весь рядок клікабельним
+                      >
                         <td className={styles.cellImg}>
                           <img
                             src={p.mainImage}
@@ -393,14 +394,18 @@ export default function ProjectsPage() {
                         <td className={styles.cellPower}>{p.power} кВт</td>
                         <td className={styles.cellActions}>
                           <button
-                            onClick={() => handleEditClick(p)}
+                            onClick={(e) => {
+                              e.stopPropagation(); // Зупиняємо клік, щоб не клікнути на весь рядок
+                              handleEditClick(p);
+                            }}
                             className={`${styles.actionBtn} ${styles.edit}`}
                             title="Редагувати"
                           >
                             <IconEdit />
                           </button>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation(); // Зупиняємо клік, щоб не клікнути на весь рядок
                               setProjectToDelete(p._id);
                               setIsDeleteModalOpen(true);
                             }}
