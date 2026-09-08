@@ -66,6 +66,7 @@ const IconMail = () => (
     <polyline points="22,6 12,13 2,6"></polyline>
   </svg>
 );
+// 🔥 НОВА іконка компанії (будівля)
 const IconCompany = () => (
   <svg
     width="16"
@@ -77,16 +78,31 @@ const IconCompany = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-    <rect x="9" y="9" width="6" height="6"></rect>
-    <line x1="9" y1="1" x2="9" y2="4"></line>
-    <line x1="15" y1="1" x2="15" y2="4"></line>
-    <line x1="9" y1="20" x2="9" y2="23"></line>
-    <line x1="15" y1="20" x2="15" y2="23"></line>
-    <line x1="20" y1="9" x2="23" y2="9"></line>
-    <line x1="20" y1="14" x2="23" y2="14"></line>
-    <line x1="1" y1="9" x2="4" y2="9"></line>
-    <line x1="1" y1="14" x2="4" y2="14"></line>
+    <path d="M3 21h18"></path>
+    <path d="M9 8h1"></path>
+    <path d="M9 12h1"></path>
+    <path d="M9 16h1"></path>
+    <path d="M14 8h1"></path>
+    <path d="M14 12h1"></path>
+    <path d="M14 16h1"></path>
+    <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+  </svg>
+);
+// 🔥 Іконка девайсу для футера
+const IconDevice = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+    <line x1="8" y1="21" x2="16" y2="21"></line>
+    <line x1="12" y1="17" x2="12" y2="21"></line>
   </svg>
 );
 
@@ -99,7 +115,7 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState(leadsCache || []);
   const [isLoading, setIsLoading] = useState(!leadsCache);
 
-  // 🔥 Миттєво підтягуємо першу заявку з кешу, щоб уникнути блимання пустого екрану
+  // Миттєво підтягуємо першу заявку з кешу
   const [selectedLead, setSelectedLead] = useState(() => {
     if (leadsCache && leadsCache.length > 0 && !isMobile) {
       return leadsCache[0];
@@ -351,6 +367,25 @@ export default function LeadsPage() {
                         </p>
                       )}
                     </div>
+
+                    {/* 🔥 ІНФОРМАЦІЯ ПРО ПРИСТРІЙ (ПЕРЕМІЩЕНО ВНИЗ) 🔥 */}
+                    {selectedLead.deviceInfo && (
+                      <div
+                        style={{
+                          marginTop: "40px",
+                          paddingTop: "16px",
+                          borderTop: "1px solid rgba(0,0,0,0.06)",
+                          fontSize: "12px",
+                          color: "#9ca3af",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          fontWeight: "500",
+                        }}
+                      >
+                        <IconDevice /> {selectedLead.deviceInfo}
+                      </div>
+                    )}
                   </div>
                 </>
               ) : (

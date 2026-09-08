@@ -4,19 +4,20 @@ import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import styles from "./ContactModal.module.scss";
 
+// 🔥 Виносимо початковий стан в окрему константу, щоб телефон ОДРАЗУ мав +380
+const initialFormState = {
+  name: "",
+  phone: "+38 (0",
+  email: "",
+  company: "",
+  message: "",
+  _gotcha: "",
+};
+
 const ContactModal = ({ isOpen, onClose }) => {
   const [mounted, setMounted] = useState(false);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    company: "",
-    message: "",
-    _gotcha: "",
-  });
-
-  const [errors, setErrors] = useState({}); // Стан для помилок валідації
+  const [formData, setFormData] = useState(initialFormState);
+  const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle");
 
   useEffect(() => {
@@ -31,7 +32,9 @@ const ContactModal = ({ isOpen, onClose }) => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
       setStatus("idle");
-      setErrors({}); // Скидаємо помилки при закритті
+      setErrors({});
+      // Скидаємо форму до початкового стану (з жорстким префіксом телефону) при закритті
+      setFormData(initialFormState);
     }
     return () => {
       document.body.style.overflow = "";
@@ -41,43 +44,47 @@ const ContactModal = ({ isOpen, onClose }) => {
 
   if (!isOpen || !mounted) return null;
 
-  // 🔥 Функція для створення строгої маски телефону під час вводу
+  // 🔥 РОЗУМНА І ЖОРСТКА МАСКА ТЕЛЕФОНУ
   const formatPhoneInput = (value) => {
-    const digits = value.replace(/\D/g, ""); // Залишаємо тільки цифри
-    if (!digits) return "";
+    let digits = value.replace(/\D/g, "");
 
-    let phone = digits;
-    // Автоматично підставляємо код України
-    if (phone.startsWith("0")) phone = "38" + phone;
-    else if (!phone.startsWith("3") && phone.length > 0) phone = "380" + phone;
+    // 1. Жорстко блокуємо видалення базового коду 380
+    if (digits.length < 3) {
+      digits = "380";
+    }
+    // 2. Якщо користувач вставив скопійований номер без 380 (наприклад, 097...)
+    else if (!digits.startsWith("380")) {
+      digits = "380" + digits.replace(/^38?0?/, "");
+    }
 
-    // Формуємо маску: +38 (0XX) XXX-XX-XX
-    let formatted = "+38";
-    if (phone.length > 2) formatted += ` (${phone.substring(2, 5)}`;
-    if (phone.length > 5) formatted += `) ${phone.substring(5, 8)}`;
-    if (phone.length > 8) formatted += `-${phone.substring(8, 10)}`;
-    if (phone.length > 10) formatted += `-${phone.substring(10, 12)}`;
+    digits = digits.substring(0, 12); // Обмежуємо довжину 12 цифрами
 
-    return formatted;
+    // 3. Формуємо красивий вивід, який дружній до клавіші Backspace
+    if (digits.length <= 3) return "+38 (0";
+    if (digits.length <= 5) return `+38 (0${digits.substring(3, 5)}`;
+    if (digits.length <= 8)
+      return `+38 (0${digits.substring(3, 5)}) ${digits.substring(5, 8)}`;
+    if (digits.length <= 10)
+      return `+38 (0${digits.substring(3, 5)}) ${digits.substring(5, 8)}-${digits.substring(8, 10)}`;
+
+    return `+38 (0${digits.substring(3, 5)}) ${digits.substring(5, 8)}-${digits.substring(8, 10)}-${digits.substring(10, 12)}`;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Якщо змінюється телефон, застосовуємо маску
     if (name === "phone") {
       setFormData((prev) => ({ ...prev, [name]: formatPhoneInput(value) }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
 
-    // Прибираємо підсвітку помилки, коли користувач починає вводити текст
+    // Прибираємо підсвітку помилки під час вводу
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
   };
 
-  // 🔥 Строга перевірка полів перед відправкою
   const validateForm = () => {
     const newErrors = {};
 
@@ -90,18 +97,25 @@ const ContactModal = ({ isOpen, onClose }) => {
       newErrors.phone = "Введіть повний номер телефону";
     }
 
+    // 🔥 Нормальна валідація Email (перевіряємо, тільки якщо користувач щось ввів)
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = "Введіть коректний email";
+      }
+    }
+
     if (!formData.message.trim()) {
       newErrors.message = "Будь ласка, опишіть ваш запит";
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Повертає true, якщо помилок немає
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Зупиняємо відправку, якщо форма не пройшла валідацію
     if (!validateForm()) return;
 
     setStatus("loading");
@@ -115,14 +129,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
       if (res.ok) {
         setStatus("success");
-        setFormData({
-          name: "",
-          phone: "",
-          email: "",
-          company: "",
-          message: "",
-          _gotcha: "",
-        });
+        setFormData(initialFormState); // Скидаємо до стану з префіксом телефону
         setTimeout(() => onClose(), 4000);
       } else {
         setStatus("error");
@@ -134,6 +141,7 @@ const ContactModal = ({ isOpen, onClose }) => {
     }
   };
 
+  // Екран успіху/помилки
   if (status === "success" || status === "error") {
     return createPortal(
       <div className={styles.modalOverlay}>
@@ -192,6 +200,7 @@ const ContactModal = ({ isOpen, onClose }) => {
     );
   }
 
+  // Головний екран форми
   return createPortal(
     <div className={styles.modalOverlay} onPointerDown={onClose}>
       <div className={styles.modalWrapper}>
@@ -218,17 +227,18 @@ const ContactModal = ({ isOpen, onClose }) => {
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
+
           <div className={styles.modalHeader}>
             <h3>Залиште заявку</h3>
             <p>І ми допоможемо підібрати найкраще рішення для вас</p>
           </div>
 
-          {/* 🔥 Видалили атрибут required у полів, бо тепер у нас власна красива валідація 🔥 */}
           <form
             className={styles.contactForm}
             onSubmit={handleSubmit}
             noValidate
           >
+            {/* Honeypot поле (захист від ботів) */}
             <input
               type="text"
               name="_gotcha"
@@ -278,7 +288,9 @@ const ContactModal = ({ isOpen, onClose }) => {
               )}
             </div>
 
-            <div className={styles.inputGroup}>
+            <div
+              className={`${styles.inputGroup} ${errors.email ? styles.hasError : ""}`}
+            >
               <label htmlFor="email">Ваш Email</label>
               <input
                 type="email"
@@ -288,6 +300,9 @@ const ContactModal = ({ isOpen, onClose }) => {
                 onChange={handleChange}
                 placeholder="example@mail.com"
               />
+              {errors.email && (
+                <span className={styles.errorText}>{errors.email}</span>
+              )}
             </div>
 
             <div className={styles.inputGroup}>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
-import Lead from "@/models/Lead"; // Вкажіть правильний шлях до моделі, якщо він відрізняється
+import Lead from "@/models/Lead";
 
 const escapeHTML = (str) => {
   if (!str) return "";
@@ -49,7 +49,7 @@ export async function POST(request) {
     const body = await request.json();
     const { name, phone, email, company, message: userMessage, _gotcha } = body;
 
-    // 🔥 ЗАХИСТ ВІД СПАМУ
+    // ЗАХИСТ ВІД СПАМУ
     if (_gotcha) {
       console.warn("Spam bot blocked (Honeypot triggered)");
       return NextResponse.json({ success: true });
@@ -59,7 +59,7 @@ export async function POST(request) {
     const deviceInfo = parseUserAgent(userAgentHeader);
     const { clean: cleanPhone, formatted: formattedPhone } = formatPhone(phone);
 
-    // 🔥 1. ПІДКЛЮЧЕННЯ ТА ЗБЕРЕЖЕННЯ В MONGODB
+    // 1. ПІДКЛЮЧЕННЯ ТА ЗБЕРЕЖЕННЯ В MONGODB
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(process.env.MONGODB_URI);
     }
@@ -70,11 +70,11 @@ export async function POST(request) {
       email: email || "",
       company: company || "",
       message: userMessage || "",
-      deviceInfo: deviceInfo,
+      deviceInfo: deviceInfo, // Зберігаємо інфо про пристрій
+      status: "Нова",
     });
-    console.log("✅ Заявку збережено в БД, ID:", newLead._id);
 
-    // 🔥 2. ВІДПРАВКА В ТЕЛЕГРАМ
+    // 2. ВІДПРАВКА В ТЕЛЕГРАМ (Чисте повідомлення без емодзі)
     const timeString = new Date().toLocaleString("uk-UA", {
       timeZone: "Europe/Kyiv",
       day: "2-digit",
@@ -88,32 +88,32 @@ export async function POST(request) {
     const safeCompany = escapeHTML(company);
     const safeMessage = escapeHTML(userMessage);
 
-    let text = `🔥 <b>НОВА ЗАЯВКА З САЙТУ</b> 🔥\n\n`;
-    text += `👤 <b>Ім'я:</b> ${safeName || "<i>Не вказано</i>"}\n`;
-    text += `📞 <b>Телефон:</b> ${formattedPhone || escapeHTML(phone)}\n`;
+    let text = `<b>НОВА ЗАЯВКА З САЙТУ</b>\n\n`;
+    text += `<b>Ім'я:</b> ${safeName || "<i>Не вказано</i>"}\n`;
+    text += `<b>Телефон:</b> ${formattedPhone || escapeHTML(phone)}\n`;
 
-    if (email) text += `✉️ <b>Email:</b> ${escapeHTML(email)}\n`;
-    if (company) text += `🏢 <b>Компанія:</b> ${safeCompany}\n`;
+    if (email) text += `<b>Email:</b> ${escapeHTML(email)}\n`;
+    if (company) text += `<b>Компанія:</b> ${safeCompany}\n`;
 
     if (userMessage) {
-      text += `\n💬 <b>Запит:</b>\n<i>${safeMessage}</i>\n`;
+      text += `\n<b>Запит:</b>\n<i>${safeMessage}</i>\n`;
     } else {
-      text += `\n💬 <b>Запит:</b> <i>Не вказано</i>\n`;
+      text += `\n<b>Запит:</b> <i>Не вказано</i>\n`;
     }
 
-    text += `\n⚙️ <i>${timeString} | ${deviceInfo}</i>`;
+    text += `\n<i>${timeString} | ${deviceInfo}</i>`;
 
     const inlineKeyboard = [];
     if (cleanPhone) {
       inlineKeyboard.push([
-        { text: "💬 Написати в TG", url: `https://t.me/${cleanPhone}` },
+        { text: "Написати в Telegram", url: `https://t.me/${cleanPhone}` },
       ]);
     }
 
     const token = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
-    // Якщо токени є, відправляємо в TG
+    // Відправляємо в TG
     if (token && chatId) {
       const url = `https://api.telegram.org/bot${token}/sendMessage`;
       const response = await fetch(url, {
