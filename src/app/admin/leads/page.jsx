@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./leads.module.scss";
 
 // Іконки
@@ -103,8 +103,79 @@ const IconDevice = () => (
     <line x1="12" y1="17" x2="12" y2="21"></line>
   </svg>
 );
+const IconChevron = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>
+);
 
 let leadsCache = null;
+
+// 🔥 КАСТОМНИЙ ВИТОНЧЕНИЙ ВИПАДАЮЧИЙ СПИСОК (БЕЗ СТАНДАРТНИХ <select>) 🔥
+const CustomDropdown = ({
+  value,
+  onChange,
+  options,
+  variant = "mini",
+  statusClass = "",
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Закриваємо при кліку поза елементом
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedOption =
+    options.find((opt) => opt.value === value) || options[0];
+
+  return (
+    <div
+      className={`${styles.customDropdown} ${styles[variant]}`}
+      ref={dropdownRef}
+    >
+      <div
+        className={`${styles.dropdownTrigger} ${statusClass ? styles[statusClass] : ""}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span>{selectedOption.label}</span>
+        <IconChevron />
+      </div>
+      {isOpen && (
+        <div className={styles.dropdownMenu}>
+          {options.map((opt) => (
+            <div
+              key={opt.value}
+              className={`${styles.dropdownItem} ${value === opt.value ? styles.selected : ""}`}
+              onClick={() => {
+                onChange(opt.value);
+                setIsOpen(false);
+              }}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function LeadsPage() {
   const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
@@ -112,9 +183,8 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState(leadsCache || []);
   const [isLoading, setIsLoading] = useState(!leadsCache);
 
-  // 🔥 Стан для фільтрів і сортування 🔥
   const [filterStatus, setFilterStatus] = useState("All");
-  const [sortOrder, setSortOrder] = useState("newest"); // "newest" або "oldest"
+  const [sortOrder, setSortOrder] = useState("newest");
 
   const [selectedLead, setSelectedLead] = useState(() => {
     if (leadsCache && leadsCache.length > 0 && !isMobile) return leadsCache[0];
@@ -219,7 +289,6 @@ export default function LeadsPage() {
     });
   };
 
-  // 🔥 Застосовуємо фільтри та сортування "на льоту" 🔥
   const filteredAndSortedLeads = leads
     .filter(
       (lead) =>
@@ -256,28 +325,27 @@ export default function LeadsPage() {
                   Всі заявки ({filteredAndSortedLeads.length})
                 </div>
 
-                {/* 🔥 ПАНЕЛЬ ФІЛЬТРІВ ТА СОРТУВАННЯ 🔥 */}
                 <div className={styles.sidebarFilters}>
-                  <select
+                  {/* Замінили нативні select на CustomDropdown */}
+                  <CustomDropdown
                     value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className={styles.miniSelect}
-                  >
-                    <option value="All">Всі статуси</option>
-                    <option value="Нова">Тільки нові</option>
-                    <option value="В роботі">В роботі</option>
-                    <option value="Успіх">Успішні</option>
-                    <option value="Відмова">Відмови</option>
-                  </select>
-
-                  <select
+                    onChange={setFilterStatus}
+                    options={[
+                      { value: "All", label: "Всі статуси" },
+                      { value: "Нова", label: "Тільки нові" },
+                      { value: "В роботі", label: "В роботі" },
+                      { value: "Успіх", label: "Успішні" },
+                      { value: "Відмова", label: "Відмови" },
+                    ]}
+                  />
+                  <CustomDropdown
                     value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value)}
-                    className={styles.miniSelect}
-                  >
-                    <option value="newest">Спочатку нові</option>
-                    <option value="oldest">Спочатку старі</option>
-                  </select>
+                    onChange={setSortOrder}
+                    options={[
+                      { value: "newest", label: "Спочатку нові" },
+                      { value: "oldest", label: "Спочатку старі" },
+                    ]}
+                  />
                 </div>
               </div>
 
@@ -331,18 +399,21 @@ export default function LeadsPage() {
                     </button>
 
                     <div className={styles.statusControl}>
-                      <select
+                      {/* Кастомний Dropdown для зміни статусу (має кольори) */}
+                      <CustomDropdown
                         value={selectedLead.status || "Нова"}
-                        onChange={(e) =>
-                          handleStatusChange(selectedLead._id, e.target.value)
+                        onChange={(newVal) =>
+                          handleStatusChange(selectedLead._id, newVal)
                         }
-                        className={`${styles.customSelect} ${styles[getStatusClass(selectedLead.status)]}`}
-                      >
-                        <option value="Нова">Нова</option>
-                        <option value="В роботі">В роботі</option>
-                        <option value="Успіх">Успіх</option>
-                        <option value="Відмова">Відмова</option>
-                      </select>
+                        variant="status"
+                        statusClass={getStatusClass(selectedLead.status)}
+                        options={[
+                          { value: "Нова", label: "Нова" },
+                          { value: "В роботі", label: "В роботі" },
+                          { value: "Успіх", label: "Успіх" },
+                          { value: "Відмова", label: "Відмова" },
+                        ]}
+                      />
                     </div>
                     <button
                       onClick={() => setIsDeleteModalOpen(true)}

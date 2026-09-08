@@ -14,7 +14,7 @@ $white: #ffffff;
 
   @media (max-width: 768px) {
     height: auto;
-    min-height: calc(100vh - 120px); /* Враховуємо мобільний хедер */
+    min-height: calc(100vh - 120px);
   }
 }
 
@@ -54,11 +54,11 @@ $white: #ffffff;
   flex: 1;
   overflow: hidden;
   min-height: 500px;
-  position: relative; /* Важливо для мобільного позиціонування */
+  position: relative;
 
   @media (max-width: 768px) {
     border-radius: 20px;
-    min-height: 600px; /* На мобільному даємо більше висоти для читання */
+    min-height: 600px;
   }
 }
 
@@ -96,7 +96,6 @@ $white: #ffffff;
   font-weight: 500;
 }
 
-/* Клас для приховування колонок ТІЛЬКИ на мобільному */
 .hideOnMobile {
   @media (max-width: 768px) {
     display: none !important;
@@ -142,30 +141,6 @@ $white: #ffffff;
 .sidebarFilters {
   display: flex;
   gap: 8px;
-
-  .miniSelect {
-    flex: 1;
-    appearance: none;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 8px;
-    padding: 6px 24px 6px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    color: $text-dark;
-    cursor: pointer;
-    outline: none;
-    background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%236b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="12" viewBox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    transition: all 0.2s ease;
-
-    &:focus,
-    &:hover {
-      border-color: $primary;
-      background-color: #fff;
-    }
-  }
 }
 
 .noResultsText {
@@ -304,7 +279,7 @@ $white: #ffffff;
     position: absolute;
     inset: 0;
     z-index: 10;
-    background: #ffffff; /* На телефоні робимо фон суцільним білим, щоб текст не змішувався */
+    background: #ffffff;
   }
 }
 
@@ -317,11 +292,10 @@ $white: #ffffff;
   flex-shrink: 0;
 
   @media (max-width: 768px) {
-    padding: 12px 16px; /* Зменшуємо відступи на телефоні */
+    padding: 12px 16px;
   }
 }
 
-/* Кнопка "Назад" тільки для мобільного */
 .backBtnMobile {
   display: none;
 
@@ -355,50 +329,8 @@ $white: #ffffff;
 .statusControl {
   display: flex;
   align-items: center;
-  margin-left: auto; /* На мобільному притисне статус вправо */
+  margin-left: auto;
   margin-right: 12px;
-}
-
-.customSelect {
-  appearance: none;
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 6px 32px 6px 12px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%234b5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="14" viewBox="0 0 24 24" width="14" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>');
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-
-  &:focus {
-    outline: none;
-    border-color: $primary;
-  }
-  &.nova {
-    color: #0284c7;
-    background-color: rgba(2, 132, 199, 0.05);
-  }
-  &.work {
-    color: #ca8a04;
-    background-color: rgba(202, 138, 4, 0.05);
-  }
-  &.success {
-    color: #16a34a;
-    background-color: rgba(22, 163, 74, 0.05);
-  }
-  &.reject {
-    color: #dc2626;
-    background-color: rgba(220, 38, 38, 0.05);
-  }
-
-  @media (max-width: 768px) {
-    padding: 6px 28px 6px 10px;
-    font-size: 12px;
-  }
 }
 
 .deleteBtn {
@@ -424,7 +356,7 @@ $white: #ffffff;
   padding: 40px 48px;
 
   @media (max-width: 768px) {
-    padding: 24px 20px; /* Зменшуємо відступи на телефоні */
+    padding: 24px 20px;
   }
 }
 
@@ -525,13 +457,10 @@ $white: #ffffff;
   }
 
   @media (max-width: 768px) {
-    font-size: 15px; /* Трохи менший текст для зручності читання з телефона */
+    font-size: 15px;
   }
 }
 
-/* =========================================
-   СТИЛЬ ДЛЯ ІНФОРМАЦІЇ ПРО ДЕВАЙС У ФУТЕРІ
-   ========================================= */
 .deviceInfoPill {
   margin-top: 40px;
   padding-top: 16px;
@@ -545,6 +474,136 @@ $white: #ffffff;
 }
 
 /* =========================================
+   🔥 КАСТОМНИЙ ВИТОНЧЕНИЙ ВИПАДАЮЧИЙ СПИСОК (macOS Style) 🔥
+   ========================================= */
+
+.customDropdown {
+  position: relative;
+  user-select: none;
+
+  &.mini {
+    flex: 1;
+    .dropdownTrigger {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: $text-dark;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+      svg {
+        width: 14px;
+        height: 14px;
+        color: #6b7280;
+        transition: transform 0.2s;
+      }
+      &:hover {
+        background: #f9fafb;
+      }
+    }
+  }
+
+  &.status {
+    min-width: 130px;
+    .dropdownTrigger {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+      svg {
+        width: 14px;
+        height: 14px;
+        opacity: 0.6;
+        transition: transform 0.2s;
+      }
+
+      &.nova {
+        color: #0284c7;
+      }
+      &.work {
+        color: #ca8a04;
+      }
+      &.success {
+        color: #16a34a;
+      }
+      &.reject {
+        color: #dc2626;
+      }
+
+      &:hover {
+        background: #f9fafb;
+      }
+    }
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 100%;
+
+  /* Щільний білий фон, щоб нічого не просвічувалось */
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 5px; /* Внутрішній відступ для елементів (як у macOS) */
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.02);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: dropdownFadeIn 0.1s ease-out;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dropdownItem {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: $text-dark;
+  border-radius: 6px; /* Заокруглення самого пункту */
+  cursor: pointer;
+  white-space: nowrap;
+
+  /* У macOS ховер не має плавної транзиції, він миттєвий */
+  transition: none;
+
+  &:hover,
+  &.selected {
+    background: #007aff; /* Фірмовий синій колір виділення macOS */
+    color: white;
+  }
+}
+
+/* =========================================
    МОДАЛКА ВИДАЛЕННЯ
    ========================================= */
 
@@ -553,7 +612,7 @@ $white: #ffffff;
   inset: 0;
   background: rgba(17, 24, 39, 0.65);
   backdrop-filter: blur(8px);
-  z-index: 100;
+  z-index: 200;
   display: flex;
   align-items: center;
   justify-content: center;
