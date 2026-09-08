@@ -112,7 +112,7 @@ export default function AdminLayout({ children }) {
           </div>
           <div className={styles.sidebarFooter}>
             <Link href="/" className={styles.navBtn}>
-              <IconExternal /> <span>Повернутися на сайт</span>
+              <IconExternal /> <span>Клієнтський сайт</span>
             </Link>
           </div>
         </aside>

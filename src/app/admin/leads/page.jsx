@@ -66,7 +66,6 @@ const IconMail = () => (
     <polyline points="22,6 12,13 2,6"></polyline>
   </svg>
 );
-// 🔥 НОВА іконка компанії (будівля)
 const IconCompany = () => (
   <svg
     width="16"
@@ -88,7 +87,6 @@ const IconCompany = () => (
     <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
   </svg>
 );
-// 🔥 Іконка девайсу для футера
 const IconDevice = () => (
   <svg
     width="14"
@@ -106,7 +104,6 @@ const IconDevice = () => (
   </svg>
 );
 
-// 🔥 ГЛОБАЛЬНИЙ КЕШ ДЛЯ МИТТЄВОГО ВІДОБРАЖЕННЯ 🔥
 let leadsCache = null;
 
 export default function LeadsPage() {
@@ -115,11 +112,12 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState(leadsCache || []);
   const [isLoading, setIsLoading] = useState(!leadsCache);
 
-  // Миттєво підтягуємо першу заявку з кешу
+  // 🔥 Стан для фільтрів і сортування 🔥
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [sortOrder, setSortOrder] = useState("newest"); // "newest" або "oldest"
+
   const [selectedLead, setSelectedLead] = useState(() => {
-    if (leadsCache && leadsCache.length > 0 && !isMobile) {
-      return leadsCache[0];
-    }
+    if (leadsCache && leadsCache.length > 0 && !isMobile) return leadsCache[0];
     return null;
   });
 
@@ -133,11 +131,8 @@ export default function LeadsPage() {
         const data = await res.json();
         leadsCache = data;
         setLeads(data);
-
-        // Відкриваємо першу заявку, якщо вона ще не відкрита
-        if (data.length > 0 && !isMobile) {
+        if (data.length > 0 && !isMobile)
           setSelectedLead((prev) => prev || data[0]);
-        }
       }
     } catch (error) {
       console.error("Помилка", error);
@@ -152,7 +147,6 @@ export default function LeadsPage() {
 
   const handleStatusChange = async (id, newStatus) => {
     const previousLeads = [...leads];
-
     const updatedLeads = leads.map((lead) =>
       lead._id === id ? { ...lead, status: newStatus } : lead,
     );
@@ -225,6 +219,18 @@ export default function LeadsPage() {
     });
   };
 
+  // 🔥 Застосовуємо фільтри та сортування "на льоту" 🔥
+  const filteredAndSortedLeads = leads
+    .filter(
+      (lead) =>
+        filterStatus === "All" || (lead.status || "Нова") === filterStatus,
+    )
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+    });
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -246,35 +252,68 @@ export default function LeadsPage() {
               className={`${styles.mailSidebar} ${selectedLead ? styles.hideOnMobile : ""}`}
             >
               <div className={styles.sidebarHeader}>
-                <span>Всі заявки ({leads.length})</span>
+                <div className={styles.sidebarTitle}>
+                  Всі заявки ({filteredAndSortedLeads.length})
+                </div>
+
+                {/* 🔥 ПАНЕЛЬ ФІЛЬТРІВ ТА СОРТУВАННЯ 🔥 */}
+                <div className={styles.sidebarFilters}>
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className={styles.miniSelect}
+                  >
+                    <option value="All">Всі статуси</option>
+                    <option value="Нова">Тільки нові</option>
+                    <option value="В роботі">В роботі</option>
+                    <option value="Успіх">Успішні</option>
+                    <option value="Відмова">Відмови</option>
+                  </select>
+
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    className={styles.miniSelect}
+                  >
+                    <option value="newest">Спочатку нові</option>
+                    <option value="oldest">Спочатку старі</option>
+                  </select>
+                </div>
               </div>
+
               <div className={styles.mailList}>
-                {leads.map((lead) => {
-                  const isActive = selectedLead?._id === lead._id;
-                  return (
-                    <div
-                      key={lead._id}
-                      className={`${styles.mailItem} ${isActive ? styles.active : ""}`}
-                      onClick={() => setSelectedLead(lead)}
-                    >
-                      <div className={styles.itemHeader}>
-                        <span className={styles.itemName}>{lead.name}</span>
-                        <span className={styles.itemDate}>
-                          {formatDate(lead.createdAt)}
-                        </span>
+                {filteredAndSortedLeads.length === 0 ? (
+                  <div className={styles.noResultsText}>
+                    Не знайдено заявок за цими критеріями.
+                  </div>
+                ) : (
+                  filteredAndSortedLeads.map((lead) => {
+                    const isActive = selectedLead?._id === lead._id;
+                    return (
+                      <div
+                        key={lead._id}
+                        className={`${styles.mailItem} ${isActive ? styles.active : ""}`}
+                        onClick={() => setSelectedLead(lead)}
+                      >
+                        <div className={styles.itemHeader}>
+                          <span className={styles.itemName}>{lead.name}</span>
+                          <span className={styles.itemDate}>
+                            {formatDate(lead.createdAt)}
+                          </span>
+                        </div>
+                        <div className={styles.itemSub}>
+                          <span className={styles.itemPhone}>{lead.phone}</span>
+                          <span
+                            className={`${styles.statusDot} ${styles[getStatusClass(lead.status)]}`}
+                          />
+                        </div>
+                        <div className={styles.itemSnippet}>
+                          {lead.message || "Без тексту запиту..."}
+                        </div>
                       </div>
-                      <div className={styles.itemSub}>
-                        <span className={styles.itemPhone}>{lead.phone}</span>
-                        <span
-                          className={`${styles.statusDot} ${styles[getStatusClass(lead.status)]}`}
-                        />
-                      </div>
-                      <div className={styles.itemSnippet}>
-                        {lead.message || "Без тексту запиту..."}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
             </div>
 
@@ -368,21 +407,8 @@ export default function LeadsPage() {
                       )}
                     </div>
 
-                    {/* 🔥 ІНФОРМАЦІЯ ПРО ПРИСТРІЙ (ПЕРЕМІЩЕНО ВНИЗ) 🔥 */}
                     {selectedLead.deviceInfo && (
-                      <div
-                        style={{
-                          marginTop: "40px",
-                          paddingTop: "16px",
-                          borderTop: "1px solid rgba(0,0,0,0.06)",
-                          fontSize: "12px",
-                          color: "#9ca3af",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          fontWeight: "500",
-                        }}
-                      >
+                      <div className={styles.deviceInfoPill}>
                         <IconDevice /> {selectedLead.deviceInfo}
                       </div>
                     )}

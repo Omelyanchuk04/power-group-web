@@ -104,7 +104,7 @@ $white: #ffffff;
 }
 
 /* =========================================
-   ЛІВА КОЛОНКА (СПИСОК)
+   ЛІВА КОЛОНКА (СПИСОК ТА ФІЛЬТРИ)
    ========================================= */
 
 .mailSidebar {
@@ -124,13 +124,56 @@ $white: #ffffff;
 
 .sidebarHeader {
   padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebarTitle {
   font-size: 12px;
   font-weight: 700;
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-  flex-shrink: 0;
+}
+
+.sidebarFilters {
+  display: flex;
+  gap: 8px;
+
+  .miniSelect {
+    flex: 1;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 6px 24px 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-dark;
+    cursor: pointer;
+    outline: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%236b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" height="12" viewBox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    transition: all 0.2s ease;
+
+    &:focus,
+    &:hover {
+      border-color: $primary;
+      background-color: #fff;
+    }
+  }
+}
+
+.noResultsText {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+  font-size: 13px;
+  font-style: italic;
 }
 
 .mailList {
@@ -484,6 +527,21 @@ $white: #ffffff;
   @media (max-width: 768px) {
     font-size: 15px; /* Трохи менший текст для зручності читання з телефона */
   }
+}
+
+/* =========================================
+   СТИЛЬ ДЛЯ ІНФОРМАЦІЇ ПРО ДЕВАЙС У ФУТЕРІ
+   ========================================= */
+.deviceInfoPill {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  font-size: 12px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
 }
 
 /* =========================================
