@@ -3,6 +3,8 @@ import { useModal } from "@/context/ModalContext";
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+// 🔥 Додано хук для перевірки поточного шляху
+import { usePathname } from "next/navigation";
 import styles from "./Header.module.scss";
 import HeaderLogo from "./HeaderLogo";
 
@@ -77,12 +79,11 @@ const ChevronDownIcon = () => (
   </svg>
 );
 
-// 🔥 Універсальний компонент вмісту дропдауну
+// Універсальний компонент вмісту дропдауну
 const ContactDropdownContent = ({ onOpenModal }) => (
   <>
     <div className={styles.dropdownGlass}></div>
     <div className={styles.dropdownContent}>
-      {/* Телефони */}
       <a href="tel:+380672671477" className={styles.dropdownLink}>
         <svg
           viewBox="0 0 24 24"
@@ -110,7 +111,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         <span>+38 099 267 14 77</span>
       </a>
 
-      {/* Пошта */}
       <a href="mailto:powergroup.vin@gmail.com" className={styles.dropdownLink}>
         <svg
           viewBox="0 0 24 24"
@@ -126,7 +126,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         <span>powergroup.vin@gmail.com</span>
       </a>
 
-      {/* Графік роботи */}
       <div className={styles.dropdownText}>
         <ClockIcon />
         <div className={styles.scheduleBlock}>
@@ -135,7 +134,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         </div>
       </div>
 
-      {/* Локація */}
       <div className={styles.dropdownText}>
         <MapPinIcon />
         <div className={styles.scheduleBlock}>
@@ -143,7 +141,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         </div>
       </div>
 
-      {/* Соцмережі */}
       <div className={styles.dropdownSocials}>
         <a
           href="https://t.me/+380672671477"
@@ -183,7 +180,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         </a>
       </div>
 
-      {/* Кнопка "Отримати консультацію" */}
       <button className={styles.dropdownContactBtn} onClick={onOpenModal}>
         Отримати консультацію
       </button>
@@ -192,6 +188,9 @@ const ContactDropdownContent = ({ onOpenModal }) => (
 );
 
 export default function Header() {
+  const pathname = usePathname() || "";
+  const isAdminPage = pathname.startsWith("/admin");
+
   const [pill, setPill] = useState({
     opacity: 0,
     left: 0,
@@ -243,12 +242,22 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const navList = [
+  // 🔥 МАСИВИ ПОСИЛАНЬ ДЛЯ КЛІЄНТСЬКОГО ТА АДМІНСЬКОГО МЕНЮ
+  const clientNavList = [
     { name: "ПОСЛУГИ", link: "/services" },
     { name: "ПРО НАС", link: "/about" },
     { name: "РЕАЛІЗОВАНІ ПРОЄКТИ", link: "/projects" },
     { name: "КОНТАКТИ", link: "/contacts" },
   ];
+
+  const adminNavList = [
+    { name: "ГОЛОВНА ПАНЕЛЬ", link: "/admin" },
+    { name: "ЗАЯВКИ З САЙТУ", link: "/admin/leads" },
+    { name: "УСІ ПРОЄКТИ", link: "/admin/projects" },
+    { name: "← ПОВЕРНУТИСЯ НА САЙТ", link: "/" },
+  ];
+
+  const activeNavList = isAdminPage ? adminNavList : clientNavList;
 
   const handleMouseEnter = (e) => {
     const { offsetLeft, offsetTop, offsetWidth, offsetHeight } =
@@ -310,7 +319,7 @@ export default function Header() {
                 : "opacity 0.3s ease",
             }}
           />
-          {navList.map((item) => (
+          {activeNavList.map((item) => (
             <Link
               key={item.link}
               href={item.link}
@@ -321,50 +330,79 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* КОНТРОЛИ ДЛЯ ДЕСКТОПУ */}
-        <div className={styles.desktopControls}>
-          <button
-            className={styles.desktopSearchBtn}
-            aria-label="Відкрити пошук"
-            onClick={() => setIsSearchOpen(true)}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+        {/* КОНТРОЛИ ДЛЯ ДЕСКТОПУ (Приховуємо в адмінці) */}
+        {!isAdminPage && (
+          <div className={styles.desktopControls}>
+            <button
+              className={styles.desktopSearchBtn}
+              aria-label="Відкрити пошук"
+              onClick={() => setIsSearchOpen(true)}
             >
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-          </button>
-
-          <div
-            className={styles.contactWrapper}
-            style={{ pointerEvents: isSearchOpen ? "none" : "auto" }}
-          >
-            <button className={styles.contactBtn} onClick={openModal}>
-              Зворотний зв'язок
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
             </button>
 
-            {/* Десктопний дропдаун */}
-            <div className={styles.contactDropdown}>
-              <ContactDropdownContent onOpenModal={openModal} />
+            <div
+              className={styles.contactWrapper}
+              style={{ pointerEvents: isSearchOpen ? "none" : "auto" }}
+            >
+              <button className={styles.contactBtn} onClick={openModal}>
+                Зворотний зв'язок
+              </button>
+              <div className={styles.contactDropdown}>
+                <ContactDropdownContent onOpenModal={openModal} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* КОНТРОЛИ ДЛЯ МОБІЛЬНОГО */}
-        <div className={styles.mobileControls}>
-          <div className={styles.mobileContactWrapper} ref={mobileContactRef}>
+        {/* КОНТРОЛИ ДЛЯ МОБІЛЬНОГО (Приховуємо в адмінці) */}
+        {!isAdminPage && (
+          <div className={styles.mobileControls}>
+            <div className={styles.mobileContactWrapper} ref={mobileContactRef}>
+              <button
+                className={`${styles.actionIconBtn} ${styles.mobilePhoneBtn} ${isMobileContactOpen ? styles.active : ""}`}
+                aria-label="Контакти"
+                onClick={() => {
+                  setIsMobileContactOpen(!isMobileContactOpen);
+                  setIsSearchOpen(false);
+                }}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <ChevronDownIcon />
+              </button>
+
+              <div
+                className={`${styles.contactDropdown} ${isMobileContactOpen ? styles.open : ""}`}
+              >
+                <ContactDropdownContent onOpenModal={handleOpenModal} />
+              </div>
+            </div>
+
             <button
-              className={`${styles.actionIconBtn} ${styles.mobilePhoneBtn} ${isMobileContactOpen ? styles.active : ""}`}
-              aria-label="Контакти"
+              className={styles.actionIconBtn}
+              aria-label="Відкрити пошук"
               onClick={() => {
-                setIsMobileContactOpen(!isMobileContactOpen);
-                setIsSearchOpen(false);
+                setIsSearchOpen(true);
+                setIsMobileContactOpen(false);
               }}
             >
               <svg
@@ -375,28 +413,20 @@ export default function Header() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <ChevronDownIcon />
             </button>
-
-            {/* Мобільний дропдаун */}
-            <div
-              className={`${styles.contactDropdown} ${isMobileContactOpen ? styles.open : ""}`}
-            >
-              <ContactDropdownContent onOpenModal={handleOpenModal} />
-            </div>
           </div>
+        )}
 
-          <button
-            className={styles.actionIconBtn}
-            aria-label="Відкрити пошук"
-            onClick={() => {
-              setIsSearchOpen(true);
-              setIsMobileContactOpen(false);
-            }}
+        {/* БЛОК ПОШУКУ (Приховуємо в адмінці) */}
+        {!isAdminPage && (
+          <div
+            className={`${styles.searchContainer} ${isSearchOpen ? styles.searchOpen : ""}`}
           >
             <svg
+              className={styles.searchIconInside}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -407,52 +437,34 @@ export default function Header() {
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-          </button>
-        </div>
-
-        {/* БЛОК ПОШУКУ */}
-        <div
-          className={`${styles.searchContainer} ${isSearchOpen ? styles.searchOpen : ""}`}
-        >
-          <svg
-            className={styles.searchIconInside}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input
-            type="text"
-            placeholder="Шукати на сайті..."
-            className={styles.searchInput}
-            ref={searchInputRef}
-          />
-          <button className={styles.searchSubmitBtn} aria-label="Знайти">
-            Пошук
-          </button>
-          <button
-            className={styles.searchCloseBtn}
-            aria-label="Закрити пошук"
-            onClick={() => setIsSearchOpen(false)}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <input
+              type="text"
+              placeholder="Шукати на сайті..."
+              className={styles.searchInput}
+              ref={searchInputRef}
+            />
+            <button className={styles.searchSubmitBtn} aria-label="Знайти">
+              Пошук
+            </button>
+            <button
+              className={styles.searchCloseBtn}
+              aria-label="Закрити пошук"
+              onClick={() => setIsSearchOpen(false)}
             >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* МОБІЛЬНЕ МЕНЮ (Бургер) */}
@@ -461,7 +473,7 @@ export default function Header() {
       >
         <div className={styles.mobileMenuContent}>
           <nav className={styles.mobileNav}>
-            {navList.map((item, i) => (
+            {activeNavList.map((item, i) => (
               <Link
                 key={item.link}
                 href={item.link}
@@ -474,67 +486,70 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className={styles.mobileContacts}>
-            <a href="tel:+380672671477">
-              <span>+38 067 267 14 77</span>
-            </a>
-            <a href="tel:+380992671477">
-              <span>+38 099 267 14 77</span>
-            </a>
-            <a href="mailto:powergroup.vin@gmail.com">
-              <span>powergroup.vin@gmail.com</span>
-            </a>
+          {/* 🔥 ПРИХОВУЄМО НИЖНІ КОНТАКТИ В АДМІНЦІ 🔥 */}
+          {!isAdminPage && (
+            <div className={styles.mobileContacts}>
+              <a href="tel:+380672671477">
+                <span>+38 067 267 14 77</span>
+              </a>
+              <a href="tel:+380992671477">
+                <span>+38 099 267 14 77</span>
+              </a>
+              <a href="mailto:powergroup.vin@gmail.com">
+                <span>powergroup.vin@gmail.com</span>
+              </a>
 
-            <div className={styles.mobileSchedule}>
-              <p>м. Вінниця, вул. Київська, 14</p>
-              <p>Пн-Пт: 8:30 - 17:30</p>
+              <div className={styles.mobileSchedule}>
+                <p>м. Вінниця, вул. Київська, 14</p>
+                <p>Пн-Пт: 8:30 - 17:30</p>
+              </div>
+
+              <div className={styles.mobileSocials}>
+                <a
+                  href="https://t.me/+380672671477"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`${styles.socialIcon} ${styles.telegram}`}
+                >
+                  <TelegramIcon />
+                </a>
+                <a
+                  href="https://t.me/+380992671477"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`${styles.socialIcon} ${styles.telegram}`}
+                >
+                  <TelegramIcon />
+                </a>
+                <a
+                  href="https://wa.me/380672671477"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`${styles.socialIcon} ${styles.whatsapp}`}
+                >
+                  <WhatsAppIcon />
+                </a>
+                <a
+                  href="https://www.instagram.com/power_group.vn?stkn=bHgwcjBxdGV3YzMx"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`${styles.socialIcon} ${styles.instagram}`}
+                >
+                  <InstagramIcon />
+                </a>
+              </div>
+
+              <button
+                className={styles.mobileContactBtn}
+                onClick={() => {
+                  openModal();
+                  closeMobileMenu();
+                }}
+              >
+                Отримати консультацію
+              </button>
             </div>
-
-            <div className={styles.mobileSocials}>
-              <a
-                href="https://t.me/+380672671477"
-                target="_blank"
-                rel="noreferrer"
-                className={`${styles.socialIcon} ${styles.telegram}`}
-              >
-                <TelegramIcon />
-              </a>
-              <a
-                href="https://t.me/+380992671477"
-                target="_blank"
-                rel="noreferrer"
-                className={`${styles.socialIcon} ${styles.telegram}`}
-              >
-                <TelegramIcon />
-              </a>
-              <a
-                href="https://wa.me/380672671477"
-                target="_blank"
-                rel="noreferrer"
-                className={`${styles.socialIcon} ${styles.whatsapp}`}
-              >
-                <WhatsAppIcon />
-              </a>
-              <a
-                href="https://www.instagram.com/power_group.vn?stkn=bHgwcjBxdGV3YzMx"
-                target="_blank"
-                rel="noreferrer"
-                className={`${styles.socialIcon} ${styles.instagram}`}
-              >
-                <InstagramIcon />
-              </a>
-            </div>
-
-            <button
-              className={styles.mobileContactBtn}
-              onClick={() => {
-                openModal();
-                closeMobileMenu();
-              }}
-            >
-              Отримати консультацію
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </header>

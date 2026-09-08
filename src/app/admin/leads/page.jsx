@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import styles from "./leads.module.scss";
 
 // Іконки
@@ -22,10 +23,12 @@ const IconTrash = () => (
     <line x1="14" y1="11" x2="14" y2="17" />
   </svg>
 );
+
+// 🔥 Оновлена іконка стрілочки (Apple Style Chevron)
 const IconArrowLeft = () => (
   <svg
-    width="20"
-    height="20"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -33,10 +36,10 @@ const IconArrowLeft = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <line x1="19" y1="12" x2="5" y2="12"></line>
-    <polyline points="12 19 5 12 12 5"></polyline>
+    <polyline points="14 18 8 12 14 6"></polyline>
   </svg>
 );
+
 const IconPhone = () => (
   <svg
     width="16"
@@ -120,7 +123,6 @@ const IconChevron = () => (
 
 let leadsCache = null;
 
-// 🔥 КАСТОМНИЙ ВИТОНЧЕНИЙ ВИПАДАЮЧИЙ СПИСОК (БЕЗ СТАНДАРТНИХ <select>) 🔥
 const CustomDropdown = ({
   value,
   onChange,
@@ -131,7 +133,6 @@ const CustomDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Закриваємо при кліку поза елементом
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -303,6 +304,14 @@ export default function LeadsPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
+        {/* Кнопка "Назад" (Liquid Glass) */}
+        <Link
+          href="/admin"
+          className={styles.backToAdminBtn}
+          aria-label="На головну панель"
+        >
+          <IconArrowLeft />
+        </Link>
         <h1>Вхідні заявки</h1>
       </div>
 
@@ -326,7 +335,6 @@ export default function LeadsPage() {
                 </div>
 
                 <div className={styles.sidebarFilters}>
-                  {/* Замінили нативні select на CustomDropdown */}
                   <CustomDropdown
                     value={filterStatus}
                     onChange={setFilterStatus}
@@ -399,7 +407,6 @@ export default function LeadsPage() {
                     </button>
 
                     <div className={styles.statusControl}>
-                      {/* Кастомний Dropdown для зміни статусу (має кольори) */}
                       <CustomDropdown
                         value={selectedLead.status || "Нова"}
                         onChange={(newVal) =>

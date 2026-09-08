@@ -113,7 +113,7 @@ export default function CompanyStats() {
                 />
                 <div className={styles.statOverlay}></div>
                 <div className={styles.statContent}>
-                  <div className={styles.statNum}>30+</div>
+                  <div className={styles.statNum}>10+</div>
                   <div className={styles.statLabel}>
                     Кваліфікованих
                     <br />
@@ -134,7 +134,7 @@ export default function CompanyStats() {
                 />
                 <div className={styles.statOverlay}></div>
                 <div className={styles.statContent}>
-                  <div className={styles.statNum}>50+</div>
+                  <div className={styles.statNum}>37+</div>
                   <div className={styles.statLabel}>
                     МВт загальної
                     <br />

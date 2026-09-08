@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import styles from "./projects.module.scss";
 
 // --- SVG ІКОНКИ ---
@@ -11,7 +12,7 @@ const IconPlus = () => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
@@ -52,19 +53,19 @@ const IconTrash = () => (
     <line x1="14" y1="11" x2="14" y2="17" />
   </svg>
 );
+// 🔥 Оновлена іконка-шеврон
 const IconArrowLeft = () => (
   <svg
-    width="20"
-    height="20"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <line x1="19" y1="12" x2="5" y2="12"></line>
-    <polyline points="12 19 5 12 12 5"></polyline>
+    <polyline points="14 18 8 12 14 6"></polyline>
   </svg>
 );
 const IconUpload = () => (
@@ -126,7 +127,6 @@ const initialForm = {
   date: "",
 };
 
-// 🔥 ГЛОБАЛЬНИЙ КЕШ ДЛЯ МИТТЄВОГО ВІДОБРАЖЕННЯ 🔥
 let projectsCache = null;
 
 export default function ProjectsPage() {
@@ -206,7 +206,7 @@ export default function ProjectsPage() {
           (p) => p._id !== projectToDelete,
         );
         setProjects(updatedProjects);
-        projectsCache = updatedProjects; // Оновлюємо кеш
+        projectsCache = updatedProjects;
       }
     } finally {
       setIsDeleteModalOpen(false);
@@ -300,7 +300,7 @@ export default function ProjectsPage() {
       });
 
       if (res.ok) {
-        projectsCache = null; // 🔥 Скидаємо кеш, щоб примусово підвантажити новий список!
+        projectsCache = null;
         fetchProjects();
         setView("list");
         setImages([]);
@@ -317,14 +317,26 @@ export default function ProjectsPage() {
       {view === "list" && (
         <div className={styles.container}>
           <div className={styles.header}>
-            <h1>Реалізовані проєкти</h1>
+            <div className={styles.headerTitleGroup}>
+              {/* 🔥 Кнопка "Назад" (Liquid Glass) */}
+              <Link
+                href="/admin"
+                className={styles.backToAdminBtn}
+                aria-label="Повернутися на головну"
+              >
+                <IconArrowLeft />
+              </Link>
+              <h1>Реалізовані проєкти</h1>
+            </div>
+
+            {/* 🔥 Кнопка "Новий проєкт" (Liquid Glass) */}
             <button
               onClick={() => {
                 setFormData(initialForm);
                 setImages([]);
                 setView("add");
               }}
-              className={styles.primaryBtn}
+              className={styles.darkGlassBtn}
             >
               <IconPlus /> <span className={styles.btnText}>Новий проєкт</span>
             </button>
@@ -583,9 +595,7 @@ export default function ProjectsPage() {
                   disabled={isUploading}
                   className={styles.submitFormBtn}
                 >
-                  <span className={styles.btnText}>
-                    {isUploading ? "Збереження..." : "Зберегти проєкт"}
-                  </span>
+                  {isUploading ? "Збереження..." : "Зберегти проєкт"}
                 </button>
               </div>
             </form>

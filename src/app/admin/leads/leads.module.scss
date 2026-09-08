@@ -19,8 +19,12 @@ $white: #ffffff;
 }
 
 .header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 20px;
   flex-shrink: 0;
+
   h1 {
     font-size: 32px;
     font-weight: 800;
@@ -30,13 +34,69 @@ $white: #ffffff;
   }
 
   @media (max-width: 768px) {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    gap: 12px;
     h1 {
       font-size: 24px;
     }
   }
 }
 
+/* 🔥 Стилі для кнопки "Назад" (Apple Liquid Glass) 🔥 */
+/* 🔥 Стилі для кнопки "Назад" (Справжній Apple Dark Glass на світлому фоні) 🔥 */
+.backToAdminBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+
+  /* Більш щільний чорний колір, щоб не губився на білому фоні */
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+
+  /* Тонкий зовнішній контур + внутрішній блік зверху для ефекту об'єму скла */
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  color: #ffffff;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+
+  transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 2px; /* Оптичне центрування */
+    transition: transform 0.2s;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
+    }
+  }
+
+  &:active {
+    transform: scale(0.92);
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  @media (max-width: 768px) {
+    width: 38px;
+    height: 38px;
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
 /* =========================================
    РОЗКЛАДКА MAIL APP (SPLIT VIEW)
    ========================================= */
@@ -171,9 +231,12 @@ $white: #ffffff;
   cursor: pointer;
   margin-bottom: 4px;
   transition: all 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
 
-  &:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.6);
+  @media (hover: hover) {
+    &:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.6);
+    }
   }
 
   &.active {
@@ -196,6 +259,25 @@ $white: #ffffff;
     .statusDot {
       background-color: white !important;
       box-shadow: none;
+    }
+  }
+
+  /* 🔥 РОЗДІЛЮВАЧІ МІЖ ПОВІДОМЛЕННЯМИ (тільки для мобільного) 🔥 */
+  @media (max-width: 768px) {
+    margin-bottom: 0;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* Лінія між заявками */
+    padding: 16px 12px;
+
+    /* Прибираємо лінію в останнього елемента */
+    &:last-child {
+      border-bottom: none;
+    }
+
+    /* Відновлюємо заокруглення, якщо елемент активний (відкритий) */
+    &.active {
+      border-radius: 12px;
+      border-bottom-color: transparent;
     }
   }
 }
@@ -311,16 +393,17 @@ $white: #ffffff;
     padding: 8px 0;
     margin-right: auto;
     cursor: pointer;
-    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
 
     svg {
       color: $text-gray;
-      transition: color 0.2s;
+      transition: transform 0.2s;
     }
-    &:hover {
+    &:active {
       color: $primary;
       svg {
         color: $primary;
+        transform: translateX(-2px);
       }
     }
   }
@@ -344,7 +427,7 @@ $white: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  &:hover {
+  &:active {
     background: #fef2f2;
     color: #ef4444;
   }
@@ -439,9 +522,6 @@ $white: #ffffff;
         color: $primary;
       }
     }
-    &[href]:hover {
-      background: #e5e7eb;
-    }
   }
 }
 
@@ -496,6 +576,7 @@ $white: #ffffff;
       align-items: center;
       cursor: pointer;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      -webkit-tap-highlight-color: transparent;
 
       svg {
         width: 14px;
@@ -503,7 +584,7 @@ $white: #ffffff;
         color: #6b7280;
         transition: transform 0.2s;
       }
-      &:hover {
+      &:active {
         background: #f9fafb;
       }
     }
@@ -524,6 +605,7 @@ $white: #ffffff;
       gap: 12px;
       cursor: pointer;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      -webkit-tap-highlight-color: transparent;
 
       svg {
         width: 14px;
@@ -545,7 +627,7 @@ $white: #ffffff;
         color: #dc2626;
       }
 
-      &:hover {
+      &:active {
         background: #f9fafb;
       }
     }
@@ -558,11 +640,10 @@ $white: #ffffff;
   left: 0;
   min-width: 100%;
 
-  /* Щільний білий фон, щоб нічого не просвічувалось */
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 10px;
-  padding: 5px; /* Внутрішній відступ для елементів (як у macOS) */
+  padding: 5px;
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.15),
     0 0 0 1px rgba(0, 0, 0, 0.02);
@@ -589,16 +670,15 @@ $white: #ffffff;
   font-size: 13px;
   font-weight: 500;
   color: $text-dark;
-  border-radius: 6px; /* Заокруглення самого пункту */
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
-
-  /* У macOS ховер не має плавної транзиції, він миттєвий */
   transition: none;
 
-  &:hover,
+  /* Замінено :hover на :active для мобільних */
+  &:active,
   &.selected {
-    background: #007aff; /* Фірмовий синій колір виділення macOS */
+    background: #007aff;
     color: white;
   }
 }
@@ -653,15 +733,9 @@ $white: #ffffff;
   .btnCancel {
     background: rgba(0, 0, 0, 0.05);
     color: $text-dark;
-    &:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
   }
   .btnDelete {
     background: #ef4444;
     color: white;
-    &:hover {
-      background: #dc2626;
-    }
   }
 }
