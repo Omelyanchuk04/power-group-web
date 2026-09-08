@@ -76,15 +76,19 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   justify-content: center;
   width: 44px;
   height: 44px;
+
+  /* 🔥 Повернуто прозорість 🔥 */
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
+
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
   color: #ffffff;
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.15),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
+
   transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
@@ -117,9 +121,12 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   gap: 8px;
   padding: 0 24px;
   height: 44px;
+
+  /* 🔥 Повернуто прозорість 🔥 */
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
+
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 100px;
   color: #ffffff;
@@ -236,6 +243,12 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     background: rgba(0, 0, 0, 0.15);
     border-radius: 10px;
   }
+
+  @media (max-width: 768px) {
+    /* 🔥 Прибираємо горизонтальний скрол на мобільному, 
+       щоб негативні відступи (margin: -16px) не створювали пустих зон */
+    overflow-x: visible;
+  }
 }
 
 .table {
@@ -265,21 +278,25 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       background-color: rgba(255, 255, 255, 0.4);
     }
 
-    /* 🔥 МОБІЛЬНИЙ ВИГЛЯД (Без рамок, автовисота, розділювачі) 🔥 */
+    /* 🔥 МОБІЛЬНИЙ ВИГЛЯД: На всю ширину екрану 🔥 */
     @media (max-width: 768px) {
       display: grid;
       grid-template-columns: 85px 1fr auto;
       grid-template-rows: auto auto auto;
       column-gap: 12px;
       row-gap: 4px;
-      padding: 16px 8px;
 
-      background: transparent; /* Без білого фону */
+      /* МАГІЯ ТУТ: Негативні відступи тягнуть картку до країв батьківського padding */
+      margin: 0 -16px;
+      /* Внутрішній padding повертає контент на нормальну позицію */
+      padding: 16px;
+
+      background: transparent;
       border: none;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08); /* Лише лінія знизу */
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
       border-radius: 0;
       box-shadow: none;
-      height: auto; /* Контент більше не буде обрізатися */
+      height: auto;
       -webkit-tap-highlight-color: transparent;
 
       &:last-child {
@@ -287,9 +304,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       }
 
       &:active {
-        background: rgba(0, 0, 0, 0.03);
-        border-radius: 12px;
-        border-bottom-color: transparent;
+        background: rgba(0, 0, 0, 0.04);
       }
     }
   }
@@ -345,10 +360,11 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   @media (max-width: 768px) {
     grid-column: 2;
     grid-row: 1;
-    font-size: 14px;
-    align-self: end;
+    font-size: 15px;
+    align-self: start;
     display: block;
     line-height: 1.3;
+    margin-top: -2px;
   }
 }
 .cellClient {
@@ -359,7 +375,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     grid-row: 2;
     font-size: 12px;
     align-self: center;
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -371,7 +387,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     grid-column: 2;
     grid-row: 3;
     font-size: 13px;
-    align-self: start;
+    align-self: end;
   }
 }
 .cellActions {
@@ -384,7 +400,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     align-items: center;
     justify-content: flex-end;
 
-    /* 🔥 Ховаємо кнопку "Редагувати" на мобільному, бо вся картка клікабельна */
+    /* Ховаємо кнопку "Редагувати", бо вся картка клікабельна */
     .edit {
       display: none;
     }
