@@ -5,7 +5,7 @@ import Link from "next/link";
 import styles from "./home.module.scss";
 
 // --- ІКОНКИ ---
-const IconLeads = () => (
+const IconInbox = () => (
   <svg
     width="22"
     height="22"
@@ -16,8 +16,8 @@ const IconLeads = () => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-    <polyline points="22,6 12,13 2,6"></polyline>
+    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
   </svg>
 );
 const IconProjects = () => (
@@ -82,7 +82,7 @@ export default function AdminHomePage() {
         <div className={styles.menuList}>
           <Link href="/admin/leads" className={styles.menuRow}>
             <div className={`${styles.rowIcon} ${styles.blueIcon}`}>
-              <IconLeads />
+              <IconInbox />
             </div>
             <div className={styles.rowInfo}>
               <h3>Заявки з сайту</h3>
@@ -111,7 +111,7 @@ export default function AdminHomePage() {
               <IconHome />
             </div>
             <div className={styles.rowInfo}>
-              <h3>На головну</h3>
+              <h3>Клієнтський сайт</h3>
               <span>Повернутися на сайт</span>
             </div>
             <div className={styles.chevron}>

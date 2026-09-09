@@ -254,7 +254,7 @@ export default function Header() {
     { name: "ГОЛОВНА ПАНЕЛЬ", link: "/admin" },
     { name: "ЗАЯВКИ З САЙТУ", link: "/admin/leads" },
     { name: "УСІ ПРОЄКТИ", link: "/admin/projects" },
-    { name: "← ПОВЕРНУТИСЯ НА САЙТ", link: "/" },
+    { name: "← КЛІЄНТСЬКИЙ САЙТ", link: "/" },
   ];
 
   const activeNavList = isAdminPage ? adminNavList : clientNavList;
