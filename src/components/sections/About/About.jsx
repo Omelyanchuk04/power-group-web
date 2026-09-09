@@ -198,7 +198,7 @@ export default function About() {
                   </svg>
                 </div>
                 <div className={styles.targetText}>
-                  <h4>Великі підприємства</h4>
+                  <h4>Комерційні підприємства</h4>
                   <p>Енергоефективність та вигода для бізнесу</p>
                 </div>
               </div>
