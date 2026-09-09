@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "./home.module.scss";
 
+// --- ІКОНКИ ---
 const IconLeads = () => (
   <svg
     width="22"
@@ -77,6 +78,7 @@ export default function AdminHomePage() {
         <h2 className={styles.title}>Вітаємо в системі управління</h2>
         <p className={styles.subtitle}>Оберіть потрібний розділ для роботи</p>
 
+        {/* Вертикальний список без бордерів */}
         <div className={styles.menuList}>
           <Link href="/admin/leads" className={styles.menuRow}>
             <div className={`${styles.rowIcon} ${styles.blueIcon}`}>

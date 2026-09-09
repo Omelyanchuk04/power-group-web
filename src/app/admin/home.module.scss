@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $text-dark: #111827;
 $text-gray: #4b5563;
 $primary: #0056b3;
@@ -15,6 +17,12 @@ $primary: #0056b3;
     color: $text-dark;
     margin: 0;
     letter-spacing: -0.5px;
+  }
+  @media (max-width: 768px) {
+    margin-bottom: 16px;
+    h1 {
+      font-size: 24px;
+    }
   }
 }
 
@@ -34,6 +42,11 @@ $primary: #0056b3;
   align-items: center;
   text-align: center;
   min-height: 60vh;
+
+  @media (max-width: 768px) {
+    padding: 32px 16px;
+    border-radius: 24px;
+  }
 }
 
 .title {
@@ -42,6 +55,10 @@ $primary: #0056b3;
   color: $text-dark;
   margin: 0 0 8px 0;
   letter-spacing: -0.3px;
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+  }
 }
 
 .subtitle {
@@ -58,64 +75,48 @@ $primary: #0056b3;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
+  gap: 8px; /* Відступ між картками замість бордерів */
 }
 
 .menuRow {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px 8px;
+  padding: 16px;
   text-decoration: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  transition: all 0.25s ease;
+  background: transparent;
+  border-radius: 16px; /* Заокруглення для фону при ховері */
+  transition: background 0.2s ease;
 
-  /* Прибираємо системну підсвітку на сенсорних екранах (iOS/Android) */
+  /* Прибираємо системну підсвітку на сенсорних екранах */
   -webkit-tap-highlight-color: transparent;
 
-  &:last-child {
-    border-bottom: none;
-  }
-
-  /* 🔥 Анімація HOVER застосовується ТІЛЬКИ на десктопі (де є мишка) 🔥 */
+  /* 🔥 Статичний акуратний ховер без руху 🔥 */
   @media (hover: hover) {
     &:hover {
-      padding-left: 16px;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.6) 0%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      border-radius: 12px;
-      border-bottom-color: transparent;
+      background: rgba(255, 255, 255, 0.7); /* Легка біла підсвітка */
 
       .chevron {
-        transform: translateX(4px);
-        color: $primary;
+        color: $primary; /* Зміна кольору стрілки без зсуву */
       }
     }
   }
 
-  /* 🔥 Реакція на фізичний дотик/клік на мобільному 🔥 */
+  /* Реакція на дотик/клік */
   &:active {
-    transform: scale(0.97); /* Ефект втиснення кнопки */
-    background: rgba(0, 0, 0, 0.03); /* Легке затемнення */
-    border-radius: 12px;
-    border-bottom-color: transparent;
+    transform: scale(0.98);
+    background: rgba(0, 0, 0, 0.03);
     transition:
       transform 0.1s ease,
       background 0.1s ease;
-
-    .chevron {
-      color: $primary;
-    }
   }
 }
 
 .rowIcon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,7 +152,7 @@ $primary: #0056b3;
 
   span {
     font-size: 13px;
-    color: #9ca3af;
+    color: #8c96a3;
     font-weight: 500;
   }
 }
@@ -160,5 +161,5 @@ $primary: #0056b3;
   color: #d1d5db;
   display: flex;
   align-items: center;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
 }
