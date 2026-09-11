@@ -1,0 +1,441 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$text-dark: #111827;
+$text-gray: #4b5563;
+$bg-light: #f9fafb;
+
+.catalogWrapper {
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* =========================================
+   ШАПКА (HERO)
+   ========================================= */
+.header {
+  padding: 60px 0 40px;
+  text-align: center;
+
+  h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0 0 12px;
+    letter-spacing: -1px;
+  }
+
+  p {
+    font-size: 18px;
+    color: $text-gray;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    padding: 30px 0 20px;
+    h1 {
+      font-size: 28px;
+    }
+    p {
+      font-size: 15px;
+    }
+  }
+}
+
+/* =========================================
+   ГОЛОВНИЙ ЛЕЙАУТ (SIDEBAR + GRID)
+   ========================================= */
+.mainLayout {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+  }
+}
+
+/* =========================================
+   SIDEBAR (ФІЛЬТРИ ТА КАТЕГОРІЇ)
+   ========================================= */
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.04);
+  position: sticky;
+  top: 100px; /* Відступ від фіксованого хедера сайту */
+
+  @media (max-width: 992px) {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    max-width: 380px;
+    height: 100vh;
+    z-index: 1000;
+    border-radius: 0;
+    padding: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    transition: left 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+    &.open {
+      left: 0;
+    }
+  }
+}
+
+.sidebarHeaderMobile,
+.sidebarFooterMobile {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .sidebarHeaderMobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    button {
+      background: none;
+      border: none;
+      padding: 4px;
+      cursor: pointer;
+      color: $text-dark;
+    }
+  }
+
+  .sidebarFooterMobile {
+    display: block;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    background: #fff;
+  }
+
+  .sidebarScrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+  }
+}
+
+.filterSection {
+  margin-bottom: 32px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.filterTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: $text-dark;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px 0;
+}
+
+/* Список категорій */
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.categoryBtn {
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-gray;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: $text-dark;
+  }
+
+  &.active {
+    background: $primary;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+  }
+}
+
+/* Чекбокси фільтрів */
+.checkboxList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-dark;
+  transition: opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    opacity: 0.7;
+  }
+  &:active .customCheckbox {
+    transform: scale(0.9);
+  }
+}
+
+.customCheckbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #fff;
+
+  &.checked {
+    background: $primary;
+    border-color: $primary;
+  }
+}
+
+/* =========================================
+   GRID ТОВАРІВ
+   ========================================= */
+.productGridArea {
+  flex: 1;
+}
+
+.categoryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: $text-dark;
+    margin: 0;
+  }
+  span {
+    font-size: 14px;
+    color: $text-gray;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr; /* На телефоні 1 колонка */
+    gap: 16px;
+  }
+}
+
+.productCard {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+    }
+  }
+}
+
+.imageWrap {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #f3f4f6;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply; /* Робить білий фон картинки прозорим */
+  }
+}
+
+.cardContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  background: rgba(0, 86, 179, 0.08);
+  color: $primary;
+  border-radius: 6px;
+}
+
+.productName {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.buyBtn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
+  color: $text-dark;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 8px 20px rgba(255, 204, 0, 0.5);
+    filter: brightness(1.05);
+  }
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+/* =========================================
+   ПУСТИЙ СТАН ТА МОБІЛЬНІ КНОПКИ
+   ========================================= */
+.emptyState {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  padding: 60px 20px;
+  text-align: center;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+
+  .emptyIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  h3 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 0 8px;
+  }
+  p {
+    color: $text-gray;
+    margin: 0 0 24px;
+  }
+}
+
+.resetBtn {
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.mobileFilterBtn {
+  display: none;
+  @media (max-width: 992px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-dark;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+}
+
+.applyBtn {
+  width: 100%;
+  padding: 16px;
+  background: $primary;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(0, 86, 179, 0.3);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}

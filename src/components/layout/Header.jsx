@@ -245,6 +245,7 @@ export default function Header() {
   // 🔥 МАСИВИ ПОСИЛАНЬ ДЛЯ КЛІЄНТСЬКОГО ТА АДМІНСЬКОГО МЕНЮ
   const clientNavList = [
     { name: "ПОСЛУГИ", link: "/services" },
+    { name: "КАТАЛОГ", link: "/catalog" },
     { name: "ПРО НАС", link: "/about" },
     { name: "РЕАЛІЗОВАНІ ПРОЄКТИ", link: "/projects" },
     { name: "КОНТАКТИ", link: "/contacts" },

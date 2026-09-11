@@ -15,9 +15,9 @@ $light-bg: #f5f5f5;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1220px; /* 🔥 1200px контенту + 20px (по 10px з боків) 🔥 */
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 10px; /* 🔥 Відступи до краю вікна 10px, як у шапці 🔥 */
   position: relative;
   z-index: 2;
 }
@@ -61,7 +61,7 @@ $light-bg: #f5f5f5;
 
 .timelineWrapper {
   position: relative;
-  max-width: 1200px;
+  max-width: 1220px; /* 🔥 Уніфікована ширина з контейнером 🔥 */
   margin: 0 auto;
   padding: 20px 0;
 }
@@ -435,10 +435,7 @@ $light-bg: #f5f5f5;
   .iconCircle {
     width: 56px;
     height: 56px;
-    // border-radius можна теж трохи зменшити для гармонії, якщо хочете
     border-radius: 16px;
-
-    // ВИДАЛІТЬ ЗВІДСИ &::before повністю!
 
     svg {
       width: 24px;

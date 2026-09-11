@@ -5,11 +5,11 @@ $white: #ffffff;
 
 .ctaContainer {
   width: 100%;
-  max-width: 1200px; /* Обмеження ширини */
+  max-width: 1220px; /* 1200px для контенту + 20px (по 10px з боків) */
   margin: 80px auto 0; /* 80px зверху, auto з боків для центрування */
   display: flex;
   justify-content: center;
-  padding: 0 20px; /* Додаємо безпечні відступи для мобільних пристроїв */
+  padding: 0 10px; /* 🔥 Відступи до краю вікна точно такі ж, як у шапці (10px) 🔥 */
 }
 
 .ctaCard {
@@ -177,6 +177,7 @@ $white: #ffffff;
 @media (max-width: 768px) {
   .ctaContainer {
     margin-top: 50px;
+    /* padding: 0 10px; успадковується з основного класу, тому тут дублювати не потрібно */
   }
   .ctaCard {
     padding: 24px;

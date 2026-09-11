@@ -16,43 +16,47 @@ export default function CompanyStats() {
 
   useGSAP(
     () => {
+      // 1. Полегшена анімація заголовку
       gsap.fromTo(
         `.${styles.statsHeader}`,
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.8,
-          ease: "power3.out",
+          duration: 0.6,
+          ease: "power2.out",
+          force3D: true, // Апаратне прискорення GPU
           scrollTrigger: {
             trigger: `.${styles.statsHeader}`,
-            start: "top 85%",
+            start: "top 90%",
           },
         },
       );
 
+      // 2. Ультралегка анімація сітки (БЕЗ SCALE)
       gsap.fromTo(
         ".animStatWrapper",
-        { opacity: 0, scale: 0.95, y: 40 },
+        { opacity: 0, y: 30 }, // Прибрали scale, зменшили дистанцію
         {
           opacity: 1,
-          scale: 1,
           y: 0,
-          stagger: 0.15,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: `.${styles.statsGrid}`, start: "top 80%" },
+          stagger: 0.1, // Швидший каскад (менше часу навантажує процесор)
+          duration: 0.5, // Швидша поява
+          ease: "power2.out",
+          force3D: true, // Примусово рендеримо на відеокарті
+          scrollTrigger: {
+            trigger: `.${styles.statsGrid}`,
+            start: "top 85%",
+          },
         },
       );
     },
-    { scope: containerRef, dependencies: [] },
+    { scope: containerRef },
   );
 
   return (
-    // 🔥 Секція і контейнер обмежують ширину
     <section className={styles.statsSection} ref={containerRef}>
       <div className={styles.container}>
-        {/* 🔥 А ось цей блок повертає заокруглення та прозорість */}
         <div className={styles.statsWrapper}>
           <div className={styles.statsHeader}>
             <h3>Наш практичний досвід у цифрах та фактах</h3>
@@ -66,6 +70,7 @@ export default function CompanyStats() {
                   src="/images/experiense-card.jpg"
                   alt="Досвід"
                   fill
+                  priority // Пріоритетне завантаження для LCP
                   sizes="(max-width: 768px) 100vw, 25vw"
                   className={styles.statBgImage}
                 />
@@ -87,6 +92,7 @@ export default function CompanyStats() {
                   src="/images/projects-card.jpg"
                   alt="Проєкти"
                   fill
+                  priority // Другій картинці теж даємо пріоритет, щоб не було ривків
                   sizes="(max-width: 768px) 100vw, 25vw"
                   className={styles.statBgImage}
                 />

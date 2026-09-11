@@ -207,6 +207,7 @@ export default function About() {
         </div>
       </div>
 
+      {/* Container specifically for transitionBlock */}
       <div className={styles.container}>
         <div className={styles.transitionBlock}>
           <h3>Надійність на кожному етапі</h3>
@@ -217,9 +218,10 @@ export default function About() {
             та довготривалий термін експлуатації.
           </p>
         </div>
-
-        <CompanyStats />
       </div>
+
+      {/* CompanyStats moved outside the container to manage its own width */}
+      <CompanyStats />
     </section>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import NextImage from "next/image";
 import gsap from "gsap";
-import { useModal } from "@/context/ModalContext"; // 🔥 Використовуємо глобальний контекст
+import { useModal } from "@/context/ModalContext";
 import styles from "./ProjectsGrid.module.scss";
 
-// --- SVG ІКОНКИ ТІЛЬКИ ДЛЯ СІТКИ І ФІЛЬТРІВ ---
+// --- SVG ІКОНКИ ---
 const IconHouse = () => (
   <svg
     viewBox="0 0 24 24"
@@ -116,7 +116,7 @@ const IconPin = () => (
 );
 
 export default function ProjectsGrid({ initialProjects = [] }) {
-  const { openModal } = useModal(); // 🔥 Отримуємо функцію відкриття глобальної модалки
+  const { openModal } = useModal();
 
   const formatPower = (kw) => {
     if (!kw) return "0 кВт";
@@ -134,33 +134,39 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   };
 
-  // Форматуємо проєкти для сітки і модалки
-  const mappedProjects = initialProjects.map((p) => ({
-    id: p._id,
-    title: p.title,
-    clientType: p.clientType,
-    serviceType: p.serviceType,
-    power: p.power,
-    powerLabel: formatPower(p.power),
-    location: p.client || "Локація не вказана",
-    description: p.shortDescription || "Опис відсутній",
-    image: p.mainImage,
-    gallery: p.gallery || [],
-    date: formatDate(p.date),
-  }));
+  const mappedProjects = initialProjects
+    .map((p) => ({
+      id: p._id,
+      title: p.title,
+      clientType: p.clientType,
+      serviceType: p.serviceType,
+      power: p.power,
+      powerLabel: formatPower(p.power),
+      location: p.client || "Локація не вказана",
+      description: p.shortDescription || "Опис відсутній",
+      image: p.mainImage,
+      gallery: p.gallery || [],
+      date: formatDate(p.date),
+      rawDate: new Date(p.date || 0).getTime(),
+    }))
+    .sort((a, b) => b.rawDate - a.rawDate);
 
   const [activeFilters, setActiveFilters] = useState({
     clientType: "all",
     serviceType: ["all"],
   });
-  const MAX_POWER = 2000;
-  const [powerLimit, setPowerLimit] = useState(MAX_POWER);
-  const gridRef = useRef(null);
 
+  // 🔥 Обмеження 500 кВт
+  const MAX_POWER = 500;
+
+  // 🔥 Два стани: один для візуалу повзунка, інший для реальної фільтрації
+  const [powerLimitUI, setPowerLimitUI] = useState(MAX_POWER);
+  const [powerLimit, setPowerLimit] = useState(MAX_POWER);
+
+  const gridRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 4;
 
-  // 🔥 Виклик глобальної модалки замість локальної
   const openProjectModal = (project) => {
     openModal("project", {
       title: project.title,
@@ -193,37 +199,46 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     indexOfLastProject,
   );
 
-  const animateGrid = (updateStateCallback) => {
-    gsap.to(`.${styles.projectCard}`, {
+  const updateWithAnimation = (stateUpdaterCallback) => {
+    const cards = gridRef.current?.children;
+    if (!cards || cards.length === 0) {
+      stateUpdaterCallback();
+      return;
+    }
+    gsap.to(cards, {
       opacity: 0,
-      scale: 0.96,
       y: 15,
+      scale: 0.98,
       duration: 0.2,
       stagger: 0.02,
       ease: "power2.in",
       onComplete: () => {
-        updateStateCallback();
-        setTimeout(() => {
-          gsap.fromTo(
-            `.${styles.projectCard}`,
-            { opacity: 0, scale: 0.96, y: 15 },
-            {
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              duration: 0.4,
-              stagger: 0.04,
-              ease: "power3.out",
-              clearProps: "all",
-            },
-          );
-        }, 10);
+        stateUpdaterCallback();
       },
     });
   };
 
+  useEffect(() => {
+    const cards = gridRef.current?.children;
+    if (cards && cards.length > 0) {
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 15, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.4,
+          stagger: 0.04,
+          ease: "power3.out",
+          clearProps: "all",
+        },
+      );
+    }
+  }, [currentPage, activeFilters, powerLimit]);
+
   const handleFilterClick = (groupKey, filterId) => {
-    animateGrid(() => {
+    updateWithAnimation(() => {
       setCurrentPage(1);
       setActiveFilters((prev) => {
         if (groupKey === "clientType") return { ...prev, clientType: filterId };
@@ -239,26 +254,29 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   };
 
   const resetFilters = () => {
-    animateGrid(() => {
+    updateWithAnimation(() => {
       setActiveFilters({ clientType: "all", serviceType: ["all"] });
       setPowerLimit(MAX_POWER);
+      setPowerLimitUI(MAX_POWER); // Скидаємо і візуал теж
       setCurrentPage(1);
     });
   };
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber === currentPage) return;
-    animateGrid(() => {
+
+    if (gridRef.current) {
+      const yOffset =
+        gridRef.current.getBoundingClientRect().top + window.scrollY - 150;
+      window.scrollTo({ top: yOffset, behavior: "smooth" });
+    }
+
+    updateWithAnimation(() => {
       setCurrentPage(pageNumber);
-      if (gridRef.current) {
-        const yOffset =
-          gridRef.current.getBoundingClientRect().top + window.scrollY - 150;
-        window.scrollTo({ top: yOffset, behavior: "smooth" });
-      }
     });
   };
 
-  const sliderFillPercentage = (powerLimit / MAX_POWER) * 100;
+  const sliderFillPercentage = (powerLimitUI / MAX_POWER) * 100;
 
   return (
     <section className={styles.gridSection}>
@@ -268,29 +286,31 @@ export default function ProjectsGrid({ initialProjects = [] }) {
             <div className={styles.sidebarSticky}>
               <div className={styles.filterGroup}>
                 <h4 className={styles.groupTitle}>Тип об'єкта</h4>
-                <div className={styles.segmentedControl}>
-                  <button
-                    className={`${styles.segmentBtn} ${activeFilters.clientType === "all" ? styles.active : ""}`}
-                    onClick={() => handleFilterClick("clientType", "all")}
-                  >
-                    Усі
-                  </button>
-                  <button
-                    className={`${styles.segmentBtn} ${activeFilters.clientType === "b2c" ? styles.active : ""}`}
-                    onClick={() => handleFilterClick("clientType", "b2c")}
-                  >
-                    <IconHouse /> Для
-                    <br />
-                    дому
-                  </button>
-                  <button
-                    className={`${styles.segmentBtn} ${activeFilters.clientType === "b2b" ? styles.active : ""}`}
-                    onClick={() => handleFilterClick("clientType", "b2b")}
-                  >
-                    <IconFactory /> Для
-                    <br />
-                    бізнесу
-                  </button>
+                <div className={styles.segmentedWrapper}>
+                  <div className={styles.segmentedControl}>
+                    <button
+                      className={`${styles.segmentBtn} ${activeFilters.clientType === "all" ? styles.active : ""}`}
+                      onClick={() => handleFilterClick("clientType", "all")}
+                    >
+                      Усі
+                    </button>
+                    <button
+                      className={`${styles.segmentBtn} ${activeFilters.clientType === "b2c" ? styles.active : ""}`}
+                      onClick={() => handleFilterClick("clientType", "b2c")}
+                    >
+                      <IconHouse /> Для
+                      <br />
+                      дому
+                    </button>
+                    <button
+                      className={`${styles.segmentBtn} ${activeFilters.clientType === "b2b" ? styles.active : ""}`}
+                      onClick={() => handleFilterClick("clientType", "b2b")}
+                    >
+                      <IconFactory /> Для
+                      <br />
+                      бізнесу
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -338,9 +358,9 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                 <div className={styles.sliderHeader}>
                   <h4 className={styles.groupTitle}>Потужність СЕС</h4>
                   <span className={styles.powerValue}>
-                    {powerLimit === MAX_POWER
+                    {powerLimitUI === MAX_POWER
                       ? "Макс."
-                      : `до ${powerLimit} кВт`}
+                      : `до ${powerLimitUI} кВт`}
                   </span>
                 </div>
                 <div className={styles.sliderWrapper}>
@@ -348,11 +368,29 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     type="range"
                     min="0"
                     max={MAX_POWER}
-                    step="50"
-                    value={powerLimit}
+                    step="5" /* Плавний крок */
+                    value={powerLimitUI}
                     onChange={(e) => {
-                      setPowerLimit(Number(e.target.value));
-                      setCurrentPage(1);
+                      // 🔥 Оновлюємо лише візуал під час руху (без фліккерінгу)
+                      setPowerLimitUI(Number(e.target.value));
+                    }}
+                    onPointerUp={() => {
+                      // 🔥 Фільтруємо картки тільки коли користувач відпустив повзунок
+                      if (powerLimit !== powerLimitUI) {
+                        updateWithAnimation(() => {
+                          setPowerLimit(powerLimitUI);
+                          setCurrentPage(1);
+                        });
+                      }
+                    }}
+                    onKeyUp={() => {
+                      // Додаткова підтримка для клавіатури
+                      if (powerLimit !== powerLimitUI) {
+                        updateWithAnimation(() => {
+                          setPowerLimit(powerLimitUI);
+                          setCurrentPage(1);
+                        });
+                      }
                     }}
                     className={styles.glassSlider}
                     style={{
@@ -361,7 +399,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                   />
                   <div className={styles.sliderLabels}>
                     <span>0</span>
-                    <span>2 МВт+</span>
+                    <span>{MAX_POWER} кВт+</span>
                   </div>
                 </div>
               </div>

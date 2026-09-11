@@ -13,33 +13,30 @@ export default function AboutPage() {
     <main className={styles.aboutPage}>
       <AboutHero />
 
-      {/* 🔥 МЕГА-КОНТЕЙНЕР 🔥 */}
       <div
         style={{
           position: "relative",
           zIndex: 1,
           width: "100%",
-          // 🔥 ВИДАЛИЛИ backgroundColor ЗВІДСИ, щоб він не обрізався жорстко перед футером
         }}
       >
-        {/* Абсолютний блок фону */}
+        {/* Повертаємо класичний варіант, який заходить під футер */}
         <div
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             right: 0,
-            bottom: "-800px" /* Заходить глибоко під футер */,
+            bottom: "-800px",
             zIndex: 0,
             pointerEvents: "none",
             overflow: "hidden",
-            backgroundColor: "#f9fafb" /* 🔥 ПЕРЕНЕСЛИ КОЛІР СЮДИ */,
+            backgroundColor: "#f9fafb",
           }}
         >
           <GlobalBackground isLayout={false} />
         </div>
 
-        {/* Контент безпечно лежить зверху */}
         <div style={{ position: "relative", zIndex: 2 }}>
           <CompanyStats />
           <AboutExperience />

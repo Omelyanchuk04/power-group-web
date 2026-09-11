@@ -13,15 +13,17 @@ $instagram-color: #e1306c;
 // --- ОСНОВНІ БЛОКИ ---
 .footerWrapper {
   background-color: transparent;
-  padding: 100px 20px 30px;
+  padding: 100px 10px 30px; /* 🔥 Відступи по 10px з боків (як у шапці) 🔥 */
   position: relative;
   z-index: 10;
   width: 100%;
+  max-width: 1220px; /* 🔥 Обмеження: 1200px контенту + 20px відступів */
+  margin: 0 auto; /* Центрування на великих екранах */
   display: flex;
   justify-content: center;
 }
 
-// Обгортка для фону
+// Обгортка для фону (Залишається на всю ширину екрану, якщо вона винесена за footerWrapper, або всередині)
 .footerBgWrapper {
   position: absolute;
   top: 0;
@@ -60,6 +62,7 @@ $instagram-color: #e1306c;
 .footerCard {
   width: 100%;
   max-width: 1200px;
+  /* margin: 0 auto; вже не обов'язковий, бо footerWrapper має max-width, але залишаємо для надійності */
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.6);
   -webkit-backdrop-filter: blur(24px) saturate(100%);
@@ -345,7 +348,7 @@ $instagram-color: #e1306c;
 
 @media (max-width: 560px) {
   .footerWrapper {
-    padding: 30px 10px;
+    padding: 30px 10px; /* Відступи 10px залишаються і на мобайлі */
   }
   .socials {
     .socialLink {

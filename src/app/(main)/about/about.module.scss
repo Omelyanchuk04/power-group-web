@@ -10,17 +10,13 @@ $bg-light: #f9fafb;
   width: 100%;
   max-width: 100vw;
   overflow-x: clip;
-
-  /* 🔥 РОБИМО ПРОЗОРИМ (або просто видали цей рядок взагалі) */
   background-color: transparent;
-
   min-height: 100svh;
 }
 
 /* =========================================
    HERO SECTION
    ========================================= */
-
 .hero {
   position: relative;
   width: 100%;
@@ -29,7 +25,6 @@ $bg-light: #f9fafb;
   overflow: hidden;
   background-color: #000;
 
-  /* ФІКС ДЛЯ ТЕКСТУ */
   padding-top: calc(140px + env(safe-area-inset-top));
   padding-bottom: 140px;
 
@@ -93,26 +88,19 @@ $bg-light: #f9fafb;
 .container {
   position: relative;
   z-index: 3;
-  max-width: 1200px;
+  max-width: 1220px; /* 🔥 1200px для контенту + 20px (по 10px з боків) 🔥 */
   width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 10px; /* 🔥 Відступи до краю вікна 10px, як у шапці 🔥 */
   display: flex;
   flex-direction: column;
-
-  @media (max-width: 560px) {
-    padding: 0 10px;
-  }
 }
 
-/* Анімація Hero (Апаратне прискорення) */
 .badgeWrapper,
 .title,
 .description {
   opacity: 0;
-  transform: translateY(40px) translateZ(0);
-  will-change: transform, opacity;
-  backface-visibility: hidden;
+  transform: translateY(40px);
   transition:
     opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
     transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -123,7 +111,7 @@ $bg-light: #f9fafb;
   .title,
   .description {
     opacity: 1;
-    transform: translateY(0) translateZ(0);
+    transform: translateY(0);
   }
 
   .badgeWrapper {
@@ -148,12 +136,6 @@ $bg-light: #f9fafb;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.accent_blue {
-  color: #48a0ffd9;
-  font-weight: 700;
-  font-size: 24px;
 }
 
 .title {
@@ -184,22 +166,24 @@ $bg-light: #f9fafb;
    ========================================= */
 
 .experienceSection {
+  padding-top: 80px;
   position: relative;
-
-  /* 🔥 ВИДАЛИЛИ clip-path: inset(-300px 0 -300px 0); */
-
-  // padding: 20px 0 80px 0;
   width: 100%;
   background-color: transparent;
 }
 
-/* 1. БЛОК ЗАГОЛОВКІВ (Очищений від opacity: 0) */
 .headerBlock {
+  opacity: 0;
+  transform: translateY(30px);
+  will-change: opacity, transform;
+
   .badgeWrapper {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     margin-bottom: 24px;
+    opacity: 1;
+    transform: none;
   }
 
   .badgeDark {
@@ -244,26 +228,25 @@ $bg-light: #f9fafb;
   }
 }
 
-/* --- 2. СІТКА BENTO GRID --- */
 .bentoGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: minmax(180px, auto);
+  grid-auto-rows: minmax(260px, auto);
   gap: 20px;
 
   @media (max-width: 992px) {
     grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: minmax(180px, auto);
+    grid-auto-rows: minmax(240px, auto);
   }
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: minmax(160px, auto);
+    grid-auto-rows: minmax(200px, auto);
     gap: 12px;
   }
 }
 
-/* --- РОЗМІРИ КАРТОК --- */
+/* РОЗМІРИ ОБГОРТОК */
 .size2x2 {
   grid-column: span 2;
   grid-row: span 2;
@@ -334,38 +317,33 @@ $bg-light: #f9fafb;
 /* --- БАЗОВА КАРТКА --- */
 .bentoCard {
   position: relative;
+  width: 100%;
+  height: 100%;
   border-radius: 30px;
   border: 1px solid rgba(255, 255, 255, 0.7);
-  padding: 24px;
+  padding: 30px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   color: #ffffff;
 
-  will-change: transform;
-  backface-visibility: hidden;
-
-  /* 🔥 Очищено від opacity: 0. Залишили тільки транзишени для ховеру */
-  --hover-scale: 1;
-  transform: scale(var(--hover-scale)) translateZ(0);
-  transition:
-    transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.4s ease;
+  transition: box-shadow 0.4s ease;
 
   @media (max-width: 768px) {
-    padding: 16px;
+    padding: 20px;
     border-radius: 25px;
   }
 
   .cardBgLayer {
     position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
+    inset: -5px;
     z-index: 1;
-    will-change: transform;
-    backface-visibility: hidden;
+  }
+
+  .cardBgImage {
+    object-fit: cover;
+    transform: scale(1) translateZ(0);
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -373,26 +351,20 @@ $bg-light: #f9fafb;
     position: absolute;
     inset: 0;
     z-index: 2;
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(0, 0, 0, 0.15);
     background-image: linear-gradient(
       to top,
-      rgba(0, 0, 0, 0.85) 0%,
-      rgba(0, 0, 0, 0.1) 100%
+      rgba(0, 0, 0, 0.75) 0%,
+      rgba(0, 0, 0, 0.05) 100%
     );
-    transition:
-      background-color 0.4s ease,
-      background-image 0.4s ease;
+    transition: opacity 0.4s ease;
   }
 
-  /* ХОВЕР ЕФЕКТ (ТІЛЬКИ МИШКА) */
+  /* ХОВЕР ЕФЕКТ */
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      --hover-scale: 1.02;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-
-      transition:
-        transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-        box-shadow 0.4s ease;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      z-index: 10;
 
       .iconCircle {
         transform: scale(1.05) rotate(5deg) translateZ(0);
@@ -401,21 +373,12 @@ $bg-light: #f9fafb;
           0 15px 30px rgba(0, 0, 0, 0.2);
       }
 
-      .cardBgLayer {
-        transform: scale(1.05) translateZ(0);
+      .cardBgImage {
+        transform: scale(1.08) translateZ(0);
       }
 
       .imageOverlay {
-        background-color: rgba(0, 0, 0, 0.35);
-        background-image: linear-gradient(
-          to top,
-          rgba(0, 0, 0, 0.95) 0%,
-          rgba(0, 0, 0, 0.25) 100%
-        );
-      }
-
-      &.bentoDark .bentoIconBig {
-        transform: rotate(0deg) scale(1.1) translateZ(0);
+        opacity: 0.85;
       }
     }
   }
@@ -428,26 +391,26 @@ $bg-light: #f9fafb;
     height: 100%;
 
     h3 {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 800;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       line-height: 1.2;
       margin-top: auto;
 
       @media (max-width: 768px) {
-        font-size: 15px;
-        margin-bottom: 4px;
+        font-size: 18px;
+        margin-bottom: 6px;
       }
     }
 
     p {
-      font-size: 14px;
-      line-height: 1.4;
+      font-size: 15px;
+      line-height: 1.5;
       opacity: 0.95;
       margin: 0;
 
       @media (max-width: 768px) {
-        font-size: 12px;
+        font-size: 13px;
       }
     }
   }
@@ -455,21 +418,18 @@ $bg-light: #f9fafb;
 
 /* --- СТИЛЬ ІКОНОК (Сині) --- */
 .iconCircle {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   background: linear-gradient(135deg, #4facfe 0%, #0056b3 100%);
   color: #ffffff;
-  border-radius: 16px;
+  border-radius: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   z-index: 10;
   flex-shrink: 0;
-  margin-bottom: 16px;
-
-  will-change: transform, box-shadow;
-  backface-visibility: hidden;
+  margin-bottom: 20px;
 
   box-shadow:
     inset 0 0 0 1.5px rgba(255, 255, 255, 0.3),
@@ -480,68 +440,20 @@ $bg-light: #f9fafb;
     box-shadow 0.4s ease;
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     stroke-width: 2px;
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
   }
 
   @media (max-width: 768px) {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     margin-bottom: 12px;
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
     }
-  }
-}
-
-/* --- ПРИЗНАЧЕННЯ ФОНОВИХ КАРТИНОК --- */
-.bentoDark {
-  .cardBgLayer {
-    background-image: url("/images/about-page-hero/about-hero-1.jpg");
-  }
-
-  .bentoIconBig {
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 200px;
-    height: 200px;
-    color: rgba(255, 255, 255, 0.08);
-    transform: rotate(15deg) translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 3;
-
-    @media (max-width: 768px) {
-      width: 140px;
-      height: 140px;
-    }
-  }
-}
-
-.bentoWarm {
-  .cardBgLayer {
-    background-image: url("/images/about-page-hero/about-hero-2.jpg");
-  }
-}
-.bentoBlue {
-  .cardBgLayer {
-    background-image: url("/images/about-page-experience/reliable_materials.jpg");
-  }
-}
-.bentoImage {
-  .cardBgLayer {
-    background-image: url("/images/about-page-experience/qualification.jpg");
-  }
-}
-.bentoSuccess {
-  .cardBgLayer {
-    background-image: url("/images/about-page-hero/about-hero-5.jpg");
   }
 }
