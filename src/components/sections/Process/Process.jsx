@@ -8,9 +8,6 @@ import ContactModal from "../../modals/ContactModal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
-
-  // 🔥 ВИРІШУЄ ПРОБЛЕМУ ЛАГІВ НА МОБІЛЬНИХ:
-  // Ігноруємо зміну розміру вікна при хованні адресної строки браузера
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
@@ -140,7 +137,6 @@ export default function Process() {
 
     updateLineHeight();
 
-    // Перевіряємо тільки зміну ШИРИНИ, щоб уникнути лагів при скролі на телефонах
     let lastWidth = window.innerWidth;
     const handleResize = () => {
       if (window.innerWidth !== lastWidth) {
@@ -154,7 +150,7 @@ export default function Process() {
     let ctx = gsap.context(() => {
       const triggerPoint = "35%";
 
-      // 1. СМУГА ПРОГРЕСУ
+      // 1. Анімація синьої смуги
       gsap.to(lineRef.current, {
         height: "100%",
         ease: "none",
@@ -162,11 +158,11 @@ export default function Process() {
           trigger: mainLineRef.current,
           start: `top ${triggerPoint}`,
           end: `bottom ${triggerPoint}`,
-          scrub: 0.5, // 🔥 0.5 робить рух смуги м'якшим (без ривків)
+          scrub: 0.5,
         },
       });
 
-      // 2. АНІМАЦІЇ КАРТОК ТА ТОЧОК
+      // 2. Анімація точки та картки (ОДНОЧАСНО)
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
 
       rows.forEach((row) => {
@@ -174,42 +170,31 @@ export default function Process() {
         const dotContainer = row.querySelector(`.${styles.dotContainer}`);
         const dot = row.querySelector(`.${styles.smallDot}`);
 
-        // Анімація карток
-        if (card) {
-          gsap.fromTo(
-            card,
-            { opacity: 0, y: 60, scale: 0.95 },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.5,
-              ease: "power2.out",
-              scrollTrigger: {
-                trigger: row, // 🔥 Використовуємо рядок як тригер (стабільніше)
-                start: "top 75%", // 🔥 Пізніше! Треба доскролити більше, щоб картка з'явилась
-                toggleActions: "play none none reverse",
-              },
+        if (dotContainer && card) {
+          // Створюємо спільний таймлайн для обох елементів
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: dotContainer, // Все залежить від позиції точки (35%)
+              start: `center ${triggerPoint}`,
+              toggleActions: "play none none reverse",
             },
-          );
-        }
+          });
 
-        // Анімація жовтих точок
-        if (dot && dotContainer) {
-          gsap.fromTo(
-            dot,
-            { scale: 0, opacity: 0 },
-            {
-              scale: 1,
-              opacity: 1,
-              duration: 0.3,
-              ease: "back.out(1.5)",
-              scrollTrigger: {
-                trigger: dotContainer,
-                start: `center ${triggerPoint}`, // Спрацьовує точно при дотику синьої смуги
-                toggleActions: "play none none reverse",
-              },
-            },
+          // Точка спалахує
+          if (dot) {
+            tl.fromTo(
+              dot,
+              { scale: 0, opacity: 0 },
+              { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)" },
+            );
+          }
+
+          // Картка з'являється плавно слідом за точкою
+          tl.fromTo(
+            card,
+            { opacity: 0, y: 40, scale: 0.95 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" },
+            "-=0.15", // Невелике перекриття: картка стартує трохи раніше завершення анімації точки
           );
         }
       });
