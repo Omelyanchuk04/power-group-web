@@ -8,16 +8,12 @@ $border-color: #e2e8f0;
 $white: #ffffff;
 
 .projectsSection {
-  background-color: transparent; // 🔥 Робимо секцію повністю прозорою
+  background-color: transparent;
   padding: 50px 0;
   position: relative;
   z-index: 10;
   overflow: hidden;
-
-  // 🔥 Всі ::before, ::after та .blob видалено!
 }
-
-// 🔥 Всі @keyframes для плям видалено!
 
 .container {
   max-width: 100%;
@@ -26,7 +22,6 @@ $white: #ffffff;
   z-index: 2;
 }
 
-// ОНОВЛЕНИЙ HEADER З ЦЕНТРАЛЬНИМ ТЕКСТОМ І КНОПКАМИ ПО КРАЯХ
 .header {
   padding: 0 5vw;
   display: flex;
@@ -73,7 +68,6 @@ $white: #ffffff;
   text-align: left;
 }
 
-// Рядок з кнопками
 .headerBottom {
   display: flex;
   justify-content: space-between;
@@ -181,6 +175,7 @@ $white: #ffffff;
 
 .sliderTrack {
   display: flex;
+  align-items: stretch; /* 🔥 РОБИТЬ ВСІ КАРТКИ ОДНАКОВОЇ ВИСОТИ */
   gap: 40px;
   padding: 20px calc(50vw - 290px) 40px calc(50vw - 290px);
   width: max-content;
@@ -192,6 +187,7 @@ $white: #ffffff;
   gap: 16px;
   scroll-snap-align: center;
   scroll-snap-stop: normal;
+  height: auto;
 }
 
 .yearLabel {
@@ -208,13 +204,14 @@ $white: #ffffff;
 
 .projectCard {
   display: flex;
+  flex-grow: 1; /* 🔥 ДОЗВОЛЯЄ КАРТЦІ ТЯГНУТИСЯ НА ВСЮ ВИСОТУ ОБГОРТКИ */
   width: 580px;
-  height: 340px;
+  min-height: 340px;
   background: #ebebeb99;
   border: 1px solid #ffffff;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-radius: 20px;
+  border-radius: 40px;
   overflow: hidden;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.4s ease;
@@ -346,7 +343,7 @@ $white: #ffffff;
 @media (max-width: 1024px) {
   .projectCard {
     width: 500px;
-    height: 320px;
+    min-height: 320px;
   }
   .title {
     align-self: flex-start;
@@ -367,7 +364,6 @@ $white: #ffffff;
 @media (max-width: 768px) {
   .projectsSection {
     padding: 80px 0;
-    // 🔥 Видалено перевизначення локальних плям для мобайлу
   }
 
   .header {
@@ -398,9 +394,10 @@ $white: #ffffff;
 
   .projectCard {
     width: 85vw;
+    border-radius: 30px;
     flex-direction: column;
     height: auto;
-    pointer-events: none;
+    /* pointer-events: none; 🔥 ВИДАЛЕНО! Саме це блокувало кліки на мобільних */
   }
 
   .imagePanel {
@@ -413,8 +410,12 @@ $white: #ffffff;
   }
 
   .infoPanel {
-    flex: none;
+    flex: 1; /* 🔥 ДОЗВОЛЯЄ КОНТЕНТНІЙ ПАНЕЛІ РОЗТЯГУВАТИСЯ */
     width: 100%;
     padding: 20px;
+  }
+
+  .detailBtn {
+    margin-top: auto; /* 🔥 ЗАВЖДИ ПРИТИСКАЄ КНОПКУ ДО НИЖНЬОГО КРАЮ КАРТКИ */
   }
 }
