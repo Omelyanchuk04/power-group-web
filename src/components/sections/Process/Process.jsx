@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import styles from "./Process.module.scss";
-// Імпорт вашого нового компонента модалки
 import ContactModal from "../../modals/ContactModal";
 
 if (typeof window !== "undefined") {
@@ -113,67 +112,105 @@ const PROCESS_STEPS = [
 
 export default function Process() {
   const containerRef = useRef(null);
+  const timelineWrapperRef = useRef(null);
+  const mainLineRef = useRef(null);
   const lineRef = useRef(null);
-  // Стан для керування видимістю модального вікна
+  const lastDotRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    let ctx = gsap.context(() => {
-      gsap.fromTo(
-        lineRef.current,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 50%",
-            end: "bottom 90%",
-            scrub: 1,
-          },
-        },
-      );
+    const updateLineHeight = () => {
+      if (
+        timelineWrapperRef.current &&
+        mainLineRef.current &&
+        lastDotRef.current
+      ) {
+        const wrapperRect = timelineWrapperRef.current.getBoundingClientRect();
+        const dotRect = lastDotRef.current.getBoundingClientRect();
 
+        const exactHeight =
+          dotRect.top - wrapperRect.top + dotRect.height / 2 + 14;
+        mainLineRef.current.style.height = `${exactHeight}px`;
+      }
+    };
+
+    updateLineHeight();
+
+    const handleResize = () => {
+      updateLineHeight();
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener("resize", handleResize);
+
+    let ctx = gsap.context(() => {
+      // Ця змінна відповідає за те, де знаходиться кінець синьої лінії на екрані
+      const triggerPoint = "35%";
+
+      // 1. СМУГА ПРОГРЕСУ
+      gsap.to(lineRef.current, {
+        height: "100%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: mainLineRef.current,
+          start: `top ${triggerPoint}`,
+          end: `bottom ${triggerPoint}`,
+          scrub: true,
+        },
+      });
+
+      // 2. АНІМАЦІЇ КАРТОК ТА ТОЧОК РОЗДІЛЕНО
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
 
       rows.forEach((row) => {
         const card = row.querySelector(`.${styles.card}`);
-        const dot = row.querySelector(`.${styles.dot}`);
-        const glow = row.querySelector(`.${styles.activeGlow}`);
+        const dotContainer = row.querySelector(`.${styles.dotContainer}`);
+        const dot = row.querySelector(`.${styles.smallDot}`);
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: row,
-            start: "top 85%",
-            toggleActions: "play none none reverse",
-          },
-        });
-
-        tl.to(
-          dot,
-          {
-            backgroundColor: "#00d4ff",
-            scale: 1.3,
-            duration: 0.4,
-            ease: "back.out(1.5)",
-          },
-          0,
-        )
-          .to(
-            glow,
-            { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
-            0,
-          )
-          .fromTo(
+        // Картки з'являються рано (щойно з'являються на екрані знизу)
+        if (card) {
+          gsap.fromTo(
             card,
             { opacity: 0, y: 50, scale: 0.95 },
-            { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" },
-            0.1,
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.6,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%", // Тригер: верх картки досягає 85% висоти екрану
+                toggleActions: "play none none reverse",
+              },
+            },
           );
+        }
+
+        // Точки з'являються ПІЗНІШЕ (рівно в той момент, коли до них доходить синя смуга)
+        if (dot && dotContainer) {
+          gsap.fromTo(
+            dot,
+            { scale: 0, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.3,
+              ease: "back.out(2)",
+              scrollTrigger: {
+                trigger: dotContainer,
+                start: `center ${triggerPoint}`, // Тригер: центр точки стикається з синьою лінією (35%)
+                toggleActions: "play none none reverse",
+              },
+            },
+          );
+        }
       });
     }, containerRef);
 
-    return () => ctx.revert();
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -188,8 +225,8 @@ export default function Process() {
           </p>
         </div>
 
-        <div className={styles.timelineWrapper}>
-          <div className={styles.mainLine}>
+        <div className={styles.timelineWrapper} ref={timelineWrapperRef}>
+          <div className={styles.mainLine} ref={mainLineRef}>
             <div className={styles.lineProgress} ref={lineRef}></div>
           </div>
 
@@ -199,9 +236,8 @@ export default function Process() {
                 key={step.id}
                 className={`${styles.stepRow} ${index % 2 === 0 ? styles.left : styles.right}`}
               >
-                <div className={styles.dotWrapper}>
-                  <div className={styles.activeGlow}></div>
-                  <div className={styles.dot}></div>
+                <div className={styles.dotContainer}>
+                  <div className={styles.smallDot}></div>
                 </div>
 
                 <div className={styles.card}>
@@ -220,9 +256,8 @@ export default function Process() {
 
             {/* ФІНАЛЬНИЙ БЛОК ЗВОРОТНОГО ЗВ'ЯЗКУ */}
             <div className={`${styles.stepRow} ${styles.ctaRow}`}>
-              <div className={styles.dotWrapper}>
-                <div className={styles.activeGlow}></div>
-                <div className={styles.dot}></div>
+              <div className={styles.dotContainer} ref={lastDotRef}>
+                <div className={styles.smallDot}></div>
               </div>
 
               <div className={`${styles.card} ${styles.ctaCard}`}>
@@ -252,7 +287,6 @@ export default function Process() {
                     </p>
                   </div>
 
-                  {/* Кнопка тепер відкриває модалку */}
                   <button
                     className={styles.ctaButton}
                     onClick={() => setIsModalOpen(true)}
@@ -266,7 +300,6 @@ export default function Process() {
         </div>
       </div>
 
-      {/* Компонент модальної форми */}
       <ContactModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

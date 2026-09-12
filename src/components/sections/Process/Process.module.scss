@@ -66,28 +66,38 @@ $light-bg: #f5f5f5;
   padding: 20px 0;
 }
 
+/* =========================================
+   СКЛЯНА ВЕРТИКАЛЬНА СМУГА
+   ========================================= */
 .mainLine {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   top: 0;
-  bottom: 60px;
-  width: 4px;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 2px;
+  width: 14px;
+  /* Висота тепер розраховується автоматично у React, тому bottom: 60px прибрано */
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.15),
+    0 1px 2px rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 100px;
   z-index: 1;
 }
 
 .lineProgress {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, $primary, $cyan);
-  border-radius: 2px;
-  transform-origin: top;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+  top: -1px;
+  left: -1px;
+  width: calc(100% + 2px);
+  height: 0; /* Початкова висота 0 */
+  background: $primary;
+  border-radius: 100px; /* Це гарантує ідеальне заокруглення верху і низу */
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.15),
+    0 0 12px rgba(0, 86, 179, 0.4);
 }
 
 .stepsContainer {
@@ -109,40 +119,41 @@ $light-bg: #f5f5f5;
   }
 }
 
-.dotWrapper {
+/* =========================================
+   ВНУТРІШНІ ТОЧКИ НА СМУЗІ (ЖОВТЕ СКЛО)
+   ========================================= */
+
+.dotContainer {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 50px;
-  height: 50px;
+  width: 14px;
+  height: 14px;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 3;
+  z-index: 5;
 }
 
-.activeGlow {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle,
-    rgba(0, 212, 255, 0.4) 0%,
-    transparent 70%
+.smallDot {
+  width: 10px; /* Збільшено для кращого ефекту скла */
+  height: 10px;
+  /* Ефект жовтого напівпрозорого скла */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 230, 0, 0.95),
+    rgba(255, 200, 0, 0.8)
   );
-  opacity: 0;
-  transform: scale(0.5);
-}
-
-.dot {
-  width: 16px;
-  height: 16px;
-  background-color: #cbd5e1;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.9); /* Блік по краю */
   border-radius: 50%;
-  border: 3px solid $light-bg;
-  position: relative;
-  z-index: 2;
+  /* Жовте світіння назовні та внутрішня тінь для об'єму */
+  box-shadow:
+    0 0 12px rgba(255, 213, 0, 0.9),
+    inset 0 2px 4px rgba(255, 255, 255, 0.6);
+  will-change: transform, opacity;
 }
 
 .card {
@@ -301,7 +312,7 @@ $light-bg: #f5f5f5;
   justify-content: center;
   margin-top: 60px;
 
-  .dotWrapper {
+  .dotContainer {
     top: 0;
   }
 }
@@ -409,6 +420,7 @@ $light-bg: #f5f5f5;
     box-shadow: 0 5px 10px rgba(255, 213, 0, 0.2);
   }
 }
+
 // ==========================================
 // АДАПТИВНІСТЬ
 // ==========================================
@@ -467,7 +479,7 @@ $light-bg: #f5f5f5;
     bottom: 40px;
   }
 
-  .dotWrapper {
+  .dotContainer {
     left: 32px;
     top: 60px;
   }
@@ -490,7 +502,7 @@ $light-bg: #f5f5f5;
   }
 
   .ctaRow {
-    .dotWrapper {
+    .dotContainer {
       top: 50%;
     }
     .ctaBadge {
