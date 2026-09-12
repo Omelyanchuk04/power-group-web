@@ -15,9 +15,9 @@ $light-bg: #f5f5f5;
 }
 
 .container {
-  max-width: 1220px; /* 🔥 1200px контенту + 20px (по 10px з боків) 🔥 */
+  max-width: 1220px;
   margin: 0 auto;
-  padding: 0 10px; /* 🔥 Відступи до краю вікна 10px, як у шапці 🔥 */
+  padding: 0 10px;
   position: relative;
   z-index: 2;
 }
@@ -61,7 +61,7 @@ $light-bg: #f5f5f5;
 
 .timelineWrapper {
   position: relative;
-  max-width: 1220px; /* 🔥 Уніфікована ширина з контейнером 🔥 */
+  max-width: 1220px;
   margin: 0 auto;
   padding: 20px 0;
 }
@@ -75,7 +75,6 @@ $light-bg: #f5f5f5;
   transform: translateX(-50%);
   top: 0;
   width: 14px;
-  /* Висота тепер розраховується автоматично у React, тому bottom: 60px прибрано */
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -92,12 +91,16 @@ $light-bg: #f5f5f5;
   top: -1px;
   left: -1px;
   width: calc(100% + 2px);
-  height: 0; /* Початкова висота 0 */
+  height: 0;
   background: $primary;
-  border-radius: 100px; /* Це гарантує ідеальне заокруглення верху і низу */
+  border-radius: 100px;
   box-shadow:
     inset 0 3px 6px rgba(0, 0, 0, 0.15),
     0 0 12px rgba(0, 86, 179, 0.4);
+
+  /* 🔥 Апаратне прискорення для малювання смуги */
+  will-change: height;
+  transform: translateZ(0);
 }
 
 .stepsContainer {
@@ -120,9 +123,8 @@ $light-bg: #f5f5f5;
 }
 
 /* =========================================
-   ВНУТРІШНІ ТОЧКИ НА СМУЗІ (ЖОВТЕ СКЛО)
+   ВНУТРІШНІ ТОЧКИ НА СМУЗІ
    ========================================= */
-
 .dotContainer {
   position: absolute;
   left: 50%;
@@ -137,9 +139,8 @@ $light-bg: #f5f5f5;
 }
 
 .smallDot {
-  width: 10px; /* Збільшено для кращого ефекту скла */
+  width: 10px;
   height: 10px;
-  /* Ефект жовтого напівпрозорого скла */
   background: linear-gradient(
     135deg,
     rgba(255, 230, 0, 0.95),
@@ -147,13 +148,14 @@ $light-bg: #f5f5f5;
   );
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.9); /* Блік по краю */
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 50%;
-  /* Жовте світіння назовні та внутрішня тінь для об'єму */
   box-shadow:
     0 0 12px rgba(255, 213, 0, 0.9),
     inset 0 2px 4px rgba(255, 255, 255, 0.6);
+
   will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 .card {
@@ -161,23 +163,22 @@ $light-bg: #f5f5f5;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-
   border-radius: 30px;
   padding: 36px;
   position: relative;
   overflow: hidden;
-
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-bottom-color: rgba(255, 255, 255, 0.4);
   border-right-color: rgba(255, 255, 255, 0.4);
-
-  transform: translateZ(0);
   backface-visibility: hidden;
-
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.04),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   transition: box-shadow 0.4s ease;
+
+  /* 🔥 Апаратне прискорення для карток */
+  will-change: transform, opacity;
+  transform: translateZ(0);
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
@@ -241,7 +242,6 @@ $light-bg: #f5f5f5;
   gap: 24px;
 }
 
-// 🔥 Оновлена іконка: ідеально рівна внутрішня обводка без ::before
 .iconCircle {
   width: 64px;
   height: 64px;
@@ -253,17 +253,10 @@ $light-bg: #f5f5f5;
   align-items: center;
   position: relative;
   z-index: 1;
-
-  // ЗАБОРОНЯЄМО стискатися на вузьких екранах!
   flex-shrink: 0;
-
-  // Магія тут: перша тінь (inset) робить ідеальну внутрішню обводку,
-  // друга тінь робить зовнішнє світіння
   box-shadow:
     inset 0 0 0 1.5px rgba(255, 255, 255, 0.3),
-    // Внутрішня лінія
-    0 10px 20px rgba($primary, 0.3); // Зовнішня тінь
-
+    0 10px 20px rgba($primary, 0.3);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   svg {
@@ -307,7 +300,6 @@ $light-bg: #f5f5f5;
 // ==========================================
 // CTA (Call to Action) Секція
 // ==========================================
-
 .ctaRow {
   justify-content: center;
   margin-top: 60px;
@@ -327,7 +319,6 @@ $light-bg: #f5f5f5;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   transition: box-shadow 0.4s ease;
   position: relative;
-
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.95)),
     url("/images/background-img.jpg");
@@ -366,33 +357,22 @@ $light-bg: #f5f5f5;
   padding: 16px 40px;
   font-size: 16px;
   font-weight: 700;
-
-  // Темно-синій або майже чорний текст для сильного контрасту
   color: $text-dark;
-
-  // Щільніший жовтий колір (тепер він не такий прозорий)
   background: linear-gradient(
     135deg,
     rgba(255, 225, 0, 0.85) 0%,
     rgba(255, 200, 0, 0.7) 100%
   );
-
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
-  // Більш виразна біла рамка зверху для ефекту скла
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-bottom-color: rgba(255, 255, 255, 0.3);
   border-right-color: rgba(255, 255, 255, 0.3);
-
   border-radius: 50px;
   cursor: pointer;
-
-  // Зовнішня тепла тінь + внутрішній відблиск для об'єму скла
   box-shadow:
     0 10px 20px rgba(255, 213, 0, 0.2),
     inset 0 2px 2px rgba(255, 255, 255, 0.5);
-
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
   overflow: hidden;
@@ -404,7 +384,6 @@ $light-bg: #f5f5f5;
 
   &:hover {
     transform: translateY(-3px) scale(1.02);
-    // При наведенні скло стає ще більш "густим" і яскравим
     background: linear-gradient(
       135deg,
       rgba(255, 230, 0, 0.9) 0%,
@@ -424,7 +403,6 @@ $light-bg: #f5f5f5;
 // ==========================================
 // АДАПТИВНІСТЬ
 // ==========================================
-
 @media (max-width: 1024px) {
   .card {
     padding: 30px;

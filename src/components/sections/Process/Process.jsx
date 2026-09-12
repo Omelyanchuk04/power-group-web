@@ -8,6 +8,10 @@ import ContactModal from "../../modals/ContactModal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+
+  // 🔥 ВИРІШУЄ ПРОБЛЕМУ ЛАГІВ НА МОБІЛЬНИХ:
+  // Ігноруємо зміну розміру вікна при хованні адресної строки браузера
+  ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 const PROCESS_STEPS = [
@@ -136,14 +140,18 @@ export default function Process() {
 
     updateLineHeight();
 
+    // Перевіряємо тільки зміну ШИРИНИ, щоб уникнути лагів при скролі на телефонах
+    let lastWidth = window.innerWidth;
     const handleResize = () => {
-      updateLineHeight();
-      ScrollTrigger.refresh();
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth;
+        updateLineHeight();
+        ScrollTrigger.refresh();
+      }
     };
     window.addEventListener("resize", handleResize);
 
     let ctx = gsap.context(() => {
-      // Ця змінна відповідає за те, де знаходиться кінець синьої лінії на екрані
       const triggerPoint = "35%";
 
       // 1. СМУГА ПРОГРЕСУ
@@ -154,11 +162,11 @@ export default function Process() {
           trigger: mainLineRef.current,
           start: `top ${triggerPoint}`,
           end: `bottom ${triggerPoint}`,
-          scrub: true,
+          scrub: 0.5, // 🔥 0.5 робить рух смуги м'якшим (без ривків)
         },
       });
 
-      // 2. АНІМАЦІЇ КАРТОК ТА ТОЧОК РОЗДІЛЕНО
+      // 2. АНІМАЦІЇ КАРТОК ТА ТОЧОК
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
 
       rows.forEach((row) => {
@@ -166,27 +174,27 @@ export default function Process() {
         const dotContainer = row.querySelector(`.${styles.dotContainer}`);
         const dot = row.querySelector(`.${styles.smallDot}`);
 
-        // Картки з'являються рано (щойно з'являються на екрані знизу)
+        // Анімація карток
         if (card) {
           gsap.fromTo(
             card,
-            { opacity: 0, y: 50, scale: 0.95 },
+            { opacity: 0, y: 60, scale: 0.95 },
             {
               opacity: 1,
               y: 0,
               scale: 1,
-              duration: 0.6,
-              ease: "power3.out",
+              duration: 0.5,
+              ease: "power2.out",
               scrollTrigger: {
-                trigger: card,
-                start: "top 85%", // Тригер: верх картки досягає 85% висоти екрану
+                trigger: row, // 🔥 Використовуємо рядок як тригер (стабільніше)
+                start: "top 75%", // 🔥 Пізніше! Треба доскролити більше, щоб картка з'явилась
                 toggleActions: "play none none reverse",
               },
             },
           );
         }
 
-        // Точки з'являються ПІЗНІШЕ (рівно в той момент, коли до них доходить синя смуга)
+        // Анімація жовтих точок
         if (dot && dotContainer) {
           gsap.fromTo(
             dot,
@@ -195,10 +203,10 @@ export default function Process() {
               scale: 1,
               opacity: 1,
               duration: 0.3,
-              ease: "back.out(2)",
+              ease: "back.out(1.5)",
               scrollTrigger: {
                 trigger: dotContainer,
-                start: `center ${triggerPoint}`, // Тригер: центр точки стикається з синьою лінією (35%)
+                start: `center ${triggerPoint}`, // Спрацьовує точно при дотику синьої смуги
                 toggleActions: "play none none reverse",
               },
             },
@@ -254,7 +262,6 @@ export default function Process() {
               </div>
             ))}
 
-            {/* ФІНАЛЬНИЙ БЛОК ЗВОРОТНОГО ЗВ'ЯЗКУ */}
             <div className={`${styles.stepRow} ${styles.ctaRow}`}>
               <div className={styles.dotContainer} ref={lastDotRef}>
                 <div className={styles.smallDot}></div>
