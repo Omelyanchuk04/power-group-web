@@ -14,8 +14,8 @@ body {
   background-color: #f5f5f5 !important;
   color: #333333;
 
-  /* 🔥 ЗАМІНИЛИ visible НА hidden ПО ГОРИЗОНТАЛІ */
-  overflow-x: hidden;
+  /* 🔥 ВИПРАВЛЕНО: clip замість hidden, щоб працював sticky сайдбар */
+  overflow-x: clip;
   -webkit-overflow-scrolling: touch !important;
 }
 

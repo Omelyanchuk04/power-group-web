@@ -15,8 +15,7 @@ export default function CatalogPage() {
       style={{
         position: "relative",
         width: "100%",
-        overflowY: "visible",
-        overflowX: "clip",
+        // 🔥 Прибрали overflowX: "clip", щоб запрацювало залипання сайдбару
         backgroundColor: "transparent",
       }}
     >
@@ -25,7 +24,6 @@ export default function CatalogPage() {
           position: "relative",
           zIndex: 1,
           width: "100%",
-          overflow: "visible",
           display: "flex",
           flexDirection: "column",
         }}
@@ -44,7 +42,6 @@ export default function CatalogPage() {
           <GlobalBackground isLayout={false} />
         </div>
 
-        {/* Головний компонент каталогу */}
         <CatalogGrid />
 
         <ContactCTA />
