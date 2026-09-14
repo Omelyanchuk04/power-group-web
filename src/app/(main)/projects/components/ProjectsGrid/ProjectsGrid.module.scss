@@ -41,7 +41,7 @@ $text-gray: #64748b;
   width: 340px;
   flex-shrink: 0;
   position: relative;
-  /* Прибрали фон звідси, тепер сайдбар не тягне пусте скло до низу екрана */
+  /* 🔥 Прибрали фон звідси, тепер сайдбар не тягне пусте скло до низу екрана */
 
   @media (max-width: 1024px) {
     width: 100%;
@@ -51,10 +51,10 @@ $text-gray: #64748b;
 .sidebarSticky {
   position: sticky;
   top: 120px;
-  height: max-content; /* Дозволяє скляному блоку мати висоту по контенту */
+  height: max-content; /* 🔥 Дозволяє скляному блоку мати висоту по контенту */
   padding: 32px 24px;
 
-  /* Скляний фон тепер тут */
+  /* 🔥 Скляний фон тепер тут */
   background: rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(20px) saturate(150%);
   -webkit-backdrop-filter: blur(20px) saturate(150%);
@@ -254,7 +254,7 @@ $text-gray: #64748b;
   }
 }
 
-/* --- 3. Slider --- */
+/* --- 3. Slider (Оновлено: товстий, скляний, з блискавкою) --- */
 .sliderHeader {
   display: flex;
   justify-content: space-between;
@@ -273,15 +273,17 @@ $text-gray: #64748b;
 .glassSlider {
   -webkit-appearance: none;
   width: 100%;
-  height: 14px;
+  height: 14px; /* 🔥 Зробили товстішим (було 6px) */
   border-radius: 100px;
   outline: none;
-  margin: 20px 0;
+  margin: 20px 0; /* Збільшили відступи для великого повзунка */
   border: 1px solid rgba(255, 255, 255, 0.9);
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
+
+    /* 🔥 Великий стильний повзунок як у каталозі */
     width: 40px;
     height: 40px;
     background-color: #ffffff;
@@ -296,6 +298,7 @@ $text-gray: #64748b;
 
     cursor: grab;
 
+    /* Подвійне світіння: жовте і синє */
     box-shadow:
       0 0 12px rgba(255, 204, 0, 0.6),
       0 2px 8px rgba(0, 86, 179, 0.3);
@@ -373,7 +376,7 @@ $text-gray: #64748b;
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 колонки */
+  grid-template-columns: repeat(2, 1fr); /* 🔥 2 колонки */
   gap: 32px;
 
   @media (max-width: 768px) {
@@ -411,27 +414,12 @@ $text-gray: #64748b;
 .imageWrapper {
   position: relative;
   width: 100%;
-  height: 260px; /* Повернуто висоту картинки для 2 колонок */
+  height: 260px; /* 🔥 Повернуто висоту картинки для 2 колонок */
   overflow: hidden;
-
   @media (max-width: 640px) {
     height: 220px;
   }
-
-  /* 🔥 Плавний градієнт-перехід до білого кольору картки 🔥 */
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -1px; /* -1px щоб точно не було зазору */
-    left: 0;
-    width: 100%;
-    height: 60px; /* Висота плавного переходу */
-    background: linear-gradient(to top, #ffffff 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 1;
-  }
 }
-
 .img {
   object-fit: cover;
   transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -477,16 +465,12 @@ $text-gray: #64748b;
   align-items: center;
   justify-content: space-between;
   flex-grow: 1;
-  /* Підтягуємо контент трохи вгору, щоб він плавно заходив під перехід */
-  position: relative;
-  z-index: 2;
 }
-
 .cardText {
   flex: 1;
   padding-right: 12px;
   h4 {
-    font-size: 20px;
+    font-size: 20px; /* 🔥 Повернуто оригінальний розмір шрифту */
     font-weight: 700;
     color: $text-dark;
     margin: 0 0 10px 0;
