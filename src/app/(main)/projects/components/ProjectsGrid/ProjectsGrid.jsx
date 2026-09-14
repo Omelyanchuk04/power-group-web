@@ -165,7 +165,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
 
   const gridRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 6;
+  const projectsPerPage = 8;
 
   const openProjectModal = (project) => {
     openModal("project", {

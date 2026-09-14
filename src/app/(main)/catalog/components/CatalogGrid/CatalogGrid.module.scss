@@ -373,8 +373,8 @@ $bg-light: #f1f5f9;
 .categoriesScrollWrapper {
   width: 100%;
   overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 20px;
+  padding-bottom: 12px;
+  margin-bottom: 40px; /* 🔥 Збільшили відступ до контенту знизу */
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;

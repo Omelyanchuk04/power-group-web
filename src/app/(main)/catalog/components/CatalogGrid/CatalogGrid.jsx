@@ -14,7 +14,7 @@ export default function CatalogGrid() {
   const gridRef = useRef(null);
 
   const MAX_POWER = 150;
-  const [activeCategory, setActiveCategory] = useState("inverters");
+  const [activeCategory, setActiveCategory] = useState("solar_panels");
   const [activeFilters, setActiveFilters] = useState({});
   const [powerLimitUI, setPowerLimitUI] = useState(MAX_POWER);
   const [powerLimit, setPowerLimit] = useState(MAX_POWER);
@@ -22,8 +22,6 @@ export default function CatalogGrid() {
   const itemsPerPage = 9;
 
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  // 🔥 СТАН ДЛЯ МІБІЛЬНОЇ ШТОРКИ ФІЛЬТРІВ
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
   const updateWithAnimation = (stateUpdaterCallback) => {
@@ -135,7 +133,7 @@ export default function CatalogGrid() {
       }
     });
 
-    const hasSlider = FILTER_CONFIG[activeCategory].some(
+    const hasSlider = FILTER_CONFIG[activeCategory]?.some(
       (c) => c.type === "slider",
     );
     if (hasSlider) {
@@ -151,7 +149,6 @@ export default function CatalogGrid() {
     currentPage * itemsPerPage,
   );
 
-  // Блокування скролу сторінки, коли відкриті мобільні фільтри
   useEffect(() => {
     if (isMobileFiltersOpen) {
       document.body.style.overflow = "hidden";
@@ -174,7 +171,6 @@ export default function CatalogGrid() {
           </p>
         </div>
 
-        {/* 🔥 КНОПКА ФІЛЬТРІВ (Тільки на мобільних) */}
         <div className={styles.mobileControls}>
           <button
             className={styles.filterToggleBtn}
@@ -194,6 +190,12 @@ export default function CatalogGrid() {
           </button>
         </div>
 
+        {/* 🔥 ПЕРЕНЕСЛИ ВКЛАДКИ СЮДИ: Тепер вони на всю ширину над усім контентом 🔥 */}
+        <CatalogCategoryTabs
+          activeCategory={activeCategory}
+          onCategoryChange={handleCategoryChange}
+        />
+
         <div className={styles.mainLayout}>
           <CatalogSidebar
             activeCategory={activeCategory}
@@ -203,16 +205,11 @@ export default function CatalogGrid() {
             onPowerChange={setPowerLimitUI}
             onPowerRelease={handlePowerRelease}
             onReset={resetFilters}
-            isOpen={isMobileFiltersOpen} // 🔥 Передаємо стан
-            onClose={() => setIsMobileFiltersOpen(false)} // 🔥 Передаємо функцію закриття
+            isOpen={isMobileFiltersOpen}
+            onClose={() => setIsMobileFiltersOpen(false)}
           />
 
           <div className={styles.content}>
-            <CatalogCategoryTabs
-              activeCategory={activeCategory}
-              onCategoryChange={handleCategoryChange}
-            />
-
             {filteredProducts.length === 0 && (
               <div className={styles.noResults}>
                 <div className={styles.noResultsIcon}>📦</div>
