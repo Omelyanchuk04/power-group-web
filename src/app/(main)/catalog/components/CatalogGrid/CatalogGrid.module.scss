@@ -259,25 +259,38 @@ $bg-light: #f1f5f9;
   height: 14px;
   border-radius: 100px;
   outline: none;
-  margin: 16px 0;
+  margin: 20px 0;
   border: 1px solid rgba(255, 255, 255, 0.9);
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
+
+    /* 🔥 Новий скляний повзунок у стилі Apple */
     width: 36px;
-    height: 36px;
-    background-color: #ffffff;
-    border: 2px solid $primary;
-    border-radius: 50%;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="%23ffcc00"/></svg>');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 14px 14px;
-    cursor: grab;
+    height: 24px;
+    border-radius: 100px;
+
+    background: rgba(255, 255, 255, 0.15); /* Майже прозорий фон */
+    backdrop-filter: blur(12px) saturate(180%); /* Сильне розмиття (скло) */
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+
+    border: 1px solid rgba(255, 255, 255, 0.5); /* Тонка світла рамка по контуру */
+
+    /* Світлий блік зверху, легке затемнення знизу + зовнішня тінь для об'єму */
     box-shadow:
-      0 0 10px rgba(255, 204, 0, 0.6),
-      0 2px 6px rgba(0, 86, 179, 0.3);
+      inset 0 1px 2px rgba(255, 255, 255, 0.9),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+      0 4px 10px rgba(0, 0, 0, 0.15);
+
+    cursor: grab;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  &::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.08); /* Легке збільшення при натисканні */
+    background: rgba(255, 255, 255, 0.25); /* Трохи світлішає при кліку */
   }
 }
 .sliderLabels {
@@ -374,7 +387,8 @@ $bg-light: #f1f5f9;
   width: 100%;
   overflow-x: auto;
   padding-bottom: 12px;
-  margin-bottom: 40px; /* 🔥 Збільшили відступ до контенту знизу */
+  margin-bottom: 40px;
+  text-align: center; /* 🔥 Додали центрування вмісту */
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
@@ -384,6 +398,7 @@ $bg-light: #f1f5f9;
 .segmentedTrack {
   display: inline-flex;
   align-items: center;
+  margin: 0 auto; /* 🔥 Гарантує центрування блоку по горизонталі */
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -478,7 +493,18 @@ $bg-light: #f1f5f9;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
+
+  /* 🔥 ВИПРАВЛЕННЯ: прибрали 'all'. Анімуємо ТІЛЬКИ тінь і фон для ховеру. 
+     Тепер CSS не буде конфліктувати з GSAP! 🔥 */
+  transition:
+    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Додаємо красивий, плавний Apple-hover */
+  &:hover {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.95);
+  }
 
   @media (max-width: 640px) {
     border-radius: 16px;

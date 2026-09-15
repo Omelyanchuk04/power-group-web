@@ -36,7 +36,7 @@ export default function CatalogProductCard({ product, onClick }) {
     <div
       className={styles.productCard}
       onClick={onClick}
-      style={{ opacity: 0 }} // gsap.fromTo анімує це значення
+      /* 🔥 Жорстку прозорість видалено, тепер GSAP керує цим сам 🔥 */
     >
       <div className={styles.imageBox}>
         <img src={product.image} alt={product.name} className={styles.img} />

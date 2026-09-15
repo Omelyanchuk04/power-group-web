@@ -15,7 +15,6 @@ export default function CatalogSidebar({
 }) {
   return (
     <>
-      {/* Темний фон для мобільного, клік по якому закриває фільтри */}
       <div
         className={[styles.sidebarOverlay, isOpen ? styles.open : ""].join(" ")}
         onClick={onClose}
@@ -23,7 +22,6 @@ export default function CatalogSidebar({
 
       <aside className={[styles.sidebar, isOpen ? styles.open : ""].join(" ")}>
         <div className={styles.sidebarSticky}>
-          {/* Мобільна шапка меню фільтрів */}
           <div className={styles.mobileSidebarHeader}>
             <h3>Фільтри</h3>
             <button className={styles.closeSidebarBtn} onClick={onClose}>
@@ -43,23 +41,30 @@ export default function CatalogSidebar({
 
           {FILTER_CONFIG[activeCategory].map((filterGroup) => {
             if (filterGroup.type === "slider") {
-              const fillPercentage = (powerLimitUI / filterGroup.max) * 100;
+              const minVal = filterGroup.min || 0;
+              const maxVal = filterGroup.max || 150;
+              const unit = filterGroup.unit || "кВт";
+
+              // Коректний відсоток для градієнту повзунка
+              const fillPercentage =
+                ((powerLimitUI - minVal) / (maxVal - minVal)) * 100;
+
               return (
                 <div key={filterGroup.key} className={styles.filterGroup}>
                   <div className={styles.sliderHeader}>
                     <h4 className={styles.groupTitle}>{filterGroup.title}</h4>
                     <span className={styles.powerValue}>
-                      {powerLimitUI === filterGroup.max
+                      {powerLimitUI === maxVal
                         ? "Макс."
-                        : `до ${powerLimitUI} кВт`}
+                        : `до ${powerLimitUI} ${unit}`}
                     </span>
                   </div>
                   <div className={styles.sliderWrapper}>
                     <input
                       type="range"
-                      min={filterGroup.min}
-                      max={filterGroup.max}
-                      step={filterGroup.step}
+                      min={minVal}
+                      max={maxVal}
+                      step={filterGroup.step || 1}
                       value={powerLimitUI}
                       onChange={(e) => onPowerChange(Number(e.target.value))}
                       onPointerUp={onPowerRelease}
@@ -71,8 +76,10 @@ export default function CatalogSidebar({
                       }}
                     />
                     <div className={styles.sliderLabels}>
-                      <span>0</span>
-                      <span>{filterGroup.max} кВт+</span>
+                      <span>{minVal}</span>
+                      <span>
+                        {maxVal} {unit}+
+                      </span>
                     </div>
                   </div>
                 </div>

@@ -10,20 +10,35 @@ import CatalogCategoryTabs from "./CatalogCategoryTabs";
 import CatalogProductCard from "./CatalogProductCard";
 import CatalogProductModal from "./CatalogProductModal";
 
+// Допоміжна функція для отримання налаштувань повзунка
+const getSliderConfig = (categoryId) => {
+  return FILTER_CONFIG[categoryId]?.find((f) => f.type === "slider") || null;
+};
+
 export default function CatalogGrid() {
   const gridRef = useRef(null);
+  const isInitialRender = useRef(true); // 🔥 Відстежуємо перший рендер для анімації
 
-  const MAX_POWER = 150;
+  // Стейт для даних (фільтрації)
   const [activeCategory, setActiveCategory] = useState("solar_panels");
+
+  // 🔥 ДОДАНО: Окремий стейт тільки для візуалу кнопок (щоб натискалося миттєво)
+  const [activeTabUI, setActiveTabUI] = useState("solar_panels");
+
+  // Ініціалізація повзунка під поточну категорію
+  const initialSlider = getSliderConfig("solar_panels");
+  const initialMax = initialSlider ? initialSlider.max : 150;
+
   const [activeFilters, setActiveFilters] = useState({});
-  const [powerLimitUI, setPowerLimitUI] = useState(MAX_POWER);
-  const [powerLimit, setPowerLimit] = useState(MAX_POWER);
+  const [powerLimitUI, setPowerLimitUI] = useState(initialMax);
+  const [powerLimit, setPowerLimit] = useState(initialMax);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
+  // АНІМАЦІЯ ЗНИКНЕННЯ
   const updateWithAnimation = (stateUpdaterCallback) => {
     const cards = gridRef.current?.children;
     if (!cards || cards.length === 0) {
@@ -33,10 +48,8 @@ export default function CatalogGrid() {
     gsap.killTweensOf(cards);
     gsap.to(cards, {
       opacity: 0,
-      y: 15,
-      scale: 0.98,
-      duration: 0.2,
-      stagger: 0.02,
+      duration: 0.15,
+      stagger: 0.01,
       ease: "power2.in",
       onComplete: () => {
         stateUpdaterCallback();
@@ -44,23 +57,42 @@ export default function CatalogGrid() {
     });
   };
 
+  // АНІМАЦІЯ ПОЯВИ
   useEffect(() => {
     const cards = gridRef.current?.children;
     if (cards && cards.length > 0) {
-      gsap.killTweensOf(cards);
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 15, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.4,
-          stagger: 0.04,
-          ease: "power3.out",
-          clearProps: "all",
-        },
-      );
+      let ctx = gsap.context(() => {
+        if (isInitialRender.current) {
+          // 1. Перший рендер: плавний виїзд знизу
+          gsap.fromTo(
+            cards,
+            { opacity: 0, y: 24 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              stagger: 0.05,
+              ease: "power3.out",
+              clearProps: "all",
+            },
+          );
+          isInitialRender.current = false;
+        } else {
+          // 2. При перемиканні вкладок: дуже швидке розчинення/поява (щоб не чекати)
+          gsap.fromTo(
+            cards,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: 0.3,
+              stagger: 0.02,
+              ease: "power2.out",
+              clearProps: "all",
+            },
+          );
+        }
+      });
+      return () => ctx.revert();
     }
   }, [currentPage, activeFilters, activeCategory, powerLimit]);
 
@@ -69,7 +101,6 @@ export default function CatalogGrid() {
       setCurrentPage(1);
       setActiveFilters((prev) => {
         if (option === "all") return { ...prev, [filterKey]: [] };
-
         const currentOptions = prev[filterKey] || [];
         if (currentOptions.includes(option)) {
           return {
@@ -84,12 +115,21 @@ export default function CatalogGrid() {
   };
 
   const handleCategoryChange = (categoryId) => {
-    if (activeCategory !== categoryId) {
+    if (activeCategory !== categoryId && activeTabUI !== categoryId) {
+      // 🔥 1. МИТТЄВИЙ відгук: перемикаємо візуал кнопки без жодних затримок
+      setActiveTabUI(categoryId);
+
+      // 2. Запускаємо анімацію і фільтрацію на фоні
       updateWithAnimation(() => {
         setActiveCategory(categoryId);
         setActiveFilters({});
-        setPowerLimit(MAX_POWER);
-        setPowerLimitUI(MAX_POWER);
+
+        // Оновлюємо ліміт повзунка для нової категорії
+        const newSlider = getSliderConfig(categoryId);
+        const newMax = newSlider ? newSlider.max : 150;
+        setPowerLimit(newMax);
+        setPowerLimitUI(newMax);
+
         setCurrentPage(1);
       });
     }
@@ -98,8 +138,10 @@ export default function CatalogGrid() {
   const resetFilters = () => {
     updateWithAnimation(() => {
       setActiveFilters({});
-      setPowerLimit(MAX_POWER);
-      setPowerLimitUI(MAX_POWER);
+      const currentSlider = getSliderConfig(activeCategory);
+      const currentMax = currentSlider ? currentSlider.max : 150;
+      setPowerLimit(currentMax);
+      setPowerLimitUI(currentMax);
       setCurrentPage(1);
     });
   };
@@ -133,9 +175,7 @@ export default function CatalogGrid() {
       }
     });
 
-    const hasSlider = FILTER_CONFIG[activeCategory]?.some(
-      (c) => c.type === "slider",
-    );
+    const hasSlider = getSliderConfig(activeCategory);
     if (hasSlider) {
       result = result.filter((p) => (p.powerNum || 0) <= powerLimit);
     }
@@ -190,9 +230,9 @@ export default function CatalogGrid() {
           </button>
         </div>
 
-        {/* 🔥 ПЕРЕНЕСЛИ ВКЛАДКИ СЮДИ: Тепер вони на всю ширину над усім контентом 🔥 */}
+        {/* 🔥 ПЕРЕДАЄМО activeTabUI ЗАМІСТЬ activeCategory */}
         <CatalogCategoryTabs
-          activeCategory={activeCategory}
+          activeCategory={activeTabUI}
           onCategoryChange={handleCategoryChange}
         />
 
@@ -212,7 +252,6 @@ export default function CatalogGrid() {
           <div className={styles.content}>
             {filteredProducts.length === 0 && (
               <div className={styles.noResults}>
-                <div className={styles.noResultsIcon}>📦</div>
                 <h3>Товарів не знайдено</h3>
                 <p>Змініть критерії пошуку або скиньте фільтри.</p>
               </div>

@@ -13,22 +13,22 @@ $instagram-color: #e1306c;
 // --- ОСНОВНІ БЛОКИ ---
 .footerWrapper {
   background-color: transparent;
-  padding: 100px 10px 30px; /* 🔥 Відступи по 10px з боків (як у шапці) 🔥 */
+  padding: 100px 10px 30px; /* Відступи по 10px з боків (як у шапці) */
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 1220px; /* 🔥 Обмеження: 1200px контенту + 20px відступів */
-  margin: 0 auto; /* Центрування на великих екранах */
+  /* 🔥 Прибрано max-width: 1220px та margin: 0 auto, щоб фон тягнувся на весь екран 🔥 */
   display: flex;
   justify-content: center;
+  overflow: hidden; /* Відрізає краї фону, щоб не було горизонтального скролу */
 }
 
-// Обгортка для фону (Залишається на всю ширину екрану, якщо вона винесена за footerWrapper, або всередині)
+// Обгортка для фону
 .footerBgWrapper {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100%; /* Тепер 100% від ширини всього екрана */
   height: 100%;
   overflow: hidden;
   opacity: 0.3;
@@ -61,8 +61,7 @@ $instagram-color: #e1306c;
 
 .footerCard {
   width: 100%;
-  max-width: 1200px;
-  /* margin: 0 auto; вже не обов'язковий, бо footerWrapper має max-width, але залишаємо для надійності */
+  max-width: 1200px; /* Картка залишається обмеженою по ширині */
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.6);
   -webkit-backdrop-filter: blur(24px) saturate(100%);
@@ -196,7 +195,7 @@ $instagram-color: #e1306c;
   }
 }
 
-// 🔥 ОДНА СПІЛЬНА СІТКА ДЛЯ ВСІХ МЕРЕЖ (2х2) 🔥
+// ОДНА СПІЛЬНА СІТКА ДЛЯ ВСІХ МЕРЕЖ (2х2)
 .socials {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -215,7 +214,7 @@ $instagram-color: #e1306c;
     border-radius: 100px;
     color: $white;
     transition: all 0.3s ease;
-    white-space: nowrap; // Щоб номери не розривалися на два рядки
+    white-space: nowrap;
 
     svg {
       width: 16px;
@@ -348,7 +347,7 @@ $instagram-color: #e1306c;
 
 @media (max-width: 560px) {
   .footerWrapper {
-    padding: 30px 10px; /* Відступи 10px залишаються і на мобайлі */
+    padding: 30px 10px;
   }
   .socials {
     .socialLink {

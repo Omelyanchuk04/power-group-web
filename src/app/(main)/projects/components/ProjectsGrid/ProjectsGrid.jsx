@@ -156,16 +156,13 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     serviceType: ["all"],
   });
 
-  // 🔥 Обмеження 500 кВт
   const MAX_POWER = 500;
-
-  // 🔥 Два стани: один для візуалу повзунка, інший для реальної фільтрації
   const [powerLimitUI, setPowerLimitUI] = useState(MAX_POWER);
   const [powerLimit, setPowerLimit] = useState(MAX_POWER);
 
   const gridRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const projectsPerPage = 8;
+  const projectsPerPage = 12;
 
   const openProjectModal = (project) => {
     openModal("project", {
@@ -199,18 +196,19 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     indexOfLastProject,
   );
 
+  // 🔥 АНІМАЦІЯ ЗНИКНЕННЯ (Apple style) 🔥
   const updateWithAnimation = (stateUpdaterCallback) => {
     const cards = gridRef.current?.children;
     if (!cards || cards.length === 0) {
       stateUpdaterCallback();
       return;
     }
+    gsap.killTweensOf(cards);
     gsap.to(cards, {
       opacity: 0,
-      y: 15,
-      scale: 0.98,
-      duration: 0.2,
-      stagger: 0.02,
+      y: 10,
+      duration: 0.15,
+      stagger: 0.01,
       ease: "power2.in",
       onComplete: () => {
         stateUpdaterCallback();
@@ -218,22 +216,26 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     });
   };
 
+  // 🔥 АНІМАЦІЯ ПОЯВИ (Apple style) 🔥
   useEffect(() => {
     const cards = gridRef.current?.children;
+
     if (cards && cards.length > 0) {
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 15, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.4,
-          stagger: 0.04,
-          ease: "power3.out",
-          clearProps: "all",
-        },
-      );
+      let ctx = gsap.context(() => {
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 24 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.05,
+            ease: "power3.out",
+            clearProps: "all",
+          },
+        );
+      });
+      return () => ctx.revert();
     }
   }, [currentPage, activeFilters, powerLimit]);
 
@@ -257,7 +259,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     updateWithAnimation(() => {
       setActiveFilters({ clientType: "all", serviceType: ["all"] });
       setPowerLimit(MAX_POWER);
-      setPowerLimitUI(MAX_POWER); // Скидаємо і візуал теж
+      setPowerLimitUI(MAX_POWER);
       setCurrentPage(1);
     });
   };
@@ -368,14 +370,12 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     type="range"
                     min="0"
                     max={MAX_POWER}
-                    step="5" /* Плавний крок */
+                    step="5"
                     value={powerLimitUI}
                     onChange={(e) => {
-                      // 🔥 Оновлюємо лише візуал під час руху (без фліккерінгу)
                       setPowerLimitUI(Number(e.target.value));
                     }}
                     onPointerUp={() => {
-                      // 🔥 Фільтруємо картки тільки коли користувач відпустив повзунок
                       if (powerLimit !== powerLimitUI) {
                         updateWithAnimation(() => {
                           setPowerLimit(powerLimitUI);
@@ -384,7 +384,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                       }
                     }}
                     onKeyUp={() => {
-                      // Додаткова підтримка для клавіатури
                       if (powerLimit !== powerLimitUI) {
                         updateWithAnimation(() => {
                           setPowerLimit(powerLimitUI);
@@ -412,7 +411,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
           <div className={styles.content}>
             {filteredProjects.length === 0 && (
               <div className={styles.noResults}>
-                <div className={styles.noResultsIcon}>🔍</div>
                 <h3>Немає таких проектів</h3>
                 <p>Змініть критерії пошуку або скиньте фільтри.</p>
               </div>

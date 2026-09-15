@@ -36,7 +36,8 @@ $text-gray: #64748b;
 .modalContent {
   background: #ffffff;
   width: 100%;
-  max-width: 1000px;
+  /* 🔥 Зробили модалку ширшою: було 1000px, стало 1280px 🔥 */
+  max-width: 1280px;
   margin: 0 auto;
   border-radius: 32px;
   padding: 0;
@@ -182,7 +183,7 @@ $text-gray: #64748b;
   align-items: center;
   color: #0f172a;
   cursor: pointer;
-  z-index: 100; /* 🔥 Гарантує, що стрілка завжди над фото 🔥 */
+  z-index: 100;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
 
@@ -284,7 +285,6 @@ $text-gray: #64748b;
   }
 }
 
-/* 🔥 ОПТИМІЗОВАНИЙ БЛОК ХАРАКТЕРИСТИК ДЛЯ МОБАЙЛУ 🔥 */
 .statsHorizontalRow {
   display: flex;
   align-items: center;
@@ -295,7 +295,6 @@ $text-gray: #64748b;
   padding: 20px 24px;
   margin-bottom: 32px;
 
-  /* 🔥 Сітка 2 на 2 активується вже на планшетах 🔥 */
   @media (max-width: 1024px) {
     border-radius: 40px;
     display: grid;
@@ -403,8 +402,6 @@ $text-gray: #64748b;
       font-size: 16px;
       font-weight: 800;
       color: #0f172a;
-
-      /* Дозволяємо нормальне перенесення для довгих слів */
       overflow-wrap: break-word;
       word-break: normal;
 
@@ -611,7 +608,7 @@ $text-gray: #64748b;
   cursor: pointer;
   backdrop-filter: blur(4px);
   transition: all 0.2s;
-  z-index: 100; /* 🔥 Гарантує клікабельність кнопок у фулскріні 🔥 */
+  z-index: 100;
 
   &:hover:not(.disabled) {
     background: rgba(255, 255, 255, 0.25);

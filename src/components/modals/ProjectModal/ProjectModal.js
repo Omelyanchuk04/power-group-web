@@ -303,7 +303,8 @@ export default function ProjectModal({ project, onClose }) {
                     alt={`${project.title} - фото ${index + 1}`}
                     fill
                     className={styles.modalImg}
-                    sizes="(max-width: 1000px) 100vw, 1000px"
+                    /* 🔥 ОНОВЛЕНО sizes для ширшої модалки 🔥 */
+                    sizes="(max-width: 1280px) 100vw, 1280px"
                   />
                 </div>
               ))}
