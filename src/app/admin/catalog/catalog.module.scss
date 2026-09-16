@@ -16,7 +16,6 @@ $apple-border: #e5e5ea;
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 0;
 }
 
 .header {
@@ -101,7 +100,6 @@ $apple-border: #e5e5ea;
     &:hover {
       background: rgba(0, 0, 0, 0.4);
       border-color: rgba(255, 255, 255, 0.25);
-      transform: scale(1.05);
     }
   }
   &:active {
@@ -138,7 +136,6 @@ $apple-border: #e5e5ea;
     &:hover {
       background: rgba(0, 0, 0, 0.4);
       border-color: rgba(255, 255, 255, 0.25);
-      transform: scale(1.03);
     }
   }
   &:active {
