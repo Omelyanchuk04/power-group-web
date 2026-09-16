@@ -66,6 +66,22 @@ const IconChevronRight = () => (
     <polyline points="9 18 15 12 9 6"></polyline>
   </svg>
 );
+const IconCatalog = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="3" y1="9" x2="21" y2="9"></line>
+    <line x1="9" y1="21" x2="9" y2="9"></line>
+  </svg>
+);
 
 export default function AdminHomePage() {
   return (
@@ -78,7 +94,6 @@ export default function AdminHomePage() {
         <h2 className={styles.title}>Вітаємо в системі управління</h2>
         <p className={styles.subtitle}>Оберіть потрібний розділ для роботи</p>
 
-        {/* Вертикальний список без бордерів */}
         <div className={styles.menuList}>
           <Link href="/admin/leads" className={styles.menuRow}>
             <div className={`${styles.rowIcon} ${styles.blueIcon}`}>
@@ -100,6 +115,25 @@ export default function AdminHomePage() {
             <div className={styles.rowInfo}>
               <h3>Усі проєкти</h3>
               <span>Керування портфоліо</span>
+            </div>
+            <div className={styles.chevron}>
+              <IconChevronRight />
+            </div>
+          </Link>
+
+          <Link href="/admin/catalog" className={styles.menuRow}>
+            <div
+              className={`${styles.rowIcon}`}
+              style={{
+                color: "#10b981",
+                background: "rgba(16, 185, 129, 0.1)",
+              }}
+            >
+              <IconCatalog />
+            </div>
+            <div className={styles.rowInfo}>
+              <h3>Каталог обладнання</h3>
+              <span>Керування товарами</span>
             </div>
             <div className={styles.chevron}>
               <IconChevronRight />
