@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation"; // 🔥 ДОДАЛИ ІМПОРТ
 import NextImage from "next/image";
 import gsap from "gsap";
 import { useModal } from "@/context/ModalContext";
@@ -116,6 +117,7 @@ const IconPin = () => (
 );
 
 export default function ProjectsGrid({ initialProjects = [] }) {
+  const pathname = usePathname(); // 🔥 СЛІДКУЄМО ЗА ЗМІНОЮ СТОРІНКИ
   const { openModal } = useModal();
 
   const formatPower = (kw) => {
@@ -196,39 +198,18 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     indexOfLastProject,
   );
 
-  // 🔥 АНІМАЦІЯ ЗНИКНЕННЯ (Apple style) 🔥
-  const updateWithAnimation = (stateUpdaterCallback) => {
-    const cards = gridRef.current?.children;
-    if (!cards || cards.length === 0) {
-      stateUpdaterCallback();
-      return;
-    }
-    gsap.killTweensOf(cards);
-    gsap.to(cards, {
-      opacity: 0,
-      y: 10,
-      duration: 0.15,
-      stagger: 0.01,
-      ease: "power2.in",
-      onComplete: () => {
-        stateUpdaterCallback();
-      },
-    });
-  };
-
-  // 🔥 АНІМАЦІЯ ПОЯВИ (Apple style) 🔥
+  // 🔥 АНІМАЦІЯ ЛИШЕ ПРИ ПОЯВІ / ПОВЕРНЕННІ НА СТОРІНКУ 🔥
   useEffect(() => {
     const cards = gridRef.current?.children;
-
     if (cards && cards.length > 0) {
       let ctx = gsap.context(() => {
         gsap.fromTo(
           cards,
-          { opacity: 0, y: 24 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
+            duration: 0.8,
             stagger: 0.05,
             ease: "power3.out",
             clearProps: "all",
@@ -237,45 +218,38 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       });
       return () => ctx.revert();
     }
-  }, [currentPage, activeFilters, powerLimit]);
+  }, [pathname]); // Запускається ТІЛЬКИ коли змінюється маршрут сторінки!
 
+  // 🔥 МИТТЄВІ ДІЇ ДЛЯ ФІЛЬТРІВ (Без анімацій) 🔥
   const handleFilterClick = (groupKey, filterId) => {
-    updateWithAnimation(() => {
-      setCurrentPage(1);
-      setActiveFilters((prev) => {
-        if (groupKey === "clientType") return { ...prev, clientType: filterId };
-        const currentGroup = [...prev.serviceType];
-        if (filterId === "all") return { ...prev, serviceType: ["all"] };
-        let newGroup = currentGroup.includes(filterId)
-          ? currentGroup.filter((id) => id !== filterId)
-          : [...currentGroup.filter((id) => id !== "all"), filterId];
-        if (!newGroup.length) newGroup = ["all"];
-        return { ...prev, serviceType: newGroup };
-      });
+    setCurrentPage(1);
+    setActiveFilters((prev) => {
+      if (groupKey === "clientType") return { ...prev, clientType: filterId };
+      const currentGroup = [...prev.serviceType];
+      if (filterId === "all") return { ...prev, serviceType: ["all"] };
+      let newGroup = currentGroup.includes(filterId)
+        ? currentGroup.filter((id) => id !== filterId)
+        : [...currentGroup.filter((id) => id !== "all"), filterId];
+      if (!newGroup.length) newGroup = ["all"];
+      return { ...prev, serviceType: newGroup };
     });
   };
 
   const resetFilters = () => {
-    updateWithAnimation(() => {
-      setActiveFilters({ clientType: "all", serviceType: ["all"] });
-      setPowerLimit(MAX_POWER);
-      setPowerLimitUI(MAX_POWER);
-      setCurrentPage(1);
-    });
+    setActiveFilters({ clientType: "all", serviceType: ["all"] });
+    setPowerLimit(MAX_POWER);
+    setPowerLimitUI(MAX_POWER);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber === currentPage) return;
-
     if (gridRef.current) {
       const yOffset =
         gridRef.current.getBoundingClientRect().top + window.scrollY - 150;
       window.scrollTo({ top: yOffset, behavior: "smooth" });
     }
-
-    updateWithAnimation(() => {
-      setCurrentPage(pageNumber);
-    });
+    setCurrentPage(pageNumber);
   };
 
   const sliderFillPercentage = (powerLimitUI / MAX_POWER) * 100;
@@ -377,18 +351,14 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     }}
                     onPointerUp={() => {
                       if (powerLimit !== powerLimitUI) {
-                        updateWithAnimation(() => {
-                          setPowerLimit(powerLimitUI);
-                          setCurrentPage(1);
-                        });
+                        setPowerLimit(powerLimitUI);
+                        setCurrentPage(1);
                       }
                     }}
                     onKeyUp={() => {
                       if (powerLimit !== powerLimitUI) {
-                        updateWithAnimation(() => {
-                          setPowerLimit(powerLimitUI);
-                          setCurrentPage(1);
-                        });
+                        setPowerLimit(powerLimitUI);
+                        setCurrentPage(1);
                       }
                     }}
                     className={styles.glassSlider}
