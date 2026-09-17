@@ -148,7 +148,6 @@ export default function CatalogAdminPage() {
         if (settingsRes.ok) {
           const settings = await settingsRes.json();
           settingsCache = settings;
-          // Якщо категорій у БД немає, беремо ключі з нашого об'єкту іконок (хардкод)
           setCategories(
             settings.categories?.length > 0
               ? settings.categories
@@ -300,7 +299,6 @@ export default function CatalogAdminPage() {
           </div>
 
           <div className={styles.settingsGroup}>
-            {/* 🔥 Прибрано кнопку налаштування категорій 🔥 */}
             <button
               className={styles.settingBtn}
               onClick={() => setActiveModal("brands")}
@@ -365,6 +363,16 @@ export default function CatalogAdminPage() {
               <table className={styles.table}>
                 <thead>
                   <tr>
+                    {/* 🔥 ДОДАНО КОЛОНКУ ДЛЯ НОМЕРА 🔥 */}
+                    <th
+                      style={{
+                        width: "40px",
+                        paddingRight: "0",
+                        textAlign: "center",
+                      }}
+                    >
+                      №
+                    </th>
                     <th>Фото</th>
                     <th>Назва</th>
                     <th>Категорія</th>
@@ -375,7 +383,7 @@ export default function CatalogAdminPage() {
                   {isLoading && displayedItems.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="4"
+                        colSpan="5"
                         style={{
                           padding: "60px",
                           textAlign: "center",
@@ -388,7 +396,7 @@ export default function CatalogAdminPage() {
                   ) : displayedItems.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="4"
+                        colSpan="5"
                         style={{ padding: "60px", textAlign: "center" }}
                       >
                         <div style={{ fontSize: "40px", marginBottom: "16px" }}>
@@ -407,7 +415,7 @@ export default function CatalogAdminPage() {
                       </td>
                     </tr>
                   ) : (
-                    displayedItems.map((item) => (
+                    displayedItems.map((item, index) => (
                       <tr
                         key={item._id}
                         className={styles.projectRow}
@@ -415,6 +423,8 @@ export default function CatalogAdminPage() {
                           router.push(`/admin/catalog/${item._id}`)
                         }
                       >
+                        {/* 🔥 ДОДАНО НОМЕР ПЕРЕД ФОТО 🔥 */}
+                        <td className={styles.cellIndex}>{index + 1}.</td>
                         <td className={styles.cellImg}>
                           {item.image ? (
                             <img
@@ -541,7 +551,19 @@ export default function CatalogAdminPage() {
                       }}
                     />
                   ) : (
-                    <span className={styles.settingsItemText}>{item}</span>
+                    <span className={styles.settingsItemText}>
+                      <span
+                        style={{
+                          color: "#9ca3af",
+                          marginRight: "8px",
+                          fontWeight: "600",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {index + 1}.
+                      </span>
+                      {item}
+                    </span>
                   )}
                   <div className={styles.settingsItemActions}>
                     {editingIndex === index ? (

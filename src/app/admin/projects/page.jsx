@@ -359,12 +359,21 @@ export default function ProjectsPage() {
             </button>
           </div>
 
-          {/* 🔥 ПОВЕРНУЛИ ТВОЮ СКЛЯНУ ОБГОРТКУ 🔥 */}
           <div className={styles.glassPanel}>
             <div className={styles.tableContainer}>
               <table className={styles.table}>
                 <thead>
                   <tr>
+                    {/* 🔥 ДОДАНО КОЛОНКУ НОМЕРА 🔥 */}
+                    <th
+                      style={{
+                        width: "40px",
+                        paddingRight: "0",
+                        textAlign: "center",
+                      }}
+                    >
+                      №
+                    </th>
                     <th>Фото</th>
                     <th>Назва</th>
                     <th>Локація</th>
@@ -376,7 +385,7 @@ export default function ProjectsPage() {
                   {isLoading ? (
                     <tr>
                       <td
-                        colSpan="5"
+                        colSpan="6"
                         style={{
                           padding: "60px",
                           textAlign: "center",
@@ -389,7 +398,7 @@ export default function ProjectsPage() {
                   ) : projects.length === 0 ? (
                     <tr>
                       <td
-                        colSpan="5"
+                        colSpan="6"
                         style={{ padding: "60px", textAlign: "center" }}
                       >
                         <div style={{ fontSize: "40px", marginBottom: "16px" }}>
@@ -408,14 +417,15 @@ export default function ProjectsPage() {
                       </td>
                     </tr>
                   ) : (
-                    projects.map((p) => (
+                    projects.map((p, index) => (
                       <tr
                         key={p._id}
                         className={styles.projectRow}
                         onClick={() => handleEditClick(p)}
                       >
+                        {/* 🔥 ВИВЕДЕНО НОМЕР 🔥 */}
+                        <td className={styles.cellIndex}>{index + 1}.</td>
                         <td className={styles.cellImg}>
-                          {/* 🔥 ВИКОРИСТОВУЄМО ОПТИМІЗОВАНУ МІНІАТЮРУ 🔥 */}
                           <img
                             src={getThumbnail(p.mainImage)}
                             className={styles.projectImg}
@@ -466,13 +476,11 @@ export default function ProjectsPage() {
             <IconArrowLeft /> Повернутися
           </button>
 
-          {/* 🔥 СКЛЯНА ОБГОРТКА ДЛЯ ФОРМИ 🔥 */}
           <div className={styles.glassPanel}>
             <h2 className={styles.formTitle}>
               {view === "edit" ? "Редагування проєкту" : "Створення нового"}
             </h2>
             <form onSubmit={handleSubmit} className={styles.formLayout}>
-              {/* Тут весь твій код форми без змін */}
               <div className={styles.grid3}>
                 <div className={styles.inputGroup}>
                   <label>

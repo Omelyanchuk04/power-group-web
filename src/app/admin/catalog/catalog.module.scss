@@ -1,4 +1,3 @@
-$primary: #0056b3;
 $danger: #ef4444;
 $text-dark: #111827;
 $text-gray: #4b5563;
@@ -16,8 +15,7 @@ $apple-border: #e5e5ea;
 .container {
   max-width: 1200px;
   margin: 0 auto;
-
-  min-height: 101vh; /* 🔥 ФІКС СТРИБКІВ: Завжди тримаємо скролбар активним */
+  min-height: 101vh;
 }
 
 .header {
@@ -70,7 +68,7 @@ $apple-border: #e5e5ea;
 }
 
 /* =========================================
-   КНОПКИ (APPLE DARK GLASS) З ПРОЄКТІВ
+   КНОПКИ (APPLE DARK GLASS) 
    ========================================= */
 .backToAdminBtn {
   display: flex;
@@ -203,7 +201,7 @@ $apple-border: #e5e5ea;
     }
     .cardContent h3 {
       text-decoration: underline;
-      color: $primary;
+      color: $apple-blue;
     }
   }
 }
@@ -276,7 +274,7 @@ $apple-border: #e5e5ea;
 
 .toggleBtn {
   background: transparent;
-  border: 1px solid transparent; /* Запобігає стрибкам */
+  border: 1px solid transparent;
   padding: 8px 18px;
   border-radius: 10px;
   font-weight: 600;
@@ -317,7 +315,7 @@ $apple-border: #e5e5ea;
   &:hover {
     border-color: rgba(0, 86, 179, 0.3);
     background: white;
-    color: $primary;
+    color: $apple-blue;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   }
 }
@@ -327,7 +325,7 @@ $apple-border: #e5e5ea;
   align-items: center;
   gap: 8px;
   background: rgba(0, 86, 179, 0.08);
-  color: $primary;
+  color: $apple-blue;
   padding: 8px 16px;
   border-radius: 100px;
   font-size: 14px;
@@ -341,7 +339,7 @@ $apple-border: #e5e5ea;
     height: 20px;
     border-radius: 50%;
     border: none;
-    color: $primary;
+    color: $apple-blue;
     cursor: pointer;
     font-size: 14px;
     display: flex;
@@ -350,14 +348,14 @@ $apple-border: #e5e5ea;
     transition: all 0.2s;
 
     &:hover {
-      background: $primary;
+      background: $apple-blue;
       color: white;
     }
   }
 }
 
 /* =========================================
-   ТАБЛИЦЯ І КНОПКИ (СТИЛЬ З ПРОЄКТІВ)
+   ТАБЛИЦЯ І КНОПКИ
    ========================================= */
 .tableContainer {
   width: 100%;
@@ -400,6 +398,71 @@ $apple-border: #e5e5ea;
     &:hover {
       background-color: rgba(255, 255, 255, 0.4);
     }
+
+    /* 🔥 ОНОВЛЕНА СІТКА ДЛЯ МОБІЛЬНИХ 🔥 */
+    @media (max-width: 768px) {
+      display: grid;
+      /* Додано 24px колонку під номер товару */
+      grid-template-columns: 24px 85px 1fr auto;
+      grid-template-rows: auto auto auto;
+      column-gap: 12px;
+      row-gap: 4px;
+
+      margin: 0 -16px;
+      padding: 16px;
+
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 0;
+      box-shadow: none;
+      height: auto;
+      -webkit-tap-highlight-color: transparent;
+
+      &:last-child {
+        border-bottom: none;
+      }
+      &:active {
+        background: rgba(0, 0, 0, 0.04);
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+    min-width: auto;
+    thead {
+      display: none;
+    }
+    tbody {
+      display: flex;
+      flex-direction: column;
+    }
+    td {
+      display: block;
+      padding: 0;
+      border: none;
+    }
+  }
+}
+
+/* 🔥 СТИЛІ КОЛОНКИ З НОМЕРОМ 🔥 */
+.cellIndex {
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 15px;
+  width: 40px;
+  text-align: center;
+  padding-right: 0 !important;
+
+  @media (max-width: 768px) {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 14px;
+    padding: 0 !important;
   }
 }
 
@@ -412,10 +475,29 @@ $apple-border: #e5e5ea;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
+.cellImg {
+  @media (max-width: 768px) {
+    grid-column: 2; /* Посунуто через номер */
+    grid-row: 1 / 4;
+    align-self: stretch;
+    display: flex;
+  }
+}
+
 .cellTitle {
   font-weight: 700;
   color: $text-dark;
   font-size: 16px;
+
+  @media (max-width: 768px) {
+    grid-column: 3; /* Посунуто через номер */
+    grid-row: 1;
+    font-size: 15px;
+    align-self: start;
+    display: block;
+    line-height: 1.3;
+    margin-top: -2px;
+  }
 }
 
 .categoryBadge {
@@ -427,11 +509,34 @@ $apple-border: #e5e5ea;
   font-weight: 600;
   white-space: nowrap;
   display: inline-block;
+
+  @media (max-width: 768px) {
+    margin-top: 4px;
+  }
+}
+
+.cellClient {
+  @media (max-width: 768px) {
+    grid-column: 3; /* Посунуто через номер */
+    grid-row: 2;
+  }
 }
 
 .cellActions {
   text-align: right;
   white-space: nowrap;
+
+  @media (max-width: 768px) {
+    grid-column: 4; /* Посунуто через номер */
+    grid-row: 1 / 4;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+
+    .edit {
+      display: none;
+    }
+  }
 }
 
 .actionBtn {
@@ -453,12 +558,22 @@ $apple-border: #e5e5ea;
 
   &.edit {
     background: rgba(255, 255, 255, 0.8);
-    color: $primary;
+    color: $apple-blue;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
   &.delete {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
+  }
+
+  @media (max-width: 768px) {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px !important;
+    svg {
+      width: 18px;
+      height: 18px;
+    }
   }
 }
 
@@ -701,7 +816,7 @@ $apple-border: #e5e5ea;
 }
 
 /* =========================================
-   МОДАЛЬНЕ ВІКНО ВИДАЛЕННЯ З ПРОЄКТІВ
+   МОДАЛЬНЕ ВІКНО ВИДАЛЕННЯ
    ========================================= */
 .modalOverlay {
   position: fixed;
