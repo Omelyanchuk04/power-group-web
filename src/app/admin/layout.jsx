@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 import Header from "@/components/layout/Header";
 import styles from "./layout.module.scss";
@@ -78,6 +78,34 @@ const IconCatalog = () => (
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // React 18 Transition API для фонової навігації
+  const [isPending, startTransition] = useTransition();
+  // Оптимістичний стан для миттєвої реакції інтерфейсу
+  const [optimisticPath, setOptimisticPath] = useState(null);
+
+  // Скидаємо оптимістичний стан, коли Next.js нарешті змінив реальний шлях
+  useEffect(() => {
+    setOptimisticPath(null);
+  }, [pathname]);
+
+  const handleNavigation = (e, path) => {
+    e.preventDefault(); // Забороняємо Next.js робити стандартний блокуючий перехід
+
+    if (pathname === path || pathname.startsWith(path + "/")) return;
+
+    // 1. Миттєво підсвічуємо кнопку (0 мс затримки)
+    setOptimisticPath(path);
+
+    // 2. Запускаємо перехід як неприорітетне фонове завдання
+    startTransition(() => {
+      router.push(path);
+    });
+  };
+
+  // Визначаємо, який шлях зараз показувати як активний
+  const currentPath = optimisticPath || pathname;
 
   return (
     <div className={styles.dashboardWrapper}>
@@ -118,25 +146,25 @@ export default function AdminLayout({ children }) {
           </div>
           <div className={styles.navContainer}>
             <Link
-              prefetch={true}
               href="/admin/leads"
-              className={`${styles.navBtn} ${pathname.includes("/admin/leads") ? styles.active : ""}`}
+              onClick={(e) => handleNavigation(e, "/admin/leads")}
+              className={`${styles.navBtn} ${currentPath.includes("/admin/leads") ? styles.active : ""}`}
             >
               <IconInbox /> <span>Заявки</span>
             </Link>
 
             <Link
-              prefetch={true}
               href="/admin/projects"
-              className={`${styles.navBtn} ${pathname.includes("/admin/projects") ? styles.active : ""}`}
+              onClick={(e) => handleNavigation(e, "/admin/projects")}
+              className={`${styles.navBtn} ${currentPath.includes("/admin/projects") ? styles.active : ""}`}
             >
               <IconProjects /> <span>Усі проєкти</span>
             </Link>
 
             <Link
-              prefetch={true}
               href="/admin/catalog"
-              className={`${styles.navBtn} ${pathname.includes("/admin/catalog") ? styles.active : ""}`}
+              onClick={(e) => handleNavigation(e, "/admin/catalog")}
+              className={`${styles.navBtn} ${currentPath.includes("/admin/catalog") ? styles.active : ""}`}
             >
               <IconCatalog /> <span>Каталог обладнання</span>
             </Link>
@@ -149,7 +177,17 @@ export default function AdminLayout({ children }) {
           </div>
         </aside>
 
-        <main className={styles.mainContent}>{children}</main>
+        {/* Контент плавно реагує на фоновий перехід, але не зникає */}
+        <main
+          className={styles.mainContent}
+          style={{
+            opacity: isPending ? 0.6 : 1,
+            pointerEvents: isPending ? "none" : "auto",
+            transition: "opacity 0.2s ease",
+          }}
+        >
+          {children}
+        </main>
       </div>
     </div>
   );
