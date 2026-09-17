@@ -49,6 +49,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
+/* 🔥 ОБГОРТКА ПОВЕРНУЛАСЬ 🔥 */
 .glassPanel {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
@@ -69,26 +70,21 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 /* =========================================
    КНОПКИ (APPLE DARK GLASS)
    ========================================= */
-
 .backToAdminBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-
-  /* 🔥 Повернуто прозорість 🔥 */
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
   color: #ffffff;
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.15),
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
-
   transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
@@ -120,12 +116,9 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   gap: 8px;
   padding: 0 24px;
   height: 44px;
-
-  /* 🔥 Повернуто прозорість 🔥 */
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 100px;
   color: #ffffff;
@@ -243,8 +236,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 
   @media (max-width: 768px) {
-    /* 🔥 Прибираємо горизонтальний скрол на мобільному, 
-       щоб негативні відступи (margin: -16px) не створювали пустих зон */
     overflow-x: visible;
   }
 }
@@ -276,7 +267,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       background-color: rgba(255, 255, 255, 0.4);
     }
 
-    /* 🔥 МОБІЛЬНИЙ ВИГЛЯД: На всю ширину екрану 🔥 */
     @media (max-width: 768px) {
       display: grid;
       grid-template-columns: 85px 1fr auto;
@@ -284,9 +274,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       column-gap: 12px;
       row-gap: 4px;
 
-      /* МАГІЯ ТУТ: Негативні відступи тягнуть картку до країв батьківського padding */
       margin: 0 -16px;
-      /* Внутрішній padding повертає контент на нормальну позицію */
       padding: 16px;
 
       background: transparent;
@@ -398,7 +386,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     align-items: center;
     justify-content: flex-end;
 
-    /* Ховаємо кнопку "Редагувати", бо вся картка клікабельна */
     .edit {
       display: none;
     }

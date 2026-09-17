@@ -128,6 +128,15 @@ const initialForm = {
 
 let projectsCache = null;
 
+// 🔥 МАГІЯ ОПТИМІЗАЦІЇ: Змушуємо Cloudinary віддати картинку розміром 200px (вагою 5КБ) замість 5МБ оригіналу
+const getThumbnail = (url) => {
+  if (!url) return "";
+  if (url.includes("/upload/")) {
+    return url.replace("/upload/", "/upload/w_200,h_150,c_fill,q_auto,f_auto/");
+  }
+  return url;
+};
+
 export default function ProjectsPage() {
   const [projects, setProjects] = useState(projectsCache || []);
   const [isLoading, setIsLoading] = useState(!projectsCache);
@@ -350,19 +359,9 @@ export default function ProjectsPage() {
             </button>
           </div>
 
-          {/* 🔥 ДОДАНО АПАРАТНЕ ПРИСКОРЕННЯ (GPU) ДЛЯ УСУНЕННЯ БІЛИХ КВАДРАТІВ 🔥 */}
-          <div
-            className={styles.glassPanel}
-            style={{
-              WebkitTransform: "translateZ(0)",
-              transform: "translateZ(0)",
-              willChange: "transform",
-            }}
-          >
-            <div
-              className={styles.tableContainer}
-              style={{ transform: "translateZ(0)" }}
-            >
+          {/* 🔥 ПОВЕРНУЛИ ТВОЮ СКЛЯНУ ОБГОРТКУ 🔥 */}
+          <div className={styles.glassPanel}>
+            <div className={styles.tableContainer}>
               <table className={styles.table}>
                 <thead>
                   <tr>
@@ -416,8 +415,9 @@ export default function ProjectsPage() {
                         onClick={() => handleEditClick(p)}
                       >
                         <td className={styles.cellImg}>
+                          {/* 🔥 ВИКОРИСТОВУЄМО ОПТИМІЗОВАНУ МІНІАТЮРУ 🔥 */}
                           <img
-                            src={p.mainImage}
+                            src={getThumbnail(p.mainImage)}
                             className={styles.projectImg}
                             alt={p.title}
                           />
@@ -466,19 +466,13 @@ export default function ProjectsPage() {
             <IconArrowLeft /> Повернутися
           </button>
 
-          {/* 🔥 ДОДАНО АПАРАТНЕ ПРИСКОРЕННЯ (GPU) ДЛЯ ФОРМИ 🔥 */}
-          <div
-            className={styles.glassPanel}
-            style={{
-              WebkitTransform: "translateZ(0)",
-              transform: "translateZ(0)",
-              willChange: "transform",
-            }}
-          >
+          {/* 🔥 СКЛЯНА ОБГОРТКА ДЛЯ ФОРМИ 🔥 */}
+          <div className={styles.glassPanel}>
             <h2 className={styles.formTitle}>
               {view === "edit" ? "Редагування проєкту" : "Створення нового"}
             </h2>
             <form onSubmit={handleSubmit} className={styles.formLayout}>
+              {/* Тут весь твій код форми без змін */}
               <div className={styles.grid3}>
                 <div className={styles.inputGroup}>
                   <label>
