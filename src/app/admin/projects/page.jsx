@@ -126,11 +126,16 @@ const initialForm = {
   date: "",
 };
 
+// 🔥 СТРОГА СИСТЕМА КЕШУВАННЯ 🔥
 let projectsCache = null;
 
 export default function ProjectsPage() {
+  // Одразу беремо дані з пам'яті, якщо вони там є
   const [projects, setProjects] = useState(projectsCache || []);
+
+  // Якщо кеш є, ми ВЗАГАЛІ не вмикаємо стан завантаження
   const [isLoading, setIsLoading] = useState(!projectsCache);
+
   const [view, setView] = useState("list");
   const [formData, setFormData] = useState(initialForm);
   const [isUploading, setIsUploading] = useState(false);
@@ -143,7 +148,14 @@ export default function ProjectsPage() {
   const [projectToDelete, setProjectToDelete] = useState(null);
 
   useEffect(() => {
+    // 🔥 ГОЛОВНИЙ ФІКС: Якщо кеш вже є, ми ПОВНІСТЮ СКАСОВУЄМО запит на сервер.
+    // Це забезпечує миттєве відкриття при поверненні на цю вкладку.
+    if (projectsCache) {
+      return;
+    }
+
     const fetchProjects = async () => {
+      setIsLoading(true);
       try {
         const res = await fetch("/api/projects");
         if (res.ok) {
@@ -155,6 +167,7 @@ export default function ProjectsPage() {
         setIsLoading(false);
       }
     };
+
     fetchProjects();
   }, []);
 
@@ -206,7 +219,7 @@ export default function ProjectsPage() {
           (p) => p._id !== projectToDelete,
         );
         setProjects(updatedProjects);
-        projectsCache = updatedProjects;
+        projectsCache = updatedProjects; // Оновлюємо кеш одразу!
       }
     } finally {
       setIsDeleteModalOpen(false);
@@ -300,11 +313,11 @@ export default function ProjectsPage() {
       });
 
       if (res.ok) {
-        projectsCache = null;
+        projectsCache = null; // Скидаємо старий кеш
         const freshRes = await fetch("/api/projects");
         if (freshRes.ok) {
           const freshData = await freshRes.json();
-          projectsCache = freshData;
+          projectsCache = freshData; // Записуємо новий свіжий кеш
           setProjects(freshData);
         }
         setView("list");
@@ -323,7 +336,6 @@ export default function ProjectsPage() {
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.headerTitleGroup}>
-              {/* 🔥 PREFETCH TRUE 🔥 */}
               <Link
                 prefetch={true}
                 href="/admin"
@@ -349,6 +361,7 @@ export default function ProjectsPage() {
 
           <div className={styles.glassPanel}>
             <div className={styles.tableContainer}>
+              {/* 🔥 ТАБЛИЦЯ ЗАВЖДИ РЕНДЕРИТЬСЯ (Структура миттєво на екрані) 🔥 */}
               <table className={styles.table}>
                 <thead>
                   <tr>
@@ -360,7 +373,7 @@ export default function ProjectsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {isLoading && projects.length === 0 ? (
+                  {isLoading ? (
                     <tr>
                       <td
                         colSpan="5"
