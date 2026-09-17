@@ -16,7 +16,7 @@ $apple-border: #e5e5ea;
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px 0;
+
   min-height: 101vh; /* 🔥 ФІКС СТРИБКІВ: Завжди тримаємо скролбар активним */
 }
 
