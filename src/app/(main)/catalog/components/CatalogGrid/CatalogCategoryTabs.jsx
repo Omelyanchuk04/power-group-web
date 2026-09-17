@@ -5,10 +5,14 @@ import { CATEGORIES } from "./catalogData";
 // --- МАПІНГ КАРТИНОК ЯК В АДМІНЦІ ---
 const CATEGORY_IMAGES = {
   "Сонячні панелі": "/images/admin/equipment/solar-panel-icon.png",
-  "Гібридні інвертори": "/images/admin/equipment/hybrid-inverter-img.png", // з маленької літери
+  // 🔥 Виправлено: велика літера 'H'
+  "Гібридні інвертори": "/images/admin/equipment/Hybrid-inverter-img.png",
   "Мережеві інвертори": "/images/admin/equipment/network-inverter-img.png",
-  Акумулятори: "/images/admin/equipment/battery-img.png", // додано лапки для єдиного стилю
+  Акумулятори: "/images/admin/equipment/battery-img.png",
   "Системи накопичення": "/images/admin/equipment/storage-system-img.png",
+  // 🔥 Виправлено: скорочена назва, точно як у твоїх табах
+  "Силове обладнання": "/images/admin/equipment/power-equipment-img.png",
+  // На всякий випадок залишаємо і повну назву
   "Силове обладнання для сонячних електростанцій":
     "/images/admin/equipment/power-equipment-img.png",
   "Комплектуючі для монтажу":
