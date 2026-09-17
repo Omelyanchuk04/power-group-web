@@ -4,18 +4,20 @@ $text-dark: #111827;
 $text-gray: #4b5563;
 $border: #e2e8f0;
 
-/* Збережені кольори для модалки налаштувань (Apple Style) */
+/* Apple System Colors */
 $apple-blue: #0071e3;
 $apple-red: #ff3b30;
 $apple-gray-bg: #f2f2f7;
 $apple-border: #e5e5ea;
 
 /* =========================================
-   БАЗОВІ КОНТЕЙНЕРИ
+   БАЗОВІ КОНТЕЙНЕРИ ТА АНТИ-СТРИБОК (101VH)
    ========================================= */
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 32px 0;
+  min-height: 101vh; /* 🔥 ФІКС СТРИБКІВ: Завжди тримаємо скролбар активним */
 }
 
 .header {
@@ -100,6 +102,7 @@ $apple-border: #e5e5ea;
     &:hover {
       background: rgba(0, 0, 0, 0.4);
       border-color: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
     }
   }
   &:active {
@@ -136,6 +139,7 @@ $apple-border: #e5e5ea;
     &:hover {
       background: rgba(0, 0, 0, 0.4);
       border-color: rgba(255, 255, 255, 0.25);
+      transform: scale(1.03);
     }
   }
   &:active {
@@ -269,11 +273,12 @@ $apple-border: #e5e5ea;
   padding: 4px;
   border-radius: 12px;
   gap: 4px;
+  box-sizing: border-box;
 }
 
 .toggleBtn {
   background: transparent;
-  border: none;
+  border: 1px solid transparent; /* Запобігає стрибкам */
   padding: 8px 18px;
   border-radius: 10px;
   font-weight: 600;
@@ -281,6 +286,11 @@ $apple-border: #e5e5ea;
   color: $text-gray;
   cursor: pointer;
   transition: all 0.2s;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 
   &.active {
     background: white;
@@ -416,8 +426,8 @@ $apple-border: #e5e5ea;
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 600; /* Зробив трохи жирнішим для читабельності */
-  white-space: nowrap; /* 🔥 ЗАБОРОНЯЄ ПЕРЕНЕСЕННЯ СЛІВ НА НОВИЙ РЯДОК 🔥 */
+  font-weight: 600;
+  white-space: nowrap;
   display: inline-block;
 }
 

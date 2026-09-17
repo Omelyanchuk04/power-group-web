@@ -87,23 +87,6 @@ const IconCheck = () => (
   </svg>
 );
 
-const IconWarning = () => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-    <line x1="12" y1="9" x2="12" y2="13"></line>
-    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-  </svg>
-);
-
 const CATEGORY_IMAGES = {
   "Сонячні панелі": "/images/admin/equipment/solar-panel-icon.png",
   "Гібридні інвертори": "/images/admin/equipment/Hybrid-inverter-img.png",
@@ -116,17 +99,21 @@ const CATEGORY_IMAGES = {
     "/images/admin/equipment/electric-installation-icon.png",
 };
 
+// Кеш для миттєвого завантаження
+let catalogCache = null;
+let settingsCache = null;
+
 export default function CatalogAdminPage() {
   const router = useRouter();
-  const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Стани
+  const [items, setItems] = useState(catalogCache || []);
+  const [categories, setCategories] = useState(settingsCache?.categories || []);
+  const [brands, setBrands] = useState(settingsCache?.brands || []);
+
+  const [isLoading, setIsLoading] = useState(!catalogCache || !settingsCache);
+
   const [viewMode, setViewMode] = useState("categories");
   const [selectedCategory, setSelectedCategory] = useState(null);
-
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
 
   const [activeModal, setActiveModal] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
@@ -136,7 +123,6 @@ export default function CatalogAdminPage() {
 
   const [deletePrompt, setDeletePrompt] = useState(null);
 
-  // 🔥 ВІДНОВЛЕННЯ СТАНУ З ПАМ'ЯТІ ПРИ ЗАВАНТАЖЕННІ 🔥
   useEffect(() => {
     const savedViewMode = sessionStorage.getItem("catalog_viewMode");
     const savedCategory = sessionStorage.getItem("catalog_selectedCategory");
@@ -152,9 +138,14 @@ export default function CatalogAdminPage() {
           fetch("/api/settings/catalog"),
         ]);
 
-        if (itemsRes.ok) setItems(await itemsRes.json());
+        if (itemsRes.ok) {
+          const fetchedItems = await itemsRes.json();
+          catalogCache = fetchedItems;
+          setItems(fetchedItems);
+        }
         if (settingsRes.ok) {
           const settings = await settingsRes.json();
+          settingsCache = settings;
           setCategories(settings.categories || []);
           setBrands(settings.brands || []);
         }
@@ -167,7 +158,6 @@ export default function CatalogAdminPage() {
     fetchData();
   }, []);
 
-  // 🔥 ФУНКЦІЇ ДЛЯ ОНОВЛЕННЯ СТАНУ + ЗБЕРЕЖЕННЯ В ПАМ'ЯТЬ 🔥
   const updateViewMode = (mode) => {
     setViewMode(mode);
     sessionStorage.setItem("catalog_viewMode", mode);
@@ -189,6 +179,7 @@ export default function CatalogAdminPage() {
 
   const saveSettingsToDB = async (newCategories, newBrands) => {
     try {
+      settingsCache = { categories: newCategories, brands: newBrands };
       await fetch("/api/settings/catalog", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -272,7 +263,11 @@ export default function CatalogAdminPage() {
         const res = await fetch(`/api/catalog/${identifier}`, {
           method: "DELETE",
         });
-        if (res.ok) setItems(items.filter((item) => item._id !== identifier));
+        if (res.ok) {
+          const newItems = items.filter((item) => item._id !== identifier);
+          setItems(newItems);
+          catalogCache = newItems;
+        }
       } catch (error) {
         console.error("Помилка видалення:", error);
       }
@@ -338,30 +333,44 @@ export default function CatalogAdminPage() {
 
         {viewMode === "categories" && (
           <div className={styles.categoriesGrid}>
-            {categories.map((category) => (
+            {/* 🔥 Не ховаємо обгортку, показуємо категорії або м'який лоадер всередині 🔥 */}
+            {categories.length === 0 && isLoading ? (
               <div
-                key={category}
-                className={styles.categoryCard}
-                onClick={() => handleCategoryClick(category)}
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  padding: "40px",
+                  color: "#64748b",
+                }}
               >
-                <div className={styles.iconWrapper}>
-                  <img
-                    src={
-                      CATEGORY_IMAGES[category] ||
-                      "/images/admin/equipment/solar-panel-icon.png"
-                    }
-                    alt={category}
-                    className={styles.categoryIcon}
-                  />
-                </div>
-                <div className={styles.cardContent}>
-                  <h3>{category}</h3>
-                  <span className={styles.countBadge}>
-                    {getItemsCount(category)} товарів
-                  </span>
-                </div>
+                Оновлення категорій...
               </div>
-            ))}
+            ) : (
+              categories.map((category) => (
+                <div
+                  key={category}
+                  className={styles.categoryCard}
+                  onClick={() => handleCategoryClick(category)}
+                >
+                  <div className={styles.iconWrapper}>
+                    <img
+                      src={
+                        CATEGORY_IMAGES[category] ||
+                        "/images/admin/equipment/solar-panel-icon.png"
+                      }
+                      alt={category}
+                      className={styles.categoryIcon}
+                    />
+                  </div>
+                  <div className={styles.cardContent}>
+                    <h3>{category}</h3>
+                    <span className={styles.countBadge}>
+                      {getItemsCount(category)} товарів
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 
@@ -375,43 +384,53 @@ export default function CatalogAdminPage() {
             )}
 
             <div className={styles.tableContainer}>
-              {isLoading ? (
-                <div
-                  style={{
-                    padding: "40px",
-                    textAlign: "center",
-                    color: "#4b5563",
-                  }}
-                >
-                  Завантаження...
-                </div>
-              ) : displayedItems.length === 0 ? (
-                <div style={{ padding: "40px", textAlign: "center" }}>
-                  <div style={{ fontSize: "40px", marginBottom: "16px" }}>
-                    📂
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: "18px",
-                      fontWeight: "800",
-                      color: "#111827",
-                    }}
-                  >
-                    Немає товарів
-                  </h3>
-                </div>
-              ) : (
-                <table className={styles.table}>
-                  <thead>
+              {/* 🔥 ТАБЛИЦЯ ЗАВЖДИ РЕНДЕРИТЬСЯ, ЩОБ НЕ БУЛО СТРИБКІВ 🔥 */}
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Фото</th>
+                    <th>Назва</th>
+                    <th>Категорія</th>
+                    <th style={{ textAlign: "right" }}>Дії</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading && displayedItems.length === 0 ? (
                     <tr>
-                      <th>Фото</th>
-                      <th>Назва</th>
-                      <th>Категорія</th>
-                      <th style={{ textAlign: "right" }}>Дії</th>
+                      <td
+                        colSpan="4"
+                        style={{
+                          padding: "60px",
+                          textAlign: "center",
+                          color: "#64748b",
+                        }}
+                      >
+                        Оновлення списку...
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {displayedItems.map((item) => (
+                  ) : displayedItems.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="4"
+                        style={{ padding: "60px", textAlign: "center" }}
+                      >
+                        <div style={{ fontSize: "40px", marginBottom: "16px" }}>
+                          📂
+                        </div>
+                        <h3
+                          style={{
+                            fontSize: "18px",
+                            fontWeight: "800",
+                            color: "#111827",
+                            margin: 0,
+                          }}
+                        >
+                          Немає товарів
+                        </h3>
+                      </td>
+                    </tr>
+                  ) : (
+                    displayedItems.map((item) => (
                       <tr
                         key={item._id}
                         className={styles.projectRow}
@@ -469,16 +488,15 @@ export default function CatalogAdminPage() {
                           </button>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </>
         )}
       </div>
 
-      {/* МОДАЛКА НАЛАШТУВАНЬ КАТЕГОРІЙ ТА БРЕНДІВ */}
       {activeModal && (
         <div className={styles.settingsOverlay}>
           <div className={styles.settingsContent}>
@@ -563,7 +581,6 @@ export default function CatalogAdminPage() {
                     ) : (
                       <span className={styles.settingsItemText}>{item}</span>
                     )}
-
                     <div className={styles.settingsItemActions}>
                       {editingIndex === index ? (
                         <button
@@ -609,7 +626,6 @@ export default function CatalogAdminPage() {
         </div>
       )}
 
-      {/* МОДАЛЬНЕ ВІКНО ВИДАЛЕННЯ З ПРОЄКТІВ */}
       {deletePrompt && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>

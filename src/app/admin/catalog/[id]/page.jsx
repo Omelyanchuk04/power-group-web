@@ -69,7 +69,6 @@ const IconStar = () => (
   </svg>
 );
 
-// --- НАЛАШТУВАННЯ CLOUDINARY ---
 const CLOUD_NAME = "umg8kma4";
 const UPLOAD_PRESET = "vin_power_group_projects";
 
@@ -274,7 +273,6 @@ export default function CatalogFormPage({ params }) {
       });
 
       if (res.ok) {
-        // Замість router.back() використовуємо надійний перехід
         router.push("/admin/catalog");
         router.refresh();
       } else {
@@ -288,27 +286,13 @@ export default function CatalogFormPage({ params }) {
     }
   };
 
-  if (isLoading)
-    return (
-      <div className={styles.containerForm}>
-        <div
-          style={{
-            padding: "40px",
-            textAlign: "center",
-            color: "#4b5563",
-            fontWeight: "500",
-          }}
-        >
-          Завантаження...
-        </div>
-      </div>
-    );
+  // ❌ ПРИБРАНО ПОВНИЙ ЛОАДЕР ❌
+  // Тепер вся верстка рендериться миттєво!
 
   const currentCategoryFilters = CATEGORY_FILTERS[formData.category];
 
   return (
     <div className={styles.containerForm}>
-      {/* 🔥 ЗАМІНЕНО: router.push("/admin/catalog") замість router.back() 🔥 */}
       <button
         type="button"
         onClick={() => router.push("/admin/catalog")}
@@ -322,7 +306,16 @@ export default function CatalogFormPage({ params }) {
           {isNew ? "Створення нового товару" : "Редагування товару"}
         </h2>
 
-        <form className={styles.formLayout} onSubmit={handleSubmit}>
+        {/* 🔥 Форма злегка прозора, поки вантажиться, але вона Є НА ЕКРАНІ 🔥 */}
+        <form
+          className={styles.formLayout}
+          onSubmit={handleSubmit}
+          style={{
+            opacity: isLoading ? 0.6 : 1,
+            pointerEvents: isLoading ? "none" : "auto",
+            transition: "opacity 0.3s ease",
+          }}
+        >
           <div className={styles.inputGroup}>
             <label>
               Назва товару <span>*</span>
@@ -461,7 +454,6 @@ export default function CatalogFormPage({ params }) {
           </div>
 
           <div className={styles.formActions}>
-            {/* 🔥 ЗАМІНЕНО: router.push("/admin/catalog") замість router.back() 🔥 */}
             <button
               type="button"
               onClick={() => router.push("/admin/catalog")}
