@@ -126,16 +126,11 @@ const initialForm = {
   date: "",
 };
 
-// 🔥 СТРОГА СИСТЕМА КЕШУВАННЯ 🔥
 let projectsCache = null;
 
 export default function ProjectsPage() {
-  // Одразу беремо дані з пам'яті, якщо вони там є
   const [projects, setProjects] = useState(projectsCache || []);
-
-  // Якщо кеш є, ми ВЗАГАЛІ не вмикаємо стан завантаження
   const [isLoading, setIsLoading] = useState(!projectsCache);
-
   const [view, setView] = useState("list");
   const [formData, setFormData] = useState(initialForm);
   const [isUploading, setIsUploading] = useState(false);
@@ -148,11 +143,7 @@ export default function ProjectsPage() {
   const [projectToDelete, setProjectToDelete] = useState(null);
 
   useEffect(() => {
-    // 🔥 ГОЛОВНИЙ ФІКС: Якщо кеш вже є, ми ПОВНІСТЮ СКАСОВУЄМО запит на сервер.
-    // Це забезпечує миттєве відкриття при поверненні на цю вкладку.
-    if (projectsCache) {
-      return;
-    }
+    if (projectsCache) return;
 
     const fetchProjects = async () => {
       setIsLoading(true);
@@ -219,7 +210,7 @@ export default function ProjectsPage() {
           (p) => p._id !== projectToDelete,
         );
         setProjects(updatedProjects);
-        projectsCache = updatedProjects; // Оновлюємо кеш одразу!
+        projectsCache = updatedProjects;
       }
     } finally {
       setIsDeleteModalOpen(false);
@@ -313,11 +304,11 @@ export default function ProjectsPage() {
       });
 
       if (res.ok) {
-        projectsCache = null; // Скидаємо старий кеш
+        projectsCache = null;
         const freshRes = await fetch("/api/projects");
         if (freshRes.ok) {
           const freshData = await freshRes.json();
-          projectsCache = freshData; // Записуємо новий свіжий кеш
+          projectsCache = freshData;
           setProjects(freshData);
         }
         setView("list");
@@ -359,9 +350,19 @@ export default function ProjectsPage() {
             </button>
           </div>
 
-          <div className={styles.glassPanel}>
-            <div className={styles.tableContainer}>
-              {/* 🔥 ТАБЛИЦЯ ЗАВЖДИ РЕНДЕРИТЬСЯ (Структура миттєво на екрані) 🔥 */}
+          {/* 🔥 ДОДАНО АПАРАТНЕ ПРИСКОРЕННЯ (GPU) ДЛЯ УСУНЕННЯ БІЛИХ КВАДРАТІВ 🔥 */}
+          <div
+            className={styles.glassPanel}
+            style={{
+              WebkitTransform: "translateZ(0)",
+              transform: "translateZ(0)",
+              willChange: "transform",
+            }}
+          >
+            <div
+              className={styles.tableContainer}
+              style={{ transform: "translateZ(0)" }}
+            >
               <table className={styles.table}>
                 <thead>
                   <tr>
@@ -465,7 +466,15 @@ export default function ProjectsPage() {
             <IconArrowLeft /> Повернутися
           </button>
 
-          <div className={styles.glassPanel}>
+          {/* 🔥 ДОДАНО АПАРАТНЕ ПРИСКОРЕННЯ (GPU) ДЛЯ ФОРМИ 🔥 */}
+          <div
+            className={styles.glassPanel}
+            style={{
+              WebkitTransform: "translateZ(0)",
+              transform: "translateZ(0)",
+              willChange: "transform",
+            }}
+          >
             <h2 className={styles.formTitle}>
               {view === "edit" ? "Редагування проєкту" : "Створення нового"}
             </h2>
