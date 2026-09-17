@@ -167,7 +167,10 @@ export default function ProjectsPage() {
       client: project.client || "",
       clientType: project.clientType,
       serviceType: project.serviceType,
-      power: project.power,
+      power:
+        project.power !== null && project.power !== undefined
+          ? project.power
+          : "",
       date: project.date || "",
     });
     setEditingId(project._id);
@@ -285,7 +288,8 @@ export default function ProjectsPage() {
 
       const projectData = {
         ...formData,
-        power: Number(formData.power) || 0,
+        // 🔥 Якщо поле порожнє, записуємо null замість 0
+        power: formData.power ? Number(formData.power) : null,
         mainImage: finalMainImage,
         gallery: finalGallery,
       };
@@ -380,7 +384,7 @@ export default function ProjectsPage() {
                       <tr
                         key={p._id}
                         className={styles.projectRow}
-                        onClick={() => handleEditClick(p)} // 🔥 Робимо весь рядок клікабельним
+                        onClick={() => handleEditClick(p)}
                       >
                         <td className={styles.cellImg}>
                           <img
@@ -391,11 +395,14 @@ export default function ProjectsPage() {
                         </td>
                         <td className={styles.cellTitle}>{p.title}</td>
                         <td className={styles.cellClient}>{p.client || "—"}</td>
-                        <td className={styles.cellPower}>{p.power} кВт</td>
+                        {/* 🔥 Змінено вивід потужності: показуємо число або прочерк */}
+                        <td className={styles.cellPower}>
+                          {p.power ? `${p.power} кВт` : "—"}
+                        </td>
                         <td className={styles.cellActions}>
                           <button
                             onClick={(e) => {
-                              e.stopPropagation(); // Зупиняємо клік, щоб не клікнути на весь рядок
+                              e.stopPropagation();
                               handleEditClick(p);
                             }}
                             className={`${styles.actionBtn} ${styles.edit}`}
@@ -405,7 +412,7 @@ export default function ProjectsPage() {
                           </button>
                           <button
                             onClick={(e) => {
-                              e.stopPropagation(); // Зупиняємо клік, щоб не клікнути на весь рядок
+                              e.stopPropagation();
                               setProjectToDelete(p._id);
                               setIsDeleteModalOpen(true);
                             }}
@@ -499,16 +506,15 @@ export default function ProjectsPage() {
                   </select>
                 </div>
                 <div className={styles.inputGroup}>
-                  <label>
-                    Потужність (кВт) <span>*</span>
-                  </label>
+                  {/* 🔥 Прибрано <span>*</span> */}
+                  <label>Потужність (кВт)</label>
                   <input
                     type="number"
                     value={formData.power}
                     onChange={(e) =>
                       setFormData({ ...formData, power: e.target.value })
                     }
-                    required
+                    /* 🔥 Прибрано required */
                   />
                 </div>
               </div>
