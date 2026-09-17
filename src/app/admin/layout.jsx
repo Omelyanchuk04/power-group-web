@@ -79,22 +79,20 @@ const IconCatalog = () => (
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
 
-  // 🔥 Додаємо оптимістичний стан для миттєвого підсвічування кнопки 🔥
   const [clickedPath, setClickedPath] = useState(null);
 
-  // Скидаємо клік, коли сторінка нарешті завантажилась
   useEffect(() => {
     setClickedPath(null);
   }, [pathname]);
 
-  // Визначаємо, яка кнопка має бути синьою прямо зараз
   const activePath = clickedPath || pathname;
 
   return (
     <div className={styles.dashboardWrapper}>
+      {/* 🔥 ФОН ТЕПЕР ABSOLUTE: він скролиться разом із контентом 🔥 */}
       <div
         style={{
-          position: "fixed",
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
@@ -102,10 +100,12 @@ export default function AdminLayout({ children }) {
           zIndex: 0,
           pointerEvents: "none",
           backgroundColor: "#f9fafb",
+          overflow: "hidden",
         }}
       >
         <GlobalBackground isLayout={false} />
       </div>
+
       <div className={styles.mobileClientHeader}>
         <Header />
       </div>
