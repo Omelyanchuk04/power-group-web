@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import GlobalBackground from "@/components/layout/GlobalBackground";
@@ -79,6 +79,17 @@ const IconCatalog = () => (
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
 
+  // 🔥 Додаємо оптимістичний стан для миттєвого підсвічування кнопки 🔥
+  const [clickedPath, setClickedPath] = useState(null);
+
+  // Скидаємо клік, коли сторінка нарешті завантажилась
+  useEffect(() => {
+    setClickedPath(null);
+  }, [pathname]);
+
+  // Визначаємо, яка кнопка має бути синьою прямо зараз
+  const activePath = clickedPath || pathname;
+
   return (
     <div className={styles.dashboardWrapper}>
       <div
@@ -120,7 +131,8 @@ export default function AdminLayout({ children }) {
             <Link
               prefetch={true}
               href="/admin/leads"
-              className={`${styles.navBtn} ${pathname.includes("/admin/leads") ? styles.active : ""}`}
+              onClick={() => setClickedPath("/admin/leads")}
+              className={`${styles.navBtn} ${activePath.includes("/admin/leads") ? styles.active : ""}`}
             >
               <IconInbox /> <span>Заявки</span>
             </Link>
@@ -128,7 +140,8 @@ export default function AdminLayout({ children }) {
             <Link
               prefetch={true}
               href="/admin/projects"
-              className={`${styles.navBtn} ${pathname.includes("/admin/projects") ? styles.active : ""}`}
+              onClick={() => setClickedPath("/admin/projects")}
+              className={`${styles.navBtn} ${activePath.includes("/admin/projects") ? styles.active : ""}`}
             >
               <IconProjects /> <span>Усі проєкти</span>
             </Link>
@@ -136,7 +149,8 @@ export default function AdminLayout({ children }) {
             <Link
               prefetch={true}
               href="/admin/catalog"
-              className={`${styles.navBtn} ${pathname.includes("/admin/catalog") ? styles.active : ""}`}
+              onClick={() => setClickedPath("/admin/catalog")}
+              className={`${styles.navBtn} ${activePath.includes("/admin/catalog") ? styles.active : ""}`}
             >
               <IconCatalog /> <span>Каталог обладнання</span>
             </Link>
@@ -149,7 +163,6 @@ export default function AdminLayout({ children }) {
           </div>
         </aside>
 
-        {/* Ніяких штучних opacity тут більше немає */}
         <main className={styles.mainContent}>{children}</main>
       </div>
     </div>
