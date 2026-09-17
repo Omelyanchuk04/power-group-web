@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 import Header from "@/components/layout/Header";
 import styles from "./layout.module.scss";
@@ -78,28 +78,6 @@ const IconCatalog = () => (
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const [activeRoute, setActiveRoute] = useState(pathname);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  useEffect(() => {
-    setActiveRoute(pathname);
-    setIsTransitioning(false);
-  }, [pathname]);
-
-  const handleNavClick = (e, path) => {
-    e.preventDefault();
-
-    if (pathname === path || pathname.startsWith(path + "/")) return;
-
-    setActiveRoute(path);
-    setIsTransitioning(true);
-
-    setTimeout(() => {
-      router.push(path);
-    }, 10);
-  };
 
   return (
     <div className={styles.dashboardWrapper}>
@@ -142,8 +120,7 @@ export default function AdminLayout({ children }) {
             <Link
               prefetch={true}
               href="/admin/leads"
-              onClick={(e) => handleNavClick(e, "/admin/leads")}
-              className={`${styles.navBtn} ${activeRoute.includes("/admin/leads") ? styles.active : ""}`}
+              className={`${styles.navBtn} ${pathname.includes("/admin/leads") ? styles.active : ""}`}
             >
               <IconInbox /> <span>Заявки</span>
             </Link>
@@ -151,8 +128,7 @@ export default function AdminLayout({ children }) {
             <Link
               prefetch={true}
               href="/admin/projects"
-              onClick={(e) => handleNavClick(e, "/admin/projects")}
-              className={`${styles.navBtn} ${activeRoute.includes("/admin/projects") ? styles.active : ""}`}
+              className={`${styles.navBtn} ${pathname.includes("/admin/projects") ? styles.active : ""}`}
             >
               <IconProjects /> <span>Усі проєкти</span>
             </Link>
@@ -160,8 +136,7 @@ export default function AdminLayout({ children }) {
             <Link
               prefetch={true}
               href="/admin/catalog"
-              onClick={(e) => handleNavClick(e, "/admin/catalog")}
-              className={`${styles.navBtn} ${activeRoute.includes("/admin/catalog") ? styles.active : ""}`}
+              className={`${styles.navBtn} ${pathname.includes("/admin/catalog") ? styles.active : ""}`}
             >
               <IconCatalog /> <span>Каталог обладнання</span>
             </Link>
@@ -174,16 +149,7 @@ export default function AdminLayout({ children }) {
           </div>
         </aside>
 
-        <main
-          className={styles.mainContent}
-          style={{
-            opacity: isTransitioning ? 0.4 : 1,
-            pointerEvents: isTransitioning ? "none" : "auto",
-            transition: "opacity 0.2s ease-out",
-          }}
-        >
-          {children}
-        </main>
+        <main className={styles.mainContent}>{children}</main>
       </div>
     </div>
   );
