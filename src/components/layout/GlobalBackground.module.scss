@@ -7,7 +7,6 @@
   z-index: 0;
   pointer-events: none;
 
-  /* 🔥 ВИДАЛИ overflow: hidden; ТА ВСТАВ ЦІ ДВА РЯДКИ: */
   overflow-x: clip; /* Забороняємо плямам розширювати екран вбоки */
   overflow-y: visible; /* Дозволяємо плямам вилазити вгору і вниз, щоб злитися з іншими секціями */
 
@@ -24,6 +23,9 @@
     position: absolute;
     border-radius: 50%;
     pointer-events: none;
+    /* Оптимізація: змушуємо браузер намалювати це один раз і не перераховувати */
+    transform: translateZ(0);
+    will-change: auto;
   }
 
   /* --- БАЗОВІ ПЛЯМИ (На ПК працюють всі 10) --- */
@@ -34,7 +36,6 @@
     filter: blur(80px);
     top: 5%;
     left: -5%;
-    animation: floatBlob1 20s infinite alternate ease-in-out;
   }
   .blob2 {
     width: 30vw;
@@ -43,7 +44,6 @@
     filter: blur(75px);
     top: 25%;
     right: -5%;
-    animation: floatBlob2 25s infinite alternate ease-in-out;
   }
   .blob3 {
     width: 25vw;
@@ -52,7 +52,6 @@
     filter: blur(40px);
     top: 50%;
     left: 20%;
-    animation: floatBlob3 30s infinite alternate-reverse ease-in-out;
   }
   .blob4 {
     width: 40vw;
@@ -61,7 +60,6 @@
     filter: blur(85px);
     top: 75%;
     right: 15%;
-    animation: floatBlob4 28s infinite alternate ease-in-out;
   }
   .blob5 {
     width: 20vw;
@@ -70,7 +68,6 @@
     filter: blur(80px);
     bottom: 2%;
     left: 10%;
-    animation: floatBlob5 22s infinite alternate-reverse ease-in-out;
   }
 
   /* --- ДОДАТКОВІ ПЛЯМИ --- */
@@ -81,7 +78,6 @@
     filter: blur(70px);
     top: 15%;
     right: 25%;
-    animation: floatBlob6 22s infinite alternate ease-in-out;
   }
   .blob7 {
     width: 35vw;
@@ -90,7 +86,6 @@
     filter: blur(85px);
     top: 60%;
     left: -10%;
-    animation: floatBlob7 26s infinite alternate-reverse ease-in-out;
   }
   .blob8 {
     width: 22vw;
@@ -99,7 +94,6 @@
     filter: blur(55px);
     bottom: 18%;
     right: 5%;
-    animation: floatBlob8 24s infinite alternate ease-in-out;
   }
   .blob9 {
     width: 26vw;
@@ -108,7 +102,6 @@
     filter: blur(65px);
     top: -5%;
     left: 45%;
-    animation: floatBlob9 28s infinite alternate-reverse ease-in-out;
   }
   .blob10 {
     width: 32vw;
@@ -117,7 +110,6 @@
     filter: blur(80px);
     bottom: 35%;
     right: 10%;
-    animation: floatBlob10 32s infinite alternate ease-in-out;
   }
 }
 
@@ -127,127 +119,15 @@
   top: 0 !important;
   left: 0 !important;
   width: 100vw;
-  height: 100dvh; /* 🔥 ТУТ МАЄ БУТИ dvh */
+  height: 100dvh;
   z-index: 0;
   background-color: #f5f5f5;
 }
 
-/* АНІМАЦІЇ */
-@keyframes floatBlob1 {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(15vw, 10vh) scale(1.1);
-  }
-  100% {
-    transform: translate(-5vw, 20vh) scale(0.9);
-  }
-}
-@keyframes floatBlob2 {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-20vw, -15vh) scale(0.9);
-  }
-  100% {
-    transform: translate(-5vw, -5vh) scale(1.1);
-  }
-}
-@keyframes floatBlob3 {
-  0% {
-    transform: translate(0, 0) scale(0.9);
-  }
-  50% {
-    transform: translate(-10vw, 25vh) scale(1.2);
-  }
-  100% {
-    transform: translate(15vw, -15vh) scale(1);
-  }
-}
-@keyframes floatBlob4 {
-  0% {
-    transform: translate(0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate(-25vw, 15vh) scale(0.85);
-  }
-  100% {
-    transform: translate(-10vw, -10vh) scale(1.05);
-  }
-}
-@keyframes floatBlob5 {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(10vw, -20vh) scale(1.2);
-  }
-  100% {
-    transform: translate(25vw, 5vh) scale(0.9);
-  }
-}
-@keyframes floatBlob6 {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-10vw, 15vh) scale(1.15);
-  }
-  100% {
-    transform: translate(5vw, -5vh) scale(0.9);
-  }
-}
-@keyframes floatBlob7 {
-  0% {
-    transform: translate(0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate(15vw, -10vh) scale(0.9);
-  }
-  100% {
-    transform: translate(-5vw, 15vh) scale(1.05);
-  }
-}
-@keyframes floatBlob8 {
-  0% {
-    transform: translate(0, 0) scale(0.9);
-  }
-  50% {
-    transform: translate(-15vw, -15vh) scale(1.2);
-  }
-  100% {
-    transform: translate(10vw, 10vh) scale(1);
-  }
-}
-@keyframes floatBlob9 {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(10vw, 15vh) scale(0.9);
-  }
-  100% {
-    transform: translate(-10vw, 5vh) scale(1.1);
-  }
-}
-@keyframes floatBlob10 {
-  0% {
-    transform: translate(0, 0) scale(1.1);
-  }
-  50% {
-    transform: translate(-15vw, -10vh) scale(0.95);
-  }
-  100% {
-    transform: translate(5vw, -20vh) scale(1.05);
-  }
-}
-
-/* АДАПТИВ ДЛЯ МОБАЙЛУ (ЖОРСТКА ОПТИМІЗАЦІЯ ВІД ЛАГІВ) */
+/* АДАПТИВ ДЛЯ МОБАЙЛУ */
 @media (max-width: 768px) {
   .absoluteWrapper {
-    /* Вимикаємо 6 зайвих плям */
+    /* Вимикаємо 6 зайвих плям для економії пам'яті */
     .blob4,
     .blob6,
     .blob7,
@@ -255,7 +135,6 @@
     .blob9,
     .blob10 {
       display: none !important;
-      animation: none !important;
     }
 
     /* Зменшуємо blur у 4 залишених */
