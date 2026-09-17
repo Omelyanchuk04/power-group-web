@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import NextImage from "next/image";
 import gsap from "gsap";
 import { useModal } from "@/context/ModalContext";
@@ -153,7 +154,6 @@ export default function ProjectModal({ project, onClose }) {
   const galleryRef = useRef(null);
   const fullscreenRef = useRef(null);
 
-  // Блокуємо скрол сторінки
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -161,7 +161,6 @@ export default function ProjectModal({ project, onClose }) {
     };
   }, []);
 
-  // Анімація ПОЯВИ модалки
   useEffect(() => {
     const tl = gsap.timeline();
     gsap.set(backdropRef.current, { opacity: 0 });
@@ -183,7 +182,6 @@ export default function ProjectModal({ project, onClose }) {
       );
   }, []);
 
-  // Функція ЗАКРИТТЯ з анімацією
   const handleClose = () => {
     if (isClosing) return;
     setIsClosing(true);
@@ -208,12 +206,10 @@ export default function ProjectModal({ project, onClose }) {
     ? [project.image, ...(project.gallery || [])]
     : [];
 
-  // Оновлення стану крапок під час гортання пальцем
   const handleGalleryScroll = (e, isFullscreenMode = false) => {
     const ref = isFullscreenMode ? fullscreenRef : galleryRef;
     if (!ref.current) return;
 
-    // Обчислюємо поточний слайд на основі позиції скролу
     const newIndex = Math.round(
       ref.current.scrollLeft / ref.current.offsetWidth,
     );
@@ -222,12 +218,10 @@ export default function ProjectModal({ project, onClose }) {
     }
   };
 
-  // 🔥 НАДІЙНА ФУНКЦІЯ ПРОКРУТКИ КНОПКАМИ 🔥
   const scrollToSlide = (index, isFullscreenMode = false) => {
     const ref = isFullscreenMode ? fullscreenRef : galleryRef;
     if (!ref.current) return;
 
-    // Використовуємо нативний скрол браузера, який ідеально працює зі scroll-snap
     ref.current.scrollTo({
       left: index * ref.current.offsetWidth,
       behavior: "smooth",
@@ -236,15 +230,12 @@ export default function ProjectModal({ project, onClose }) {
     setCurrentSlide(index);
   };
 
-  // Відкриття фулскріну
   const openFullscreen = () => {
     setIsFullscreen(true);
   };
 
-  // Синхронізація фулскріну з поточним слайдом при його відкритті
   useEffect(() => {
     if (isFullscreen && fullscreenRef.current) {
-      // Використовуємо instant, щоб воно одразу відкрилося на потрібній картинці
       fullscreenRef.current.scrollTo({
         left: currentSlide * fullscreenRef.current.offsetWidth,
         behavior: "instant",
@@ -252,7 +243,6 @@ export default function ProjectModal({ project, onClose }) {
     }
   }, [isFullscreen, currentSlide]);
 
-  // Закриття фулскріну і синхронізація маленької галереї
   const closeFullscreen = () => {
     setIsFullscreen(false);
     setTimeout(() => {
@@ -303,7 +293,6 @@ export default function ProjectModal({ project, onClose }) {
                     alt={`${project.title} - фото ${index + 1}`}
                     fill
                     className={styles.modalImg}
-                    /* 🔥 ОНОВЛЕНО sizes для ширшої модалки 🔥 */
                     sizes="(max-width: 1280px) 100vw, 1280px"
                   />
                 </div>
@@ -361,18 +350,26 @@ export default function ProjectModal({ project, onClose }) {
             <h2 className={styles.modalTitle}>{project.title}</h2>
 
             <div className={styles.statsHorizontalRow}>
-              <div className={styles.statHItem}>
-                <div className={styles.iconBox}>
-                  <IconLightning />
-                </div>
-                <div className={styles.statHText}>
-                  <span className={styles.statHLabel}>Потужність</span>
-                  <span className={`${styles.statHValue} ${styles.highlight}`}>
-                    {project.powerLabel}
-                  </span>
-                </div>
-              </div>
-              <div className={styles.statDivider}></div>
+              {/* 🔥 Блок відображається тільки якщо є потужність 🔥 */}
+              {project.powerLabel && (
+                <>
+                  <div className={styles.statHItem}>
+                    <div className={styles.iconBox}>
+                      <IconLightning />
+                    </div>
+                    <div className={styles.statHText}>
+                      <span className={styles.statHLabel}>Потужність</span>
+                      <span
+                        className={`${styles.statHValue} ${styles.highlight}`}
+                      >
+                        {project.powerLabel}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.statDivider}></div>
+                </>
+              )}
+
               <div className={styles.statHItem}>
                 <div className={styles.iconBox}>
                   <IconPin />

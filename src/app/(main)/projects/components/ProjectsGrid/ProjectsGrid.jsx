@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation"; // 🔥 ДОДАЛИ ІМПОРТ
+import { usePathname } from "next/navigation";
 import NextImage from "next/image";
 import gsap from "gsap";
 import { useModal } from "@/context/ModalContext";
@@ -117,11 +117,12 @@ const IconPin = () => (
 );
 
 export default function ProjectsGrid({ initialProjects = [] }) {
-  const pathname = usePathname(); // 🔥 СЛІДКУЄМО ЗА ЗМІНОЮ СТОРІНКИ
+  const pathname = usePathname();
   const { openModal } = useModal();
 
   const formatPower = (kw) => {
-    if (!kw) return "0 кВт";
+    // Якщо потужність не вказана (або рівна 0), повертаємо null, щоб приховати плашку
+    if (!kw) return null;
     if (kw >= 1000) return (kw / 1000).toFixed(1).replace(/\.0$/, "") + " МВт";
     return kw + " кВт";
   };
@@ -198,7 +199,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     indexOfLastProject,
   );
 
-  // 🔥 АНІМАЦІЯ ЛИШЕ ПРИ ПОЯВІ / ПОВЕРНЕННІ НА СТОРІНКУ 🔥
   useEffect(() => {
     const cards = gridRef.current?.children;
     if (cards && cards.length > 0) {
@@ -218,9 +218,8 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       });
       return () => ctx.revert();
     }
-  }, [pathname]); // Запускається ТІЛЬКИ коли змінюється маршрут сторінки!
+  }, [pathname]);
 
-  // 🔥 МИТТЄВІ ДІЇ ДЛЯ ФІЛЬТРІВ (Без анімацій) 🔥
   const handleFilterClick = (groupKey, filterId) => {
     setCurrentPage(1);
     setActiveFilters((prev) => {
@@ -403,9 +402,12 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     />
                     <div className={styles.overlay}></div>
                     <div className={styles.tags}>
-                      <span className={styles.tagPower}>
-                        {project.powerLabel}
-                      </span>
+                      {/* Відображаємо плашку потужності тільки якщо вона є */}
+                      {project.powerLabel && (
+                        <span className={styles.tagPower}>
+                          {project.powerLabel}
+                        </span>
+                      )}
                       <span className={styles.tagClient}>
                         {project.clientType === "b2c"
                           ? "Для дому"
