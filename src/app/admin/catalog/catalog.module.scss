@@ -416,7 +416,9 @@ $apple-border: #e5e5ea;
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600; /* Зробив трохи жирнішим для читабельності */
+  white-space: nowrap; /* 🔥 ЗАБОРОНЯЄ ПЕРЕНЕСЕННЯ СЛІВ НА НОВИЙ РЯДОК 🔥 */
+  display: inline-block;
 }
 
 .cellActions {

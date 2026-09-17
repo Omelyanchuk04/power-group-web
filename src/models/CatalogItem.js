@@ -7,6 +7,9 @@ const CatalogItemSchema = new mongoose.Schema(
     description: { type: String },
     image: { type: String }, // URL головного зображення
 
+    // 🔥 ДОДАНО ПОЛЕ ДЛЯ ГАЛЕРЕЇ ФОТОГРАФІЙ 🔥
+    gallery: { type: [String], default: [] },
+
     // Динамічні фільтри зберігаємо тут
     filters: {
       brand: { type: String },

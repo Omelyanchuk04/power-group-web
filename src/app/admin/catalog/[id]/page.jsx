@@ -54,6 +54,21 @@ const IconX = () => (
   </svg>
 );
 
+const IconStar = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+  </svg>
+);
+
 // --- НАЛАШТУВАННЯ CLOUDINARY ---
 const CLOUD_NAME = "umg8kma4";
 const UPLOAD_PRESET = "vin_power_group_projects";
@@ -61,7 +76,6 @@ const UPLOAD_PRESET = "vin_power_group_projects";
 export default function CatalogFormPage({ params }) {
   const router = useRouter();
 
-  // 🔥 РОЗПАКОВУЄМО PARAMS ДЛЯ НОВИХ ВЕРСІЙ NEXT.JS 🔥
   const resolvedParams = use(params);
   const id = resolvedParams.id;
   const isNew = id === "new";
@@ -76,13 +90,12 @@ export default function CatalogFormPage({ params }) {
     name: "",
     category: "",
     description: "",
-    image: "",
     filters: {},
   });
 
-  // Стейт для Drag & Drop
+  // --- СТЕЙТ ДЛЯ ГАЛЕРЕЇ ---
+  const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -107,9 +120,30 @@ export default function CatalogFormPage({ params }) {
               name: item.name || "",
               category: item.category || fetchedCategories[0] || "",
               description: item.description || "",
-              image: item.image || "",
               filters: item.filters || {},
             });
+
+            // Завантажуємо існуючі фото в галерею
+            const existingImages = [];
+            if (item.image) {
+              existingImages.push({
+                id: "main_old",
+                url: item.image,
+                file: null,
+                isMain: true,
+              });
+            }
+            if (item.gallery && item.gallery.length > 0) {
+              item.gallery.forEach((url, i) => {
+                existingImages.push({
+                  id: `gal_old_${i}`,
+                  url,
+                  file: null,
+                  isMain: false,
+                });
+              });
+            }
+            setImages(existingImages);
           }
         } else {
           setFormData((prev) => ({
@@ -142,62 +176,101 @@ export default function CatalogFormPage({ params }) {
     }));
   };
 
-  // --- ЛОГІКА DRAG & DROP ---
+  // --- ЛОГІКА МУЛЬТИЗАВАНТАЖЕННЯ ---
+  const processFiles = (fileList) => {
+    const files = Array.from(fileList);
+    if (!files.length) return;
+
+    const newImages = files.map((f, i) => ({
+      id: `new_${Date.now()}_${i}`,
+      url: URL.createObjectURL(f),
+      file: f,
+      isMain: false,
+    }));
+
+    setImages((prev) => {
+      const combined = [...prev, ...newImages];
+      // Якщо це перше фото, робимо його головним
+      if (combined.length > 0 && !combined.some((img) => img.isMain)) {
+        combined[0].isMain = true;
+      }
+      return combined;
+    });
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
   };
-
   const handleDragLeave = (e) => {
     e.preventDefault();
     setIsDragging(false);
   };
-
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files?.length) processFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files?.length) processFiles(e.dataTransfer.files);
   };
-
   const handleFileChange = (e) => {
-    if (e.target.files?.length) processFile(e.target.files[0]);
+    if (e.target.files?.length) processFiles(e.target.files);
   };
 
-  const processFile = (file) => {
-    setImageFile(file);
-    setFormData((prev) => ({ ...prev, image: URL.createObjectURL(file) }));
+  const setMainImage = (id) => {
+    setImages((prev) => prev.map((img) => ({ ...img, isMain: img.id === id })));
   };
 
-  const removeImage = () => {
-    setImageFile(null);
-    setFormData((prev) => ({ ...prev, image: "" }));
+  const removeImage = (id) => {
+    setImages((prev) => {
+      const filtered = prev.filter((img) => img.id !== id);
+      if (filtered.length > 0 && !filtered.some((img) => img.isMain)) {
+        filtered[0].isMain = true;
+      }
+      return filtered;
+    });
   };
 
+  // --- ВІДПРАВКА ДАНИХ ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
 
     try {
-      let finalImageUrl = formData.image;
+      // Завантажуємо всі нові фото на Cloudinary
+      const uploadedImages = await Promise.all(
+        images.map(async (img) => {
+          if (img.file) {
+            const formDataUpload = new FormData();
+            formDataUpload.append("file", img.file);
+            formDataUpload.append("upload_preset", UPLOAD_PRESET);
+            const res = await fetch(
+              `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+              {
+                method: "POST",
+                body: formDataUpload,
+              },
+            );
+            const data = await res.json();
+            return { url: data.secure_url, isMain: img.isMain };
+          }
+          return { url: img.url, isMain: img.isMain };
+        }),
+      );
 
-      if (imageFile) {
-        const formDataUpload = new FormData();
-        formDataUpload.append("file", imageFile);
-        formDataUpload.append("upload_preset", UPLOAD_PRESET);
-        const uploadRes = await fetch(
-          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-          {
-            method: "POST",
-            body: formDataUpload,
-          },
-        );
-        const uploadData = await uploadRes.json();
-        finalImageUrl = uploadData.secure_url;
-      }
+      // Розділяємо на Головне фото та Галерею
+      const finalMainImage =
+        uploadedImages.find((u) => u.isMain)?.url ||
+        uploadedImages[0]?.url ||
+        "";
+      const finalGallery = uploadedImages
+        .filter((u) => !u.isMain)
+        .map((u) => u.url);
 
-      const payload = { ...formData, image: finalImageUrl };
+      const payload = {
+        ...formData,
+        image: finalMainImage,
+        gallery: finalGallery,
+      };
 
-      // Використовуємо id змінну, яку розпакували з params
       const url = isNew ? "/api/catalog" : `/api/catalog/${id}`;
       const method = isNew ? "POST" : "PUT";
 
@@ -270,39 +343,57 @@ export default function CatalogFormPage({ params }) {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Фотографія товару</label>
-            {!formData.image ? (
-              <label
-                className={`${styles.unifiedUploadZone} ${isDragging ? styles.dragging : ""}`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-              >
-                <input
-                  type="file"
-                  accept="image/*"
-                  className={styles.hiddenFileInput}
-                  onChange={handleFileChange}
-                />
-                <div className={styles.uploadContent}>
-                  <IconUpload />
-                  <span className={styles.uploadText}>
-                    Натисніть або перетягніть фото сюди
-                  </span>
-                </div>
-              </label>
-            ) : (
-              <div className={styles.imagePreviewContainer}>
-                <div className={styles.imageCard}>
-                  <img src={formData.image} alt="preview" />
-                  <button
-                    type="button"
-                    className={styles.removeBtn}
-                    onClick={removeImage}
+            <label>Фотографії товару (Головне фото та Галерея)</label>
+            <label
+              className={`${styles.unifiedUploadZone} ${isDragging ? styles.dragging : ""}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className={styles.hiddenFileInput}
+                onChange={handleFileChange}
+              />
+              <div className={styles.uploadContent}>
+                <IconUpload />
+                <span className={styles.uploadText}>
+                  Натисніть або перетягніть фото сюди
+                </span>
+              </div>
+            </label>
+
+            {images.length > 0 && (
+              <div className={styles.imageGrid}>
+                {images.map((img) => (
+                  <div
+                    key={img.id}
+                    className={`${styles.imageCard} ${img.isMain ? styles.isMain : ""}`}
                   >
-                    <IconX />
-                  </button>
-                </div>
+                    <img src={img.url} alt="preview" />
+                    <button
+                      type="button"
+                      className={styles.removeBtn}
+                      onClick={() => removeImage(img.id)}
+                    >
+                      <IconX />
+                    </button>
+                    {img.isMain ? (
+                      <div className={styles.mainBadge}>
+                        <IconStar /> Головна
+                      </div>
+                    ) : (
+                      <div
+                        className={styles.setMainOverlay}
+                        onClick={() => setMainImage(img.id)}
+                      >
+                        Зробити головною
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
           </div>

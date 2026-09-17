@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
-// 🔥 Тепер правильний шлях до моделі
 import CatalogItem from "@/models/CatalogItem";
 
 export async function DELETE(request, { params }) {
   try {
     await connectToDatabase();
-    const { id } = params;
+
+    // 🔥 РОЗПАКОВУЄМО PARAMS ЧЕРЕЗ AWAIT (Обов'язково для Next.js 15+) 🔥
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
+
     await CatalogItem.findByIdAndDelete(id);
     return NextResponse.json({ message: "Товар успішно видалено" });
   } catch (error) {
+    console.error("Помилка видалення API:", error);
     return NextResponse.json({ error: "Помилка видалення" }, { status: 500 });
   }
 }
@@ -17,13 +21,18 @@ export async function DELETE(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     await connectToDatabase();
-    const { id } = params;
+
+    // 🔥 ТЕ САМЕ РОБИМО ДЛЯ ОНОВЛЕННЯ 🔥
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
+
     const data = await request.json();
     const updatedItem = await CatalogItem.findByIdAndUpdate(id, data, {
       new: true,
     });
     return NextResponse.json(updatedItem);
   } catch (error) {
+    console.error("Помилка оновлення API:", error);
     return NextResponse.json({ error: "Помилка оновлення" }, { status: 500 });
   }
 }
