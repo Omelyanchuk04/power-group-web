@@ -107,7 +107,9 @@ export default function CatalogAdminPage() {
   const router = useRouter();
 
   const [items, setItems] = useState(catalogCache || []);
-  const [categories, setCategories] = useState(settingsCache?.categories || []);
+  const [categories, setCategories] = useState(
+    settingsCache?.categories || Object.keys(CATEGORY_IMAGES),
+  );
   const [brands, setBrands] = useState(settingsCache?.brands || []);
 
   const [isLoading, setIsLoading] = useState(!catalogCache || !settingsCache);
@@ -146,7 +148,12 @@ export default function CatalogAdminPage() {
         if (settingsRes.ok) {
           const settings = await settingsRes.json();
           settingsCache = settings;
-          setCategories(settings.categories || []);
+          // Якщо категорій у БД немає, беремо ключі з нашого об'єкту іконок (хардкод)
+          setCategories(
+            settings.categories?.length > 0
+              ? settings.categories
+              : Object.keys(CATEGORY_IMAGES),
+          );
           setBrands(settings.brands || []);
         }
       } catch (error) {
@@ -203,25 +210,6 @@ export default function CatalogAdminPage() {
     setNewItemName("");
   };
 
-  const addCategory = async (e) => {
-    e.preventDefault();
-    if (!newItemName.trim()) return;
-    const updated = [...categories, newItemName.trim()];
-    setCategories(updated);
-    setNewItemName("");
-    setIsAdding(false);
-    await saveSettingsToDB(updated, brands);
-  };
-
-  const saveEditedCategory = async (index) => {
-    const updated = [...categories];
-    updated[index] = editValue;
-    setCategories(updated);
-    setEditingIndex(null);
-    setEditValue("");
-    await saveSettingsToDB(updated, brands);
-  };
-
   const addBrand = async (e) => {
     e.preventDefault();
     if (!newItemName.trim()) return;
@@ -250,11 +238,7 @@ export default function CatalogAdminPage() {
 
     const { type, identifier } = deletePrompt;
 
-    if (type === "categories") {
-      const updated = categories.filter((_, idx) => idx !== identifier);
-      setCategories(updated);
-      await saveSettingsToDB(updated, brands);
-    } else if (type === "brands") {
+    if (type === "brands") {
       const updated = brands.filter((_, idx) => idx !== identifier);
       setBrands(updated);
       await saveSettingsToDB(categories, updated);
@@ -316,12 +300,7 @@ export default function CatalogAdminPage() {
           </div>
 
           <div className={styles.settingsGroup}>
-            <button
-              className={styles.settingBtn}
-              onClick={() => setActiveModal("categories")}
-            >
-              Налаштування категорій
-            </button>
+            {/* 🔥 Прибрано кнопку налаштування категорій 🔥 */}
             <button
               className={styles.settingBtn}
               onClick={() => setActiveModal("brands")}
@@ -333,7 +312,6 @@ export default function CatalogAdminPage() {
 
         {viewMode === "categories" && (
           <div className={styles.categoriesGrid}>
-            {/* 🔥 Не ховаємо обгортку, показуємо категорії або м'який лоадер всередині 🔥 */}
             {categories.length === 0 && isLoading ? (
               <div
                 style={{
@@ -384,7 +362,6 @@ export default function CatalogAdminPage() {
             )}
 
             <div className={styles.tableContainer}>
-              {/* 🔥 ТАБЛИЦЯ ЗАВЖДИ РЕНДЕРИТЬСЯ, ЩОБ НЕ БУЛО СТРИБКІВ 🔥 */}
               <table className={styles.table}>
                 <thead>
                   <tr>
@@ -497,11 +474,11 @@ export default function CatalogAdminPage() {
         )}
       </div>
 
-      {activeModal && (
+      {activeModal === "brands" && (
         <div className={styles.settingsOverlay}>
           <div className={styles.settingsContent}>
             <div className={styles.settingsHeader}>
-              <h2>{activeModal === "categories" ? "Категорії" : "Бренди"}</h2>
+              <h2>Бренди</h2>
               <button className={styles.settingsCloseBtn} onClick={closeModal}>
                 ×
               </button>
@@ -514,25 +491,13 @@ export default function CatalogAdminPage() {
                   onClick={() => setIsAdding(true)}
                 >
                   <IconPlus />
-                  <span>
-                    Додати{" "}
-                    {activeModal === "categories" ? "категорію" : "бренд"}
-                  </span>
+                  <span>Додати бренд</span>
                 </button>
               ) : (
-                <form
-                  className={styles.settingsAddForm}
-                  onSubmit={
-                    activeModal === "categories" ? addCategory : addBrand
-                  }
-                >
+                <form className={styles.settingsAddForm} onSubmit={addBrand}>
                   <input
                     type="text"
-                    placeholder={
-                      activeModal === "categories"
-                        ? "Назва категорії..."
-                        : "Назва бренду..."
-                    }
+                    placeholder="Назва бренду..."
                     value={newItemName}
                     onChange={(e) => setNewItemName(e.target.value)}
                     className={styles.settingsInput}
@@ -560,67 +525,57 @@ export default function CatalogAdminPage() {
             </div>
 
             <div className={styles.settingsList}>
-              {(activeModal === "categories" ? categories : brands).map(
-                (item, index) => (
-                  <div key={item} className={styles.settingsListItem}>
+              {brands.map((item, index) => (
+                <div key={item} className={styles.settingsListItem}>
+                  {editingIndex === index ? (
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className={styles.settingsInlineInput}
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          saveEditedBrand(index);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <span className={styles.settingsItemText}>{item}</span>
+                  )}
+                  <div className={styles.settingsItemActions}>
                     {editingIndex === index ? (
-                      <input
-                        type="text"
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className={styles.settingsInlineInput}
-                        autoFocus
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            activeModal === "categories"
-                              ? saveEditedCategory(index)
-                              : saveEditedBrand(index);
-                          }
-                        }}
-                      />
+                      <button
+                        className={styles.iconBtnSuccess}
+                        onClick={() => saveEditedBrand(index)}
+                        title="Зберегти"
+                      >
+                        <IconCheck />
+                      </button>
                     ) : (
-                      <span className={styles.settingsItemText}>{item}</span>
-                    )}
-                    <div className={styles.settingsItemActions}>
-                      {editingIndex === index ? (
+                      <>
                         <button
-                          className={styles.iconBtnSuccess}
-                          onClick={() =>
-                            activeModal === "categories"
-                              ? saveEditedCategory(index)
-                              : saveEditedBrand(index)
-                          }
-                          title="Зберегти"
+                          className={styles.iconBtnEdit}
+                          onClick={() => {
+                            setEditingIndex(index);
+                            setEditValue(item);
+                          }}
+                          title="Редагувати"
                         >
-                          <IconCheck />
+                          <IconEdit />
                         </button>
-                      ) : (
-                        <>
-                          <button
-                            className={styles.iconBtnEdit}
-                            onClick={() => {
-                              setEditingIndex(index);
-                              setEditValue(item);
-                            }}
-                            title="Редагувати"
-                          >
-                            <IconEdit />
-                          </button>
-                          <button
-                            className={styles.iconBtnDelete}
-                            onClick={() =>
-                              triggerDelete(activeModal, index, item)
-                            }
-                            title="Видалити"
-                          >
-                            <IconTrash />
-                          </button>
-                        </>
-                      )}
-                    </div>
+                        <button
+                          className={styles.iconBtnDelete}
+                          onClick={() => triggerDelete("brands", index, item)}
+                          title="Видалити"
+                        >
+                          <IconTrash />
+                        </button>
+                      </>
+                    )}
                   </div>
-                ),
-              )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -630,13 +585,7 @@ export default function CatalogAdminPage() {
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <h3>
-              Видалити{" "}
-              {deletePrompt.type === "item"
-                ? "товар"
-                : deletePrompt.type === "brands"
-                  ? "бренд"
-                  : "категорію"}
-              ?
+              Видалити {deletePrompt.type === "item" ? "товар" : "бренд"}?
             </h3>
             <p>Цю дію неможливо буде скасувати.</p>
             <div className={styles.modalActions}>

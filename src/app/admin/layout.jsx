@@ -78,18 +78,29 @@ const IconCatalog = () => (
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
-
   const [clickedPath, setClickedPath] = useState(null);
 
   useEffect(() => {
     setClickedPath(null);
   }, [pathname]);
 
+  // 🔥 МАГІЯ ДЛЯ ІНЕРЦІЇ (RUBBER-BANDING) 🔥
+  // Фарбуємо системний фон браузера, щоб при відтягуванні сторінки не було білих дірок
+  useEffect(() => {
+    document.body.style.backgroundColor = "#f9fafb";
+    document.documentElement.style.backgroundColor = "#f9fafb";
+
+    // Прибираємо колір, якщо вийдемо з адмінки
+    return () => {
+      document.body.style.backgroundColor = "";
+      document.documentElement.style.backgroundColor = "";
+    };
+  }, []);
+
   const activePath = clickedPath || pathname;
 
   return (
     <div className={styles.dashboardWrapper}>
-      {/* 🔥 ФОН ТЕПЕР ABSOLUTE: він скролиться разом із контентом 🔥 */}
       <div
         style={{
           position: "absolute",
