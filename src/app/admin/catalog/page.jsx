@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./catalog.module.scss";
 
-// --- ІКОНКИ З ПРОЄКТІВ ---
+// --- ІКОНКИ ---
 const IconPlus = () => (
   <svg
     width="20"
@@ -87,6 +87,23 @@ const IconCheck = () => (
   </svg>
 );
 
+const IconWarning = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+    <line x1="12" y1="9" x2="12" y2="13"></line>
+    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+  </svg>
+);
+
 const CATEGORY_IMAGES = {
   "Сонячні панелі": "/images/admin/equipment/solar-panel-icon.png",
   "Гібридні інвертори": "/images/admin/equipment/Hybrid-inverter-img.png",
@@ -104,6 +121,7 @@ export default function CatalogAdminPage() {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Стани
   const [viewMode, setViewMode] = useState("categories");
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -118,7 +136,15 @@ export default function CatalogAdminPage() {
 
   const [deletePrompt, setDeletePrompt] = useState(null);
 
+  // 🔥 ВІДНОВЛЕННЯ СТАНУ З ПАМ'ЯТІ ПРИ ЗАВАНТАЖЕННІ 🔥
   useEffect(() => {
+    const savedViewMode = sessionStorage.getItem("catalog_viewMode");
+    const savedCategory = sessionStorage.getItem("catalog_selectedCategory");
+
+    if (savedViewMode) setViewMode(savedViewMode);
+    if (savedCategory && savedCategory !== "null")
+      setSelectedCategory(savedCategory);
+
     const fetchData = async () => {
       try {
         const [itemsRes, settingsRes] = await Promise.all([
@@ -141,6 +167,26 @@ export default function CatalogAdminPage() {
     fetchData();
   }, []);
 
+  // 🔥 ФУНКЦІЇ ДЛЯ ОНОВЛЕННЯ СТАНУ + ЗБЕРЕЖЕННЯ В ПАМ'ЯТЬ 🔥
+  const updateViewMode = (mode) => {
+    setViewMode(mode);
+    sessionStorage.setItem("catalog_viewMode", mode);
+  };
+
+  const updateSelectedCategory = (category) => {
+    setSelectedCategory(category);
+    if (category) {
+      sessionStorage.setItem("catalog_selectedCategory", category);
+    } else {
+      sessionStorage.removeItem("catalog_selectedCategory");
+    }
+  };
+
+  const handleCategoryClick = (categoryName) => {
+    updateSelectedCategory(categoryName);
+    updateViewMode("list");
+  };
+
   const saveSettingsToDB = async (newCategories, newBrands) => {
     try {
       await fetch("/api/settings/catalog", {
@@ -151,11 +197,6 @@ export default function CatalogAdminPage() {
     } catch (error) {
       console.error("Помилка при збереженні налаштувань:", error);
     }
-  };
-
-  const handleCategoryClick = (categoryName) => {
-    setSelectedCategory(categoryName);
-    setViewMode("list");
   };
 
   const displayedItems = selectedCategory
@@ -242,7 +283,6 @@ export default function CatalogAdminPage() {
 
   return (
     <div className={styles.container}>
-      {/* ОНОВЛЕНИЙ ХЕДЕР З ПРОЄКТІВ */}
       <div className={styles.header}>
         <div className={styles.headerTitleGroup}>
           <Link
@@ -266,15 +306,15 @@ export default function CatalogAdminPage() {
             <button
               className={`${styles.toggleBtn} ${viewMode === "categories" ? styles.active : ""}`}
               onClick={() => {
-                setViewMode("categories");
-                setSelectedCategory(null);
+                updateViewMode("categories");
+                updateSelectedCategory(null);
               }}
             >
               Категорії
             </button>
             <button
               className={`${styles.toggleBtn} ${viewMode === "list" ? styles.active : ""}`}
-              onClick={() => setViewMode("list")}
+              onClick={() => updateViewMode("list")}
             >
               Всі товари
             </button>
@@ -330,7 +370,7 @@ export default function CatalogAdminPage() {
             {selectedCategory && (
               <div className={styles.activeFilterBadge}>
                 Фільтр: {selectedCategory}
-                <button onClick={() => setSelectedCategory(null)}>×</button>
+                <button onClick={() => updateSelectedCategory(null)}>×</button>
               </div>
             )}
 

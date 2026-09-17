@@ -93,7 +93,6 @@ export default function CatalogFormPage({ params }) {
     filters: {},
   });
 
-  // --- СТЕЙТ ДЛЯ ГАЛЕРЕЇ ---
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -123,7 +122,6 @@ export default function CatalogFormPage({ params }) {
               filters: item.filters || {},
             });
 
-            // Завантажуємо існуючі фото в галерею
             const existingImages = [];
             if (item.image) {
               existingImages.push({
@@ -176,7 +174,6 @@ export default function CatalogFormPage({ params }) {
     }));
   };
 
-  // --- ЛОГІКА МУЛЬТИЗАВАНТАЖЕННЯ ---
   const processFiles = (fileList) => {
     const files = Array.from(fileList);
     if (!files.length) return;
@@ -190,7 +187,6 @@ export default function CatalogFormPage({ params }) {
 
     setImages((prev) => {
       const combined = [...prev, ...newImages];
-      // Якщо це перше фото, робимо його головним
       if (combined.length > 0 && !combined.some((img) => img.isMain)) {
         combined[0].isMain = true;
       }
@@ -229,13 +225,11 @@ export default function CatalogFormPage({ params }) {
     });
   };
 
-  // --- ВІДПРАВКА ДАНИХ ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
 
     try {
-      // Завантажуємо всі нові фото на Cloudinary
       const uploadedImages = await Promise.all(
         images.map(async (img) => {
           if (img.file) {
@@ -256,7 +250,6 @@ export default function CatalogFormPage({ params }) {
         }),
       );
 
-      // Розділяємо на Головне фото та Галерею
       const finalMainImage =
         uploadedImages.find((u) => u.isMain)?.url ||
         uploadedImages[0]?.url ||
@@ -281,6 +274,7 @@ export default function CatalogFormPage({ params }) {
       });
 
       if (res.ok) {
+        // Замість router.back() використовуємо надійний перехід
         router.push("/admin/catalog");
         router.refresh();
       } else {
@@ -314,6 +308,7 @@ export default function CatalogFormPage({ params }) {
 
   return (
     <div className={styles.containerForm}>
+      {/* 🔥 ЗАМІНЕНО: router.push("/admin/catalog") замість router.back() 🔥 */}
       <button
         type="button"
         onClick={() => router.push("/admin/catalog")}
@@ -466,6 +461,7 @@ export default function CatalogFormPage({ params }) {
           </div>
 
           <div className={styles.formActions}>
+            {/* 🔥 ЗАМІНЕНО: router.push("/admin/catalog") замість router.back() 🔥 */}
             <button
               type="button"
               onClick={() => router.push("/admin/catalog")}
