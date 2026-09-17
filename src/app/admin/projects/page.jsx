@@ -142,21 +142,19 @@ export default function ProjectsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState(null);
 
-  const fetchProjects = async () => {
-    if (!projectsCache) setIsLoading(true);
-    try {
-      const res = await fetch("/api/projects");
-      if (res.ok) {
-        const data = await res.json();
-        projectsCache = data;
-        setProjects(data);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch("/api/projects");
+        if (res.ok) {
+          const data = await res.json();
+          projectsCache = data;
+          setProjects(data);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchProjects();
   }, []);
 
@@ -288,7 +286,6 @@ export default function ProjectsPage() {
 
       const projectData = {
         ...formData,
-        // 🔥 Якщо поле порожнє, записуємо null замість 0
         power: formData.power ? Number(formData.power) : null,
         mainImage: finalMainImage,
         gallery: finalGallery,
@@ -304,7 +301,12 @@ export default function ProjectsPage() {
 
       if (res.ok) {
         projectsCache = null;
-        fetchProjects();
+        const freshRes = await fetch("/api/projects");
+        if (freshRes.ok) {
+          const freshData = await freshRes.json();
+          projectsCache = freshData;
+          setProjects(freshData);
+        }
         setView("list");
         setImages([]);
       } else throw new Error("Помилка збереження");
@@ -321,7 +323,9 @@ export default function ProjectsPage() {
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.headerTitleGroup}>
+              {/* 🔥 PREFETCH TRUE 🔥 */}
               <Link
+                prefetch={true}
                 href="/admin"
                 className={styles.backToAdminBtn}
                 aria-label="Повернутися на головну"
@@ -344,43 +348,54 @@ export default function ProjectsPage() {
           </div>
 
           <div className={styles.glassPanel}>
-            {isLoading ? (
-              <div
-                style={{
-                  padding: "40px",
-                  textAlign: "center",
-                  color: "#4b5563",
-                }}
-              >
-                Завантаження...
-              </div>
-            ) : projects.length === 0 ? (
-              <div style={{ padding: "40px", textAlign: "center" }}>
-                <div style={{ fontSize: "40px", marginBottom: "16px" }}>📂</div>
-                <h3
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "800",
-                    color: "#111827",
-                  }}
-                >
-                  Немає проєктів
-                </h3>
-              </div>
-            ) : (
-              <div className={styles.tableContainer}>
-                <table className={styles.table}>
-                  <thead>
+            <div className={styles.tableContainer}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Фото</th>
+                    <th>Назва</th>
+                    <th>Локація</th>
+                    <th>Потужність</th>
+                    <th style={{ textAlign: "right" }}>Дії</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isLoading && projects.length === 0 ? (
                     <tr>
-                      <th>Фото</th>
-                      <th>Назва</th>
-                      <th>Локація</th>
-                      <th>Потужність</th>
-                      <th style={{ textAlign: "right" }}>Дії</th>
+                      <td
+                        colSpan="5"
+                        style={{
+                          padding: "60px",
+                          textAlign: "center",
+                          color: "#64748b",
+                        }}
+                      >
+                        Оновлення списку...
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {projects.map((p) => (
+                  ) : projects.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan="5"
+                        style={{ padding: "60px", textAlign: "center" }}
+                      >
+                        <div style={{ fontSize: "40px", marginBottom: "16px" }}>
+                          📂
+                        </div>
+                        <h3
+                          style={{
+                            fontSize: "18px",
+                            fontWeight: "800",
+                            color: "#111827",
+                            margin: 0,
+                          }}
+                        >
+                          Немає проєктів
+                        </h3>
+                      </td>
+                    </tr>
+                  ) : (
+                    projects.map((p) => (
                       <tr
                         key={p._id}
                         className={styles.projectRow}
@@ -395,7 +410,6 @@ export default function ProjectsPage() {
                         </td>
                         <td className={styles.cellTitle}>{p.title}</td>
                         <td className={styles.cellClient}>{p.client || "—"}</td>
-                        {/* 🔥 Змінено вивід потужності: показуємо число або прочерк */}
                         <td className={styles.cellPower}>
                           {p.power ? `${p.power} кВт` : "—"}
                         </td>
@@ -423,11 +437,11 @@ export default function ProjectsPage() {
                           </button>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -506,7 +520,6 @@ export default function ProjectsPage() {
                   </select>
                 </div>
                 <div className={styles.inputGroup}>
-                  {/* 🔥 Прибрано <span>*</span> */}
                   <label>Потужність (кВт)</label>
                   <input
                     type="number"
@@ -514,7 +527,6 @@ export default function ProjectsPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, power: e.target.value })
                     }
-                    /* 🔥 Прибрано required */
                   />
                 </div>
               </div>

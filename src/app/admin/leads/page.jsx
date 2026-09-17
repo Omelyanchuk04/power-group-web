@@ -24,7 +24,6 @@ const IconTrash = () => (
   </svg>
 );
 
-// 🔥 Оновлена іконка стрілочки (Apple Style Chevron)
 const IconArrowLeft = () => (
   <svg
     width="24"
@@ -194,27 +193,26 @@ export default function LeadsPage() {
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const fetchLeads = async () => {
-    if (!leadsCache) setIsLoading(true);
-    try {
-      const res = await fetch("/api/leads");
-      if (res.ok) {
-        const data = await res.json();
-        leadsCache = data;
-        setLeads(data);
-        if (data.length > 0 && !isMobile)
-          setSelectedLead((prev) => prev || data[0]);
-      }
-    } catch (error) {
-      console.error("Помилка", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const res = await fetch("/api/leads");
+        if (res.ok) {
+          const data = await res.json();
+          leadsCache = data;
+          setLeads(data);
+          if (data.length > 0 && !isMobile && !selectedLead) {
+            setSelectedLead(data[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Помилка", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     fetchLeads();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStatusChange = async (id, newStatus) => {
     const previousLeads = [...leads];
@@ -304,202 +302,188 @@ export default function LeadsPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        {/* Кнопка "Назад" (Liquid Glass) */}
-        <Link
-          href="/admin"
-          className={styles.backToAdminBtn}
-          aria-label="На головну панель"
-        >
+        <Link href="/admin" className={styles.backToAdminBtn} prefetch={true}>
           <IconArrowLeft />
         </Link>
         <h1>Вхідні заявки</h1>
       </div>
 
+      {/* 🔥 Обгортка завжди на екрані, жодних стрибків 🔥 */}
       <div className={styles.mailApp}>
-        {isLoading ? (
-          <div className={styles.emptyState}>Завантаження...</div>
-        ) : leads.length === 0 ? (
-          <div className={styles.emptyState}>
-            <div className={styles.emptyIcon}>📬</div>
-            <h3>Немає нових заявок</h3>
-            <p>Усі нові запити з сайту з'являтимуться тут.</p>
-          </div>
-        ) : (
-          <>
-            <div
-              className={`${styles.mailSidebar} ${selectedLead ? styles.hideOnMobile : ""}`}
-            >
-              <div className={styles.sidebarHeader}>
-                <div className={styles.sidebarTitle}>
-                  Всі заявки ({filteredAndSortedLeads.length})
-                </div>
-
-                <div className={styles.sidebarFilters}>
-                  <CustomDropdown
-                    value={filterStatus}
-                    onChange={setFilterStatus}
-                    options={[
-                      { value: "All", label: "Всі статуси" },
-                      { value: "Нова", label: "Тільки нові" },
-                      { value: "В роботі", label: "В роботі" },
-                      { value: "Успіх", label: "Успішні" },
-                      { value: "Відмова", label: "Відмови" },
-                    ]}
-                  />
-                  <CustomDropdown
-                    value={sortOrder}
-                    onChange={setSortOrder}
-                    options={[
-                      { value: "newest", label: "Спочатку нові" },
-                      { value: "oldest", label: "Спочатку старі" },
-                    ]}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.mailList}>
-                {filteredAndSortedLeads.length === 0 ? (
-                  <div className={styles.noResultsText}>
-                    Не знайдено заявок за цими критеріями.
-                  </div>
-                ) : (
-                  filteredAndSortedLeads.map((lead) => {
-                    const isActive = selectedLead?._id === lead._id;
-                    return (
-                      <div
-                        key={lead._id}
-                        className={`${styles.mailItem} ${isActive ? styles.active : ""}`}
-                        onClick={() => setSelectedLead(lead)}
-                      >
-                        <div className={styles.itemHeader}>
-                          <span className={styles.itemName}>{lead.name}</span>
-                          <span className={styles.itemDate}>
-                            {formatDate(lead.createdAt)}
-                          </span>
-                        </div>
-                        <div className={styles.itemSub}>
-                          <span className={styles.itemPhone}>{lead.phone}</span>
-                          <span
-                            className={`${styles.statusDot} ${styles[getStatusClass(lead.status)]}`}
-                          />
-                        </div>
-                        <div className={styles.itemSnippet}>
-                          {lead.message || "Без тексту запиту..."}
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+        <div
+          className={`${styles.mailSidebar} ${selectedLead ? styles.hideOnMobile : ""}`}
+        >
+          <div className={styles.sidebarHeader}>
+            <div className={styles.sidebarTitle}>
+              Всі заявки ({filteredAndSortedLeads.length})
             </div>
+            <div className={styles.sidebarFilters}>
+              <CustomDropdown
+                value={filterStatus}
+                onChange={setFilterStatus}
+                options={[
+                  { value: "All", label: "Всі статуси" },
+                  { value: "Нова", label: "Тільки нові" },
+                  { value: "В роботі", label: "В роботі" },
+                  { value: "Успіх", label: "Успішні" },
+                  { value: "Відмова", label: "Відмови" },
+                ]}
+              />
+              <CustomDropdown
+                value={sortOrder}
+                onChange={setSortOrder}
+                options={[
+                  { value: "newest", label: "Спочатку нові" },
+                  { value: "oldest", label: "Спочатку старі" },
+                ]}
+              />
+            </div>
+          </div>
 
-            <div
-              className={`${styles.mailContent} ${!selectedLead ? styles.hideOnMobile : ""}`}
-            >
-              {selectedLead ? (
-                <>
-                  <div className={styles.contentToolbar}>
-                    <button
-                      className={styles.backBtnMobile}
-                      onClick={() => setSelectedLead(null)}
-                    >
-                      <IconArrowLeft /> Назад
-                    </button>
-
-                    <div className={styles.statusControl}>
-                      <CustomDropdown
-                        value={selectedLead.status || "Нова"}
-                        onChange={(newVal) =>
-                          handleStatusChange(selectedLead._id, newVal)
-                        }
-                        variant="status"
-                        statusClass={getStatusClass(selectedLead.status)}
-                        options={[
-                          { value: "Нова", label: "Нова" },
-                          { value: "В роботі", label: "В роботі" },
-                          { value: "Успіх", label: "Успіх" },
-                          { value: "Відмова", label: "Відмова" },
-                        ]}
+          <div className={styles.mailList}>
+            {isLoading && leads.length === 0 ? (
+              <div className={styles.noResultsText}>Завантаження заявок...</div>
+            ) : filteredAndSortedLeads.length === 0 ? (
+              <div className={styles.noResultsText}>Не знайдено заявок.</div>
+            ) : (
+              filteredAndSortedLeads.map((lead) => {
+                const isActive = selectedLead?._id === lead._id;
+                return (
+                  <div
+                    key={lead._id}
+                    className={`${styles.mailItem} ${isActive ? styles.active : ""}`}
+                    onClick={() => setSelectedLead(lead)}
+                  >
+                    <div className={styles.itemHeader}>
+                      <span className={styles.itemName}>{lead.name}</span>
+                      <span className={styles.itemDate}>
+                        {formatDate(lead.createdAt)}
+                      </span>
+                    </div>
+                    <div className={styles.itemSub}>
+                      <span className={styles.itemPhone}>{lead.phone}</span>
+                      <span
+                        className={`${styles.statusDot} ${styles[getStatusClass(lead.status)]}`}
                       />
                     </div>
-                    <button
-                      onClick={() => setIsDeleteModalOpen(true)}
-                      className={styles.deleteBtn}
-                      title="Видалити"
-                    >
-                      <IconTrash />
-                    </button>
+                    <div className={styles.itemSnippet}>
+                      {lead.message || "Без тексту запиту..."}
+                    </div>
                   </div>
+                );
+              })
+            )}
+          </div>
+        </div>
 
-                  <div className={styles.contentScrollArea}>
-                    <div className={styles.emailHeader}>
-                      <div className={styles.emailAvatar}>
-                        {selectedLead.name.substring(0, 2).toUpperCase()}
-                      </div>
-                      <div className={styles.emailMeta}>
-                        <h2>{selectedLead.name}</h2>
-                        <div className={styles.emailDate}>
-                          {new Date(selectedLead.createdAt).toLocaleString(
-                            "uk-UA",
-                            {
-                              day: "numeric",
-                              month: "long",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            },
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className={styles.emailContacts}>
-                      <a
-                        href={`tel:${selectedLead.phone}`}
-                        className={styles.contactPill}
-                      >
-                        <IconPhone /> {selectedLead.phone}
-                      </a>
-                      {selectedLead.email && (
-                        <a
-                          href={`mailto:${selectedLead.email}`}
-                          className={styles.contactPill}
-                        >
-                          <IconMail /> {selectedLead.email}
-                        </a>
-                      )}
-                      {selectedLead.company && (
-                        <div className={styles.contactPill}>
-                          <IconCompany /> {selectedLead.company}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={styles.emailBody}>
-                      {selectedLead.message ? (
-                        <p>{selectedLead.message}</p>
-                      ) : (
-                        <p className={styles.emptyText}>
-                          Клієнт залишив заявку без додаткового коментаря.
-                        </p>
-                      )}
-                    </div>
-
-                    {selectedLead.deviceInfo && (
-                      <div className={styles.deviceInfoPill}>
-                        <IconDevice /> {selectedLead.deviceInfo}
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className={styles.emptyContent}>
-                  Виберіть заявку для перегляду
-                </div>
-              )}
+        <div
+          className={`${styles.mailContent} ${!selectedLead ? styles.hideOnMobile : ""}`}
+        >
+          {isLoading && !selectedLead && leads.length === 0 ? (
+            <div className={styles.emptyContent} style={{ opacity: 0.5 }}>
+              Оновлення даних...
             </div>
-          </>
-        )}
+          ) : selectedLead ? (
+            <>
+              <div className={styles.contentToolbar}>
+                <button
+                  className={styles.backBtnMobile}
+                  onClick={() => setSelectedLead(null)}
+                >
+                  <IconArrowLeft /> Назад
+                </button>
+                <div className={styles.statusControl}>
+                  <CustomDropdown
+                    value={selectedLead.status || "Нова"}
+                    onChange={(newVal) =>
+                      handleStatusChange(selectedLead._id, newVal)
+                    }
+                    variant="status"
+                    statusClass={getStatusClass(selectedLead.status)}
+                    options={[
+                      { value: "Нова", label: "Нова" },
+                      { value: "В роботі", label: "В роботі" },
+                      { value: "Успіх", label: "Успіх" },
+                      { value: "Відмова", label: "Відмова" },
+                    ]}
+                  />
+                </div>
+                <button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className={styles.deleteBtn}
+                  title="Видалити"
+                >
+                  <IconTrash />
+                </button>
+              </div>
+
+              <div className={styles.contentScrollArea}>
+                <div className={styles.emailHeader}>
+                  <div className={styles.emailAvatar}>
+                    {selectedLead.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div className={styles.emailMeta}>
+                    <h2>{selectedLead.name}</h2>
+                    <div className={styles.emailDate}>
+                      {new Date(selectedLead.createdAt).toLocaleString(
+                        "uk-UA",
+                        {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.emailContacts}>
+                  <a
+                    href={`tel:${selectedLead.phone}`}
+                    className={styles.contactPill}
+                  >
+                    <IconPhone /> {selectedLead.phone}
+                  </a>
+                  {selectedLead.email && (
+                    <a
+                      href={`mailto:${selectedLead.email}`}
+                      className={styles.contactPill}
+                    >
+                      <IconMail /> {selectedLead.email}
+                    </a>
+                  )}
+                  {selectedLead.company && (
+                    <div className={styles.contactPill}>
+                      <IconCompany /> {selectedLead.company}
+                    </div>
+                  )}
+                </div>
+
+                <div className={styles.emailBody}>
+                  {selectedLead.message ? (
+                    <p>{selectedLead.message}</p>
+                  ) : (
+                    <p className={styles.emptyText}>
+                      Клієнт залишив заявку без додаткового коментаря.
+                    </p>
+                  )}
+                </div>
+
+                {selectedLead.deviceInfo && (
+                  <div className={styles.deviceInfoPill}>
+                    <IconDevice /> {selectedLead.deviceInfo}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className={styles.emptyContent}>
+              Виберіть заявку для перегляду
+            </div>
+          )}
+        </div>
       </div>
 
       {isDeleteModalOpen && (

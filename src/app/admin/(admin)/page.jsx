@@ -95,7 +95,8 @@ export default function AdminHomePage() {
         <p className={styles.subtitle}>Оберіть потрібний розділ для роботи</p>
 
         <div className={styles.menuList}>
-          <Link href="/admin/leads" className={styles.menuRow}>
+          {/* 🔥 PREFETCH TRUE 🔥 */}
+          <Link prefetch={true} href="/admin/leads" className={styles.menuRow}>
             <div className={`${styles.rowIcon} ${styles.blueIcon}`}>
               <IconInbox />
             </div>
@@ -108,7 +109,11 @@ export default function AdminHomePage() {
             </div>
           </Link>
 
-          <Link href="/admin/projects" className={styles.menuRow}>
+          <Link
+            prefetch={true}
+            href="/admin/projects"
+            className={styles.menuRow}
+          >
             <div className={`${styles.rowIcon} ${styles.orangeIcon}`}>
               <IconProjects />
             </div>
@@ -121,7 +126,11 @@ export default function AdminHomePage() {
             </div>
           </Link>
 
-          <Link href="/admin/catalog" className={styles.menuRow}>
+          <Link
+            prefetch={true}
+            href="/admin/catalog"
+            className={styles.menuRow}
+          >
             <div
               className={`${styles.rowIcon}`}
               style={{

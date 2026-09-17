@@ -116,26 +116,32 @@ export default function AdminLayout({ children }) {
               className={styles.logoDesktop}
             />
           </div>
+
           <div className={styles.navContainer}>
+            {/* 🔥 PREFETCH TRUE РОБИТЬ ПЕРЕХОДИ МИТТЄВИМИ 🔥 */}
             <Link
+              prefetch={true}
               href="/admin/leads"
               className={`${styles.navBtn} ${pathname.includes("/leads") ? styles.active : ""}`}
             >
               <IconInbox /> <span>Заявки</span>
             </Link>
             <Link
+              prefetch={true}
               href="/admin/projects"
               className={`${styles.navBtn} ${pathname.includes("/admin/projects") ? styles.active : ""}`}
             >
               <IconProjects /> <span>Усі проєкти</span>
             </Link>
             <Link
+              prefetch={true}
               href="/admin/catalog"
               className={`${styles.navBtn} ${pathname.includes("/admin/catalog") ? styles.active : ""}`}
             >
               <IconCatalog /> <span>Каталог обладнання</span>
             </Link>
           </div>
+
           <div className={styles.sidebarFooter}>
             <Link href="/" className={styles.navBtn}>
               <IconExternal /> <span>Клієнтський сайт</span>
