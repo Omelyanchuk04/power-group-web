@@ -189,6 +189,75 @@ $bg-light: #f1f5f9;
   }
 }
 
+/* =========================================
+   🔥 СТИЛІ ДОКУМЕНТА (PDF) 🔥
+   ========================================= */
+.documentSection {
+  margin-top: 24px;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 12px 0;
+  }
+}
+
+.pdfLinkBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+  &:hover {
+    border-color: rgba(0, 86, 179, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.08);
+    transform: translateY(-1px);
+
+    .pdfText {
+      color: $primary;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .pdfIcon {
+      background: rgba(0, 86, 179, 0.1);
+      color: $primary;
+    }
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+}
+
+.pdfIcon {
+  width: 40px;
+  height: 40px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.pdfText {
+  font-size: 15px;
+  font-weight: 600;
+  color: $text-dark;
+  transition: color 0.2s ease;
+}
+
 .ctaButton {
   margin-top: 32px;
   width: max-content;
@@ -227,7 +296,6 @@ $bg-light: #f1f5f9;
   }
 }
 
-/* Замість різкого Scale, робимо плавний SlideUp (як у iOS) */
 @keyframes slideUp {
   from {
     transform: translateY(40px);

@@ -7,6 +7,7 @@ const CatalogItemSchema = new mongoose.Schema(
     description: { type: String },
     image: { type: String },
     gallery: { type: [String], default: [] },
+    datasheetUrl: { type: String, default: "" },
 
     // 🔥 ОНОВЛЕНІ ДИНАМІЧНІ ФІЛЬТРИ 🔥
     // Це приклад того, як має виглядати шматок твоєї моделі

@@ -113,9 +113,8 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     cursor: pointer;
   }
 
-  /* 🔥 ЗБІЛЬШЕНА ВИСОТА ТЕКСТОВОГО ПОЛЯ 🔥 */
   .fixedTextarea {
-    height: 350px; /* Збільшено з 120px до 200px */
+    height: 350px;
     resize: none;
     overflow-y: auto;
     line-height: 1.5;
@@ -177,14 +176,13 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       margin-bottom: 4px;
     }
     .uploadText {
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 500;
       color: $text-dark;
     }
   }
 }
 
-/* 🔥 СІТКА ДЛЯ КІЛЬКОХ ФОТО (ГАЛЕРЕЯ) 🔥 */
 .imageGrid {
   display: flex;
   flex-wrap: wrap;
@@ -367,5 +365,110 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     button {
       width: 100%;
     }
+  }
+}
+
+/* =========================================
+   🔥 СТИЛІ ДЛЯ РОЗДІЛЮВАЧА ТА PDF ФАЙЛУ 🔥
+   ========================================= */
+
+.sectionDivider {
+  height: 1px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.08); /* Легка напівпрозора сіра лінія */
+  margin: 16px 0;
+  border-radius: 2px;
+}
+
+.pdfZone {
+  padding: 20px 16px !important;
+  border-style: solid !important;
+  background: rgba(0, 86, 179, 0.02) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+
+  &:hover {
+    border-color: #0071e3 !important;
+    background: rgba(0, 86, 179, 0.05) !important;
+  }
+}
+
+.pdfCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.pdfInfoLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  cursor: pointer;
+  flex: 1;
+
+  &:hover .pdfName {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    color: #0071e3;
+  }
+}
+
+.pdfIconWrapper {
+  width: 40px;
+  height: 40px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.pdfName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.pdfRemoveBtn {
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-left: 12px;
+
+  &:hover {
+    background: #fef2f2;
+    color: #ef4444;
   }
 }
