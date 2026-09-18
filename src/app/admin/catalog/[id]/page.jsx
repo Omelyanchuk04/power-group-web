@@ -107,15 +107,11 @@ const FILTER_LABELS = {
   batteryType: "Тип батареї",
 };
 
+// Залишаємо структуру фільтрів, але опції для brand тепер грають роль "заглушки",
+// оскільки реальні бренди ми підтягнемо з БД
 const CATEGORY_FILTERS = {
   "Сонячні панелі": {
-    brand: [
-      "Longi Solar",
-      "Tongwei Solar",
-      "Jinko Solar",
-      "JA Solar",
-      "Trina Solar",
-    ],
+    brand: [],
     power: ["300 - 400 Вт", "400 - 500 Вт", "500 - 600 Вт", "600 - 700 Вт"],
     dimensions: [
       "1722х1134",
@@ -127,15 +123,7 @@ const CATEGORY_FILTERS = {
     ],
   },
   "Гібридні інвертори": {
-    brand: [
-      "Deye",
-      "Solis",
-      "Afore",
-      "Sungrow",
-      "FoxESS",
-      "LuxPower",
-      "Huawei",
-    ],
+    brand: [],
     phase: ["3 фази", "1 фаза"],
     type: ["високовольтний", "низьковольтний"],
     power: [
@@ -148,7 +136,7 @@ const CATEGORY_FILTERS = {
     ],
   },
   "Мережеві інвертори": {
-    brand: ["Deye", "Solis", "Sungrow", "Huawei"],
+    brand: [],
     phase: ["3 фази", "1 фаза"],
     power: [
       "6-10 кВт",
@@ -160,11 +148,11 @@ const CATEGORY_FILTERS = {
     ],
   },
   Акумулятори: {
-    brand: ["Deye", "Dyness", "GSL ENERGY", "FoxESS"],
+    brand: [],
     batteryType: ["Низьковольтна", "Високовольтна"],
   },
   "Системи накопичення": {
-    brand: ["Deye", "Dyness", "GSL ENERGY", "FoxESS"],
+    brand: [],
   },
   "Силове обладнання для сонячних електростанцій": {
     executionType: [
@@ -202,6 +190,9 @@ export default function CatalogFormPage({ params }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
+  // 🔥 СТАН ДЛЯ БРЕНДІВ З БАЗИ ДАНИХ 🔥
+  const [brandsList, setBrandsList] = useState([]);
+
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -216,9 +207,19 @@ export default function CatalogFormPage({ params }) {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        if (!isNew) {
-          const res = await fetch("/api/catalog");
-          const items = await res.json();
+        // 🔥 ПАРАЛЕЛЬНО ЗАВАНТАЖУЄМО БРЕНДИ І ТОВАР (ЯКЩО РЕДАГУВАННЯ) 🔥
+        const [settingsRes, itemsRes] = await Promise.all([
+          fetch("/api/settings/catalog"),
+          isNew ? Promise.resolve(null) : fetch("/api/catalog"),
+        ]);
+
+        if (settingsRes.ok) {
+          const settings = await settingsRes.json();
+          setBrandsList(settings.brands || []);
+        }
+
+        if (!isNew && itemsRes && itemsRes.ok) {
+          const items = await itemsRes.json();
           const item = items.find((i) => i._id === id);
           if (item) {
             setFormData({
@@ -257,7 +258,7 @@ export default function CatalogFormPage({ params }) {
               });
             }
           }
-        } else {
+        } else if (isNew) {
           setFormData((prev) => ({
             ...prev,
             category: CATEGORIES[0],
@@ -478,7 +479,7 @@ export default function CatalogFormPage({ params }) {
             </select>
           </div>
 
-          {/* 3. СПЕЦИФІКАЦІЇ (ДИНАМІЧНІ) */}
+          {/* 3. СПЕЦИФІКАЦІЇ (ДИНАМІЧНІ ТА З БД) */}
           {currentCategoryFilters && (
             <div
               className={styles.dynamicFiltersBox}
@@ -507,24 +508,32 @@ export default function CatalogFormPage({ params }) {
                 }}
               >
                 {Object.entries(currentCategoryFilters).map(
-                  ([filterKey, options]) => (
-                    <div key={filterKey} className={styles.inputGroup}>
-                      <label>{FILTER_LABELS[filterKey]}</label>
-                      <select
-                        value={formData.filters[filterKey] || ""}
-                        onChange={(e) =>
-                          handleFilterChange(filterKey, e.target.value)
-                        }
-                      >
-                        <option value="">Не обрано</option>
-                        {options.map((opt) => (
-                          <option key={opt} value={opt}>
-                            {opt}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  ),
+                  ([filterKey, options]) => {
+                    // 🔥 ЯКЩО ПОЛЕ БРЕНД - ПІДСТАВЛЯЄМО ДАНІ З БД 🔥
+                    const renderOptions =
+                      filterKey === "brand" && brandsList.length > 0
+                        ? brandsList
+                        : options;
+
+                    return (
+                      <div key={filterKey} className={styles.inputGroup}>
+                        <label>{FILTER_LABELS[filterKey]}</label>
+                        <select
+                          value={formData.filters[filterKey] || ""}
+                          onChange={(e) =>
+                            handleFilterChange(filterKey, e.target.value)
+                          }
+                        >
+                          <option value="">Не обрано</option>
+                          {renderOptions.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    );
+                  },
                 )}
               </div>
             </div>
