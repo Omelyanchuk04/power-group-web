@@ -355,7 +355,7 @@ $apple-border: #e5e5ea;
 }
 
 /* =========================================
-   ТАБЛИЦЯ І КНОПКИ
+   ТАБЛИЦЯ
    ========================================= */
 .tableContainer {
   width: 100%;
@@ -395,14 +395,13 @@ $apple-border: #e5e5ea;
   .projectRow {
     cursor: pointer;
     transition: background 0.2s;
+
     &:hover {
       background-color: rgba(255, 255, 255, 0.4);
     }
 
-    /* 🔥 ОНОВЛЕНА СІТКА ДЛЯ МОБІЛЬНИХ 🔥 */
     @media (max-width: 768px) {
       display: grid;
-      /* Додано 24px колонку під номер товару */
       grid-template-columns: 24px 85px 1fr auto;
       grid-template-rows: auto auto auto;
       column-gap: 12px;
@@ -446,7 +445,6 @@ $apple-border: #e5e5ea;
   }
 }
 
-/* 🔥 СТИЛІ КОЛОНКИ З НОМЕРОМ 🔥 */
 .cellIndex {
   color: #9ca3af;
   font-weight: 600;
@@ -477,7 +475,7 @@ $apple-border: #e5e5ea;
 
 .cellImg {
   @media (max-width: 768px) {
-    grid-column: 2; /* Посунуто через номер */
+    grid-column: 2;
     grid-row: 1 / 4;
     align-self: stretch;
     display: flex;
@@ -490,7 +488,7 @@ $apple-border: #e5e5ea;
   font-size: 16px;
 
   @media (max-width: 768px) {
-    grid-column: 3; /* Посунуто через номер */
+    grid-column: 3;
     grid-row: 1;
     font-size: 15px;
     align-self: start;
@@ -517,7 +515,7 @@ $apple-border: #e5e5ea;
 
 .cellClient {
   @media (max-width: 768px) {
-    grid-column: 3; /* Посунуто через номер */
+    grid-column: 3;
     grid-row: 2;
   }
 }
@@ -527,58 +525,236 @@ $apple-border: #e5e5ea;
   white-space: nowrap;
 
   @media (max-width: 768px) {
-    grid-column: 4; /* Посунуто через номер */
+    grid-column: 4;
     grid-row: 1 / 4;
     display: flex !important;
     align-items: center;
     justify-content: flex-end;
-
-    .edit {
-      display: none;
-    }
-  }
-}
-
-.actionBtn {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-
-  &:last-child {
-    margin-right: 0 !important;
-  }
-
-  &.edit {
-    background: rgba(255, 255, 255, 0.8);
-    color: $apple-blue;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-  &.delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-  }
-
-  @media (max-width: 768px) {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px !important;
-    svg {
-      width: 18px;
-      height: 18px;
-    }
   }
 }
 
 /* =========================================
-   МОДАЛЬНЕ ВІКНО НАЛАШТУВАНЬ (APPLE STYLE)
+   🔥 APPLE CONTEXT MENU (ДІЇ З ТОВАРАМИ) 🔥
+   ========================================= */
+.dropdownContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.ellipsisBtn {
+  background: transparent;
+  border: none;
+  color: #8e8e93;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover,
+  &.active {
+    background: rgba(0, 0, 0, 0.06);
+    color: $text-dark;
+  }
+}
+
+/* 🔥 ФОН ТЕПЕР СУЦІЛЬНИЙ БІЛИЙ, ЩОБ НІЧОГО НЕ ПРОСВІЧУВАЛОСЬ 🔥 */
+.dropdownMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 170px;
+  padding: 6px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-dark;
+  text-align: left;
+  transition: background 0.15s;
+
+  svg {
+    color: #8e8e93;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+}
+
+.dropdownItemDanger {
+  color: $apple-red;
+  svg {
+    color: $apple-red;
+  }
+  &:hover {
+    background: rgba(255, 59, 48, 0.1);
+  }
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.06);
+  margin: 4px 0;
+}
+
+/* 🔥 СТИЛІ ІНЛАЙН ПІДТВЕРДЖЕННЯ ВИДАЛЕННЯ 🔥 */
+.inlineConfirm {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.confirmText {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-top: 4px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 4px;
+  button {
+    flex: 1;
+    padding: 6px 0;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btnCancel {
+    background: $apple-gray-bg;
+    color: $text-gray;
+    &:hover {
+      background: #e5e5ea;
+    }
+  }
+  .btnDelete {
+    background: $apple-red;
+    color: white;
+    &:hover {
+      background: #d32f2f;
+    }
+  }
+}
+
+.inlineConfirmBrand {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  .btnCancelMini,
+  .btnDeleteMini {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+  .btnCancelMini {
+    background: $apple-gray-bg;
+    color: $text-gray;
+    &:hover {
+      background: #e5e5ea;
+    }
+  }
+  .btnDeleteMini {
+    background: $apple-red;
+    color: white;
+    &:hover {
+      background: #d32f2f;
+    }
+  }
+}
+
+/* Іконки для списку брендів в модалці */
+.iconBtnEdit,
+.iconBtnDelete,
+.iconBtnSuccess {
+  background: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+  opacity: 0.3;
+  padding: 0;
+}
+.iconBtnEdit {
+  color: #8e8e93;
+  &:hover {
+    color: $apple-blue;
+    opacity: 1 !important;
+  }
+}
+.iconBtnDelete {
+  color: #8e8e93;
+  &:hover {
+    color: $apple-red;
+    opacity: 1 !important;
+  }
+}
+.iconBtnSuccess {
+  color: #34c759;
+  opacity: 1;
+  &:hover {
+    color: darken(#34c759, 10%);
+  }
+}
+
+/* =========================================
+   МОДАЛЬНЕ ВІКНО НАЛАШТУВАНЬ БРЕНДІВ (APPLE STYLE)
    ========================================= */
 .settingsOverlay {
   position: fixed;
@@ -771,115 +947,4 @@ $apple-border: #e5e5ea;
   display: flex;
   gap: 4px;
   align-items: center;
-}
-
-.iconBtnEdit,
-.iconBtnDelete,
-.iconBtnSuccess {
-  background: transparent;
-  border: none;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition:
-    color 0.2s ease,
-    opacity 0.2s ease;
-  opacity: 0.3;
-  padding: 0;
-}
-
-.iconBtnEdit {
-  color: #8e8e93;
-  &:hover {
-    color: $apple-blue;
-    opacity: 1 !important;
-  }
-}
-
-.iconBtnDelete {
-  color: #8e8e93;
-  &:hover {
-    color: $apple-red;
-    opacity: 1 !important;
-  }
-}
-
-.iconBtnSuccess {
-  color: #34c759;
-  opacity: 1;
-  &:hover {
-    color: darken(#34c759, 10%);
-  }
-}
-
-/* =========================================
-   МОДАЛЬНЕ ВІКНО ВИДАЛЕННЯ
-   ========================================= */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(17, 24, 39, 0.65);
-  backdrop-filter: blur(8px);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.modalContent {
-  background: rgba(255, 255, 255, 0.95);
-  width: 100%;
-  max-width: 360px;
-  padding: 24px;
-  text-align: center;
-  border-radius: 30px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-
-  h3 {
-    font-size: 18px;
-    font-weight: 800;
-    color: $text-dark;
-    margin: 0 0 8px 0;
-  }
-
-  p {
-    color: $text-gray;
-    font-size: 14px;
-    margin: 0 0 20px 0;
-    line-height: 1.4;
-  }
-}
-
-.modalActions {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-
-  button {
-    flex: 1;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-  }
-
-  .btnCancel {
-    background: rgba(0, 0, 0, 0.05);
-    color: $text-gray;
-  }
-
-  .btnDelete {
-    background: #ef4444;
-    color: white;
-    &:hover {
-      background: #dc2626;
-    }
-  }
 }

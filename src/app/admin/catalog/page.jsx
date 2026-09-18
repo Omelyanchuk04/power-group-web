@@ -37,41 +37,6 @@ const IconArrowLeft = () => (
   </svg>
 );
 
-const IconEdit = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 20h9"></path>
-    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-  </svg>
-);
-
-const IconTrash = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 6h18" />
-    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-    <line x1="10" y1="11" x2="10" y2="17" />
-    <line x1="14" y1="11" x2="14" y2="17" />
-  </svg>
-);
-
 const IconCheck = () => (
   <svg
     width="18"
@@ -87,6 +52,72 @@ const IconCheck = () => (
   </svg>
 );
 
+const IconX = () => (
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
+
+// 🔥 APPLE ІКОНКИ 🔥
+const IconEllipsis = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="1.5"></circle>
+    <circle cx="19" cy="12" r="1.5"></circle>
+    <circle cx="5" cy="12" r="1.5"></circle>
+  </svg>
+);
+
+const IconEditApple = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 20h9"></path>
+    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+  </svg>
+);
+
+const IconTrashApple = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 6h18"></path>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  </svg>
+);
+
 const CATEGORY_IMAGES = {
   "Сонячні панелі": "/images/admin/equipment/solar-panel-icon.png",
   "Гібридні інвертори": "/images/admin/equipment/Hybrid-inverter-img.png",
@@ -99,7 +130,6 @@ const CATEGORY_IMAGES = {
     "/images/admin/equipment/electric-installation-icon.png",
 };
 
-// Кеш для миттєвого завантаження
 let catalogCache = null;
 let settingsCache = null;
 
@@ -123,7 +153,19 @@ export default function CatalogAdminPage() {
   const [editingIndex, setEditingIndex] = useState(null);
   const [editValue, setEditValue] = useState("");
 
-  const [deletePrompt, setDeletePrompt] = useState(null);
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [itemDeleteConfirm, setItemDeleteConfirm] = useState(null);
+  const [brandDeleteConfirm, setBrandDeleteConfirm] = useState(null);
+
+  useEffect(() => {
+    const closeAllDropdowns = () => {
+      setOpenDropdownId(null);
+      setItemDeleteConfirm(null);
+      setBrandDeleteConfirm(null);
+    };
+    document.addEventListener("click", closeAllDropdowns);
+    return () => document.removeEventListener("click", closeAllDropdowns);
+  }, []);
 
   useEffect(() => {
     const savedViewMode = sessionStorage.getItem("catalog_viewMode");
@@ -228,35 +270,37 @@ export default function CatalogAdminPage() {
     await saveSettingsToDB(categories, updated);
   };
 
-  const triggerDelete = (type, identifier, name) => {
-    setDeletePrompt({ type, identifier, name });
+  const handleDeleteBrand = async (index) => {
+    const updated = brands.filter((_, idx) => idx !== index);
+    setBrands(updated);
+    setBrandDeleteConfirm(null);
+    await saveSettingsToDB(categories, updated);
   };
 
-  const confirmDeletion = async () => {
-    if (!deletePrompt) return;
-
-    const { type, identifier } = deletePrompt;
-
-    if (type === "brands") {
-      const updated = brands.filter((_, idx) => idx !== identifier);
-      setBrands(updated);
-      await saveSettingsToDB(categories, updated);
-    } else if (type === "item") {
-      try {
-        const res = await fetch(`/api/catalog/${identifier}`, {
-          method: "DELETE",
-        });
-        if (res.ok) {
-          const newItems = items.filter((item) => item._id !== identifier);
-          setItems(newItems);
-          catalogCache = newItems;
-        }
-      } catch (error) {
-        console.error("Помилка видалення:", error);
+  const handleDeleteItem = async (id) => {
+    try {
+      const res = await fetch(`/api/catalog/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        const newItems = items.filter((item) => item._id !== id);
+        setItems(newItems);
+        catalogCache = newItems;
       }
+    } catch (error) {
+      console.error("Помилка видалення:", error);
+    } finally {
+      setItemDeleteConfirm(null);
+      setOpenDropdownId(null);
     }
+  };
 
-    setDeletePrompt(null);
+  // Допоміжна функція для зупинки кліків
+  const stopPropagation = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.nativeEvent) {
+      e.nativeEvent.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+    }
   };
 
   return (
@@ -363,7 +407,6 @@ export default function CatalogAdminPage() {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    {/* 🔥 ДОДАНО КОЛОНКУ ДЛЯ НОМЕРА 🔥 */}
                     <th
                       style={{
                         width: "40px",
@@ -376,7 +419,9 @@ export default function CatalogAdminPage() {
                     <th>Фото</th>
                     <th>Назва</th>
                     <th>Категорія</th>
-                    <th style={{ textAlign: "right" }}>Дії</th>
+                    <th style={{ textAlign: "right", paddingRight: "30px" }}>
+                      Дії
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -423,7 +468,6 @@ export default function CatalogAdminPage() {
                           router.push(`/admin/catalog/${item._id}`)
                         }
                       >
-                        {/* 🔥 ДОДАНО НОМЕР ПЕРЕД ФОТО 🔥 */}
                         <td className={styles.cellIndex}>{index + 1}.</td>
                         <td className={styles.cellImg}>
                           {item.image ? (
@@ -452,27 +496,86 @@ export default function CatalogAdminPage() {
                             {item.category}
                           </span>
                         </td>
+
                         <td className={styles.cellActions}>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              router.push(`/admin/catalog/${item._id}`);
-                            }}
-                            className={`${styles.actionBtn} ${styles.edit}`}
-                            title="Редагувати"
-                          >
-                            <IconEdit />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              triggerDelete("item", item._id, item.name);
-                            }}
-                            className={`${styles.actionBtn} ${styles.delete}`}
-                            title="Видалити"
-                          >
-                            <IconTrash />
-                          </button>
+                          <div className={styles.dropdownContainer}>
+                            <button
+                              className={`${styles.ellipsisBtn} ${openDropdownId === item._id ? styles.active : ""}`}
+                              onClick={(e) => {
+                                stopPropagation(e);
+                                setOpenDropdownId(
+                                  openDropdownId === item._id ? null : item._id,
+                                );
+                                setItemDeleteConfirm(null);
+                              }}
+                            >
+                              <IconEllipsis />
+                            </button>
+
+                            {openDropdownId === item._id && (
+                              <div
+                                className={styles.dropdownMenu}
+                                onClick={stopPropagation}
+                              >
+                                {itemDeleteConfirm === item._id ? (
+                                  <div className={styles.inlineConfirm}>
+                                    <span className={styles.confirmText}>
+                                      Точно видалити?
+                                    </span>
+                                    <div className={styles.confirmActions}>
+                                      <button
+                                        className={styles.btnCancel}
+                                        onClick={(e) => {
+                                          stopPropagation(e);
+                                          setItemDeleteConfirm(null);
+                                        }}
+                                      >
+                                        Ні
+                                      </button>
+                                      <button
+                                        className={styles.btnDelete}
+                                        onClick={(e) => {
+                                          stopPropagation(e);
+                                          handleDeleteItem(item._id);
+                                        }}
+                                      >
+                                        Так
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <button
+                                      className={styles.dropdownItem}
+                                      onClick={(e) => {
+                                        stopPropagation(e);
+                                        setOpenDropdownId(null);
+                                        router.push(
+                                          `/admin/catalog/${item._id}`,
+                                        );
+                                      }}
+                                    >
+                                      <IconEditApple />
+                                      <span>Редагувати</span>
+                                    </button>
+
+                                    <div className={styles.dropdownDivider} />
+
+                                    <button
+                                      className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+                                      onClick={(e) => {
+                                        stopPropagation(e);
+                                        setItemDeleteConfirm(item._id);
+                                      }}
+                                    >
+                                      <IconTrashApple />
+                                      <span>Видалити</span>
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -545,9 +648,7 @@ export default function CatalogAdminPage() {
                       className={styles.settingsInlineInput}
                       autoFocus
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          saveEditedBrand(index);
-                        }
+                        if (e.key === "Enter") saveEditedBrand(index);
                       }}
                     />
                   ) : (
@@ -569,57 +670,63 @@ export default function CatalogAdminPage() {
                     {editingIndex === index ? (
                       <button
                         className={styles.iconBtnSuccess}
-                        onClick={() => saveEditedBrand(index)}
+                        onClick={(e) => {
+                          stopPropagation(e);
+                          saveEditedBrand(index);
+                        }}
                         title="Зберегти"
                       >
                         <IconCheck />
                       </button>
+                    ) : brandDeleteConfirm === index ? (
+                      <div className={styles.inlineConfirmBrand}>
+                        <button
+                          className={styles.btnCancelMini}
+                          onClick={(e) => {
+                            stopPropagation(e);
+                            setBrandDeleteConfirm(null);
+                          }}
+                        >
+                          <IconX />
+                        </button>
+                        <button
+                          className={styles.btnDeleteMini}
+                          onClick={(e) => {
+                            stopPropagation(e);
+                            handleDeleteBrand(index);
+                          }}
+                        >
+                          <IconCheck />
+                        </button>
+                      </div>
                     ) : (
                       <>
                         <button
                           className={styles.iconBtnEdit}
-                          onClick={() => {
+                          onClick={(e) => {
+                            stopPropagation(e);
                             setEditingIndex(index);
                             setEditValue(item);
                           }}
                           title="Редагувати"
                         >
-                          <IconEdit />
+                          <IconEditApple />
                         </button>
                         <button
                           className={styles.iconBtnDelete}
-                          onClick={() => triggerDelete("brands", index, item)}
+                          onClick={(e) => {
+                            stopPropagation(e);
+                            setBrandDeleteConfirm(index);
+                          }}
                           title="Видалити"
                         >
-                          <IconTrash />
+                          <IconTrashApple />
                         </button>
                       </>
                     )}
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {deletePrompt && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <h3>
-              Видалити {deletePrompt.type === "item" ? "товар" : "бренд"}?
-            </h3>
-            <p>Цю дію неможливо буде скасувати.</p>
-            <div className={styles.modalActions}>
-              <button
-                onClick={() => setDeletePrompt(null)}
-                className={styles.btnCancel}
-              >
-                Скасування
-              </button>
-              <button onClick={confirmDeletion} className={styles.btnDelete}>
-                Видалити
-              </button>
             </div>
           </div>
         </div>

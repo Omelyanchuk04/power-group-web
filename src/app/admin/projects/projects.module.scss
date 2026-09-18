@@ -5,6 +5,11 @@ $text-dark: #111827;
 $text-gray: #4b5563;
 $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
+/* Apple System Colors */
+$apple-blue: #0071e3;
+$apple-red: #ff3b30;
+$apple-gray-bg: #f2f2f7;
+
 /* =========================================
    БАЗОВІ КОНТЕЙНЕРИ
    ========================================= */
@@ -180,44 +185,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-.actionBtn {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-
-  &:last-child {
-    margin-right: 0 !important;
-  }
-
-  &.edit {
-    background: rgba(255, 255, 255, 0.8);
-    color: $primary;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  }
-  &.delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-  }
-
-  @media (max-width: 768px) {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px !important;
-    svg {
-      width: 18px;
-      height: 18px;
-    }
-  }
-}
-
 /* =========================================
    ТАБЛИЦЯ ПРОЄКТІВ 
    ========================================= */
@@ -266,10 +233,9 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       background-color: rgba(255, 255, 255, 0.4);
     }
 
-    /* 🔥 ОНОВЛЕНА СІТКА ДЛЯ МОБІЛЬНИХ 🔥 */
     @media (max-width: 768px) {
       display: grid;
-      grid-template-columns: 24px 85px 1fr auto; /* Додано місце для номера */
+      grid-template-columns: 24px 85px 1fr auto;
       grid-template-rows: auto auto auto;
       column-gap: 12px;
       row-gap: 4px;
@@ -313,7 +279,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   }
 }
 
-/* 🔥 СТИЛІ КОЛОНКИ З НОМЕРОМ 🔥 */
 .cellIndex {
   color: #9ca3af;
   font-weight: 600;
@@ -352,7 +317,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 
 .cellImg {
   @media (max-width: 768px) {
-    grid-column: 2; /* Зміщено */
+    grid-column: 2;
     grid-row: 1 / 4;
     align-self: stretch;
     display: flex;
@@ -364,7 +329,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
   color: $text-dark;
   font-size: 16px;
   @media (max-width: 768px) {
-    grid-column: 3; /* Зміщено */
+    grid-column: 3;
     grid-row: 1;
     font-size: 15px;
     align-self: start;
@@ -373,11 +338,12 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     margin-top: -2px;
   }
 }
+
 .cellClient {
   color: $text-gray;
   font-weight: 600;
   @media (max-width: 768px) {
-    grid-column: 3; /* Зміщено */
+    grid-column: 3;
     grid-row: 2;
     font-size: 12px;
     align-self: center;
@@ -386,28 +352,167 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     text-overflow: ellipsis;
   }
 }
+
 .cellPower {
   color: $primary;
   font-weight: 800;
   @media (max-width: 768px) {
-    grid-column: 3; /* Зміщено */
+    grid-column: 3;
     grid-row: 3;
     font-size: 13px;
     align-self: end;
   }
 }
+
 .cellActions {
   text-align: right;
   white-space: nowrap;
   @media (max-width: 768px) {
-    grid-column: 4; /* Зміщено */
+    grid-column: 4;
     grid-row: 1 / 4;
     display: flex !important;
     align-items: center;
     justify-content: flex-end;
+  }
+}
 
-    .edit {
-      display: none;
+/* =========================================
+   🔥 APPLE CONTEXT MENU (ДІЇ) 🔥
+   ========================================= */
+.dropdownContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.ellipsisBtn {
+  background: transparent;
+  border: none;
+  color: #8e8e93;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover,
+  &.active {
+    background: rgba(0, 0, 0, 0.06);
+    color: $text-dark;
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 170px;
+  padding: 6px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-dark;
+  text-align: left;
+  transition: background 0.15s;
+
+  svg {
+    color: #8e8e93;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.06);
+  }
+}
+
+.dropdownItemDanger {
+  color: $apple-red;
+  svg {
+    color: $apple-red;
+  }
+  &:hover {
+    background: rgba(255, 59, 48, 0.1);
+  }
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.06);
+  margin: 4px 0;
+}
+
+.inlineConfirm {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.confirmText {
+  font-size: 13px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-top: 4px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 4px;
+  button {
+    flex: 1;
+    padding: 6px 0;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btnCancel {
+    background: $apple-gray-bg;
+    color: $text-gray;
+    &:hover {
+      background: #e5e5ea;
+    }
+  }
+  .btnDelete {
+    background: $apple-red;
+    color: white;
+    &:hover {
+      background: #d32f2f;
     }
   }
 }
@@ -701,67 +806,6 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
     padding: 10px;
     &:hover {
       opacity: 1;
-    }
-  }
-}
-
-/* =========================================
-   МОДАЛЬНЕ ВІКНО ВИДАЛЕННЯ
-   ========================================= */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(17, 24, 39, 0.65);
-  backdrop-filter: blur(8px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-.modalContent {
-  @extend .glassPanel;
-  width: 100%;
-  max-width: 360px;
-  padding: 24px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.95);
-  h3 {
-    font-size: 18px;
-    font-weight: 800;
-    color: $text-dark;
-    margin: 0 0 8px 0;
-  }
-  p {
-    color: $text-gray;
-    font-size: 14px;
-    margin: 0 0 20px 0;
-    line-height: 1.4;
-  }
-}
-.modalActions {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  button {
-    flex: 1;
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-  }
-  .btnCancel {
-    background: rgba(0, 0, 0, 0.05);
-    color: $text-gray;
-  }
-  .btnDelete {
-    background: #ef4444;
-    color: white;
-    &:hover {
-      background: #dc2626;
     }
   }
 }

@@ -20,39 +20,6 @@ const IconPlus = () => (
     <line x1="5" y1="12" x2="19" y2="12"></line>
   </svg>
 );
-const IconEdit = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 20h9"></path>
-    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-  </svg>
-);
-const IconTrash = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 6h18" />
-    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-    <line x1="10" y1="11" x2="10" y2="17" />
-    <line x1="14" y1="11" x2="14" y2="17" />
-  </svg>
-);
 const IconArrowLeft = () => (
   <svg
     width="24"
@@ -113,6 +80,56 @@ const IconX = () => (
   </svg>
 );
 
+// 🔥 НОВІ APPLE ІКОНКИ 🔥
+const IconEllipsis = () => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="1.5"></circle>
+    <circle cx="19" cy="12" r="1.5"></circle>
+    <circle cx="5" cy="12" r="1.5"></circle>
+  </svg>
+);
+
+const IconEditApple = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 20h9"></path>
+    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+  </svg>
+);
+
+const IconTrashApple = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 6h18"></path>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  </svg>
+);
+
 const CLOUD_NAME = "umg8kma4";
 const UPLOAD_PRESET = "vin_power_group_projects";
 
@@ -128,7 +145,6 @@ const initialForm = {
 
 let projectsCache = null;
 
-// 🔥 МАГІЯ ОПТИМІЗАЦІЇ: Змушуємо Cloudinary віддати картинку розміром 200px (вагою 5КБ) замість 5МБ оригіналу
 const getThumbnail = (url) => {
   if (!url) return "";
   if (url.includes("/upload/")) {
@@ -148,8 +164,19 @@ export default function ProjectsPage() {
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState(null);
+  // 🔥 СТАНИ ДЛЯ ВИПАДАЮЧОГО МЕНЮ І ЛОКАЛЬНОГО ВИДАЛЕННЯ 🔥
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [itemDeleteConfirm, setItemDeleteConfirm] = useState(null);
+
+  // Закриваємо меню при кліку поза ним
+  useEffect(() => {
+    const closeAllDropdowns = () => {
+      setOpenDropdownId(null);
+      setItemDeleteConfirm(null);
+    };
+    document.addEventListener("click", closeAllDropdowns);
+    return () => document.removeEventListener("click", closeAllDropdowns);
+  }, []);
 
   useEffect(() => {
     if (projectsCache) return;
@@ -208,22 +235,29 @@ export default function ProjectsPage() {
     setView("edit");
   };
 
-  const confirmDelete = async () => {
-    if (!projectToDelete) return;
+  const handleDeleteItem = async (id) => {
     try {
-      const res = await fetch(`/api/projects/${projectToDelete}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
       if (res.ok) {
-        const updatedProjects = projects.filter(
-          (p) => p._id !== projectToDelete,
-        );
+        const updatedProjects = projects.filter((p) => p._id !== id);
         setProjects(updatedProjects);
         projectsCache = updatedProjects;
       }
+    } catch (error) {
+      console.error("Помилка видалення:", error);
     } finally {
-      setIsDeleteModalOpen(false);
-      setProjectToDelete(null);
+      setItemDeleteConfirm(null);
+      setOpenDropdownId(null);
+    }
+  };
+
+  // Допоміжна функція для зупинки кліків
+  const stopPropagation = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.nativeEvent) {
+      e.nativeEvent.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
     }
   };
 
@@ -364,7 +398,6 @@ export default function ProjectsPage() {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    {/* 🔥 ДОДАНО КОЛОНКУ НОМЕРА 🔥 */}
                     <th
                       style={{
                         width: "40px",
@@ -378,7 +411,9 @@ export default function ProjectsPage() {
                     <th>Назва</th>
                     <th>Локація</th>
                     <th>Потужність</th>
-                    <th style={{ textAlign: "right" }}>Дії</th>
+                    <th style={{ textAlign: "right", paddingRight: "30px" }}>
+                      Дії
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -423,7 +458,6 @@ export default function ProjectsPage() {
                         className={styles.projectRow}
                         onClick={() => handleEditClick(p)}
                       >
-                        {/* 🔥 ВИВЕДЕНО НОМЕР 🔥 */}
                         <td className={styles.cellIndex}>{index + 1}.</td>
                         <td className={styles.cellImg}>
                           <img
@@ -437,28 +471,85 @@ export default function ProjectsPage() {
                         <td className={styles.cellPower}>
                           {p.power ? `${p.power} кВт` : "—"}
                         </td>
+
+                        {/* 🔥 ВИПРАВЛЕНА КНОПКА APPLE-STYLE 🔥 */}
                         <td className={styles.cellActions}>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditClick(p);
-                            }}
-                            className={`${styles.actionBtn} ${styles.edit}`}
-                            title="Редагувати"
-                          >
-                            <IconEdit />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setProjectToDelete(p._id);
-                              setIsDeleteModalOpen(true);
-                            }}
-                            className={`${styles.actionBtn} ${styles.delete}`}
-                            title="Видалити"
-                          >
-                            <IconTrash />
-                          </button>
+                          <div className={styles.dropdownContainer}>
+                            <button
+                              className={`${styles.ellipsisBtn} ${openDropdownId === p._id ? styles.active : ""}`}
+                              onClick={(e) => {
+                                stopPropagation(e);
+                                setOpenDropdownId(
+                                  openDropdownId === p._id ? null : p._id,
+                                );
+                                setItemDeleteConfirm(null);
+                              }}
+                            >
+                              <IconEllipsis />
+                            </button>
+
+                            {openDropdownId === p._id && (
+                              <div
+                                className={styles.dropdownMenu}
+                                onClick={stopPropagation}
+                              >
+                                {itemDeleteConfirm === p._id ? (
+                                  <div className={styles.inlineConfirm}>
+                                    <span className={styles.confirmText}>
+                                      Точно видалити?
+                                    </span>
+                                    <div className={styles.confirmActions}>
+                                      <button
+                                        className={styles.btnCancel}
+                                        onClick={(e) => {
+                                          stopPropagation(e);
+                                          setItemDeleteConfirm(null);
+                                        }}
+                                      >
+                                        Ні
+                                      </button>
+                                      <button
+                                        className={styles.btnDelete}
+                                        onClick={(e) => {
+                                          stopPropagation(e);
+                                          handleDeleteItem(p._id);
+                                        }}
+                                      >
+                                        Так
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <button
+                                      className={styles.dropdownItem}
+                                      onClick={(e) => {
+                                        stopPropagation(e);
+                                        setOpenDropdownId(null);
+                                        handleEditClick(p);
+                                      }}
+                                    >
+                                      <IconEditApple />
+                                      <span>Редагувати</span>
+                                    </button>
+
+                                    <div className={styles.dropdownDivider} />
+
+                                    <button
+                                      className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
+                                      onClick={(e) => {
+                                        stopPropagation(e);
+                                        setItemDeleteConfirm(p._id);
+                                      }}
+                                    >
+                                      <IconTrashApple />
+                                      <span>Видалити</span>
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -646,26 +737,6 @@ export default function ProjectsPage() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {isDeleteModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <h3>Видалити проєкт?</h3>
-            <p>Цю дію неможливо буде скасувати.</p>
-            <div className={styles.modalActions}>
-              <button
-                onClick={() => setIsDeleteModalOpen(false)}
-                className={styles.btnCancel}
-              >
-                Скасування
-              </button>
-              <button onClick={confirmDelete} className={styles.btnDelete}>
-                Видалити
-              </button>
-            </div>
           </div>
         </div>
       )}
