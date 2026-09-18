@@ -642,10 +642,7 @@ export default function CatalogFormPage({ params }) {
                 />
                 <div className={styles.uploadContent}>
                   <IconFileText />
-                  <span
-                    className={styles.uploadText}
-                    style={{ fontSize: "12px" }}
-                  >
+                  <span className={styles.uploadText}>
                     Натисніть сюди, щоб обрати PDF файл
                   </span>
                 </div>

@@ -133,7 +133,7 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 }
 
 /* =========================================
-   ЗОНА ЗАВАНТАЖЕННЯ ФОТО (DRAG & DROP)
+   СПІЛЬНА ЗОНА ЗАВАНТАЖЕННЯ (ФОТО ТА ФАЙЛИ)
    ========================================= */
 .hiddenFileInput {
   display: none;
@@ -176,8 +176,8 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
       margin-bottom: 4px;
     }
     .uploadText {
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
       color: $text-dark;
     }
   }
@@ -369,27 +369,15 @@ $yellow-grad: linear-gradient(180deg, #ffe066 0%, #ffcc00 100%);
 }
 
 /* =========================================
-   🔥 СТИЛІ ДЛЯ РОЗДІЛЮВАЧА ТА PDF ФАЙЛУ 🔥
+   🔥 СТИЛІ ДЛЯ РОЗДІЛЮВАЧА ТА ЗАВАНТАЖЕНОГО PDF ФАЙЛУ 🔥
    ========================================= */
 
 .sectionDivider {
   height: 1px;
   width: 100%;
-  background: rgba(0, 0, 0, 0.08); /* Легка напівпрозора сіра лінія */
+  background: rgba(0, 0, 0, 0.08);
   margin: 16px 0;
   border-radius: 2px;
-}
-
-.pdfZone {
-  padding: 20px 16px !important;
-  border-style: solid !important;
-  background: rgba(0, 86, 179, 0.02) !important;
-  border-color: rgba(0, 0, 0, 0.08) !important;
-
-  &:hover {
-    border-color: #0071e3 !important;
-    background: rgba(0, 86, 179, 0.05) !important;
-  }
 }
 
 .pdfCard {
