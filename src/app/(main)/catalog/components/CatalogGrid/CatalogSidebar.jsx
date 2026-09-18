@@ -39,13 +39,13 @@ export default function CatalogSidebar({
             </button>
           </div>
 
-          {FILTER_CONFIG[activeCategory].map((filterGroup) => {
+          {/* 🔥 ЗАПОБІЖНИК: Додано знак питання `?` перед map 🔥 */}
+          {FILTER_CONFIG[activeCategory]?.map((filterGroup) => {
             if (filterGroup.type === "slider") {
               const minVal = filterGroup.min || 0;
               const maxVal = filterGroup.max || 150;
               const unit = filterGroup.unit || "кВт";
 
-              // Коректний відсоток для градієнту повзунка
               const fillPercentage =
                 ((powerLimitUI - minVal) / (maxVal - minVal)) * 100;
 

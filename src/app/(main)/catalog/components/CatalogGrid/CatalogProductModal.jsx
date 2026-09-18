@@ -3,10 +3,20 @@
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import styles from "./CatalogProductModal.module.scss";
-import { CATEGORIES } from "./catalogData";
+
+// Мапінг англійських ключів фільтрів у зрозумілі назви
+const FILTER_LABELS = {
+  brand: "Виробник (бренд)",
+  power: "Потужність",
+  dimensions: "Габарити",
+  phase: "Кількість фаз",
+  type: "Тип",
+  executionType: "Тип виконання",
+  subcategory: "Підкатегорія (розділ)",
+  batteryType: "Тип батареї",
+};
 
 export default function CatalogProductModal({ product, onClose }) {
-  // 1. Стан для відслідковування завантаження (потрібно для Next.js SSR)
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,13 +34,21 @@ export default function CatalogProductModal({ product, onClose }) {
     };
   }, [product]);
 
-  // Якщо компонент ще не змонтовано в браузері або немає продукту - нічого не рендеримо
   if (!mounted || !product) return null;
 
-  const categoryLabel =
-    CATEGORIES.find((c) => c.id === product.category)?.label || "Обладнання";
+  // Формуємо масив наявних характеристик
+  const activeSpecs = [];
+  if (product.filters) {
+    Object.keys(product.filters).forEach((key) => {
+      if (product.filters[key]) {
+        activeSpecs.push({
+          label: FILTER_LABELS[key] || key,
+          value: product.filters[key],
+        });
+      }
+    });
+  }
 
-  // 2. 🔥 МАГІЯ ТУТ: createPortal рендерить модалку в document.body, ПОВЕРХ шапки!
   return createPortal(
     <div className={styles.backdrop} onClick={onClose}>
       <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
@@ -50,60 +68,34 @@ export default function CatalogProductModal({ product, onClose }) {
 
         <div className={styles.imageBanner}>
           <img
-            src={product.image}
+            src={product.image || "/placeholder.jpg"}
             alt={product.name}
             className={styles.mainImg}
           />
         </div>
 
         <div className={styles.content}>
-          <span className={styles.category}>{categoryLabel}</span>
+          <span className={styles.category}>{product.category}</span>
           <h2 className={styles.title}>{product.name}</h2>
 
-          <div className={styles.specsGrid}>
-            {product.brand && (
-              <div className={styles.specItem}>
-                <span className={styles.specLabel}>Виробник:</span>
-                <span className={styles.specValue}>{product.brand}</span>
-              </div>
-            )}
-            {product.power && (
-              <div className={styles.specItem}>
-                <span className={styles.specLabel}>Потужність:</span>
-                <span className={styles.specValue}>{product.power}</span>
-              </div>
-            )}
-            {product.phase && (
-              <div className={styles.specItem}>
-                <span className={styles.specLabel}>Кількість фаз:</span>
-                <span className={styles.specValue}>{product.phase}</span>
-              </div>
-            )}
-            {product.batType && (
-              <div className={styles.specItem}>
-                <span className={styles.specLabel}>Тип батареї:</span>
-                <span className={styles.specValue}>{product.batType}</span>
-              </div>
-            )}
-            {product.type && (
-              <div className={styles.specItem}>
-                <span className={styles.specLabel}>Тип:</span>
-                <span className={styles.specValue}>{product.type}</span>
-              </div>
-            )}
-          </div>
+          {activeSpecs.length > 0 && (
+            <div className={styles.specsGrid}>
+              {activeSpecs.map((spec, index) => (
+                <div key={index} className={styles.specItem}>
+                  <span className={styles.specLabel}>{spec.label}:</span>
+                  <span className={styles.specValue}>{spec.value}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className={styles.divider}></div>
 
           <div className={styles.description}>
             <h3>Опис обладнання</h3>
             <p>
-              Це високоякісне обладнання від виробника{" "}
-              {product.brand || "нашого партнера"}, яке забезпечує стабільну
-              роботу вашої сонячної електростанції чи системи накопичення.
-              {product.name} відповідає всім сучасним стандартам якості та
-              безпеки. Для отримання точних технічних характеристик (Datasheet)
-              або прорахунку вартості залиште заявку.
+              {product.description ||
+                `Це високоякісне обладнання від виробника ${product.filters?.brand || "нашого партнера"}, яке забезпечує стабільну роботу вашої сонячної електростанції чи системи накопичення.`}
             </p>
           </div>
 
@@ -118,6 +110,6 @@ export default function CatalogProductModal({ product, onClose }) {
         </div>
       </div>
     </div>,
-    document.body, // <-- Відправляємо модалку сюди
+    document.body,
   );
 }

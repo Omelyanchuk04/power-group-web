@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { CATEGORY_FILTERS, FILTER_LABELS } from "@/lib/catalogConfig";
 import styles from "./form.module.scss";
 
 // --- ІКОНКИ ---
@@ -20,7 +19,6 @@ const IconArrowLeft = () => (
     <polyline points="14 18 8 12 14 6"></polyline>
   </svg>
 );
-
 const IconUpload = () => (
   <svg
     width="28"
@@ -37,7 +35,6 @@ const IconUpload = () => (
     <line x1="12" y1="3" x2="12" y2="15"></line>
   </svg>
 );
-
 const IconX = () => (
   <svg
     width="14"
@@ -53,7 +50,6 @@ const IconX = () => (
     <line x1="6" y1="6" x2="18" y2="18"></line>
   </svg>
 );
-
 const IconStar = () => (
   <svg
     width="12"
@@ -72,18 +68,124 @@ const IconStar = () => (
 const CLOUD_NAME = "umg8kma4";
 const UPLOAD_PRESET = "vin_power_group_projects";
 
+// 🔥 ВЕСЬ ТВІЙ СПИСОК КАТЕГОРІЙ 🔥
+const CATEGORIES = [
+  "Сонячні панелі",
+  "Гібридні інвертори",
+  "Мережеві інвертори",
+  "Акумулятори",
+  "Системи накопичення",
+  "Силове обладнання для сонячних електростанцій",
+  "Комплектуючі для монтажу",
+];
+
+// 🔥 ПЕРЕКЛАД КЛЮЧІВ ДЛЯ ФІЛЬТРІВ 🔥
+const FILTER_LABELS = {
+  brand: "Виробник (бренд)",
+  power: "Потужність",
+  dimensions: "Габарити",
+  phase: "Кількість фаз",
+  type: "Тип",
+  executionType: "Тип виконання",
+  subcategory: "Підкатегорія (розділ)",
+  batteryType: "Тип батареї",
+};
+
+// 🔥 ЖОРСТКА ПРИВ'ЯЗКА ПАРАМЕТРІВ ДО КАТЕГОРІЙ 🔥
+const CATEGORY_FILTERS = {
+  "Сонячні панелі": {
+    brand: [
+      "Longi Solar",
+      "Tongwei Solar",
+      "Jinko Solar",
+      "JA Solar",
+      "Trina Solar",
+    ],
+    power: ["300 - 400 Вт", "400 - 500 Вт", "500 - 600 Вт", "600 - 700 Вт"],
+    dimensions: [
+      "1722х1134",
+      "1762x1134",
+      "1961×1134",
+      "1990х1134",
+      "2278x1134",
+      "2382x1134",
+    ],
+  },
+  "Гібридні інвертори": {
+    brand: [
+      "Deye",
+      "Solis",
+      "Afore",
+      "Sungrow",
+      "FoxESS",
+      "LuxPower",
+      "Huawei",
+    ],
+    phase: ["3 фази", "1 фаза"],
+    type: ["високовольтний", "низьковольтний"],
+    power: [
+      "6-10 кВт",
+      "11-15 кВт",
+      "16-25 кВт",
+      "26-50 кВт",
+      "51-100 кВт",
+      "понад 100 кВт",
+    ],
+  },
+  "Мережеві інвертори": {
+    brand: ["Deye", "Solis", "Sungrow", "Huawei"],
+    phase: ["3 фази", "1 фаза"],
+    power: [
+      "6-10 кВт",
+      "11-15 кВт",
+      "16-25 кВт",
+      "26-50 кВт",
+      "51-100 кВт",
+      "понад 100 кВт",
+    ],
+  },
+  Акумулятори: {
+    brand: ["Deye", "Dyness", "GSL ENERGY", "FoxESS"],
+    batteryType: ["Низьковольтна", "Високовольтна"],
+  },
+  "Системи накопичення": {
+    brand: ["Deye", "Dyness", "GSL ENERGY", "FoxESS"],
+  },
+  "Силове обладнання для сонячних електростанцій": {
+    executionType: [
+      "для гібридних інверторів",
+      "для мережевих інверторів",
+      "для установок зберігання енергії",
+      "для дизельних генераторів АВР",
+    ],
+    power: [
+      "6-10 кВт",
+      "11-15 кВт",
+      "16-25 кВт",
+      "26-50 кВт",
+      "51-100 кВт",
+      "понад 100 кВт",
+    ],
+  },
+  "Комплектуючі для монтажу": {
+    subcategory: [
+      "Кабель",
+      "Конектори МС-4",
+      "Кріплення",
+      "Лічильники",
+      "Інше",
+    ],
+  },
+};
+
 export default function CatalogFormPage({ params }) {
   const router = useRouter();
-
   const resolvedParams = use(params);
   const id = resolvedParams.id;
   const isNew = id === "new";
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -98,17 +200,6 @@ export default function CatalogFormPage({ params }) {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const settingsRes = await fetch("/api/settings/catalog");
-        let fetchedCategories = [];
-        let fetchedBrands = [];
-        if (settingsRes.ok) {
-          const settings = await settingsRes.json();
-          fetchedCategories = settings.categories || [];
-          fetchedBrands = settings.brands || [];
-          setCategories(fetchedCategories);
-          setBrands(fetchedBrands);
-        }
-
         if (!isNew) {
           const res = await fetch("/api/catalog");
           const items = await res.json();
@@ -116,7 +207,7 @@ export default function CatalogFormPage({ params }) {
           if (item) {
             setFormData({
               name: item.name || "",
-              category: item.category || fetchedCategories[0] || "",
+              category: item.category || CATEGORIES[0],
               description: item.description || "",
               filters: item.filters || {},
             });
@@ -145,7 +236,7 @@ export default function CatalogFormPage({ params }) {
         } else {
           setFormData((prev) => ({
             ...prev,
-            category: fetchedCategories[0] || "",
+            category: CATEGORIES[0],
           }));
         }
       } catch (error) {
@@ -160,6 +251,7 @@ export default function CatalogFormPage({ params }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "category") {
+      // Очищаємо фільтри при зміні категорії, щоб старі не лізли в базу
       setFormData((prev) => ({ ...prev, category: value, filters: {} }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -237,10 +329,7 @@ export default function CatalogFormPage({ params }) {
             formDataUpload.append("upload_preset", UPLOAD_PRESET);
             const res = await fetch(
               `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-              {
-                method: "POST",
-                body: formDataUpload,
-              },
+              { method: "POST", body: formDataUpload },
             );
             const data = await res.json();
             return { url: data.secure_url, isMain: img.isMain };
@@ -258,9 +347,12 @@ export default function CatalogFormPage({ params }) {
         .map((u) => u.url);
 
       const payload = {
-        ...formData,
+        name: formData.name,
+        category: formData.category,
+        description: formData.description,
         image: finalMainImage,
         gallery: finalGallery,
+        filters: formData.filters,
       };
 
       const url = isNew ? "/api/catalog" : `/api/catalog/${id}`;
@@ -286,9 +378,6 @@ export default function CatalogFormPage({ params }) {
     }
   };
 
-  // ❌ ПРИБРАНО ПОВНИЙ ЛОАДЕР ❌
-  // Тепер вся верстка рендериться миттєво!
-
   const currentCategoryFilters = CATEGORY_FILTERS[formData.category];
 
   return (
@@ -306,7 +395,6 @@ export default function CatalogFormPage({ params }) {
           {isNew ? "Створення нового товару" : "Редагування товару"}
         </h2>
 
-        {/* 🔥 Форма злегка прозора, поки вантажиться, але вона Є НА ЕКРАНІ 🔥 */}
         <form
           className={styles.formLayout}
           onSubmit={handleSubmit}
@@ -396,7 +484,10 @@ export default function CatalogFormPage({ params }) {
               onChange={handleChange}
               required
             >
-              {categories.map((cat) => (
+              <option value="" disabled>
+                Оберіть категорію...
+              </option>
+              {CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -404,36 +495,53 @@ export default function CatalogFormPage({ params }) {
             </select>
           </div>
 
+          {/* 🔥 ДИНАМІЧНІ ФІЛЬТРИ ДЛЯ КАТЕГОРІЇ 🔥 */}
           {currentCategoryFilters && (
-            <div className={styles.dynamicFiltersBox}>
-              <h3 className={styles.filtersBoxTitle}>
+            <div
+              className={styles.dynamicFiltersBox}
+              style={{
+                background: "rgba(0,0,0,0.02)",
+                padding: "16px",
+                borderRadius: "12px",
+                border: "1px solid rgba(0,0,0,0.05)",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "14px",
+                  marginTop: 0,
+                  marginBottom: "16px",
+                  color: "#111827",
+                }}
+              >
                 Специфікації для: {formData.category}
               </h3>
-              <div className={styles.grid2}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "16px",
+                }}
+              >
                 {Object.entries(currentCategoryFilters).map(
-                  ([filterKey, options]) => {
-                    const isBrand = filterKey === "brand";
-                    const renderOptions = isBrand ? brands : options;
-
-                    return (
-                      <div key={filterKey} className={styles.inputGroup}>
-                        <label>{FILTER_LABELS[filterKey] || filterKey}</label>
-                        <select
-                          value={formData.filters[filterKey] || ""}
-                          onChange={(e) =>
-                            handleFilterChange(filterKey, e.target.value)
-                          }
-                        >
-                          <option value="">Не обрано</option>
-                          {renderOptions.map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    );
-                  },
+                  ([filterKey, options]) => (
+                    <div key={filterKey} className={styles.inputGroup}>
+                      <label>{FILTER_LABELS[filterKey]}</label>
+                      <select
+                        value={formData.filters[filterKey] || ""}
+                        onChange={(e) =>
+                          handleFilterChange(filterKey, e.target.value)
+                        }
+                      >
+                        <option value="">Не обрано</option>
+                        {options.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ),
                 )}
               </div>
             </div>
@@ -450,6 +558,7 @@ export default function CatalogFormPage({ params }) {
               required
               className={styles.fixedTextarea}
               placeholder="Опишіть особливості товару..."
+              style={{ height: "200px" }}
             />
           </div>
 

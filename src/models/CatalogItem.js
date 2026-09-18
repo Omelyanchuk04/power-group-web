@@ -5,21 +5,22 @@ const CatalogItemSchema = new mongoose.Schema(
     name: { type: String, required: true },
     category: { type: String, required: true },
     description: { type: String },
-    image: { type: String }, // URL головного зображення
-
-    // 🔥 ДОДАНО ПОЛЕ ДЛЯ ГАЛЕРЕЇ ФОТОГРАФІЙ 🔥
+    image: { type: String },
     gallery: { type: [String], default: [] },
 
-    // Динамічні фільтри зберігаємо тут
+    // 🔥 ОНОВЛЕНІ ДИНАМІЧНІ ФІЛЬТРИ 🔥
+    // Це приклад того, як має виглядати шматок твоєї моделі
     filters: {
-      brand: { type: String },
-      power: { type: String },
-      dimensions: { type: String },
-      phases: { type: String },
-      type: { type: String },
+      brand: { type: String, default: "" }, // Виробник
+      power: { type: String, default: "" }, // Потужність
+      dimensions: { type: String, default: "" }, // Габарити
+      phase: { type: String, default: "" }, // Кількість фаз
+      type: { type: String, default: "" }, // Тип інвертора
+      executionType: { type: String, default: "" }, // Тип виконання (Силове обл.)
+      subcategory: { type: String, default: "" }, // Підкатегорія (Кабелі, конектори)
+      batteryType: { type: String, default: "" }, // Тип батареї (Акумулятори)
     },
 
-    // Можна додати ціну, наявність тощо
     price: { type: Number },
     inStock: { type: Boolean, default: true },
   },
