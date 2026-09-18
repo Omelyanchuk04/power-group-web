@@ -191,7 +191,13 @@ export default function LeadsPage() {
     return null;
   });
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // 🔥 СТАН ДЛЯ ІНЛАЙН-ПІДТВЕРДЖЕННЯ ВИДАЛЕННЯ 🔥
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+
+  // Скидаємо підтвердження, якщо користувач вибрав іншу заявку
+  useEffect(() => {
+    setIsConfirmingDelete(false);
+  }, [selectedLead]);
 
   useEffect(() => {
     const fetchLeads = async () => {
@@ -255,7 +261,7 @@ export default function LeadsPage() {
         );
       }
     } finally {
-      setIsDeleteModalOpen(false);
+      setIsConfirmingDelete(false);
     }
   };
 
@@ -308,7 +314,6 @@ export default function LeadsPage() {
         <h1>Вхідні заявки</h1>
       </div>
 
-      {/* 🔥 Обгортка завжди на екрані, жодних стрибків 🔥 */}
       <div className={styles.mailApp}>
         <div
           className={`${styles.mailSidebar} ${selectedLead ? styles.hideOnMobile : ""}`}
@@ -408,13 +413,39 @@ export default function LeadsPage() {
                     ]}
                   />
                 </div>
-                <button
-                  onClick={() => setIsDeleteModalOpen(true)}
-                  className={styles.deleteBtn}
-                  title="Видалити"
-                >
-                  <IconTrash />
-                </button>
+
+                {/* 🔥 ІНЛАЙН ПІДТВЕРДЖЕННЯ ВИДАЛЕННЯ 🔥 */}
+                <div className={styles.deleteContainer}>
+                  {isConfirmingDelete ? (
+                    <div className={styles.inlineConfirm}>
+                      <span className={styles.confirmText}>
+                        Точно видалити?
+                      </span>
+                      <div className={styles.confirmActions}>
+                        <button
+                          className={styles.btnCancel}
+                          onClick={() => setIsConfirmingDelete(false)}
+                        >
+                          Ні
+                        </button>
+                        <button
+                          className={styles.btnDelete}
+                          onClick={confirmDelete}
+                        >
+                          Так
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsConfirmingDelete(true)}
+                      className={styles.deleteBtn}
+                      title="Видалити"
+                    >
+                      <IconTrash />
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className={styles.contentScrollArea}>
@@ -485,26 +516,6 @@ export default function LeadsPage() {
           )}
         </div>
       </div>
-
-      {isDeleteModalOpen && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <h3>Видалити заявку?</h3>
-            <p>Цю дію неможливо буде скасувати.</p>
-            <div className={styles.modalActions}>
-              <button
-                onClick={() => setIsDeleteModalOpen(false)}
-                className={styles.btnCancel}
-              >
-                Скасувати
-              </button>
-              <button onClick={confirmDelete} className={styles.btnDelete}>
-                Видалити
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
