@@ -1,8 +1,10 @@
 import React from "react";
 import styles from "./CatalogGrid.module.scss";
-import { IconCheck, FILTER_CONFIG } from "./catalogData";
+// Видалили імпорт FILTER_CONFIG звідси, тепер використовуємо проп config
+import { IconCheck } from "./catalogData";
 
 export default function CatalogSidebar({
+  config, // 🔥 ДОДАНО ПРОП config 🔥
   activeCategory,
   activeFilters,
   powerLimitUI,
@@ -39,8 +41,8 @@ export default function CatalogSidebar({
             </button>
           </div>
 
-          {/* 🔥 ЗАПОБІЖНИК: Додано знак питання `?` перед map 🔥 */}
-          {FILTER_CONFIG[activeCategory]?.map((filterGroup) => {
+          {/* 🔥 МАЛЮЄМО ФІЛЬТРИ НА ОСНОВІ ПЕРЕДАНОГО config 🔥 */}
+          {config?.map((filterGroup) => {
             if (filterGroup.type === "slider") {
               const minVal = filterGroup.min || 0;
               const maxVal = filterGroup.max || 150;

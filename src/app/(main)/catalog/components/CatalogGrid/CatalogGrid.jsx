@@ -1,16 +1,13 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import styles from "./CatalogGrid.module.scss";
 
 import CatalogSidebar from "./CatalogSidebar";
 import CatalogCategoryTabs from "./CatalogCategoryTabs";
 import CatalogProductCard from "./CatalogProductCard";
-import CatalogProductModal from "./CatalogProductModal";
 
-// Конфігурація категорій, що відповідає базі даних
 const CATEGORIES_LIST = [
   "Сонячні панелі",
   "Гібридні інвертори",
@@ -21,21 +18,9 @@ const CATEGORIES_LIST = [
   "Комплектуючі для монтажу",
 ];
 
-// Конфігурація фільтрів
 const FILTER_CONFIG = {
   "Сонячні панелі": [
-    {
-      key: "brand",
-      title: "Виробник (бренд)",
-      type: "checkbox",
-      options: [
-        "Longi Solar",
-        "Tongwei Solar",
-        "Jinko Solar",
-        "JA Solar",
-        "Trina Solar",
-      ],
-    },
+    { key: "brand", title: "Виробник (бренд)", type: "checkbox", options: [] },
     {
       key: "power",
       title: "Потужність",
@@ -57,20 +42,7 @@ const FILTER_CONFIG = {
     },
   ],
   "Гібридні інвертори": [
-    {
-      key: "brand",
-      title: "Виробник (бренд)",
-      type: "checkbox",
-      options: [
-        "Deye",
-        "Solis",
-        "Afore",
-        "Sungrow",
-        "FoxESS",
-        "LuxPower",
-        "Huawei",
-      ],
-    },
+    { key: "brand", title: "Виробник (бренд)", type: "checkbox", options: [] },
     {
       key: "phase",
       title: "Кількість фаз",
@@ -98,12 +70,7 @@ const FILTER_CONFIG = {
     },
   ],
   "Мережеві інвертори": [
-    {
-      key: "brand",
-      title: "Виробник (бренд)",
-      type: "checkbox",
-      options: ["Deye", "Solis", "Sungrow", "Huawei"],
-    },
+    { key: "brand", title: "Виробник (бренд)", type: "checkbox", options: [] },
     {
       key: "phase",
       title: "Кількість фаз",
@@ -125,12 +92,7 @@ const FILTER_CONFIG = {
     },
   ],
   Акумулятори: [
-    {
-      key: "brand",
-      title: "Виробник (бренд)",
-      type: "checkbox",
-      options: ["Deye", "Dyness", "GSL ENERGY", "FoxESS"],
-    },
+    { key: "brand", title: "Виробник (бренд)", type: "checkbox", options: [] },
     {
       key: "batteryType",
       title: "Тип батареї",
@@ -139,12 +101,7 @@ const FILTER_CONFIG = {
     },
   ],
   "Системи накопичення": [
-    {
-      key: "brand",
-      title: "Виробник (бренд)",
-      type: "checkbox",
-      options: ["Deye", "Dyness", "GSL ENERGY", "FoxESS"],
-    },
+    { key: "brand", title: "Виробник (бренд)", type: "checkbox", options: [] },
   ],
   "Силове обладнання для сонячних електростанцій": [
     {
@@ -183,43 +140,76 @@ const FILTER_CONFIG = {
 };
 
 let cachedProducts = null;
+let cachedBrands = null;
 
 export default function CatalogGrid() {
-  const pathname = usePathname();
   const gridRef = useRef(null);
   const layoutRef = useRef(null);
+  const animTracker = useRef({ category: null, page: null, filters: null });
 
   const [products, setProducts] = useState(cachedProducts || []);
+  const [brandsList, setBrandsList] = useState(cachedBrands || []);
   const [isLoading, setIsLoading] = useState(!cachedProducts);
 
   const [activeCategory, setActiveCategory] = useState(CATEGORIES_LIST[0]);
   const [activeFilters, setActiveFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  const [isRestored, setIsRestored] = useState(false);
+
+  // 🔥 ПОВЕРНУТО ЗМІННУ 🔥
   const itemsPerPage = 9;
 
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+  useEffect(() => {
+    const savedCat = sessionStorage.getItem("catalogCat");
+    const savedFilters = sessionStorage.getItem("catalogFilters");
+    const savedPage = sessionStorage.getItem("catalogPage");
+
+    if (savedCat) setActiveCategory(savedCat);
+    if (savedFilters) setActiveFilters(JSON.parse(savedFilters));
+    if (savedPage) setCurrentPage(Number(savedPage));
+
+    setIsRestored(true);
+  }, []);
 
   useEffect(() => {
-    if (cachedProducts) return;
+    if (isRestored) {
+      sessionStorage.setItem("catalogCat", activeCategory);
+      sessionStorage.setItem("catalogFilters", JSON.stringify(activeFilters));
+      sessionStorage.setItem("catalogPage", currentPage.toString());
+    }
+  }, [activeCategory, activeFilters, currentPage, isRestored]);
 
-    const fetchProducts = async () => {
+  useEffect(() => {
+    if (cachedProducts && cachedBrands) return;
+
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch("/api/catalog");
-        if (res.ok) {
-          const data = await res.json();
+        const [prodRes, settingsRes] = await Promise.all([
+          fetch("/api/catalog"),
+          fetch("/api/settings/catalog"),
+        ]);
+
+        if (prodRes.ok) {
+          const data = await prodRes.json();
           cachedProducts = data;
           setProducts(data);
         }
+
+        if (settingsRes.ok) {
+          const settings = await settingsRes.json();
+          cachedBrands = settings.brands || [];
+          setBrandsList(settings.brands || []);
+        }
       } catch (error) {
-        console.error("Помилка завантаження товарів:", error);
+        console.error("Помилка завантаження даних:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -246,7 +236,17 @@ export default function CatalogGrid() {
 
   useEffect(() => {
     const cards = gridRef.current?.children;
-    if (cards && cards.length > 0 && !isLoading) {
+    if (cards && cards.length > 0 && !isLoading && isRestored) {
+      const currentFiltersStr = JSON.stringify(activeFilters);
+
+      if (
+        animTracker.current.category === activeCategory &&
+        animTracker.current.page === currentPage &&
+        animTracker.current.filters === currentFiltersStr
+      ) {
+        return;
+      }
+
       let ctx = gsap.context(() => {
         gsap.fromTo(
           cards,
@@ -261,9 +261,16 @@ export default function CatalogGrid() {
           },
         );
       });
+
+      animTracker.current = {
+        category: activeCategory,
+        page: currentPage,
+        filters: currentFiltersStr,
+      };
+
       return () => ctx.revert();
     }
-  }, [pathname, activeCategory, currentPage, isLoading]);
+  }, [activeCategory, currentPage, activeFilters, isLoading, isRestored]);
 
   const handleFilterToggle = (filterKey, option) => {
     setCurrentPage(1);
@@ -286,7 +293,6 @@ export default function CatalogGrid() {
       setActiveCategory(categoryId);
       setActiveFilters({});
       setCurrentPage(1);
-      // Прибрано логіку автоматичного скролу вниз
     }
   };
 
@@ -316,7 +322,16 @@ export default function CatalogGrid() {
     };
   }, [isMobileFiltersOpen]);
 
-  const currentSidebarConfig = FILTER_CONFIG[activeCategory] || [];
+  const currentSidebarConfig = (FILTER_CONFIG[activeCategory] || []).map(
+    (group) => {
+      if (group.key === "brand" && brandsList.length > 0) {
+        return { ...group, options: brandsList };
+      }
+      return group;
+    },
+  );
+
+  if (!isRestored) return null;
 
   return (
     <section className={styles.gridSection}>
@@ -388,11 +403,7 @@ export default function CatalogGrid() {
               <>
                 <div className={styles.grid} ref={gridRef}>
                   {currentProducts.map((product) => (
-                    <CatalogProductCard
-                      key={product._id}
-                      product={product}
-                      onClick={() => setSelectedProduct(product)}
-                    />
+                    <CatalogProductCard key={product._id} product={product} />
                   ))}
                 </div>
 
@@ -414,11 +425,6 @@ export default function CatalogGrid() {
           </div>
         </div>
       </div>
-
-      <CatalogProductModal
-        product={selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-      />
     </section>
   );
 }

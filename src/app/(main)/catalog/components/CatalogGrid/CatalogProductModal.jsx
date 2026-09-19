@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useModal } from "@/context/ModalContext";
 import styles from "./CatalogProductModal.module.scss";
 
-// Мапінг англійських ключів фільтрів у зрозумілі назви
 const FILTER_LABELS = {
   brand: "Виробник (бренд)",
   power: "Потужність",
@@ -16,28 +16,22 @@ const FILTER_LABELS = {
   batteryType: "Тип батареї",
 };
 
-// 🔥 ІКОНКА PDF 🔥
-const IconFileText = () => (
+const IconChevronRight = () => (
   <svg
-    width="24"
-    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-    <polyline points="14 2 14 8 20 8"></polyline>
-    <line x1="16" y1="13" x2="8" y2="13"></line>
-    <line x1="16" y1="17" x2="8" y2="17"></line>
-    <polyline points="10 9 9 9 8 9"></polyline>
+    <polyline points="9 18 15 12 9 6"></polyline>
   </svg>
 );
 
 export default function CatalogProductModal({ product, onClose }) {
   const [mounted, setMounted] = useState(false);
+  const { openModal } = useModal();
 
   useEffect(() => {
     setMounted(true);
@@ -45,18 +39,22 @@ export default function CatalogProductModal({ product, onClose }) {
 
   useEffect(() => {
     if (product) {
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     }
+
     return () => {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     };
   }, [product]);
 
   if (!mounted || !product) return null;
 
-  // Формуємо масив наявних характеристик
   const activeSpecs = [];
   if (product.filters) {
     Object.keys(product.filters).forEach((key) => {
@@ -77,7 +75,7 @@ export default function CatalogProductModal({ product, onClose }) {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2.5"
+            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
@@ -86,7 +84,8 @@ export default function CatalogProductModal({ product, onClose }) {
           </svg>
         </button>
 
-        <div className={styles.imageBanner}>
+        {/* Ліва колонка (Зменшено ширину) */}
+        <div className={styles.imageCol}>
           <img
             src={product.image || "/placeholder.jpg"}
             alt={product.name}
@@ -94,59 +93,54 @@ export default function CatalogProductModal({ product, onClose }) {
           />
         </div>
 
-        <div className={styles.content}>
-          <span className={styles.category}>{product.category}</span>
-          <h2 className={styles.title}>{product.name}</h2>
-
-          {activeSpecs.length > 0 && (
-            <div className={styles.specsGrid}>
-              {activeSpecs.map((spec, index) => (
-                <div key={index} className={styles.specItem}>
-                  <span className={styles.specLabel}>{spec.label}:</span>
-                  <span className={styles.specValue}>{spec.value}</span>
-                </div>
-              ))}
+        {/* Права колонка (Розширено) */}
+        <div className={styles.infoCol}>
+          <div className={styles.headerBlock}>
+            <h2 className={styles.title} title={product.name}>
+              {product.name}
+            </h2>
+            <div className={styles.purchaseRow}>
+              <span className={styles.category}>{product.category}</span>
+              <button
+                className={styles.buyButton}
+                onClick={() => {
+                  onClose();
+                  openModal();
+                }}
+              >
+                Замовити
+              </button>
             </div>
-          )}
-
-          <div className={styles.divider}></div>
-
-          <div className={styles.description}>
-            <h3>Опис обладнання</h3>
-            <p>
-              {product.description ||
-                `Це високоякісне обладнання від виробника ${product.filters?.brand || "нашого партнера"}, яке забезпечує стабільну роботу вашої сонячної електростанції чи системи накопичення.`}
-            </p>
           </div>
 
-          {/* 🔥 ВІДОБРАЖЕННЯ PDF ДОКУМЕНТУ 🔥 */}
-          {product.datasheetUrl && (
-            <div className={styles.documentSection}>
-              <h3>Технічна документація</h3>
+          <div className={styles.scrollContent}>
+            {activeSpecs.length > 0 && (
+              <div className={styles.specsList}>
+                {activeSpecs.map((spec, index) => (
+                  <div key={index} className={styles.specRow}>
+                    <span className={styles.specLabel}>{spec.label}</span>
+                    <span className={styles.specValue}>{spec.value}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className={styles.specRow}>
+              <div className={styles.descriptionText}>
+                {product.description ||
+                  `Це високоякісне обладнання від виробника ${product.filters?.brand || "нашого партнера"}, яке забезпечує стабільну роботу вашої сонячної електростанції чи системи накопичення.`}
+              </div>
+            </div>
+
+            <div className={styles.exploreWrapper}>
               <a
-                href={product.datasheetUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.pdfLinkBox}
+                href={`/catalog/${product._id}`}
+                className={styles.exploreLink}
               >
-                <div className={styles.pdfIcon}>
-                  <IconFileText />
-                </div>
-                <span className={styles.pdfText}>
-                  Завантажити або переглянути Datasheet
-                </span>
+                Дізнатися більше <IconChevronRight />
               </a>
             </div>
-          )}
-
-          <button
-            className={styles.ctaButton}
-            onClick={() => {
-              alert("Тут відкриється форма для замовлення");
-            }}
-          >
-            Отримати консультацію
-          </button>
+          </div>
         </div>
       </div>
     </div>,

@@ -1,6 +1,8 @@
 import React from "react";
+import Link from "next/link";
 import styles from "./CatalogGrid.module.scss";
 
+// Іконка для бренду
 const TagIconBrand = () => (
   <svg
     viewBox="0 0 24 24"
@@ -15,6 +17,7 @@ const TagIconBrand = () => (
   </svg>
 );
 
+// Іконка "Детальніше"
 const IconArrowRight = () => (
   <svg
     viewBox="0 0 24 24"
@@ -29,13 +32,29 @@ const IconArrowRight = () => (
   </svg>
 );
 
-export default function CatalogProductCard({ product, onClick }) {
-  // Дістаємо бренд з фільтрів (якщо є)
+// Іконка "Швидкий перегляд" (Око)
+const IconEye = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>
+);
+
+export default function CatalogProductCard({ product }) {
   const brandName = product.filters?.brand;
+  const productUrl = `/catalog/${product._id}`;
 
   return (
-    <div className={styles.productCard} onClick={onClick}>
-      <div className={styles.imageBox}>
+    <div className={styles.productCard}>
+      {/* Клік по фото теж відкриває модалку (швидкий перегляд) */}
+      <Link href={productUrl} scroll={false} className={styles.imageBox}>
         <img
           src={product.image || "/placeholder.jpg"}
           alt={product.name}
@@ -48,17 +67,19 @@ export default function CatalogProductCard({ product, onClick }) {
             </span>
           )}
         </div>
-      </div>
+      </Link>
+
       <div className={styles.infoBox}>
         <div className={styles.textWrap}>
           <h4 className={styles.title}>{product.name}</h4>
           <span className={styles.productCategory}>{product.category}</span>
         </div>
-        <div className={styles.actionRow}>
-          <span className={styles.linkText}>Детальніше</span>
-          <div className={styles.actionIcon}>
-            <IconArrowRight />
-          </div>
+
+        {/* 🔥 НОВИЙ БЛОК З ДВОМА КНОПКАМИ 🔥 */}
+        <div className={styles.cardButtons}>
+          <a href={productUrl} className={styles.detailsBtn}>
+            Замовити <IconArrowRight />
+          </a>
         </div>
       </div>
     </div>

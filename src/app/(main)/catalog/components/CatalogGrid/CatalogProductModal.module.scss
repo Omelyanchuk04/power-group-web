@@ -1,47 +1,44 @@
 @use "sass:color";
 
-$primary: #0056b3;
-$text-dark: #0a2540;
-$text-gray: #64748b;
-$bg-light: #f1f5f9;
+$apple-blue: #0071e3;
+$text-main: #1d1d1f;
+$text-muted: #86868b;
+$border-light: #d2d2d7;
 
 .backdrop {
   position: fixed;
   inset: 0;
-  /* Трохи легший, приємніший темний фон */
-  background: rgba(10, 37, 64, 0.5);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 2147483647 !important;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
   opacity: 0;
-  animation: fadeIn 0.4s forwards ease-out;
+  animation: fadeIn 0.3s forwards ease-out;
 }
 
 .modalBox {
   background: #ffffff;
   width: 100%;
-  max-width: 800px;
-  max-height: 90vh;
-  border-radius: 36px;
+  max-width: 1000px;
+  height: 80vh;
+  max-height: 750px;
+  border-radius: 24px;
   overflow: hidden;
   position: relative;
   display: flex;
-  flex-direction: column;
-  /* Більш м'яка і об'ємна "дорога" тінь */
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-
+  flex-direction: row;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   opacity: 0;
-  /* 🔥 Apple-style: плавний виїзд знизу без scale 🔥 */
-  animation: slideUp 0.6s forwards cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.4s forwards cubic-bezier(0.16, 1, 0.3, 1);
 
-  @media (max-width: 768px) {
-    max-height: 95vh;
-    border-radius: 28px;
+  @media (max-width: 992px) {
+    flex-direction: column;
+    height: auto;
+    max-height: 90vh;
   }
 }
 
@@ -49,50 +46,43 @@ $bg-light: #f1f5f9;
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+  width: 36px;
+  height: 36px;
+  background: #f5f5f7;
   border-radius: 50%;
   border: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: $text-dark;
+  color: $text-muted;
   z-index: 10;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
 
   svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   &:hover {
-    background: #ffffff;
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  &:active {
-    transform: scale(0.95);
+    background: #e8e8ed;
+    color: $text-main;
   }
 }
 
-.imageBanner {
-  width: 100%;
-  height: 300px;
-  position: relative;
-  flex-shrink: 0;
-  background: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
+/* ================= ЛІВА КОЛОНКА (Зменшено до 40%) ================= */
+.imageCol {
+  width: 40%;
+  // padding: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: #ffffff;
 
-  @media (max-width: 768px) {
-    height: 220px;
+  @media (max-width: 992px) {
+    width: 100%;
+    height: 300px;
+    // padding: 30px;
   }
 }
 
@@ -100,193 +90,168 @@ $bg-light: #f1f5f9;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  mix-blend-mode: darken;
 }
 
-.content {
-  padding: 40px;
-  overflow-y: auto;
-  flex-grow: 1;
+/* ================= ПРАВА КОЛОНКА (Збільшено до 60%) ================= */
+.infoCol {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-left: 1px solid rgba(0, 0, 0, 0.04);
 
-  @media (max-width: 768px) {
-    padding: 24px;
+  @media (max-width: 992px) {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
   }
 }
 
-.category {
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 700;
-  color: $primary;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 12px;
+/* --- ШАПКА --- */
+.headerBlock {
+  padding: 48px 48px 24px 40px;
+
+  @media (max-width: 768px) {
+    padding: 32px 24px 16px 24px;
+  }
 }
 
 .title {
-  font-size: 32px;
-  font-weight: 800;
-  color: $text-dark;
-  margin: 0 0 24px 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: $text-main;
+  margin: 0 0 16px 0;
   line-height: 1.2;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
+  padding-right: 30px;
+  /* 🔥 Обрізаємо заголовок максимум до 3 рядків 🔥 */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-  @media (max-width: 768px) {
-    font-size: 26px;
+.purchaseRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category {
+  font-size: 14px;
+  color: $text-muted;
+  font-weight: 400;
+}
+
+.buyButton {
+  background: $apple-blue;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #0077ed;
   }
 }
 
-.specsGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
+/* --- СКРОЛ КОНТЕНТ --- */
+.scrollContent {
+  padding: 0 48px 48px 40px;
+  overflow-y: auto;
+  flex-grow: 1;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 24px 32px 24px;
+  }
 }
 
-.specItem {
-  background: $bg-light;
-  padding: 12px 16px;
-  border-radius: 12px;
+.specsList {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 140px;
-  flex: 1;
-
-  .specLabel {
-    font-size: 12px;
-    color: $text-gray;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-
-  .specValue {
-    font-size: 16px;
-    color: $text-dark;
-    font-weight: 700;
-  }
 }
 
-.divider {
-  width: 100%;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.05);
-  margin: 32px 0;
-}
-
-.description {
-  h3 {
-    font-size: 20px;
-    font-weight: 700;
-    color: $text-dark;
-    margin: 0 0 12px 0;
-  }
-  p {
-    font-size: 16px;
-    line-height: 1.6;
-    color: $text-gray;
-    margin: 0;
-  }
-}
-
-/* =========================================
-   🔥 СТИЛІ ДОКУМЕНТА (PDF) 🔥
-   ========================================= */
-.documentSection {
-  margin-top: 24px;
-
-  h3 {
-    font-size: 20px;
-    font-weight: 700;
-    color: $text-dark;
-    margin: 0 0 12px 0;
-  }
-}
-
-.pdfLinkBox {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 12px 16px;
-  border-radius: 12px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-
-  &:hover {
-    border-color: rgba(0, 86, 179, 0.3);
-    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.08);
-    transform: translateY(-1px);
-
-    .pdfText {
-      color: $primary;
-      text-decoration: underline;
-      text-underline-offset: 4px;
-    }
-
-    .pdfIcon {
-      background: rgba(0, 86, 179, 0.1);
-      color: $primary;
-    }
-  }
-
-  &:active {
-    transform: translateY(1px);
-    box-shadow: none;
-  }
-}
-
-.pdfIcon {
-  width: 40px;
-  height: 40px;
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  border-radius: 10px;
+.specRow {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
+  padding: 20px 0;
+  border-top: 1px solid $border-light;
+  gap: 16px;
 }
 
-.pdfText {
+.specLabel {
+  font-size: 15px;
+  color: $text-main;
+  flex: 1;
+}
+
+.specValue {
   font-size: 15px;
   font-weight: 600;
-  color: $text-dark;
-  transition: color 0.2s ease;
+  color: $text-main;
+  text-align: right;
+  flex: 1;
 }
 
-.ctaButton {
-  margin-top: 32px;
-  width: max-content;
-  background: linear-gradient(135deg, #ffdf66 0%, #ffd11a 100%);
-  color: $text-dark;
-  border: 1px solid #e6b800;
-  padding: 16px 32px;
-  border-radius: 100px;
+/* Опис */
+.descriptionText {
+  font-size: 15px;
+  line-height: 1.5;
+  color: $text-main;
+  margin: 0;
+  padding: 4px 0;
+  /* 🔥 Обрізаємо опис максимум до 3 рядків 🔥 */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- ЛІНК НА ПОВНУ СТОРІНКУ --- */
+.exploreWrapper {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid $border-light;
+}
+
+.exploreLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: $apple-blue;
   font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 10px 20px rgba(255, 213, 0, 0.2);
-  transition: all 0.3s ease;
+  font-weight: 400;
+  text-decoration: none;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+    transition: transform 0.2s ease;
+  }
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(255, 213, 0, 0.3);
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
+    text-decoration: underline;
+    svg {
+      transform: translateX(2px);
+    }
   }
 }
 
-/* --- ОНОВЛЕНІ КІФРЕЙМИ --- */
+/* --- КІФРЕЙМИ --- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -295,10 +260,9 @@ $bg-light: #f1f5f9;
     opacity: 1;
   }
 }
-
 @keyframes slideUp {
   from {
-    transform: translateY(40px);
+    transform: translateY(20px);
     opacity: 0;
   }
   to {

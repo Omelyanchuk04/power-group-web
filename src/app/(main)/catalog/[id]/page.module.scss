@@ -1,0 +1,245 @@
+@use "sass:color";
+
+$primary: #0056b3;
+$text-dark: #1d1d1f; /* Фірмовий колір тексту Apple */
+$text-gray: #86868b; /* Фірмовий сірий колір тексту Apple */
+$border-color: #d2d2d7; /* Колір ліній Apple */
+
+.pageContainer {
+  padding-top: 130px;
+  padding-bottom: 120px;
+  background: transparent;
+  min-height: 100vh;
+  position: relative;
+}
+
+.bgWrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* 🔥 Робимо світлу плівку більш щільною (0.92 замість 0.75) 🔥 */
+  background: rgba(245, 245, 247, 0.92);
+}
+
+.bgFade {
+  position: absolute;
+  inset: 0;
+  /* 🔥 Робимо самі кольорові краплі дуже блідими (30% видимості) 🔥 */
+  opacity: 0.3;
+  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: $text-gray;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 32px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    color: $primary;
+  }
+}
+
+.layoutFlex {
+  display: flex;
+  align-items: flex-start;
+  gap: 64px;
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+    gap: 40px;
+  }
+}
+
+/* ================= ЛІВА КОЛОНКА (ФОТО) ================= */
+.leftStickyCol {
+  flex: 0 0 38%;
+  max-width: 480px;
+  position: sticky;
+  top: 120px;
+  z-index: 10;
+
+  @media (max-width: 992px) {
+    flex: 1 1 auto;
+    max-width: 100%;
+    position: relative;
+    top: 0;
+  }
+}
+
+.imageCard {
+  background: #f5f5f7; /* Ідеальний матовий сірий як на сайті Apple */
+  border-radius: 28px;
+  padding: 12px;
+  /* Прибрали рамки і тіні, тепер це чистий блок */
+}
+
+/* ================= ПРАВА КОЛОНКА (ТЕКСТ) ================= */
+.rightContentCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.headerBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.categoryText {
+  color: #bf4800; /* Контрастний колір для категорії */
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 600; /* Трохи тонший, як в Apple */
+  color: $text-dark;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.ctaWrapper {
+  margin-bottom: 64px; /* Відступ до інформаційних блоків */
+}
+
+.ctaButton {
+  background: linear-gradient(135deg, #ffdf66 0%, #ffd11a 100%);
+  color: #000;
+  border: 1px solid #e6b800;
+  padding: 16px 36px;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(255, 213, 0, 0.3);
+  }
+}
+
+/* ================= ІНФОРМАЦІЯ В СТИЛІ APPLE ================= */
+.appleInfoContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.appleSection {
+  display: grid;
+  grid-template-columns: 1fr 2.5fr; /* Назва зліва, контент справа */
+  gap: 32px;
+  padding: 40px 0;
+  border-top: 1px solid $border-color; /* Тонка лінія зверху */
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 32px 0;
+  }
+}
+
+.appleSectionTitle {
+  font-size: 21px;
+  font-weight: 600;
+  color: $text-dark;
+  margin: 0;
+}
+
+.appleSectionContent {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Характеристики */
+.appleSpecsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.appleSpecRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid $border-color;
+
+  &:first-child {
+    padding-top: 0;
+  }
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.appleSpecLabel {
+  font-size: 16px;
+  color: $text-dark;
+  font-weight: 400;
+}
+
+.appleSpecValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: $text-dark;
+  text-align: right;
+}
+
+/* Опис */
+.appleText {
+  font-size: 17px;
+  line-height: 1.6;
+  color: $text-dark;
+  margin: 0;
+}
+
+/* Документація */
+.appleDocLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: $primary;
+  font-weight: 400;
+  font-size: 17px;
+  transition: opacity 0.2s ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    opacity: 0.7;
+    text-decoration: underline;
+  }
+}

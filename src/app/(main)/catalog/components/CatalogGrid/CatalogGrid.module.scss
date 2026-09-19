@@ -662,15 +662,21 @@ $bg-light: #f1f5f9;
 }
 
 .title {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 800;
   color: #0f172a;
   line-height: 1.35;
   margin: 0;
 
+  /* 🔥 Автоматичне обрізання довгого тексту 🔥 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Кількість рядків, які буде видно */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   @media (max-width: 640px) {
-    font-size: 13px;
-    line-height: 1.25;
+    font-size: 15px;
   }
 }
 
@@ -752,5 +758,46 @@ $bg-light: #f1f5f9;
     color: #ffffff;
     box-shadow: 0 6px 16px rgba(0, 86, 179, 0.25);
     border-color: $primary;
+  }
+}
+/* =========================================
+   🔥 КНОПКИ ДЛЯ КАРТКИ 🔥
+   ========================================= */
+.cardButtons {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.detailsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 20px;
+  border-radius: 100px; /* Ідеальна форма пігулки, як у Apple */
+  background: #0071e3; /* Фірмовий синій колір Apple */
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500; /* Нормальна товщина тексту, без перебору */
+  text-decoration: none;
+  transition: background 0.2s ease;
+  border: none;
+
+  &:hover {
+    background: #0077ed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2px; /* Акуратна тонка стрілочка */
+  }
+
+  @media (max-width: 640px) {
+    padding: 10px 16px;
+    font-size: 14px;
   }
 }

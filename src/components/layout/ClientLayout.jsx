@@ -36,6 +36,7 @@ export default function ClientLayout({ children }) {
           overflow: "clip",
         }}
       >
+        {/* 🔥 ПОВЕРНУЛИ ОБМЕЖЕННЯ: фон тільки на головній, щоб сайт не лагав 🔥 */}
         {isHome && <GlobalBackground isLayout={true} />}
 
         <Header />
