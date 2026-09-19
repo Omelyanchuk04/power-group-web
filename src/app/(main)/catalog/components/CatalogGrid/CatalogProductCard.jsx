@@ -32,29 +32,14 @@ const IconArrowRight = () => (
   </svg>
 );
 
-// Іконка "Швидкий перегляд" (Око)
-const IconEye = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-    <circle cx="12" cy="12" r="3"></circle>
-  </svg>
-);
-
 export default function CatalogProductCard({ product }) {
   const brandName = product.filters?.brand;
-  const productUrl = `/catalog/${product._id}`;
+  const productUrl = `/catalog/${product.slug || product._id}`;
 
   return (
     <div className={styles.productCard}>
-      {/* Клік по фото теж відкриває модалку (швидкий перегляд) */}
-      <Link href={productUrl} scroll={false} className={styles.imageBox}>
+      {/* Прямий перехід на сторінку */}
+      <Link href={productUrl} className={styles.imageBox}>
         <img
           src={product.image || "/placeholder.jpg"}
           alt={product.name}
@@ -75,11 +60,10 @@ export default function CatalogProductCard({ product }) {
           <span className={styles.productCategory}>{product.category}</span>
         </div>
 
-        {/* 🔥 НОВИЙ БЛОК З ДВОМА КНОПКАМИ 🔥 */}
         <div className={styles.cardButtons}>
-          <a href={productUrl} className={styles.detailsBtn}>
+          <Link href={productUrl} className={styles.detailsBtn}>
             Замовити <IconArrowRight />
-          </a>
+          </Link>
         </div>
       </div>
     </div>

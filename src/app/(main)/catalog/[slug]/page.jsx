@@ -27,16 +27,20 @@ const IconFileText = () => (
   </svg>
 );
 
+const getProductQuery = (slugOrId) => {
+  if (mongoose.Types.ObjectId.isValid(slugOrId)) {
+    return { $or: [{ slug: slugOrId }, { _id: slugOrId }] };
+  }
+  return { slug: slugOrId };
+};
+
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const cleanId = resolvedParams.id.replace("(.)", "");
+  const slugParam = resolvedParams.slug; // 🔥 Прибрали милицю
 
   await connectToDatabase();
 
-  if (!mongoose.Types.ObjectId.isValid(cleanId))
-    return { title: "Товар не знайдено" };
-
-  const product = await CatalogItem.findById(cleanId);
+  const product = await CatalogItem.findOne(getProductQuery(slugParam));
   if (!product) return { title: "Товар не знайдено" };
 
   return {
@@ -48,27 +52,12 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const resolvedParams = await params;
-  const cleanId = resolvedParams.id.replace("(.)", "");
+  const slugParam = resolvedParams.slug; // 🔥 Прибрали милицю
 
   await connectToDatabase();
 
-  if (!mongoose.Types.ObjectId.isValid(cleanId)) {
-    return (
-      <div
-        style={{
-          paddingTop: "150px",
-          textAlign: "center",
-          fontSize: "20px",
-          color: "#64748b",
-          minHeight: "100vh",
-        }}
-      >
-        Невірний формат посилання на товар 😕
-      </div>
-    );
-  }
+  const productDoc = await CatalogItem.findOne(getProductQuery(slugParam));
 
-  const productDoc = await CatalogItem.findById(cleanId);
   if (!productDoc) {
     return (
       <div
@@ -150,7 +139,6 @@ export default async function ProductPage({ params }) {
             </div>
 
             <div className={styles.appleInfoContainer}>
-              {/* Apple-style Характеристики */}
               {activeSpecs.length > 0 && (
                 <div className={styles.appleSection}>
                   <h3 className={styles.appleSectionTitle}>Характеристики</h3>
@@ -171,7 +159,6 @@ export default async function ProductPage({ params }) {
                 </div>
               )}
 
-              {/* Apple-style Опис */}
               {product.description && (
                 <div className={styles.appleSection}>
                   <h3 className={styles.appleSectionTitle}>Опис</h3>
@@ -181,7 +168,6 @@ export default async function ProductPage({ params }) {
                 </div>
               )}
 
-              {/* Apple-style Документація */}
               {product.datasheetUrl && (
                 <div className={styles.appleSection}>
                   <h3 className={styles.appleSectionTitle}>Комплектація</h3>
