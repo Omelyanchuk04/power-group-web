@@ -8,30 +8,32 @@
 .imageBox {
   position: relative;
   width: 100%;
-
-  /* 🔥 РІШЕННЯ ВІД "СТРИБКІВ": Фіксована пропорція (трохи витягнута по вертикалі, ідеально для інверторів) */
   aspect-ratio: 4 / 4.5;
-  max-height: 560px; /* Обмеження висоти для великих моніторів */
-
-  /* 🔥 НОВИЙ КОЛІР: Легкий металево-блакитний градієнт замість нудного сірого */
+  max-height: 560px;
   background: linear-gradient(135deg, #ffffff 0%, #eef2f6 100%);
-  border: 1px solid rgba(0, 40, 100, 0.03); /* Ледь помітна холодна рамочка */
-
+  border: 1px solid rgba(0, 40, 100, 0.03);
   border-radius: 28px;
-  padding: 32px; /* Повернули відступи, щоб великі фото не прилипали до країв */
+  padding: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 24px;
+
+  /* 🔥 ВИПРАВЛЕННЯ БАГУ З БІЛИМИ КУТАМИ 🔥 */
+  overflow: hidden; /* Обрізає все, що вилазить за закруглення */
+  isolation: isolate; /* Створює окремий шар, щоб mix-blend-mode не ламав фон */
+  transform: translateZ(0); /* Примусове апаратне згладжування кутів */
 }
 
 .mainImg {
-  // width: 100%;
-  height: 100%; /* Тепер картинка займає всю доступну висоту фіксованого блоку */
-  object-fit: contain; /* Картинка масштабується без обрізання */
-  mix-blend-mode: darken;
+  height: 100%;
+  object-fit: contain;
+
+  /* 🔥 ЗМІНЕНО: multiply набагато краще і чистіше прибирає білий фон */
+  mix-blend-mode: multiply;
+
   transform: scale(1.05);
-  transition: opacity 0.3s ease; /* Додає м'якості при перемиканні */
+  transition: opacity 0.3s ease;
 }
 
 /* Кнопка на весь екран */
