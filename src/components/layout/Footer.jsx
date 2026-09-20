@@ -2,17 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import styles from "./Footer.module.scss";
 import { useModal } from "@/context/ModalContext";
-import GlobalBackground from "@/components/layout/GlobalBackground";
+// 🔥 Прибрали імпорт GlobalBackground та usePathname, вони тут більше не потрібні
 
 export default function Footer() {
   const { openModal } = useModal();
-  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
-
-  const isHome = pathname === "/";
 
   // --- SVG Іконки ---
   const TelegramIcon = () => (
@@ -46,12 +42,6 @@ export default function Footer() {
 
   return (
     <footer className={styles.footerWrapper}>
-      {!isHome && (
-        <div className={styles.footerBgWrapper}>
-          <GlobalBackground isLayout={false} />
-        </div>
-      )}
-
       <div
         className={styles.footerCard}
         style={{ position: "relative", zIndex: 1 }}
@@ -107,7 +97,6 @@ export default function Footer() {
               Замовити консультацію
             </button>
             <div className={styles.socials}>
-              {/* Ідеальна сітка 2х2. Телеграм іде з номерами, щоб було зрозуміло */}
               <a
                 href="https://t.me/+380672671477"
                 target="_blank"

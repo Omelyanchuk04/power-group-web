@@ -1,9 +1,13 @@
+@use "sass:color";
+
 $primary: #0056b3;
-$green: #10b981;
-$text-dark: #0a2540;
+$text-dark: #1d1d1f;
 $text-gray: #64748b;
 $bg-light: #f1f5f9;
 
+/* =========================================
+   БАЗОВИЙ ЛЕЙАУТ ТА КОНТЕЙНЕРИ
+   ========================================= */
 .gridSection {
   background-color: transparent;
   transition: all 0.5s ease;
@@ -15,6 +19,9 @@ $bg-light: #f1f5f9;
     padding-top: 100px;
     padding-bottom: 60px;
   }
+  @media (max-width: 560px) {
+    padding-bottom: 30px; /* Уніфіковано з футером */
+  }
 }
 
 .container {
@@ -24,7 +31,10 @@ $bg-light: #f1f5f9;
   padding: 0 20px;
 
   @media (max-width: 768px) {
-    padding: 0 12px;
+    padding: 0 24px;
+  }
+  @media (max-width: 560px) {
+    padding: 0 10px; /* Ідеальні відступи 10px від краю екрана */
   }
 }
 
@@ -51,7 +61,7 @@ $bg-light: #f1f5f9;
 }
 
 /* =========================================
-   🔥 МОБІЛЬНА КНОПКА ФІЛЬТРІВ 🔥
+   МОБІЛЬНА КНОПКА ФІЛЬТРІВ
    ========================================= */
 .mobileControls {
   display: none;
@@ -89,7 +99,7 @@ $bg-light: #f1f5f9;
 }
 
 /* =========================================
-   ОСНОВНИЙ ЛЕЙАУТ
+   ОСНОВНА СІТКА СТОРІНКИ (SIDEBAR + CONTENT)
    ========================================= */
 .mainLayout {
   display: flex;
@@ -103,279 +113,8 @@ $bg-light: #f1f5f9;
 }
 
 /* =========================================
-   🔥 ІДЕАЛЬНА МОБІЛЬНА ШТОРКА ФІЛЬТРІВ 🔥
+   КАТЕГОРІЇ (APPLE STYLE TABS)
    ========================================= */
-.sidebarOverlay {
-  display: none;
-
-  @media (max-width: 1024px) {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 37, 64, 0.6);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    z-index: 9999998;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-
-    &.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
-}
-
-.sidebar {
-  width: 340px;
-  flex-shrink: 0;
-  position: -webkit-sticky;
-  position: sticky;
-  top: 120px;
-  height: max-content;
-  z-index: 10;
-
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-  border-radius: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.02);
-
-  @media (max-width: 1024px) {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 85%;
-    max-width: 320px;
-    height: 100vh;
-    height: 100dvh;
-    background: #ffffff;
-    z-index: 9999999;
-    border-radius: 0 28px 28px 0;
-    border: none;
-    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.15);
-    transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    overflow-y: auto;
-    padding: 0;
-
-    &.open {
-      left: 0;
-    }
-  }
-}
-
-.sidebarSticky {
-  padding: 32px 24px;
-
-  @media (max-width: 1024px) {
-    padding: 110px 16px 40px 16px;
-  }
-}
-
-.mobileSidebarHeader {
-  display: none;
-
-  @media (max-width: 1024px) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 16px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-    h3 {
-      font-size: 18px;
-      font-weight: 800;
-      color: $text-dark;
-      margin: 0;
-    }
-  }
-}
-
-.closeSidebarBtn {
-  background: rgba(0, 0, 0, 0.04);
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $text-dark;
-  cursor: pointer;
-
-  svg {
-    width: 18px;
-    height: 18px;
-  }
-}
-
-.filterGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-
-  &:last-of-type {
-    margin-bottom: 20px;
-  }
-}
-
-.groupTitle {
-  font-size: 12px;
-  font-weight: 700;
-  color: $text-gray;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin: 0 0 4px 0;
-  padding-left: 4px;
-}
-
-/* --- ПОВЗУНОК --- */
-.sliderHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 4px;
-  margin-bottom: -6px;
-}
-.powerValue {
-  font-size: 14px;
-  font-weight: 700;
-  color: $primary;
-}
-.sliderWrapper {
-  padding: 0 4px;
-}
-
-.glassSlider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 14px;
-  border-radius: 100px;
-  outline: none;
-  margin: 20px 0;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 36px;
-    height: 24px;
-    border-radius: 100px;
-
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow:
-      inset 0 1px 2px rgba(255, 255, 255, 0.9),
-      inset 0 -1px 2px rgba(0, 0, 0, 0.05),
-      0 4px 10px rgba(0, 0, 0, 0.15);
-
-    cursor: grab;
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-  }
-
-  &::-webkit-slider-thumb:active {
-    cursor: grabbing;
-    transform: scale(1.08);
-    background: rgba(255, 255, 255, 0.25);
-  }
-}
-.sliderLabels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: $text-gray;
-  font-weight: 600;
-}
-
-/* --- ЧЕКБОКСИ --- */
-.checkboxList {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.checkboxLabel {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 10px;
-  transition: background 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.hiddenCheckbox {
-  display: none;
-}
-
-.customCheckbox {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
-  border: 1.5px solid rgba(100, 116, 139, 0.4);
-  background: rgba(255, 255, 255, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: transparent;
-
-  svg {
-    width: 12px;
-    height: 12px;
-    transform: scale(0.5);
-    opacity: 0;
-    transition: all 0.2s;
-  }
-
-  &.checked {
-    background: $primary;
-    border-color: $primary;
-    color: #ffffff;
-    svg {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-}
-
-.checkboxText {
-  font-size: 14px;
-  font-weight: 500;
-  color: $text-dark;
-}
-
-.sidebarResetBtn {
-  background: rgba(0, 86, 179, 0.05);
-  border: 1px solid rgba(0, 86, 179, 0.1);
-  color: $primary;
-  padding: 12px;
-  border-radius: 100px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-  transition: all 0.2s;
-}
-
-/* =========================================
-   🔥 КОНТЕНТ ТА КАТЕГОРІЇ (APPLE STYLE CARDS)
-   ========================================= */
-.content {
-  flex: 1;
-  min-width: 0;
-  width: 100%;
-}
-
 .categoriesScrollWrapper {
   width: 100%;
   overflow-x: auto;
@@ -383,6 +122,14 @@ $bg-light: #f1f5f9;
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  @media (max-width: 560px) {
+    /* Витягуємо на всю ширину екрана, ігноруючи відступи контейнера */
+    margin-left: -10px;
+    width: calc(100% + 20px);
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
@@ -393,15 +140,12 @@ $bg-light: #f1f5f9;
   align-items: flex-start;
   gap: 12px;
 
-  /* Єдина скляна підкладка */
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(24px) saturate(150%);
   -webkit-backdrop-filter: blur(24px) saturate(150%);
 
-  /* ВІДРЕДАГОВАНО: Більше скруглення та менший педінг */
   border-radius: 36px;
   padding: 12px 16px;
-
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.04),
@@ -409,54 +153,55 @@ $bg-light: #f1f5f9;
 
   width: 100%;
   min-width: max-content;
+
+  @media (max-width: 560px) {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    padding: 10px 0;
+    gap: 0; /* Зменшено відстань між категоріями */
+  }
 }
 
 .categoryTab {
-  position: relative; /* Для позиціонування індикатора */
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-
   background: transparent;
   border: none;
-  padding: 10px 8px; /* Менші внутрішні відступи */
+  padding: 10px 8px;
   border-radius: 20px;
   cursor: pointer;
   color: #1d1d1f;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-
   flex: 1;
   min-width: 110px;
   text-align: center;
 
-  /* Чистий ховер */
+  @media (max-width: 560px) {
+    min-width: 90px;
+    padding: 8px 4px;
+  }
+
   &:hover {
     .tabImageWrapper {
       transform: scale(1.08);
     }
-
     .tabText {
       color: $primary;
     }
   }
 
-  /* ВІДРЕДАГОВАНО: Новий стильний активний стан (без білої коробки) */
   &.activeTab {
-    background: transparent;
-    box-shadow: none;
-    transform: none;
-
     .tabText {
       color: $primary;
       font-weight: 700;
     }
-
     .tabImageWrapper {
-      transform: scale(1.15); /* Більший акцент на картинці */
+      transform: scale(1.15);
     }
-
-    /* iOS-стайл крапка-індикатор знизу */
     &::after {
       content: "";
       position: absolute;
@@ -486,7 +231,7 @@ $bg-light: #f1f5f9;
 
 .tabImageWrapper {
   width: 100%;
-  height: 60px; /* Трохи менша висота контейнера */
+  height: 60px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -514,8 +259,287 @@ $bg-light: #f1f5f9;
 }
 
 /* =========================================
-   🔥 СІТКА ТОВАРІВ
+   САЙДБАР (ФІЛЬТРИ)
    ========================================= */
+.sidebarOverlay {
+  display: none;
+  @media (max-width: 1024px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 37, 64, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    &.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+.sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 120px;
+  height: max-content;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.02);
+
+  @media (max-width: 1024px) {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85%;
+    max-width: 320px;
+    height: 100vh;
+    height: 100dvh;
+    background: #ffffff;
+    z-index: 9999999;
+    border-radius: 0 28px 28px 0;
+    border: none;
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.15);
+    transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+    padding: 0;
+    &.open {
+      left: 0;
+    }
+  }
+}
+
+.sidebarSticky {
+  padding: 32px 24px;
+  @media (max-width: 1024px) {
+    padding: 110px 16px 40px 16px;
+  }
+}
+
+.mobileSidebarHeader {
+  display: none;
+  @media (max-width: 1024px) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: $text-dark;
+      margin: 0;
+    }
+  }
+}
+
+.closeSidebarBtn {
+  background: rgba(0, 0, 0, 0.04);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-dark;
+  cursor: pointer;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  &:last-of-type {
+    margin-bottom: 20px;
+  }
+}
+
+/* АКОРДЕОН ФІЛЬТРІВ */
+.groupTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 4px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  user-select: none;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.groupTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-dark;
+  text-transform: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.filterContentArea {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* СЛАЙДЕР */
+.sliderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+  margin-bottom: -6px;
+}
+.powerValue {
+  font-size: 14px;
+  font-weight: 700;
+  color: $primary;
+}
+.sliderWrapper {
+  padding: 0 4px;
+}
+.glassSlider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 14px;
+  border-radius: 100px;
+  outline: none;
+  margin: 20px 0;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 36px;
+    height: 24px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 0 1px 2px rgba(255, 255, 255, 0.9),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+      0 4px 10px rgba(0, 0, 0, 0.15);
+    cursor: grab;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  &::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.08);
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+.sliderLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: $text-gray;
+  font-weight: 600;
+}
+
+/* ЧЕКБОКСИ */
+.checkboxList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.hiddenCheckbox {
+  display: none;
+}
+.customCheckbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(100, 116, 139, 0.4);
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: transparent;
+  svg {
+    width: 12px;
+    height: 12px;
+    transform: scale(0.5);
+    opacity: 0;
+    transition: all 0.2s;
+  }
+  &.checked {
+    background: $primary;
+    border-color: $primary;
+    color: #ffffff;
+    svg {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+.checkboxText {
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-dark;
+}
+.sidebarResetBtn {
+  background: rgba(0, 86, 179, 0.05);
+  border: 1px solid rgba(0, 86, 179, 0.1);
+  color: $primary;
+  padding: 12px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+
+/* =========================================
+   СІТКА ТОВАРІВ (APPLE STYLE CARDS)
+   ========================================= */
+.content {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+
 .noResults {
   text-align: center;
   padding: 60px 20px;
@@ -558,7 +582,6 @@ $bg-light: #f1f5f9;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
   overflow: hidden;
   cursor: pointer;
-
   transition:
     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -584,8 +607,8 @@ $bg-light: #f1f5f9;
   border-bottom: 1px solid rgba(0, 0, 0, 0.03);
 
   @media (max-width: 640px) {
-    height: 140px;
-    padding: 12px 12px 32px 12px;
+    height: 190px;
+    padding: 12px 12px 28px 12px;
   }
 }
 
@@ -594,6 +617,10 @@ $bg-light: #f1f5f9;
   height: 100%;
   object-fit: contain;
   mix-blend-mode: darken;
+
+  @media (max-width: 640px) {
+    transform: scale(1.15); /* Збільшено товари на мобільному */
+  }
 }
 
 .badges {
@@ -667,10 +694,8 @@ $bg-light: #f1f5f9;
   color: #0f172a;
   line-height: 1.35;
   margin: 0;
-
-  /* 🔥 Автоматичне обрізання довгого тексту 🔥 */
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Кількість рядків, які буде видно */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -690,41 +715,42 @@ $bg-light: #f1f5f9;
   }
 }
 
-.actionRow {
+.cardButtons {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: max-content;
-  gap: 6px;
-  padding: 6px 14px;
-  background: #ffdf66;
-  border: 1px solid #ffd11a;
-  border-radius: 100px;
+  flex-direction: column;
   margin-top: auto;
-
-  @media (max-width: 640px) {
-    padding: 6px 10px;
-    gap: 4px;
-  }
+  padding-top: 16px;
 }
 
-.linkText {
-  font-size: 13px;
-  font-weight: 700;
-  color: #0a2540;
-
-  @media (max-width: 640px) {
-    font-size: 12px;
-  }
-}
-
-.actionIcon {
-  color: #0a2540;
+.detailsBtn {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 20px;
+  border-radius: 100px;
+  background: #0071e3;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  border: none;
+
+  &:hover {
+    background: #0077ed;
+  }
+
   svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
+    stroke-width: 2px;
+  }
+
+  @media (max-width: 640px) {
+    padding: 10px 16px;
+    font-size: 14px;
   }
 }
 
@@ -758,89 +784,5 @@ $bg-light: #f1f5f9;
     color: #ffffff;
     box-shadow: 0 6px 16px rgba(0, 86, 179, 0.25);
     border-color: $primary;
-  }
-}
-/* =========================================
-   🔥 КНОПКИ ДЛЯ КАРТКИ 🔥
-   ========================================= */
-.cardButtons {
-  display: flex;
-  flex-direction: column;
-  margin-top: auto;
-  padding-top: 16px;
-}
-
-.detailsBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 10px 20px;
-  border-radius: 100px; /* Ідеальна форма пігулки, як у Apple */
-  background: #0071e3; /* Фірмовий синій колір Apple */
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 500; /* Нормальна товщина тексту, без перебору */
-  text-decoration: none;
-  transition: background 0.2s ease;
-  border: none;
-
-  &:hover {
-    background: #0077ed;
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-    stroke-width: 2px; /* Акуратна тонка стрілочка */
-  }
-
-  @media (max-width: 640px) {
-    padding: 10px 16px;
-    font-size: 14px;
-  }
-}
-
-/* Додай це в CatalogGrid.module.scss біля існуючого .filterGroup та .groupTitle */
-
-.groupTitleRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  padding: 8px 4px;
-  margin-bottom: 4px;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-  user-select: none; /* Запобігає виділенню тексту при подвійному кліку */
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
-}
-
-.groupTitle {
-  font-size: 13px; /* Трохи збільшив шрифт для зручності */
-  font-weight: 700;
-  color: $text-dark; /* Зробив колір темнішим для контрасту */
-  text-transform: none; /* Прибрав капслок для кращої читабельності */
-  margin: 0;
-  padding-left: 0;
-}
-
-.filterContentArea {
-  /* Додаємо анімацію розгортання (необов'язково, але виглядає краще) */
-  animation: slideDown 0.3s ease-out forwards;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }

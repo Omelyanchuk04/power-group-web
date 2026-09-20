@@ -8,12 +8,24 @@ $bg-light: #f9fafb;
 .catalogWrapper {
   min-height: 100vh;
   padding-bottom: 80px;
+
+  @media (max-width: 560px) {
+    padding-bottom: 30px; /* Уніфікуємо відступи знизу з футером */
+  }
 }
 
 .container {
   max-width: 1300px;
   margin: 0 auto;
   padding: 0 20px;
+
+  /* 🔥 ОНОВЛЕНО: Точні відступи, як у футері та на сторінці товару 🔥 */
+  @media (max-width: 768px) {
+    padding: 0 24px;
+  }
+  @media (max-width: 560px) {
+    padding: 0 10px; /* Рівно 10px від краю екрана */
+  }
 }
 
 /* =========================================

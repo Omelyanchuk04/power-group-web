@@ -11,6 +11,10 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   background: transparent;
   min-height: 100vh;
   position: relative;
+
+  @media (max-width: 560px) {
+    padding-bottom: 30px; /* Уніфікуємо відступи з футером */
+  }
 }
 
 .bgWrapper {
@@ -38,6 +42,14 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   padding: 0 20px;
   position: relative;
   z-index: 2;
+
+  /* 🔥 ОНОВЛЕНО: Точні відступи, як у футері, для різних екранів 🔥 */
+  @media (max-width: 768px) {
+    padding: 0 24px;
+  }
+  @media (max-width: 560px) {
+    padding: 0 10px; /* Рівно 10px, як у .footerWrapper */
+  }
 }
 
 .backLink {
@@ -54,6 +66,11 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   &:hover {
     text-decoration: underline;
     color: $primary;
+  }
+
+  @media (max-width: 560px) {
+    font-size: 14px;
+    margin-bottom: 24px;
   }
 }
 
@@ -126,10 +143,17 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   @media (max-width: 768px) {
     font-size: 32px;
   }
+  @media (max-width: 560px) {
+    font-size: 26px;
+  }
 }
 
 .ctaWrapper {
   margin-bottom: 64px; /* Відступ до інформаційних блоків */
+
+  @media (max-width: 768px) {
+    margin-bottom: 40px;
+  }
 }
 
 .ctaButton {
@@ -145,6 +169,11 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 
   &:hover {
     box-shadow: 0 8px 24px rgba(255, 213, 0, 0.3);
+  }
+
+  @media (max-width: 560px) {
+    width: 100%; /* Розтягуємо кнопку на мобільному */
+    padding: 14px 24px;
   }
 }
 
@@ -206,6 +235,10 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   font-size: 16px;
   color: $text-dark;
   font-weight: 400;
+
+  @media (max-width: 560px) {
+    font-size: 15px;
+  }
 }
 
 .appleSpecValue {
@@ -213,6 +246,10 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   font-weight: 600;
   color: $text-dark;
   text-align: right;
+
+  @media (max-width: 560px) {
+    font-size: 15px;
+  }
 }
 
 /* Опис */
@@ -221,6 +258,10 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   line-height: 1.6;
   color: $text-dark;
   margin: 0;
+
+  @media (max-width: 560px) {
+    font-size: 16px;
+  }
 }
 
 /* Документація */
@@ -242,5 +283,9 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   &:hover {
     opacity: 0.7;
     text-decoration: underline;
+  }
+
+  @media (max-width: 560px) {
+    font-size: 16px;
   }
 }
