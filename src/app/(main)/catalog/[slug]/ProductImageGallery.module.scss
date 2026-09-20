@@ -1,5 +1,3 @@
-@use "sass:color";
-
 .galleryWrapper {
   display: flex;
   flex-direction: column;
@@ -10,29 +8,41 @@
 .imageBox {
   position: relative;
   width: 100%;
-  height: 400px;
+
+  /* 🔥 РІШЕННЯ ВІД "СТРИБКІВ": Фіксована пропорція (трохи витягнута по вертикалі, ідеально для інверторів) */
+  aspect-ratio: 4 / 4.5;
+  max-height: 560px; /* Обмеження висоти для великих моніторів */
+
+  /* 🔥 НОВИЙ КОЛІР: Легкий металево-блакитний градієнт замість нудного сірого */
+  background: linear-gradient(135deg, #ffffff 0%, #eef2f6 100%);
+  border: 1px solid rgba(0, 40, 100, 0.03); /* Ледь помітна холодна рамочка */
+
+  border-radius: 28px;
+  padding: 32px; /* Повернули відступи, щоб великі фото не прилипали до країв */
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 32px; /* Відступ між картинкою і кнопками */
+  margin-bottom: 24px;
 }
 
 .mainImg {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  /* Робить білий фон товару прозорим на нашому сірому фоні */
+  // width: 100%;
+  height: 100%; /* Тепер картинка займає всю доступну висоту фіксованого блоку */
+  object-fit: contain; /* Картинка масштабується без обрізання */
   mix-blend-mode: darken;
+  transform: scale(1.05);
+  transition: opacity 0.3s ease; /* Додає м'якості при перемиканні */
 }
 
+/* Кнопка на весь екран */
 .fullscreenBtn {
   position: absolute;
-  top: -16px;
-  right: -8px;
+  top: 16px;
+  right: 16px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.04);
   border: none;
   display: flex;
   justify-content: center;
@@ -40,9 +50,11 @@
   color: #1d1d1f;
   cursor: pointer;
   transition: all 0.2s ease;
+  z-index: 5;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.08);
+    transform: scale(1.05);
   }
 
   svg {
@@ -52,7 +64,7 @@
 }
 
 /* ====================================
-   🔥 КОНТРОЛИ В СТИЛІ APPLE 🔥
+   🔥 КОНТРОЛИ НАВІГАЦІЇ 🔥
    ==================================== */
 .controlsRow {
   display: flex;
@@ -60,13 +72,12 @@
   gap: 16px;
 }
 
-/* Округлі кнопки вліво/вправо */
 .navBtn {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.06);
-  border: none;
+  background: rgba(0, 0, 0, 0.04); /* Трохи світліші на загальному фоні */
+  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,7 +86,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, 0.08);
   }
   &:active {
     transform: scale(0.95);
@@ -87,23 +98,22 @@
   }
 }
 
-/* Форма таблетки для крапок */
 .dotsContainer {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(0, 0, 0, 0.06);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
   padding: 0 20px;
-  height: 44px; /* Така ж висота, як і у кнопок */
-  border-radius: 100px; /* Заокруглюємо повністю */
+  height: 44px;
+  border-radius: 100px;
 }
 
-/* Самі крапки */
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.25);
   border: none;
   padding: 0;
   cursor: pointer;
@@ -115,7 +125,7 @@
 
   &.activeDot {
     background: rgba(0, 0, 0, 0.8);
-    transform: scale(1.1);
+    transform: scale(1.15);
   }
 }
 

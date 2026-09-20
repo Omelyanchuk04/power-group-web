@@ -801,3 +801,46 @@ $bg-light: #f1f5f9;
     font-size: 14px;
   }
 }
+
+/* Додай це в CatalogGrid.module.scss біля існуючого .filterGroup та .groupTitle */
+
+.groupTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 4px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  user-select: none; /* Запобігає виділенню тексту при подвійному кліку */
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.groupTitle {
+  font-size: 13px; /* Трохи збільшив шрифт для зручності */
+  font-weight: 700;
+  color: $text-dark; /* Зробив колір темнішим для контрасту */
+  text-transform: none; /* Прибрав капслок для кращої читабельності */
+  margin: 0;
+  padding-left: 0;
+}
+
+.filterContentArea {
+  /* Додаємо анімацію розгортання (необов'язково, але виглядає краще) */
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

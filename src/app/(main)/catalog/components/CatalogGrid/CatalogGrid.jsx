@@ -145,7 +145,6 @@ let cachedBrands = null;
 export default function CatalogGrid() {
   const gridRef = useRef(null);
   const layoutRef = useRef(null);
-  const animTracker = useRef({ category: null, page: null, filters: null });
 
   const [products, setProducts] = useState(cachedProducts || []);
   const [brandsList, setBrandsList] = useState(cachedBrands || []);
@@ -157,7 +156,6 @@ export default function CatalogGrid() {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [isRestored, setIsRestored] = useState(false);
 
-  // 🔥 ПОВЕРНУТО ЗМІННУ 🔥
   const itemsPerPage = 9;
 
   useEffect(() => {
@@ -229,48 +227,42 @@ export default function CatalogGrid() {
   }, [products, activeCategory, activeFilters]);
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-  const currentProducts = filteredProducts.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
 
+  // 🔥 ЗАГОРНУТО В USEMEMO: Тепер React знає, коли змінився саме список видимих товарів
+  const currentProducts = useMemo(() => {
+    return filteredProducts.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage,
+    );
+  }, [filteredProducts, currentPage]);
+
+  // 🔥 НОВА, ЧИСТА АНІМАЦІЯ GSAP 🔥
   useEffect(() => {
-    const cards = gridRef.current?.children;
-    if (cards && cards.length > 0 && !isLoading && isRestored) {
-      const currentFiltersStr = JSON.stringify(activeFilters);
+    if (isLoading || !isRestored || !gridRef.current) return;
 
-      if (
-        animTracker.current.category === activeCategory &&
-        animTracker.current.page === currentPage &&
-        animTracker.current.filters === currentFiltersStr
-      ) {
-        return;
-      }
+    const cards = gridRef.current.children;
+    if (cards.length === 0) return;
 
-      let ctx = gsap.context(() => {
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.05,
-            ease: "power3.out",
-            clearProps: "all",
-          },
-        );
+    let ctx = gsap.context(() => {
+      // 1. Зупиняємо всі попередні анімації, щоб уникнути конфліктів при швидкому перемиканні
+      gsap.killTweensOf(cards);
+
+      // 2. Миттєво ховаємо всі картки
+      gsap.set(cards, { opacity: 0, y: 30 });
+
+      // 3. Плавно виводимо їх на екран
+      gsap.to(cards, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.05,
+        ease: "power2.out",
+        clearProps: "all",
       });
+    }, gridRef);
 
-      animTracker.current = {
-        category: activeCategory,
-        page: currentPage,
-        filters: currentFiltersStr,
-      };
-
-      return () => ctx.revert();
-    }
-  }, [activeCategory, currentPage, activeFilters, isLoading, isRestored]);
+    return () => ctx.revert();
+  }, [currentProducts, isLoading, isRestored]); // Анімація спрацює тільки тоді, коли оновляться товари
 
   const handleFilterToggle = (filterKey, option) => {
     setCurrentPage(1);

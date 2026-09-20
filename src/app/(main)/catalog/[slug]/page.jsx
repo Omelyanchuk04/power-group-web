@@ -36,7 +36,7 @@ const getProductQuery = (slugOrId) => {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const slugParam = resolvedParams.slug; // 🔥 Прибрали милицю
+  const slugParam = resolvedParams.slug;
 
   await connectToDatabase();
 
@@ -50,9 +50,32 @@ export async function generateMetadata({ params }) {
   };
 }
 
+// 🔥 ДОДАНО: Словник перекладів для характеристик
+const FILTER_LABELS = {
+  brand: "Виробник (бренд)",
+  power: "Потужність",
+  dimensions: "Габарити",
+  phase: "Кількість фаз",
+  type: "Тип",
+  executionType: "Тип виконання",
+  subcategory: "Підкатегорія (розділ)",
+  batteryType: "Тип батареї",
+};
+
+// 🔥 ДОДАНО: Конфігурація характеристик для кожної категорії (як в адмінці)
+const CATEGORY_CONFIG = {
+  "Сонячні панелі": ["brand", "power", "dimensions"],
+  "Гібридні інвертори": ["brand", "phase", "type", "power"],
+  "Мережеві інвертори": ["brand", "phase", "power"],
+  Акумулятори: ["brand", "batteryType"],
+  "Системи накопичення": ["brand"],
+  "Силове обладнання для сонячних електростанцій": ["executionType", "power"],
+  "Комплектуючі для монтажу": ["subcategory"],
+};
+
 export default async function ProductPage({ params }) {
   const resolvedParams = await params;
-  const slugParam = resolvedParams.slug; // 🔥 Прибрали милицю
+  const slugParam = resolvedParams.slug;
 
   await connectToDatabase();
 
@@ -85,28 +108,21 @@ export default async function ProductPage({ params }) {
   }
   if (imagesList.length === 0) imagesList.push("/placeholder.jpg");
 
-  const FILTER_LABELS = {
-    brand: "Виробник (бренд)",
-    power: "Потужність",
-    dimensions: "Габарити",
-    phase: "Кількість фаз",
-    type: "Тип",
-    executionType: "Тип виконання",
-    subcategory: "Підкатегорія (розділ)",
-    batteryType: "Тип батареї",
-  };
-
+  // 🔥 НОВА ЛОГІКА: Формуємо список тільки з тих полів, які належать категорії
   const activeSpecs = [];
-  if (product.filters) {
-    Object.keys(product.filters).forEach((key) => {
-      if (product.filters[key]) {
-        activeSpecs.push({
-          label: FILTER_LABELS[key] || key,
-          value: product.filters[key],
-        });
-      }
+  const categoryKeys = CATEGORY_CONFIG[product.category] || [];
+
+  categoryKeys.forEach((key) => {
+    const val = product.filters?.[key];
+    // Якщо значення є і воно не "Не обрано", показуємо його. Якщо порожнє — ставимо красивий прочерк
+    const displayValue =
+      val && val.trim() !== "" && val !== "Не обрано" ? val : "—";
+
+    activeSpecs.push({
+      label: FILTER_LABELS[key] || key,
+      value: displayValue,
     });
-  }
+  });
 
   return (
     <main className={styles.pageContainer}>
