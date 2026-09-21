@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./CatalogGrid.module.scss";
 import { IconCheck } from "./catalogData";
+
+// 🔥 ГЛОБАЛЬНА ЗМІННА: пам'ятає, чи ми вже відкривали сайдбар у цій сесії
+let isGlobalFirstSidebarMount = true;
 
 // Іконка для розгортання/згортання (шеврон)
 const IconChevronDown = ({ isOpen }) => (
@@ -34,22 +37,48 @@ export default function CatalogSidebar({
   isOpen,
   onClose,
 }) {
-  // 🔥 СТАН ДЛЯ ЗГОРТАННЯ ГРУП 🔥
-  // За замовчуванням усі групи розгорнуті. Якщо хочеш згорнуті - зроби useState({})
-  const [expandedGroups, setExpandedGroups] = useState({});
+  // 🔥 СИНХРОННА ІНІЦІАЛІЗАЦІЯ: Одразу відкриваємо всі групи, щоб уникнути "кліпання"
+  const [expandedGroups, setExpandedGroups] = useState(() => {
+    const initial = {};
+    if (config) {
+      config.forEach((group) => {
+        initial[group.key] = true;
+      });
+    }
+    return initial;
+  });
 
-  // Коли змінюється категорія (або при першому завантаженні), розгортаємо всі групи
+  // Відстежуємо, які групи користувач відкривав/закривав вручну
+  const [interacted, setInteracted] = useState({});
+
+  // Перевіряємо, чи це найперший вхід
+  const isFirstMount = useRef(isGlobalFirstSidebarMount);
+
+  useEffect(() => {
+    // Одразу після першого рендеру опускаємо глобальний прапорець
+    isGlobalFirstSidebarMount = false;
+  }, []);
+
+  // Синхронізуємо групи, коли змінюється категорія
   useEffect(() => {
     if (config) {
-      const initialExpandedState = {};
-      config.forEach((group) => {
-        initialExpandedState[group.key] = true;
+      setExpandedGroups((prev) => {
+        const next = { ...prev };
+        let hasChanges = false;
+        config.forEach((group) => {
+          if (next[group.key] === undefined) {
+            next[group.key] = true;
+            hasChanges = true;
+          }
+        });
+        return hasChanges ? next : prev;
       });
-      setExpandedGroups(initialExpandedState);
     }
   }, [config, activeCategory]);
 
   const toggleGroup = (key) => {
+    // Запам'ятовуємо, що з цією групою взаємодіяли
+    setInteracted((prev) => ({ ...prev, [key]: true }));
     setExpandedGroups((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -84,6 +113,12 @@ export default function CatalogSidebar({
 
           {config?.map((filterGroup) => {
             const isGroupOpen = expandedGroups[filterGroup.key];
+            const hasInteracted = interacted[filterGroup.key];
+
+            // 🔥 ВИМИКАЄМО АНІМАЦІЮ ПРИ ПОВЕРНЕННІ ЗІ СТОРІНКИ ТОВАРУ 🔥
+            // Анімація спрацює тільки при першому вході, або якщо ти сам клікнув на фільтр
+            const shouldAnimate = isFirstMount.current || hasInteracted;
+            const animStyle = shouldAnimate ? {} : { animation: "none" };
 
             // --- РЕНДЕР ПОВЗУНКА ---
             if (filterGroup.type === "slider") {
@@ -95,7 +130,6 @@ export default function CatalogSidebar({
 
               return (
                 <div key={filterGroup.key} className={styles.filterGroup}>
-                  {/* Заголовок групи, що клікається */}
                   <div
                     className={styles.groupTitleRow}
                     onClick={() => toggleGroup(filterGroup.key)}
@@ -104,9 +138,8 @@ export default function CatalogSidebar({
                     <IconChevronDown isOpen={isGroupOpen} />
                   </div>
 
-                  {/* Вміст, який приховується */}
                   {isGroupOpen && (
-                    <div className={styles.filterContentArea}>
+                    <div className={styles.filterContentArea} style={animStyle}>
                       <div className={styles.sliderHeader}>
                         <span className={styles.powerValue}>
                           {powerLimitUI === maxVal
@@ -151,7 +184,6 @@ export default function CatalogSidebar({
 
             return (
               <div key={filterGroup.key} className={styles.filterGroup}>
-                {/* Заголовок групи, що клікається */}
                 <div
                   className={styles.groupTitleRow}
                   onClick={() => toggleGroup(filterGroup.key)}
@@ -160,9 +192,8 @@ export default function CatalogSidebar({
                   <IconChevronDown isOpen={isGroupOpen} />
                 </div>
 
-                {/* Вміст, який приховується */}
                 {isGroupOpen && (
-                  <div className={styles.filterContentArea}>
+                  <div className={styles.filterContentArea} style={animStyle}>
                     <div className={styles.checkboxList}>
                       <label className={styles.checkboxLabel}>
                         <input
