@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import gsap from "gsap";
+import React, { useState, useEffect, useMemo } from "react";
 import styles from "./CatalogGrid.module.scss";
 
 import CatalogSidebar from "./CatalogSidebar";
@@ -143,12 +142,6 @@ let cachedProducts = null;
 let cachedBrands = null;
 
 export default function CatalogGrid() {
-  const gridRef = useRef(null);
-  const layoutRef = useRef(null);
-
-  // Відстежуємо перше завантаження, щоб уникнути анімації при поверненні "Назад"
-  const isInitialMount = useRef(true);
-
   const [products, setProducts] = useState(cachedProducts || []);
   const [brandsList, setBrandsList] = useState(cachedBrands || []);
   const [isLoading, setIsLoading] = useState(!cachedProducts);
@@ -238,46 +231,6 @@ export default function CatalogGrid() {
     );
   }, [filteredProducts, currentPage]);
 
-  // 🔥 ОНОВЛЕНА, МАКСИМАЛЬНО ПЛАВНА АНІМАЦІЯ (БЕЗ ЛАГІВ) 🔥
-  useEffect(() => {
-    // Використовуємо звичайний useEffect, щоб НЕ блокувати відмальовування браузера
-    if (isLoading || !isRestored || !gridRef.current) return;
-
-    const cards = gridRef.current.children;
-    if (cards.length === 0) return;
-
-    let ctx = gsap.context(() => {
-      gsap.killTweensOf(cards);
-
-      // Якщо це перше завантаження / повернення назад — показуємо миттєво без анімації
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-        gsap.set(cards, { opacity: 1, y: 0, clearProps: "all" });
-        return;
-      }
-
-      // 1. Миттєво ховаємо всі картки ДО того, як вони з'являться на екрані
-      gsap.set(cards, { opacity: 0, y: 40 });
-
-      // 2. Відкладаємо старт анімації до наступного кадру браузера + даємо 50мс затримки
-      // Це звільняє процесор, щоб він встиг підвантажити картинки і не гальмував анімацію
-      requestAnimationFrame(() => {
-        gsap.to(cards, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          stagger: 0.05,
-          ease: "power3.out", // Більш плавне і природне уповільнення
-          delay: 0.05, // Критично важливо: дає браузеру паузу на рендер
-          force3D: true, // Примусово переводить анімацію на відеокарту (GPU)
-          clearProps: "all",
-        });
-      });
-    }, gridRef);
-
-    return () => ctx.revert();
-  }, [currentProducts, isLoading, isRestored]);
-
   const handleFilterToggle = (filterKey, option) => {
     setCurrentPage(1);
     setActiveFilters((prev) => {
@@ -309,20 +262,12 @@ export default function CatalogGrid() {
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber === currentPage) return;
-    if (layoutRef.current) {
-      const yOffset =
-        layoutRef.current.getBoundingClientRect().top + window.scrollY - 100;
-      window.scrollTo({ top: yOffset, behavior: "smooth" });
-    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setCurrentPage(pageNumber);
   };
 
   useEffect(() => {
-    if (isMobileFiltersOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = isMobileFiltersOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
@@ -338,6 +283,10 @@ export default function CatalogGrid() {
   );
 
   if (!isRestored) return null;
+
+  // 🔥 Створюємо унікальний ключ для сітки.
+  // При зміні фільтра чи сторінки React знищить стару сітку і створить нову, автоматично запустивши CSS анімацію
+  const gridKey = `${activeCategory}-${currentPage}-${JSON.stringify(activeFilters)}`;
 
   return (
     <section className={styles.gridSection}>
@@ -375,7 +324,7 @@ export default function CatalogGrid() {
           categories={CATEGORIES_LIST}
         />
 
-        <div className={styles.mainLayout} ref={layoutRef}>
+        <div className={styles.mainLayout}>
           <CatalogSidebar
             activeCategory={activeCategory}
             activeFilters={activeFilters}
@@ -407,7 +356,8 @@ export default function CatalogGrid() {
               </div>
             ) : (
               <>
-                <div className={styles.grid} ref={gridRef}>
+                {/* 🔥 Додали ключ та клас анімації 🔥 */}
+                <div key={gridKey} className={styles.gridAnimated}>
                   {currentProducts.map((product) => (
                     <CatalogProductCard key={product._id} product={product} />
                   ))}
