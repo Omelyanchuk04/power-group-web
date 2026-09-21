@@ -22,8 +22,13 @@ export async function POST(request) {
     await connectToDatabase();
     const data = await request.json();
 
+    // 🔥 Гарантуємо, що масив документів існує
+    if (!data.documents) {
+      data.documents = [];
+    }
+
     if (data.name) {
-      // 🔥 БЕРЕМО ЛИШЕ ПЕРШІ 5 СЛІВ ІЗ НАЗВИ 🔥
+      // БЕРЕМО ЛИШЕ ПЕРШІ 5 СЛІВ ІЗ НАЗВИ
       const shortName = data.name.split(" ").slice(0, 5).join(" ");
 
       const baseSlug = slugify(shortName, {
@@ -39,9 +44,7 @@ export async function POST(request) {
     const newItem = await CatalogItem.create(data);
     return NextResponse.json(newItem, { status: 201 });
   } catch (error) {
-    // 🔥 ВИВОДИМО РЕАЛЬНУ ПОМИЛКУ В ТЕРМІНАЛ VS CODE 🔥
     console.error("ПОМИЛКА СТВОРЕННЯ ТОВАРУ У БАЗІ:", error);
-
     return NextResponse.json(
       { error: "Помилка створення товару", details: error.message },
       { status: 500 },

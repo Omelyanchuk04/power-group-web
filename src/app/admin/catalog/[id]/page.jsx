@@ -107,8 +107,6 @@ const FILTER_LABELS = {
   batteryType: "Тип батареї",
 };
 
-// Залишаємо структуру фільтрів, але опції для brand тепер грають роль "заглушки",
-// оскільки реальні бренди ми підтягнемо з БД
 const CATEGORY_FILTERS = {
   "Сонячні панелі": {
     brand: [],
@@ -189,8 +187,6 @@ export default function CatalogFormPage({ params }) {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-
-  // 🔥 СТАН ДЛЯ БРЕНДІВ З БАЗИ ДАНИХ 🔥
   const [brandsList, setBrandsList] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -202,12 +198,13 @@ export default function CatalogFormPage({ params }) {
 
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [pdfFile, setPdfFile] = useState(null);
+
+  // 🔥 НОВИЙ СТАН ДЛЯ МАСИВУ ДОКУМЕНТІВ 🔥
+  const [documents, setDocuments] = useState([]);
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        // 🔥 ПАРАЛЕЛЬНО ЗАВАНТАЖУЄМО БРЕНДИ І ТОВАР (ЯКЩО РЕДАГУВАННЯ) 🔥
         const [settingsRes, itemsRes] = await Promise.all([
           fetch("/api/settings/catalog"),
           isNew ? Promise.resolve(null) : fetch("/api/catalog"),
@@ -229,15 +226,15 @@ export default function CatalogFormPage({ params }) {
               filters: item.filters || {},
             });
 
+            // Завантаження зображень
             const existingImages = [];
-            if (item.image) {
+            if (item.image)
               existingImages.push({
                 id: "main_old",
                 url: item.image,
                 file: null,
                 isMain: true,
               });
-            }
             if (item.gallery && item.gallery.length > 0) {
               item.gallery.forEach((url, i) => {
                 existingImages.push({
@@ -250,19 +247,30 @@ export default function CatalogFormPage({ params }) {
             }
             setImages(existingImages);
 
+            // 🔥 Завантаження документів (підтримка старого datasheetUrl та нового масиву documents) 🔥
+            const loadedDocs = [];
             if (item.datasheetUrl) {
-              setPdfFile({
-                name: "Технічна_документація.pdf",
+              loadedDocs.push({
+                id: "legacy_datasheet",
+                title: "Технічна документація",
                 url: item.datasheetUrl,
                 file: null,
               });
             }
+            if (item.documents && item.documents.length > 0) {
+              item.documents.forEach((doc, idx) => {
+                loadedDocs.push({
+                  id: `doc_old_${idx}`,
+                  title: doc.title || "Документ",
+                  url: doc.url,
+                  file: null,
+                });
+              });
+            }
+            setDocuments(loadedDocs);
           }
         } else if (isNew) {
-          setFormData((prev) => ({
-            ...prev,
-            category: CATEGORIES[0],
-          }));
+          setFormData((prev) => ({ ...prev, category: CATEGORIES[0] }));
         }
       } catch (error) {
         console.error("Помилка завантаження:", error);
@@ -289,17 +297,16 @@ export default function CatalogFormPage({ params }) {
     }));
   };
 
+  // --- ОБРОБКА ЗОБРАЖЕНЬ ---
   const processFiles = (fileList) => {
     const files = Array.from(fileList);
     if (!files.length) return;
-
     const newImages = files.map((f, i) => ({
       id: `new_${Date.now()}_${i}`,
       url: URL.createObjectURL(f),
       file: f,
       isMain: false,
     }));
-
     setImages((prev) => {
       const combined = [...prev, ...newImages];
       if (combined.length > 0 && !combined.some((img) => img.isMain)) {
@@ -325,26 +332,49 @@ export default function CatalogFormPage({ params }) {
   const handleFileChange = (e) => {
     if (e.target.files?.length) processFiles(e.target.files);
   };
-
-  const setMainImage = (id) => {
+  const setMainImage = (id) =>
     setImages((prev) => prev.map((img) => ({ ...img, isMain: img.id === id })));
-  };
-
   const removeImage = (id) => {
     setImages((prev) => {
       const filtered = prev.filter((img) => img.id !== id);
-      if (filtered.length > 0 && !filtered.some((img) => img.isMain)) {
+      if (filtered.length > 0 && !filtered.some((img) => img.isMain))
         filtered[0].isMain = true;
-      }
       return filtered;
     });
   };
 
+  // --- 🔥 ОБРОБКА PDF ДОКУМЕНТІВ 🔥 ---
+  const handlePdfChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    const newDocs = files.map((f, i) => ({
+      id: `new_doc_${Date.now()}_${i}`,
+      title: f.name.replace(".pdf", ""), // Назва за замовчуванням — ім'я файлу без .pdf
+      url: URL.createObjectURL(f),
+      file: f,
+    }));
+
+    setDocuments((prev) => [...prev, ...newDocs]);
+  };
+
+  const handleDocTitleChange = (id, newTitle) => {
+    setDocuments((prev) =>
+      prev.map((doc) => (doc.id === id ? { ...doc, title: newTitle } : doc)),
+    );
+  };
+
+  const removeDocument = (id) => {
+    setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+  };
+
+  // --- ЗБЕРЕЖЕННЯ ДАНИХ ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
 
     try {
+      // 1. Завантажуємо зображення
       const uploadedImages = await Promise.all(
         images.map(async (img) => {
           if (img.file) {
@@ -370,19 +400,25 @@ export default function CatalogFormPage({ params }) {
         .filter((u) => !u.isMain)
         .map((u) => u.url);
 
-      let finalPdfUrl = pdfFile ? pdfFile.url : "";
-      if (pdfFile && pdfFile.file) {
-        const pdfUploadData = new FormData();
-        pdfUploadData.append("file", pdfFile.file);
-        pdfUploadData.append("upload_preset", UPLOAD_PRESET);
-        const pdfRes = await fetch(
-          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
-          { method: "POST", body: pdfUploadData },
-        );
-        const pdfData = await pdfRes.json();
-        finalPdfUrl = pdfData.secure_url;
-      }
+      // 2. 🔥 Завантажуємо PDF документи 🔥
+      const finalDocuments = await Promise.all(
+        documents.map(async (doc) => {
+          if (doc.file) {
+            const pdfUploadData = new FormData();
+            pdfUploadData.append("file", doc.file);
+            pdfUploadData.append("upload_preset", UPLOAD_PRESET);
+            const pdfRes = await fetch(
+              `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`,
+              { method: "POST", body: pdfUploadData },
+            );
+            const pdfData = await pdfRes.json();
+            return { title: doc.title || "Документ", url: pdfData.secure_url };
+          }
+          return { title: doc.title || "Документ", url: doc.url };
+        }),
+      );
 
+      // 3. Формуємо payload
       const payload = {
         name: formData.name,
         category: formData.category,
@@ -390,7 +426,8 @@ export default function CatalogFormPage({ params }) {
         image: finalMainImage,
         gallery: finalGallery,
         filters: formData.filters,
-        datasheetUrl: finalPdfUrl,
+        datasheetUrl: "", // Залишаємо порожнім, бо тепер використовуємо масив documents
+        documents: finalDocuments,
       };
 
       const url = isNew ? "/api/catalog" : `/api/catalog/${id}`;
@@ -479,7 +516,7 @@ export default function CatalogFormPage({ params }) {
             </select>
           </div>
 
-          {/* 3. СПЕЦИФІКАЦІЇ (ДИНАМІЧНІ ТА З БД) */}
+          {/* 3. СПЕЦИФІКАЦІЇ */}
           {currentCategoryFilters && (
             <div
               className={styles.dynamicFiltersBox}
@@ -509,12 +546,10 @@ export default function CatalogFormPage({ params }) {
               >
                 {Object.entries(currentCategoryFilters).map(
                   ([filterKey, options]) => {
-                    // 🔥 ЯКЩО ПОЛЕ БРЕНД - ПІДСТАВЛЯЄМО ДАНІ З БД 🔥
                     const renderOptions =
                       filterKey === "brand" && brandsList.length > 0
                         ? brandsList
                         : options;
-
                     return (
                       <div key={filterKey} className={styles.inputGroup}>
                         <label>{FILTER_LABELS[filterKey]}</label>
@@ -539,7 +574,7 @@ export default function CatalogFormPage({ params }) {
             </div>
           )}
 
-          {/* 4. ОПИС ТОВАРУ */}
+          {/* 4. ОПИС */}
           <div className={styles.inputGroup}>
             <label>
               Короткий опис <span>*</span>
@@ -554,7 +589,7 @@ export default function CatalogFormPage({ params }) {
             />
           </div>
 
-          {/* 5. ФОТОГРАФІЇ ТОВАРУ */}
+          {/* 5. ФОТОГРАФІЇ */}
           <div className={styles.inputGroup}>
             <label>Фотографії товару (Головне фото та Галерея)</label>
             <label
@@ -611,13 +646,12 @@ export default function CatalogFormPage({ params }) {
             )}
           </div>
 
-          {/* 🔥 РОЗДІЛЮВАЧ МІЖ ФОТО І PDF 🔥 */}
           <div className={styles.sectionDivider}></div>
 
-          {/* 6. БЛОК ЗАВАНТАЖЕННЯ PDF */}
+          {/* 6. 🔥 БЛОК ЗАВАНТАЖЕННЯ ДЕКІЛЬКОХ PDF 🔥 */}
           <div className={styles.inputGroup}>
             <label>
-              Технічна документація (PDF Datasheet)
+              Технічна документація (PDF)
               <span
                 style={{
                   color: "#9ca3af",
@@ -626,63 +660,118 @@ export default function CatalogFormPage({ params }) {
                   textTransform: "none",
                 }}
               >
-                - не обов'язково
+                - можна завантажити кілька файлів
               </span>
             </label>
 
-            {!pdfFile ? (
-              <label
-                className={`${styles.unifiedUploadZone} ${styles.pdfZone}`}
+            <label className={`${styles.unifiedUploadZone} ${styles.pdfZone}`}>
+              <input
+                type="file"
+                accept=".pdf"
+                multiple
+                className={styles.hiddenFileInput}
+                onChange={handlePdfChange}
+              />
+              <div className={styles.uploadContent}>
+                <IconFileText />
+                <span className={styles.uploadText}>
+                  Натисніть сюди, щоб обрати один або кілька PDF файлів
+                </span>
+              </div>
+            </label>
+
+            {/* СПИСОК ЗАВАНТАЖЕНИХ ДОКУМЕНТІВ */}
+            {documents.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                  marginTop: "16px",
+                }}
               >
-                <input
-                  type="file"
-                  accept=".pdf"
-                  className={styles.hiddenFileInput}
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      setPdfFile({
-                        name: file.name,
-                        url: URL.createObjectURL(file),
-                        file,
-                      });
-                    }
-                  }}
-                />
-                <div className={styles.uploadContent}>
-                  <IconFileText />
-                  <span className={styles.uploadText}>
-                    Натисніть сюди, щоб обрати PDF файл
-                  </span>
-                </div>
-              </label>
-            ) : (
-              <div className={styles.pdfCard}>
-                <a
-                  href={pdfFile.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.pdfInfoLink}
-                  title="Відкрити документ у новій вкладці"
-                >
-                  <div className={styles.pdfIconWrapper}>
-                    <IconFileText />
+                {documents.map((doc) => (
+                  <div
+                    key={doc.id}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      padding: "12px",
+                      background: "rgba(0,0,0,0.02)",
+                      borderRadius: "12px",
+                      border: "1px solid rgba(0,0,0,0.05)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "40px",
+                        height: "40px",
+                        background: "rgba(0, 86, 179, 0.1)",
+                        color: "#0056b3",
+                        borderRadius: "8px",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <IconFileText />
+                    </div>
+
+                    <div
+                      style={{
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                      }}
+                    >
+                      <input
+                        type="text"
+                        value={doc.title}
+                        onChange={(e) =>
+                          handleDocTitleChange(doc.id, e.target.value)
+                        }
+                        placeholder="Назва документа (напр. Інструкція користувача)"
+                        style={{
+                          width: "100%",
+                          padding: "8px 12px",
+                          border: "1px solid #d1d5db",
+                          borderRadius: "6px",
+                          fontSize: "14px",
+                          outline: "none",
+                        }}
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => removeDocument(doc.id)}
+                      title="Видалити PDF"
+                      style={{
+                        background: "rgba(239, 68, 68, 0.1)",
+                        color: "#ef4444",
+                        border: "none",
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "background 0.2s",
+                      }}
+                    >
+                      <IconX />
+                    </button>
                   </div>
-                  <span className={styles.pdfName}>{pdfFile.name}</span>
-                </a>
-                <button
-                  type="button"
-                  className={styles.pdfRemoveBtn}
-                  onClick={() => setPdfFile(null)}
-                  title="Видалити PDF"
-                >
-                  <IconX />
-                </button>
+                ))}
               </div>
             )}
           </div>
 
-          {/* КНОПКИ */}
+          {/* КНОПКИ ЗБЕРЕЖЕННЯ */}
           <div className={styles.formActions}>
             <button
               type="button"

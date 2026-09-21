@@ -27,9 +27,19 @@ export async function PUT(request, { params }) {
     const id = resolvedParams.id;
 
     const data = await request.json();
-    const updatedItem = await CatalogItem.findByIdAndUpdate(id, data, {
-      new: true,
-    });
+
+    // 🔥 ГАРАНТУЄМО, ЩО МАСИВ ФАЙЛІВ ПРИСУТНІЙ 🔥
+    if (!data.documents) {
+      data.documents = [];
+    }
+
+    // Використовуємо $set, щоб гарантовано оновити всі передані поля
+    const updatedItem = await CatalogItem.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    );
+
     return NextResponse.json(updatedItem);
   } catch (error) {
     console.error("Помилка оновлення API:", error);

@@ -50,7 +50,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// 🔥 ДОДАНО: Словник перекладів для характеристик
+// Словник перекладів для характеристик
 const FILTER_LABELS = {
   brand: "Виробник (бренд)",
   power: "Потужність",
@@ -62,7 +62,7 @@ const FILTER_LABELS = {
   batteryType: "Тип батареї",
 };
 
-// 🔥 ДОДАНО: Конфігурація характеристик для кожної категорії (як в адмінці)
+// Конфігурація характеристик для кожної категорії (як в адмінці)
 const CATEGORY_CONFIG = {
   "Сонячні панелі": ["brand", "power", "dimensions"],
   "Гібридні інвертори": ["brand", "phase", "type", "power"],
@@ -108,7 +108,7 @@ export default async function ProductPage({ params }) {
   }
   if (imagesList.length === 0) imagesList.push("/placeholder.jpg");
 
-  // 🔥 НОВА ЛОГІКА: Формуємо список тільки з тих полів, які належать категорії
+  // Формуємо список тільки з тих полів, які належать категорії
   const activeSpecs = [];
   const categoryKeys = CATEGORY_CONFIG[product.category] || [];
 
@@ -184,19 +184,41 @@ export default async function ProductPage({ params }) {
                 </div>
               )}
 
-              {product.datasheetUrl && (
+              {/* 🔥 ДОКУМЕНТАЦІЯ ТА ФАЙЛИ 🔥 */}
+              {(product.datasheetUrl ||
+                (product.documents && product.documents.length > 0)) && (
                 <div className={styles.appleSection}>
-                  <h3 className={styles.appleSectionTitle}>Комплектація</h3>
+                  <h3 className={styles.appleSectionTitle}>Документація</h3>
                   <div className={styles.appleSectionContent}>
-                    <a
-                      href={product.datasheetUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.appleDocLink}
-                    >
-                      <IconFileText />
-                      <span>Завантажити Datasheet (PDF)</span>
-                    </a>
+                    <div className={styles.docsWrapper}>
+                      {/* Вивід старого одиночного файлу (якщо є) */}
+                      {product.datasheetUrl && (
+                        <a
+                          href={product.datasheetUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.appleDocLink}
+                        >
+                          <IconFileText />
+                          <span>Завантажити Datasheet (PDF)</span>
+                        </a>
+                      )}
+
+                      {/* Вивід нового масиву файлів */}
+                      {product.documents &&
+                        product.documents.map((doc, idx) => (
+                          <a
+                            key={idx}
+                            href={doc.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.appleDocLink}
+                          >
+                            <IconFileText />
+                            <span>{doc.title} (PDF)</span>
+                          </a>
+                        ))}
+                    </div>
                   </div>
                 </div>
               )}

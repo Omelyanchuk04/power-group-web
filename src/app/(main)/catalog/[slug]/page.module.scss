@@ -77,7 +77,8 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 .layoutFlex {
   display: flex;
   align-items: flex-start;
-  gap: 40px;
+  /* 🔥 Зменшено з 40px до 24px, щоб посунути всю праву колонку ближче до фото 🔥 */
+  gap: 24px;
 
   @media (max-width: 992px) {
     flex-direction: column;
@@ -184,22 +185,21 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 }
 
 .appleSection {
-  display: grid;
-  grid-template-columns: 1fr 2.5fr; /* Назва зліва, контент справа */
-  gap: 32px;
+  display: flex;
+  flex-direction: column; /* 🔥 Тепер заголовок чітко над контентом 🔥 */
+  gap: 20px; /* Відступ між заголовком ("Опис") та самим текстом */
   padding: 40px 0;
-  border-top: 1px solid $border-color; /* Тонка лінія зверху */
+  border-top: 1px solid $border-color;
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 16px;
     padding: 32px 0;
+    gap: 16px;
   }
 }
 
 .appleSectionTitle {
-  font-size: 21px;
-  font-weight: 600;
+  font-size: 22px; /* Зробимо трохи більшим, оскільки це тепер повноцінний заголовок блоку */
+  font-weight: 700;
   color: $text-dark;
   margin: 0;
 }
@@ -207,6 +207,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 .appleSectionContent {
   display: flex;
   flex-direction: column;
+  width: 100%; /* 🔥 Тепер контент (текст/список) займає всю доступну ширину 🔥 */
 }
 
 /* Характеристики */
@@ -259,6 +260,9 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   color: $text-dark;
   margin: 0;
 
+  /* 🔥 ВИПРАВЛЕННЯ: Змушує браузер зберігати всі абзаци та перенесення рядків з адмінки 🔥 */
+  white-space: pre-wrap;
+
   @media (max-width: 560px) {
     font-size: 16px;
   }
@@ -288,4 +292,11 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   @media (max-width: 560px) {
     font-size: 16px;
   }
+}
+
+/* 🔥 ДОДАНО: Обгортка для списку з декількох документів 🔥 */
+.docsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
