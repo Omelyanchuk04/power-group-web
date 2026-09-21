@@ -1,9 +1,9 @@
 @use "sass:color";
 
 $primary: #0056b3;
-$text-dark: #1d1d1f; /* Фірмовий колір тексту Apple */
-$text-gray: #86868b; /* Фірмовий сірий колір тексту Apple */
-$border-color: #d2d2d7; /* Колір ліній Apple */
+$text-dark: #1d1d1f;
+$text-gray: #86868b;
+$border-color: #d2d2d7;
 
 .pageContainer {
   padding-top: 130px;
@@ -13,7 +13,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   position: relative;
 
   @media (max-width: 560px) {
-    padding-bottom: 30px; /* Уніфікуємо відступи з футером */
+    padding-bottom: 140px;
   }
 }
 
@@ -23,14 +23,12 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  /* 🔥 Робимо світлу плівку більш щільною (0.92 замість 0.75) 🔥 */
   background: rgba(245, 245, 247, 0.92);
 }
 
 .bgFade {
   position: absolute;
   inset: 0;
-  /* 🔥 Робимо самі кольорові краплі дуже блідими (30% видимості) 🔥 */
   opacity: 0.3;
   -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
@@ -43,12 +41,12 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   position: relative;
   z-index: 2;
 
-  /* 🔥 ОНОВЛЕНО: Точні відступи, як у футері, для різних екранів 🔥 */
   @media (max-width: 768px) {
     padding: 0 24px;
   }
   @media (max-width: 560px) {
-    padding: 0 10px; /* Рівно 10px, як у .footerWrapper */
+    /* 🔥 Збільшено відступи з 16px до 24px, щоб текст легко читався 🔥 */
+    padding: 0 24px;
   }
 }
 
@@ -77,12 +75,15 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 .layoutFlex {
   display: flex;
   align-items: flex-start;
-  /* 🔥 Зменшено з 40px до 24px, щоб посунути всю праву колонку ближче до фото 🔥 */
   gap: 24px;
 
   @media (max-width: 992px) {
     flex-direction: column;
     gap: 40px;
+  }
+
+  @media (max-width: 560px) {
+    gap: 24px;
   }
 }
 
@@ -97,8 +98,17 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   @media (max-width: 992px) {
     flex: 1 1 auto;
     max-width: 100%;
+    width: 100%;
     position: relative;
     top: 0;
+  }
+
+  @media (max-width: 560px) {
+    /* 🔥 Прибрано негативні марджини. Тепер картинка ідеально по центру 🔥 */
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -106,8 +116,6 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   width: 100%;
   display: flex;
   flex-direction: column;
-  /* Ми прибрали background, padding і border-radius звідси, 
-     щоб перенести їх виключно на саму картинку */
 }
 
 /* ================= ПРАВА КОЛОНКА (ТЕКСТ) ================= */
@@ -126,7 +134,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 }
 
 .categoryText {
-  color: #bf4800; /* Контрастний колір для категорії */
+  color: #bf4800;
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -135,7 +143,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 
 .title {
   font-size: 40px;
-  font-weight: 600; /* Трохи тонший, як в Apple */
+  font-weight: 600;
   color: $text-dark;
   margin: 0;
   line-height: 1.15;
@@ -150,7 +158,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 }
 
 .ctaWrapper {
-  margin-bottom: 64px; /* Відступ до інформаційних блоків */
+  margin-bottom: 64px;
 
   @media (max-width: 768px) {
     margin-bottom: 40px;
@@ -173,7 +181,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   }
 
   @media (max-width: 560px) {
-    width: 100%; /* Розтягуємо кнопку на мобільному */
+    width: 100%;
     padding: 14px 24px;
   }
 }
@@ -186,8 +194,8 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 
 .appleSection {
   display: flex;
-  flex-direction: column; /* 🔥 Тепер заголовок чітко над контентом 🔥 */
-  gap: 20px; /* Відступ між заголовком ("Опис") та самим текстом */
+  flex-direction: column;
+  gap: 20px;
   padding: 40px 0;
   border-top: 1px solid $border-color;
 
@@ -198,7 +206,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 }
 
 .appleSectionTitle {
-  font-size: 22px; /* Зробимо трохи більшим, оскільки це тепер повноцінний заголовок блоку */
+  font-size: 22px;
   font-weight: 700;
   color: $text-dark;
   margin: 0;
@@ -207,7 +215,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
 .appleSectionContent {
   display: flex;
   flex-direction: column;
-  width: 100%; /* 🔥 Тепер контент (текст/список) займає всю доступну ширину 🔥 */
+  width: 100%;
 }
 
 /* Характеристики */
@@ -238,7 +246,7 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   font-weight: 400;
 
   @media (max-width: 560px) {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 
@@ -247,9 +255,10 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   font-weight: 600;
   color: $text-dark;
   text-align: right;
+  max-width: 60%;
 
   @media (max-width: 560px) {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 
@@ -259,15 +268,11 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   line-height: 1.6;
   color: $text-dark;
   margin: 0;
-
-  /* Зберігає всі абзаци та перенесення рядків з адмінки */
   white-space: pre-wrap;
-
-  /* 🔥 РОБИТЬ ВИРІВНЮВАННЯ ТЕКСТУ ПО ШИРИНІ 🔥 */
-  text-align: justify;
+  text-align: left;
 
   @media (max-width: 560px) {
-    font-size: 16px;
+    font-size: 16px; /* Збільшено шрифт для зручнішого читання */
   }
 }
 
@@ -293,11 +298,10 @@ $border-color: #d2d2d7; /* Колір ліній Apple */
   }
 
   @media (max-width: 560px) {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
-/* 🔥 ДОДАНО: Обгортка для списку з декількох документів 🔥 */
 .docsWrapper {
   display: flex;
   flex-direction: column;

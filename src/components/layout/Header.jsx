@@ -3,8 +3,7 @@ import { useModal } from "@/context/ModalContext";
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-// 🔥 Додано хук для перевірки поточного шляху
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import styles from "./Header.module.scss";
 import HeaderLogo from "./HeaderLogo";
 
@@ -79,7 +78,6 @@ const ChevronDownIcon = () => (
   </svg>
 );
 
-// Універсальний компонент вмісту дропдауну
 const ContactDropdownContent = ({ onOpenModal }) => (
   <>
     <div className={styles.dropdownGlass}></div>
@@ -110,7 +108,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         </svg>
         <span>+38 099 267 14 77</span>
       </a>
-
       <a href="mailto:powergroup.vin@gmail.com" className={styles.dropdownLink}>
         <svg
           viewBox="0 0 24 24"
@@ -125,7 +122,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
         </svg>
         <span>powergroup.vin@gmail.com</span>
       </a>
-
       <div className={styles.dropdownText}>
         <ClockIcon />
         <div className={styles.scheduleBlock}>
@@ -133,21 +129,18 @@ const ContactDropdownContent = ({ onOpenModal }) => (
           <span className={styles.weekendText}>Сб-Нд: Вихідні</span>
         </div>
       </div>
-
       <div className={styles.dropdownText}>
         <MapPinIcon />
         <div className={styles.scheduleBlock}>
           <span>м. Вінниця, вул. Київська, 14</span>
         </div>
       </div>
-
       <div className={styles.dropdownSocials}>
         <a
           href="https://t.me/+380672671477"
           target="_blank"
           rel="noreferrer"
           className={`${styles.socialIcon} ${styles.telegram}`}
-          aria-label="Telegram (067)"
         >
           <TelegramIcon />
         </a>
@@ -156,7 +149,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
           target="_blank"
           rel="noreferrer"
           className={`${styles.socialIcon} ${styles.telegram}`}
-          aria-label="Telegram (099)"
         >
           <TelegramIcon />
         </a>
@@ -165,7 +157,6 @@ const ContactDropdownContent = ({ onOpenModal }) => (
           target="_blank"
           rel="noreferrer"
           className={`${styles.socialIcon} ${styles.whatsapp}`}
-          aria-label="WhatsApp"
         >
           <WhatsAppIcon />
         </a>
@@ -174,12 +165,10 @@ const ContactDropdownContent = ({ onOpenModal }) => (
           target="_blank"
           rel="noreferrer"
           className={`${styles.socialIcon} ${styles.instagram}`}
-          aria-label="Instagram"
         >
           <InstagramIcon />
         </a>
       </div>
-
       <button className={styles.dropdownContactBtn} onClick={onOpenModal}>
         Отримати консультацію
       </button>
@@ -189,6 +178,7 @@ const ContactDropdownContent = ({ onOpenModal }) => (
 
 export default function Header() {
   const pathname = usePathname() || "";
+  const router = useRouter();
   const isAdminPage = pathname.startsWith("/admin");
 
   const [pill, setPill] = useState({
@@ -205,8 +195,15 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileContactOpen, setIsMobileContactOpen] = useState(false);
 
+  // 🔥 Стани для живого пошуку 🔥
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const searchInputRef = useRef(null);
   const mobileContactRef = useRef(null);
+  const searchContainerRef = useRef(null);
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -214,7 +211,6 @@ export default function Header() {
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
     document.body.style.width = "100%";
-
     return () => {
       document.body.style.position = "";
       document.body.style.top = "";
@@ -229,6 +225,7 @@ export default function Header() {
     }
   }, [isSearchOpen]);
 
+  // Закриття підказок при кліку поза полем пошуку
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -237,12 +234,47 @@ export default function Header() {
       ) {
         setIsMobileContactOpen(false);
       }
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🔥 МАСИВИ ПОСИЛАНЬ ДЛЯ КЛІЄНТСЬКОГО ТА АДМІНСЬКОГО МЕНЮ
+  // 🔥 Логіка завантаження підказок при вводі тексту 🔥
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(async () => {
+      setIsLoadingSuggestions(true);
+      setShowSuggestions(true);
+      try {
+        const res = await fetch(
+          `/api/search?q=${encodeURIComponent(searchQuery.trim())}`,
+        );
+        if (res.ok) {
+          const data = await res.json();
+          // Беремо лише перші 5 результатів для міні-підказок
+          setSuggestions(data.results.slice(0, 5));
+        }
+      } catch (error) {
+        console.error("Помилка при завантаженні підказок:", error);
+      } finally {
+        setIsLoadingSuggestions(false);
+      }
+    }, 300); // Затримка 300мс після того, як юзер перестав друкувати
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery]);
+
   const clientNavList = [
     { name: "ПОСЛУГИ", link: "/services" },
     { name: "КАТАЛОГ", link: "/catalog" },
@@ -286,10 +318,19 @@ export default function Header() {
     setIsMobileContactOpen(false);
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim().length > 0) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setShowSuggestions(false);
+      setSearchQuery("");
+    }
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.header__container}>
-        {/* БУРГЕР-МЕНЮ */}
         <button
           className={`${styles.burgerBtn} ${isMobileMenuOpen ? styles.burgerOpen : ""}`}
           onClick={() => {
@@ -302,10 +343,8 @@ export default function Header() {
           <span className={styles.burgerLine}></span>
         </button>
 
-        {/* ЛОГОТИП */}
         <HeaderLogo closeMobileMenu={closeMobileMenu} />
 
-        {/* НАВІГАЦІЯ ДЛЯ ДЕСКТОПУ */}
         <nav className={styles.nav} onMouseLeave={handleMouseLeave}>
           <div
             className={styles.navPill}
@@ -331,7 +370,6 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* КОНТРОЛИ ДЛЯ ДЕСКТОПУ (Приховуємо в адмінці) */}
         {!isAdminPage && (
           <div className={styles.desktopControls}>
             <button
@@ -351,7 +389,6 @@ export default function Header() {
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </button>
-
             <div
               className={styles.contactWrapper}
               style={{ pointerEvents: isSearchOpen ? "none" : "auto" }}
@@ -366,7 +403,6 @@ export default function Header() {
           </div>
         )}
 
-        {/* КОНТРОЛИ ДЛЯ МОБІЛЬНОГО (Приховуємо в адмінці) */}
         {!isAdminPage && (
           <div className={styles.mobileControls}>
             <div className={styles.mobileContactWrapper} ref={mobileContactRef}>
@@ -390,14 +426,12 @@ export default function Header() {
                 </svg>
                 <ChevronDownIcon />
               </button>
-
               <div
                 className={`${styles.contactDropdown} ${isMobileContactOpen ? styles.open : ""}`}
               >
                 <ContactDropdownContent onOpenModal={handleOpenModal} />
               </div>
             </div>
-
             <button
               className={styles.actionIconBtn}
               aria-label="Відкрити пошук"
@@ -421,10 +455,12 @@ export default function Header() {
           </div>
         )}
 
-        {/* БЛОК ПОШУКУ (Приховуємо в адмінці) */}
+        {/* 🔥 ФОРМА ПОШУКУ ІЗ ДРОПДАУНОМ ПІДКАЗОК 🔥 */}
         {!isAdminPage && (
-          <div
+          <form
             className={`${styles.searchContainer} ${isSearchOpen ? styles.searchOpen : ""}`}
+            onSubmit={handleSearchSubmit}
+            ref={searchContainerRef}
           >
             <svg
               className={styles.searchIconInside}
@@ -443,14 +479,27 @@ export default function Header() {
               placeholder="Шукати на сайті..."
               className={styles.searchInput}
               ref={searchInputRef}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => {
+                if (searchQuery.trim()) setShowSuggestions(true);
+              }}
             />
-            <button className={styles.searchSubmitBtn} aria-label="Знайти">
+            <button
+              type="submit"
+              className={styles.searchSubmitBtn}
+              aria-label="Знайти"
+            >
               Пошук
             </button>
             <button
+              type="button"
               className={styles.searchCloseBtn}
               aria-label="Закрити пошук"
-              onClick={() => setIsSearchOpen(false)}
+              onClick={() => {
+                setIsSearchOpen(false);
+                setShowSuggestions(false);
+              }}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -464,11 +513,54 @@ export default function Header() {
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             </button>
-          </div>
+
+            {/* Випадаюче вікно з результатами */}
+            {showSuggestions && (
+              <div className={styles.suggestionsDropdown}>
+                {isLoadingSuggestions ? (
+                  <div className={styles.suggestionEmpty}>Шукаємо...</div>
+                ) : suggestions.length > 0 ? (
+                  <>
+                    {suggestions.map((item) => (
+                      <Link
+                        key={item._id}
+                        href={item.url}
+                        className={styles.suggestionItem}
+                        onClick={() => {
+                          setIsSearchOpen(false);
+                          setShowSuggestions(false);
+                          setSearchQuery("");
+                        }}
+                      >
+                        <div className={styles.suggestionImgWrapper}>
+                          <img src={item.image} alt="" />
+                        </div>
+                        <div className={styles.suggestionText}>
+                          <span className={styles.suggestionTitle}>
+                            {item.title}
+                          </span>
+                          <span className={styles.suggestionCategory}>
+                            {item.type === "catalog" ? "Товар" : "Проєкт"} •{" "}
+                            {item.category}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                    <button type="submit" className={styles.suggestionSeeAll}>
+                      Показати всі результати
+                    </button>
+                  </>
+                ) : (
+                  <div className={styles.suggestionEmpty}>
+                    Нічого не знайдено
+                  </div>
+                )}
+              </div>
+            )}
+          </form>
         )}
       </div>
 
-      {/* МОБІЛЬНЕ МЕНЮ (Бургер) */}
       <div
         className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.mobileMenuOverlayOpen : ""}`}
       >
@@ -486,8 +578,6 @@ export default function Header() {
               </Link>
             ))}
           </nav>
-
-          {/* 🔥 ПРИХОВУЄМО НИЖНІ КОНТАКТИ В АДМІНЦІ 🔥 */}
           {!isAdminPage && (
             <div className={styles.mobileContacts}>
               <a href="tel:+380672671477">
@@ -499,12 +589,10 @@ export default function Header() {
               <a href="mailto:powergroup.vin@gmail.com">
                 <span>powergroup.vin@gmail.com</span>
               </a>
-
               <div className={styles.mobileSchedule}>
                 <p>м. Вінниця, вул. Київська, 14</p>
                 <p>Пн-Пт: 8:30 - 17:30</p>
               </div>
-
               <div className={styles.mobileSocials}>
                 <a
                   href="https://t.me/+380672671477"
@@ -539,7 +627,6 @@ export default function Header() {
                   <InstagramIcon />
                 </a>
               </div>
-
               <button
                 className={styles.mobileContactBtn}
                 onClick={() => {
