@@ -736,18 +736,17 @@ $bg-light: #f1f5f9;
 }
 
 .cardButtons {
-  display: flex;
+  // display: flex;
   flex-direction: column;
   margin-top: auto;
   padding-top: 16px;
 }
 
 .detailsBtn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 100%;
   padding: 10px 20px;
   border-radius: 100px;
   background: #0071e3;
