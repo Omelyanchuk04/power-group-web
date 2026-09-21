@@ -61,9 +61,15 @@ $apple-border: #e5e5ea;
     0 20px 40px rgba(0, 0, 0, 0.04),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
 
+  /* 🔥 ВАЖЛИВО: Робимо панель високою за замовчуванням 🔥 */
+  min-height: 75vh;
+  display: flex;
+  flex-direction: column;
+
   @media (max-width: 768px) {
     padding: 16px;
     border-radius: 28px;
+    min-height: 85vh;
   }
 }
 
@@ -361,6 +367,10 @@ $apple-border: #e5e5ea;
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+
+  /* 🔥 ВАЖЛИВО: Додаємо гнучкість та мінімальну висоту, щоб меню не обрізалось 🔥 */
+  flex-grow: 1;
+  min-height: 300px;
 
   &::-webkit-scrollbar {
     height: 6px;
