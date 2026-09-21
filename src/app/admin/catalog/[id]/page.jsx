@@ -607,9 +607,7 @@ export default function CatalogFormPage({ params }) {
               />
               <div className={styles.uploadContent}>
                 <IconUpload />
-                <span className={styles.uploadText}>
-                  Натисніть або перетягніть фото сюди
-                </span>
+                <span className={styles.uploadText}>Прикріпити фото</span>
               </div>
             </label>
 
@@ -674,9 +672,7 @@ export default function CatalogFormPage({ params }) {
               />
               <div className={styles.uploadContent}>
                 <IconFileText />
-                <span className={styles.uploadText}>
-                  Натисніть сюди, щоб обрати один або кілька PDF файлів
-                </span>
+                <span className={styles.uploadText}>Прикріпити PDF файл</span>
               </div>
             </label>
 
