@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import NextImage from "next/image";
-import gsap from "gsap";
 import { useModal } from "@/context/ModalContext";
 import styles from "./ProjectsGrid.module.scss";
 
@@ -121,7 +120,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const { openModal } = useModal();
 
   const formatPower = (kw) => {
-    // Якщо потужність не вказана (або рівна 0), повертаємо null, щоб приховати плашку
     if (!kw) return null;
     if (kw >= 1000) return (kw / 1000).toFixed(1).replace(/\.0$/, "") + " МВт";
     return kw + " кВт";
@@ -199,27 +197,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     indexOfLastProject,
   );
 
-  useEffect(() => {
-    const cards = gridRef.current?.children;
-    if (cards && cards.length > 0) {
-      let ctx = gsap.context(() => {
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.05,
-            ease: "power3.out",
-            clearProps: "all",
-          },
-        );
-      });
-      return () => ctx.revert();
-    }
-  }, [pathname]);
-
   const handleFilterClick = (groupKey, filterId) => {
     setCurrentPage(1);
     setActiveFilters((prev) => {
@@ -252,6 +229,9 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   };
 
   const sliderFillPercentage = (powerLimitUI / MAX_POWER) * 100;
+
+  // 🔥 Унікальний ключ для плавної анімації CSS 🔥
+  const gridKey = `${currentPage}-${activeFilters.clientType}-${activeFilters.serviceType.join("-")}-${powerLimit}`;
 
   return (
     <section className={styles.gridSection}>
@@ -345,9 +325,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     max={MAX_POWER}
                     step="5"
                     value={powerLimitUI}
-                    onChange={(e) => {
-                      setPowerLimitUI(Number(e.target.value));
-                    }}
+                    onChange={(e) => setPowerLimitUI(Number(e.target.value))}
                     onPointerUp={() => {
                       if (powerLimit !== powerLimitUI) {
                         setPowerLimit(powerLimitUI);
@@ -385,7 +363,8 @@ export default function ProjectsGrid({ initialProjects = [] }) {
               </div>
             )}
 
-            <div className={styles.grid} ref={gridRef}>
+            {/* 🔥 Додали клас gridAnimated та gridKey 🔥 */}
+            <div className={styles.gridAnimated} ref={gridRef} key={gridKey}>
               {currentProjects.map((project) => (
                 <div
                   key={project.id}
@@ -402,7 +381,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     />
                     <div className={styles.overlay}></div>
                     <div className={styles.tags}>
-                      {/* Відображаємо плашку потужності тільки якщо вона є */}
                       {project.powerLabel && (
                         <span className={styles.tagPower}>
                           {project.powerLabel}

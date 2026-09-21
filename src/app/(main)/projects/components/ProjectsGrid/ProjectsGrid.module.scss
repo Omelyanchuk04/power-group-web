@@ -434,6 +434,7 @@ $text-gray: #64748b;
     margin-bottom: 0;
   }
 }
+
 /* =========================================
    СТАН "НІЧОГО НЕ ЗНАЙДЕНО"
    ========================================= */
@@ -470,6 +471,25 @@ $text-gray: #64748b;
   min-height: 500px;
 }
 
+/* 🔥 НОВИЙ КЛАС З АПАРАТНОЮ CSS-АНІМАЦІЄЮ 🔥 */
+.gridAnimated {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+
+  /* Плавна поява всієї сітки без навантаження на процесор */
+  animation: fadeGridIn 0.5s ease-out forwards;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    gap: 8px;
+  }
+}
+
+/* Старий клас grid залишено про всяк випадок */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -481,6 +501,17 @@ $text-gray: #64748b;
 
   @media (max-width: 768px) {
     gap: 8px;
+  }
+}
+
+@keyframes fadeGridIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
