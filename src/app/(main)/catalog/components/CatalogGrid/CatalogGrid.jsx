@@ -1,12 +1,22 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useLayoutEffect,
+} from "react";
 import gsap from "gsap";
 import styles from "./CatalogGrid.module.scss";
 
 import CatalogSidebar from "./CatalogSidebar";
 import CatalogCategoryTabs from "./CatalogCategoryTabs";
 import CatalogProductCard from "./CatalogProductCard";
+
+// Утиліта для безпечного використання useLayoutEffect у Next.js
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const CATEGORIES_LIST = [
   "Сонячні панелі",
@@ -146,6 +156,9 @@ export default function CatalogGrid() {
   const gridRef = useRef(null);
   const layoutRef = useRef(null);
 
+  // 🔥 ДОДАНО: Відстежуємо перше завантаження, щоб уникнути анімації при поверненні "Назад" 🔥
+  const isInitialMount = useRef(true);
+
   const [products, setProducts] = useState(cachedProducts || []);
   const [brandsList, setBrandsList] = useState(cachedBrands || []);
   const [isLoading, setIsLoading] = useState(!cachedProducts);
@@ -228,7 +241,6 @@ export default function CatalogGrid() {
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
-  // 🔥 ЗАГОРНУТО В USEMEMO: Тепер React знає, коли змінився саме список видимих товарів
   const currentProducts = useMemo(() => {
     return filteredProducts.slice(
       (currentPage - 1) * itemsPerPage,
@@ -236,33 +248,40 @@ export default function CatalogGrid() {
     );
   }, [filteredProducts, currentPage]);
 
-  // 🔥 НОВА, ЧИСТА АНІМАЦІЯ GSAP 🔥
-  useEffect(() => {
+  // 🔥 ОНОВЛЕНА, ІДЕАЛЬНО ПЛАВНА АНІМАЦІЯ GSAP 🔥
+  useIsomorphicLayoutEffect(() => {
     if (isLoading || !isRestored || !gridRef.current) return;
 
     const cards = gridRef.current.children;
     if (cards.length === 0) return;
 
     let ctx = gsap.context(() => {
-      // 1. Зупиняємо всі попередні анімації, щоб уникнути конфліктів при швидкому перемиканні
       gsap.killTweensOf(cards);
 
-      // 2. Миттєво ховаємо всі картки
-      gsap.set(cards, { opacity: 0, y: 30 });
+      // Якщо це перше завантаження (включаючи повернення зі сторінки товару) — показуємо миттєво
+      if (isInitialMount.current) {
+        isInitialMount.current = false;
+        gsap.set(cards, { opacity: 1, y: 0, clearProps: "all" });
+        return;
+      }
 
-      // 3. Плавно виводимо їх на екран
-      gsap.to(cards, {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: "power2.out",
-        clearProps: "all",
-      });
+      // Якщо це перемикання категорії, фільтра чи сторінки — робимо плавну анімацію
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 25 }, // Старт (спрацює миттєво до появи кадру, усуваючи ривок)
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.04, // Швидший каскад для плавності
+          ease: "power2.out",
+          clearProps: "all", // Забираємо стилі після завершення, щоб нічого не зламалося
+        },
+      );
     }, gridRef);
 
     return () => ctx.revert();
-  }, [currentProducts, isLoading, isRestored]); // Анімація спрацює тільки тоді, коли оновляться товари
+  }, [currentProducts, isLoading, isRestored]);
 
   const handleFilterToggle = (filterKey, option) => {
     setCurrentPage(1);
