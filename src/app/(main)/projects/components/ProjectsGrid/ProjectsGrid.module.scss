@@ -30,10 +30,10 @@ $text-gray: #64748b;
 .mainLayout {
   display: flex;
   align-items: stretch;
-  gap: 40px;
+  gap: 30px;
   @media (max-width: 1024px) {
     flex-direction: column;
-    gap: 32px;
+    gap: 25px;
   }
 }
 
@@ -425,7 +425,6 @@ $text-gray: #64748b;
   @media (max-width: 1024px) {
     grid-column: 2 / 3;
     align-self: flex-start;
-    /* 🔥 Збільшили з 24px до 34px, щоб кнопка опустилася рівно на рівень синьої смуги */
     margin-top: 34px;
   }
 
@@ -463,7 +462,7 @@ $text-gray: #64748b;
 }
 
 /* =========================================
-   СІТКА І КАРТКИ
+   СІТКА І КАРТКИ (ОНОВЛЕНИЙ АДАПТИВ)
    ========================================= */
 .content {
   flex: 1;
@@ -474,21 +473,20 @@ $text-gray: #64748b;
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
+  gap: 15px;
 
   @media (max-width: 1280px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 8px;
   }
 }
 
 .projectCard {
   background: #ffffff;
-  border-radius: 32px;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   cursor: pointer;
@@ -513,6 +511,10 @@ $text-gray: #64748b;
       }
     }
   }
+
+  @media (max-width: 768px) {
+    border-radius: 16px;
+  }
 }
 
 .imageWrapper {
@@ -521,12 +523,15 @@ $text-gray: #64748b;
   height: 240px;
   overflow: hidden;
 
-  @media (max-width: 640px) {
-    height: 220px;
+  @media (max-width: 768px) {
+    /* 🔥 Зменшуємо висоту фото для 2-колонкової сітки на мобільному 🔥 */
+    height: 140px;
   }
 }
 
 .img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -550,6 +555,14 @@ $text-gray: #64748b;
   flex-wrap: wrap;
   gap: 6px;
   z-index: 2;
+
+  @media (max-width: 768px) {
+    /* 🔥 Компактніші відступи від країв 🔥 */
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    gap: 4px;
+  }
 }
 
 .tagPower {
@@ -560,6 +573,12 @@ $text-gray: #64748b;
   border-radius: 100px;
   font-size: 13px;
   font-weight: 700;
+
+  @media (max-width: 768px) {
+    /* 🔥 Значно менші бейджі, щоб влазили в 1 рядок 🔥 */
+    padding: 4px 8px;
+    font-size: 10px;
+  }
 }
 
 .tagClient {
@@ -574,12 +593,22 @@ $text-gray: #64748b;
   align-items: center;
   justify-content: space-between;
   flex-grow: 1;
+
+  @media (max-width: 768px) {
+    /* 🔥 Менший внутрішній відступ для тексту 🔥 */
+    padding: 12px;
+    gap: 8px;
+  }
 }
 
 .cardText {
   flex: 1;
   padding-right: 12px;
   min-width: 0;
+
+  @media (max-width: 768px) {
+    padding-right: 4px;
+  }
 
   h4 {
     font-size: 20px;
@@ -592,6 +621,13 @@ $text-gray: #64748b;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+
+    @media (max-width: 768px) {
+      /* 🔥 Менший шрифт та дозвіл на 3 рядки тексту замість 2 🔥 */
+      font-size: 14px;
+      margin: 0 0 6px 0;
+      -webkit-line-clamp: 3;
+    }
   }
 
   .location {
@@ -611,6 +647,17 @@ $text-gray: #64748b;
       height: 16px;
       color: $primary;
       flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      /* 🔥 Адаптація локації 🔥 */
+      font-size: 11px;
+      gap: 4px;
+
+      svg {
+        width: 12px;
+        height: 12px;
+      }
     }
   }
 }
@@ -633,11 +680,13 @@ $text-gray: #64748b;
   }
 
   @media (max-width: 768px) {
-    width: 40px;
-    height: 40px;
+    /* 🔥 Кнопка стає пропорційною (була занадто велика) 🔥 */
+    width: 32px;
+    height: 32px;
+
     svg {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
     }
   }
 }
