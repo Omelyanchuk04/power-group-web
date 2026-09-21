@@ -1,22 +1,12 @@
 "use client";
 
-import React, {
-  useState,
-  useRef,
-  useEffect,
-  useMemo,
-  useLayoutEffect,
-} from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import gsap from "gsap";
 import styles from "./CatalogGrid.module.scss";
 
 import CatalogSidebar from "./CatalogSidebar";
 import CatalogCategoryTabs from "./CatalogCategoryTabs";
 import CatalogProductCard from "./CatalogProductCard";
-
-// Утиліта для безпечного використання useLayoutEffect у Next.js
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const CATEGORIES_LIST = [
   "Сонячні панелі",
@@ -156,7 +146,7 @@ export default function CatalogGrid() {
   const gridRef = useRef(null);
   const layoutRef = useRef(null);
 
-  // 🔥 ДОДАНО: Відстежуємо перше завантаження, щоб уникнути анімації при поверненні "Назад" 🔥
+  // Відстежуємо перше завантаження, щоб уникнути анімації при поверненні "Назад"
   const isInitialMount = useRef(true);
 
   const [products, setProducts] = useState(cachedProducts || []);
@@ -248,8 +238,9 @@ export default function CatalogGrid() {
     );
   }, [filteredProducts, currentPage]);
 
-  // 🔥 ОНОВЛЕНА, ІДЕАЛЬНО ПЛАВНА АНІМАЦІЯ GSAP 🔥
-  useIsomorphicLayoutEffect(() => {
+  // 🔥 ОНОВЛЕНА, МАКСИМАЛЬНО ПЛАВНА АНІМАЦІЯ (БЕЗ ЛАГІВ) 🔥
+  useEffect(() => {
+    // Використовуємо звичайний useEffect, щоб НЕ блокувати відмальовування браузера
     if (isLoading || !isRestored || !gridRef.current) return;
 
     const cards = gridRef.current.children;
@@ -258,26 +249,30 @@ export default function CatalogGrid() {
     let ctx = gsap.context(() => {
       gsap.killTweensOf(cards);
 
-      // Якщо це перше завантаження (включаючи повернення зі сторінки товару) — показуємо миттєво
+      // Якщо це перше завантаження / повернення назад — показуємо миттєво без анімації
       if (isInitialMount.current) {
         isInitialMount.current = false;
         gsap.set(cards, { opacity: 1, y: 0, clearProps: "all" });
         return;
       }
 
-      // Якщо це перемикання категорії, фільтра чи сторінки — робимо плавну анімацію
-      gsap.fromTo(
-        cards,
-        { opacity: 0, y: 25 }, // Старт (спрацює миттєво до появи кадру, усуваючи ривок)
-        {
+      // 1. Миттєво ховаємо всі картки ДО того, як вони з'являться на екрані
+      gsap.set(cards, { opacity: 0, y: 40 });
+
+      // 2. Відкладаємо старт анімації до наступного кадру браузера + даємо 50мс затримки
+      // Це звільняє процесор, щоб він встиг підвантажити картинки і не гальмував анімацію
+      requestAnimationFrame(() => {
+        gsap.to(cards, {
           opacity: 1,
           y: 0,
-          duration: 0.5,
-          stagger: 0.04, // Швидший каскад для плавності
-          ease: "power2.out",
-          clearProps: "all", // Забираємо стилі після завершення, щоб нічого не зламалося
-        },
-      );
+          duration: 0.6,
+          stagger: 0.05,
+          ease: "power3.out", // Більш плавне і природне уповільнення
+          delay: 0.05, // Критично важливо: дає браузеру паузу на рендер
+          force3D: true, // Примусово переводить анімацію на відеокарту (GPU)
+          clearProps: "all",
+        });
+      });
     }, gridRef);
 
     return () => ctx.revert();
