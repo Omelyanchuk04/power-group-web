@@ -23,7 +23,6 @@ $text-gray: #64748b;
   max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  /* 🔥 Уніфіковано: завжди 10px для ідеального збігу з футером на всіх екранах 🔥 */
   padding: 0 10px;
 }
 
@@ -172,7 +171,7 @@ $text-gray: #64748b;
   border-radius: 100px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  -webkit-tap-highlight-color: transparent; /* Вимикає синє підсвічування на iOS */
+  -webkit-tap-highlight-color: transparent;
 
   svg {
     width: 16px;
@@ -180,14 +179,12 @@ $text-gray: #64748b;
     flex-shrink: 0;
   }
 
-  /* 🔥 ХОВЕР ЛИШЕ ДЛЯ ПК 🔥 */
   @media (hover: hover) {
     &:hover {
       color: $text-dark;
     }
   }
 
-  /* 🔥 ТАКТИЛЬНИЙ ВІДГУК ДЛЯ СЕНСОРА 🔥 */
   &:active {
     transform: scale(0.95);
     background: rgba(255, 255, 255, 0.4);
@@ -283,7 +280,6 @@ $text-gray: #64748b;
     }
   }
 
-  /* 🔥 ТАКТИЛЬНИЙ ВІДГУК ДЛЯ СЕНСОРА 🔥 */
   &:active {
     transform: scale(0.96);
     background: rgba(255, 255, 255, 0.6);
@@ -518,13 +514,14 @@ $text-gray: #64748b;
   border: 1px solid rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
-  -webkit-tap-highlight-color: transparent; /* Вимикає системний клік-ефект */
+  -webkit-tap-highlight-color: transparent;
+  /* 🔥 З транзицій прибрано transform, щоб картка не стрибала на мобілках 🔥 */
   transition:
     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
     border-color 0.4s ease,
-    transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Додана плавна трансформація */
+    opacity 0.2s ease,
+    background 0.2s ease;
 
-  /* 🔥 ХОВЕР ТІЛЬКИ НА ПК 🔥 */
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
@@ -540,16 +537,15 @@ $text-gray: #64748b;
     }
   }
 
-  /* 🔥 ІДЕАЛЬНИЙ ТАКТИЛЬНИЙ ВІДГУК ДЛЯ СЕНСОРІВ (КЛІК/ТАП) 🔥 */
+  /* 🔥 ІДЕАЛЬНИЙ ТАКТИЛЬНИЙ ВІДГУК ЯК В КАТАЛОЗІ (БЕЗ ЗМІНИ РОЗМІРУ) 🔥 */
   &:active {
-    transform: scale(0.97); /* Вдавлювання картки */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04); /* Тінь стає меншою */
-    background: #f8fafc; /* Легка зміна фону */
+    opacity: 0.8;
+    background: rgba(245, 245, 247, 0.95);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04);
     border-color: rgba(0, 86, 179, 0.2);
 
     .arrowBtn {
       background: rgba(0, 86, 179, 0.15);
-      transform: scale(0.9); /* Кнопочка зі стрілкою теж вдавлюється */
     }
   }
 
@@ -786,7 +782,6 @@ $text-gray: #64748b;
     }
   }
 
-  /* 🔥 ТАКТИЛЬНИЙ ВІДГУК 🔥 */
   &:active:not(.pageActive) {
     transform: scale(0.92);
     background: rgba(0, 86, 179, 0.05);
