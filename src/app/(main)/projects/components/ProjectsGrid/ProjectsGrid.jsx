@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import NextImage from "next/image";
-import { useModal } from "@/context/ModalContext";
+import Link from "next/link";
 import styles from "./ProjectsGrid.module.scss";
 
 // --- SVG ІКОНКИ ---
@@ -136,7 +136,6 @@ const SERVICE_MAP = {
 
 export default function ProjectsGrid({ initialProjects = [] }) {
   const pathname = usePathname();
-  const { openModal } = useModal();
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "Не вказано";
@@ -172,7 +171,9 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       const capacityLabel = p.capacity ? `${p.capacity} кВт·год` : null;
 
       return {
-        id: p._id,
+        // 🔥 ВИПРАВЛЕННЯ: Гарантовано формуємо коректний ID як рядок 🔥
+        linkId: p.slug || p._id?.toString() || p.id,
+        id: p._id?.toString() || p.id,
         title: p.title,
         clientType: p.clientType,
         serviceType: services,
@@ -204,21 +205,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const gridRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 12;
-
-  const openProjectModal = (project) => {
-    openModal("project", {
-      title: project.title,
-      image: project.image,
-      gallery: project.gallery,
-      powerLabel: project.powerLabel,
-      capacityLabel: project.capacityLabel, // 🔥 Передаємо окремо
-      location: project.location,
-      date: project.date,
-      clientType: project.clientType,
-      serviceLabels: project.serviceLabels,
-      description: project.description,
-    });
-  };
 
   const filteredProjects = mappedProjects.filter((p) => {
     const matchClient =
@@ -406,10 +392,11 @@ export default function ProjectsGrid({ initialProjects = [] }) {
 
             <div className={styles.gridAnimated} ref={gridRef} key={gridKey}>
               {currentProjects.map((project) => (
-                <div
+                <Link
+                  href={`/projects/${project.linkId}`}
                   key={project.id}
                   className={styles.projectCard}
-                  onClick={() => openProjectModal(project)}
+                  style={{ textDecoration: "none" }}
                 >
                   <div className={styles.imageWrapper}>
                     <NextImage
@@ -421,7 +408,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     />
                     <div className={styles.overlay}></div>
 
-                    {/* 🔥 БЕЙДЖІ (ТЕПЕР ІЗ ІКОНКАМИ) 🔥 */}
+                    {/* 🔥 БЕЙДЖІ: ОКРЕМІ ІКОНКИ БЕЗ СЛЕШІВ 🔥 */}
                     <div className={styles.tags}>
                       {project.powerLabel && (
                         <span className={styles.tagPower}>
@@ -469,7 +456,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                       </svg>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
 

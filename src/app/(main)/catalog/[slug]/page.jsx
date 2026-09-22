@@ -2,6 +2,7 @@ import React from "react";
 import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/mongodb";
 import CatalogItem from "@/models/CatalogItem";
+
 import styles from "./page.module.scss";
 
 import { BackButton, ConsultButton } from "./ProductClientButtons";

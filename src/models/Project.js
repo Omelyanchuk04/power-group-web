@@ -3,6 +3,10 @@ import mongoose from "mongoose";
 const ProjectSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
+
+    // 🔥 НОВЕ ПОЛЕ: SLUG ДЛЯ SEO-ПОСИЛАНЬ
+    slug: { type: String, unique: true },
+
     shortDescription: { type: String, required: true },
     client: { type: String },
     clientType: { type: String },
