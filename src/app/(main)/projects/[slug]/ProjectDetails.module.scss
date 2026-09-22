@@ -7,16 +7,15 @@ $border-color: #d2d2d7;
 
 .pageContainer {
   padding-top: 130px;
-  padding-bottom: 120px;
   background: transparent;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
 
-  @media (max-width: 768px) {
-    padding-top: 100px;
-    padding-bottom: 100px;
-  }
+  //   @media (max-width: 768px) {
+  //     padding-top: 80px;
+  //     padding-bottom: 60px;
+  //   }
 }
 
 .bgWrapper {
@@ -142,12 +141,12 @@ $border-color: #d2d2d7;
 
 .sliderTrack {
   display: flex;
-  align-items: center; /* 🔥 Центрує картки по вертикалі, якщо вони різної висоти 🔥 */
+  align-items: center;
   gap: 24px;
-  height: 500px;
+  height: 600px; /* Фіксована висота треку */
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  padding: 0;
+  padding: 10px 0;
 
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -156,28 +155,22 @@ $border-color: #d2d2d7;
   }
 
   @media (max-width: 768px) {
-    height: auto; /* На мобілках висота треку підлаштовується під картку */
-    min-height: 400px;
+    height: 400px;
     gap: 16px;
   }
 }
 
-/* 🔥 СПЕЙСЕР: ГАРАНТУЄ ІДЕАЛЬНЕ ЦЕНТРУВАННЯ 🔥 */
+/* 🔥 СПЕЙСЕР ОТРИМУЄ РОЗМІРИ ВІД JAVASCRIPT 🔥 */
 .sliderSpacer {
-  flex: 0 0 calc(50vw - 350px);
   scroll-snap-align: none;
   visibility: hidden;
   pointer-events: none;
-
-  @media (max-width: 768px) {
-    /* Точна математика: пів екрана (50vw) мінус половина картки (85vw/2 = 42.5vw) */
-    flex: 0 0 calc(50vw - 42.5vw);
-  }
 }
 
+/* 🔥 КАРТКА ОБЛЯГАЄ КАРТИНКУ ЯК ДРУГА ШКІРА (БЕЗ РАМОК І ФОНІВ) 🔥 */
 .slide {
-  height: auto;
-  max-height: 100%; /* Картка облягає картинку, але не вилазить за трек */
+  height: 100%;
+  width: fit-content;
   flex: 0 0 auto;
   scroll-snap-align: center;
   position: relative;
@@ -191,7 +184,7 @@ $border-color: #d2d2d7;
   opacity: 0.4;
   transform: scale(0.95);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  background: #fff; /* Фоновий колір на випадок завантаження */
+  background: transparent; /* Ніяких чорних фонів! */
 
   &.activeSlide {
     opacity: 1;
@@ -201,28 +194,16 @@ $border-color: #d2d2d7;
 
   @media (max-width: 768px) {
     border-radius: 20px;
-    flex: 0 0 85vw; /* 🔥 Жорстка ширина для мобілки (85% екрану) 🔥 */
-    aspect-ratio: 4 / 3; /* 🔥 Задаємо ідеальні пропорції, щоб всі картки були однакові 🔥 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }
 
+/* Картинка визначає ширину картки і НЕ обрізається */
 .slideImage {
   display: block;
-  height: auto;
-  max-height: 500px; /* На десктопі не вище 500px */
+  height: 100%;
   width: auto;
-  max-width: 85vw;
-  object-fit: contain;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    height: 100%;
-    max-height: none;
-    object-fit: cover; /* 🔥 На мобілці картинка повністю заповнює 85vw картку без пустих місць 🔥 */
-  }
+  max-width: 85vw; /* Захист від надто широких фото на мобілці */
+  object-fit: cover;
 }
 
 .expandBtn {
@@ -450,7 +431,7 @@ $border-color: #d2d2d7;
   align-items: center;
 }
 
-.lightboxImage {
+.lightboxImageFull {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -626,8 +607,7 @@ $border-color: #d2d2d7;
    ОПИС ТА СТИЛЬНА CTA КАПСУЛА (PILL)
    ========================================= */
 .bottomSection {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
   text-align: left;
   margin-bottom: 60px;
 }
@@ -670,7 +650,7 @@ $border-color: #d2d2d7;
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 100px;
-  padding: 12px 12px 12px 32px;
+  padding: 12px;
   margin-top: 48px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
   gap: 20px;

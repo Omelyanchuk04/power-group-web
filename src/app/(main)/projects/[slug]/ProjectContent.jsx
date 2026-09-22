@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import GlobalBackground from "@/components/layout/GlobalBackground";
@@ -174,12 +180,48 @@ const SERVICE_MAP = {
 };
 
 export default function ProjectContent({ project }) {
-  const allImages = [project.mainImage, ...(project.gallery || [])];
+  // 🔥 МЕМОІЗАЦІЯ: тепер масив не перестворюється при кожному рендері 🔥
+  const allImages = useMemo(() => {
+    return [project.mainImage, ...(project.gallery || [])];
+  }, [project.mainImage, project.gallery]);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
 
+  const [spacers, setSpacers] = useState({ left: "0px", right: "0px" });
+
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // 🔥 ОПТИМІЗОВАНИЙ РОЗРАХУНОК ВІДСТУПІВ 🔥
+  const calculateSpacers = useCallback(() => {
+    if (typeof window === "undefined" || !sliderRef.current) return;
+    const slides = Array.from(
+      sliderRef.current.querySelectorAll(`.${styles.slide}`),
+    );
+
+    if (slides.length > 0) {
+      const gap = window.innerWidth <= 768 ? 16 : 24;
+      const firstWidth = slides[0].offsetWidth || 300;
+      const lastWidth = slides[slides.length - 1].offsetWidth || 300;
+
+      setSpacers((prev) => {
+        const newLeft = `calc(50vw - ${firstWidth / 2}px - ${gap}px)`;
+        const newRight = `calc(50vw - ${lastWidth / 2}px - ${gap}px)`;
+
+        // Запобігаємо нескінченному циклу (оновлюємо тільки якщо реально змінилось)
+        if (prev.left === newLeft && prev.right === newRight) return prev;
+
+        return { left: newLeft, right: newRight };
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    calculateSpacers();
+    window.addEventListener("resize", calculateSpacers);
+    return () => window.removeEventListener("resize", calculateSpacers);
+  }, [calculateSpacers, allImages.length]);
 
   const handleScroll = () => {
     if (!sliderRef.current) return;
@@ -225,7 +267,7 @@ export default function ProjectContent({ project }) {
       const nextIndex =
         currentSlide === allImages.length - 1 ? 0 : currentSlide + 1;
       scrollToSlide(nextIndex);
-    }, 8000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [currentSlide, allImages.length, isLightboxOpen]);
@@ -318,7 +360,7 @@ export default function ProjectContent({ project }) {
               <img
                 src={allImages[lightboxIndex]}
                 alt="Повноекранне фото"
-                className={styles.lightboxImage}
+                className={styles.lightboxImageFull}
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
@@ -367,7 +409,10 @@ export default function ProjectContent({ project }) {
           ref={sliderRef}
           onScroll={handleScroll}
         >
-          <div className={styles.sliderSpacer}></div>
+          <div
+            className={styles.sliderSpacer}
+            style={{ flex: `0 0 ${spacers.left}` }}
+          ></div>
 
           {allImages.map((imgUrl, index) => (
             <div
@@ -375,11 +420,13 @@ export default function ProjectContent({ project }) {
               className={`${styles.slide} ${currentSlide === index ? styles.activeSlide : ""}`}
               onClick={() => scrollToSlide(index)}
             >
+              {/* 🔥 ОБРОБНИК ONLOAD ВИКЛИКАЄ РОЗРАХУНОК ЦЕНТРУВАННЯ 🔥 */}
               <img
                 src={imgUrl}
                 alt="Фото проєкту"
                 className={styles.slideImage}
                 draggable="false"
+                onLoad={calculateSpacers}
               />
               <button
                 className={styles.expandBtn}
@@ -393,7 +440,10 @@ export default function ProjectContent({ project }) {
             </div>
           ))}
 
-          <div className={styles.sliderSpacer}></div>
+          <div
+            className={styles.sliderSpacer}
+            style={{ flex: `0 0 ${spacers.right}` }}
+          ></div>
         </div>
 
         {allImages.length > 1 && (
@@ -500,14 +550,12 @@ export default function ProjectContent({ project }) {
           </div>
         </div>
 
-        {/* 🔥 ЦЕНТРОВАНИЙ МАКЕТ ОПИСУ 🔥 */}
         <div className={styles.bottomSection}>
           <div className={styles.descriptionBlock}>
             <h2 className={styles.sectionTitle}>Про проєкт</h2>
             <p className={styles.descriptionText}>{project.shortDescription}</p>
           </div>
 
-          {/* 🔥 НОВИЙ ВАРІАНТ: УНІКАЛЬНА СКЛЯНА КАПСУЛА (PILL) ДЛЯ CTA 🔥 */}
           <div className={styles.ctaPill}>
             <div className={styles.ctaPillContent}>
               <div className={styles.ctaPillIcon}>
