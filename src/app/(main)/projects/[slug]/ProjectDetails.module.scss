@@ -7,6 +7,7 @@ $border-color: #d2d2d7;
 
 .pageContainer {
   padding-top: 130px;
+  padding-bottom: 120px;
   background: transparent;
   min-height: 100vh;
   position: relative;
@@ -141,6 +142,7 @@ $border-color: #d2d2d7;
 
 .sliderTrack {
   display: flex;
+  align-items: center; /* 🔥 Центрує картки по вертикалі, якщо вони різної висоти 🔥 */
   gap: 24px;
   height: 500px;
   overflow-x: auto;
@@ -154,14 +156,13 @@ $border-color: #d2d2d7;
   }
 
   @media (max-width: 768px) {
-    height: 400px;
+    height: auto; /* На мобілках висота треку підлаштовується під картку */
+    min-height: 400px;
     gap: 16px;
-  }
-  @media (max-width: 480px) {
-    height: 300px;
   }
 }
 
+/* 🔥 СПЕЙСЕР: ГАРАНТУЄ ІДЕАЛЬНЕ ЦЕНТРУВАННЯ 🔥 */
 .sliderSpacer {
   flex: 0 0 calc(50vw - 350px);
   scroll-snap-align: none;
@@ -169,12 +170,14 @@ $border-color: #d2d2d7;
   pointer-events: none;
 
   @media (max-width: 768px) {
+    /* Точна математика: пів екрана (50vw) мінус половина картки (85vw/2 = 42.5vw) */
     flex: 0 0 calc(50vw - 42.5vw);
   }
 }
 
 .slide {
-  height: 100%;
+  height: auto;
+  max-height: 100%; /* Картка облягає картинку, але не вилазить за трек */
   flex: 0 0 auto;
   scroll-snap-align: center;
   position: relative;
@@ -188,6 +191,7 @@ $border-color: #d2d2d7;
   opacity: 0.4;
   transform: scale(0.95);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  background: #fff; /* Фоновий колір на випадок завантаження */
 
   &.activeSlide {
     opacity: 1;
@@ -197,15 +201,28 @@ $border-color: #d2d2d7;
 
   @media (max-width: 768px) {
     border-radius: 20px;
+    flex: 0 0 85vw; /* 🔥 Жорстка ширина для мобілки (85% екрану) 🔥 */
+    aspect-ratio: 4 / 3; /* 🔥 Задаємо ідеальні пропорції, щоб всі картки були однакові 🔥 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
 .slideImage {
   display: block;
-  height: 100%;
+  height: auto;
+  max-height: 500px; /* На десктопі не вище 500px */
   width: auto;
   max-width: 85vw;
   object-fit: contain;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: cover; /* 🔥 На мобілці картинка повністю заповнює 85vw картку без пустих місць 🔥 */
+  }
 }
 
 .expandBtn {
@@ -609,6 +626,7 @@ $border-color: #d2d2d7;
    ОПИС ТА СТИЛЬНА CTA КАПСУЛА (PILL)
    ========================================= */
 .bottomSection {
+  max-width: 900px;
   margin: 0 auto;
   text-align: left;
   margin-bottom: 60px;
@@ -643,7 +661,6 @@ $border-color: #d2d2d7;
   }
 }
 
-/* 🔥 НОВА CTA КАПСУЛА (PILL) 🔥 */
 .ctaPill {
   display: flex;
   align-items: center;
@@ -735,6 +752,7 @@ $border-color: #d2d2d7;
   flex-shrink: 0;
 
   &:hover {
+    transform: translateY(-2px);
     box-shadow: 0 12px 30px rgba(255, 213, 0, 0.4);
   }
 
