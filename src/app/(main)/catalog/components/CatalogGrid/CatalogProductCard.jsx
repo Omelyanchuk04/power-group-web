@@ -56,7 +56,9 @@ export default function CatalogProductCard({ product }) {
 
       <div className={styles.infoBox}>
         <div className={styles.textWrap}>
-          <h4 className={styles.title}>{product.name}</h4>
+          <Link href={productUrl}>
+            <h4 className={styles.title}>{product.name}</h4>
+          </Link>
           <span className={styles.productCategory}>{product.category}</span>
         </div>
 

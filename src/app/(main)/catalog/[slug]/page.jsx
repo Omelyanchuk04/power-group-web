@@ -2,6 +2,7 @@ import React from "react";
 import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/mongodb";
 import CatalogItem from "@/models/CatalogItem";
+import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 
 import styles from "./page.module.scss";
 
@@ -227,6 +228,8 @@ export default async function ProductPage({ params }) {
           </div>
         </div>
       </div>
+
+      <ContactCTA />
     </main>
   );
 }

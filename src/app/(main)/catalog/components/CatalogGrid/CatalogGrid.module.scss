@@ -20,7 +20,7 @@ $bg-light: #f1f5f9;
     padding-bottom: 60px;
   }
   @media (max-width: 560px) {
-    padding-bottom: 30px; /* Уніфіковано з футером */
+    padding-bottom: 30px;
   }
 }
 
@@ -34,7 +34,7 @@ $bg-light: #f1f5f9;
     padding: 0 24px;
   }
   @media (max-width: 560px) {
-    padding: 0 10px; /* Ідеальні відступи 10px від краю екрана */
+    padding: 0 10px;
   }
 }
 
@@ -86,6 +86,9 @@ $bg-light: #f1f5f9;
   font-size: 14px;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
 
   svg {
     width: 16px;
@@ -93,8 +96,14 @@ $bg-light: #f1f5f9;
     color: $primary;
   }
 
+  @media (hover: hover) {
+    &:hover {
+      background: #f8fafc;
+    }
+  }
+
   &:active {
-    transform: scale(0.96);
+    background: #f1f5f9;
   }
 }
 
@@ -142,15 +151,13 @@ $bg-light: #f1f5f9;
   display: flex;
   flex-wrap: nowrap;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 12px;
+  position: relative;
 
   background: rgba(255, 255, 255, 0.7);
-  // backdrop-filter: blur(24px) saturate(150%);
-  // -webkit-backdrop-filter: blur(24px) saturate(150%);
-
   border-radius: 24px;
-  padding: 8px 10px;
+  padding: 8px 10px 10px 10px; /* Прибрали зайвий відступ знизу */
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.04),
@@ -169,7 +176,7 @@ $bg-light: #f1f5f9;
 
   @media (max-width: 768px) {
     padding-top: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 12px;
     padding-left: 24px;
     padding-right: 24px;
     gap: 0;
@@ -181,6 +188,18 @@ $bg-light: #f1f5f9;
   }
 }
 
+/* 🔥 ЛІНІЯ-ІНДИКАТОР (ТРОХИ ТОНША ТА ЕЛЕГАНТНІША) 🔥 */
+.tabIndicator {
+  position: absolute;
+  /* top: задається динамічно через JS */
+  height: 2.5px;
+  background-color: #1d1d1f;
+  border-radius: 4px;
+  transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
 .categoryTab {
   position: relative;
   display: flex;
@@ -189,61 +208,55 @@ $bg-light: #f1f5f9;
   justify-content: flex-start;
   background: transparent;
   border: none;
-  padding: 10px 8px;
+  padding: 12px 8px;
   border-radius: 20px;
   cursor: pointer;
   color: #1d1d1f;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition:
+    background 0.3s ease,
+    opacity 0.2s ease;
   flex: 1;
   min-width: 110px;
   text-align: center;
+  z-index: 2;
 
   @media (max-width: 560px) {
     min-width: 90px;
     padding: 8px 4px;
   }
 
-  &:hover {
-    .tabImageWrapper {
-      transform: scale(1.08);
+  .tabImageWrapper {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      .tabImageWrapper {
+        opacity: 1;
+      }
+      .tabText {
+        color: $primary;
+      }
     }
-    .tabText {
-      color: $primary;
-    }
+  }
+
+  &:active {
+    opacity: 0.7;
+    background: rgba(0, 0, 0, 0.03);
   }
 
   &.activeTab {
+    background: transparent;
+    box-shadow: none;
+
     .tabText {
-      color: $primary;
-      font-weight: 700;
+      color: $text-dark;
+      font-weight: 800;
     }
     .tabImageWrapper {
-      transform: scale(1.15);
+      opacity: 1;
     }
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: -2px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: $primary;
-      box-shadow: 0 0 8px rgba(0, 86, 179, 0.4);
-      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-  }
-}
-
-@keyframes popIn {
-  0% {
-    transform: translate(-50%, 10px) scale(0);
-    opacity: 0;
-  }
-  100% {
-    transform: translate(-50%, 0) scale(1);
-    opacity: 1;
   }
 }
 
@@ -254,7 +267,6 @@ $bg-light: #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .tabImage {
@@ -388,7 +400,6 @@ $bg-light: #f1f5f9;
   }
 }
 
-/* АКОРДЕОН ФІЛЬТРІВ */
 .groupTitleRow {
   display: flex;
   justify-content: space-between;
@@ -399,8 +410,15 @@ $bg-light: #f1f5f9;
   border-radius: 8px;
   transition: background-color 0.2s ease;
   user-select: none;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.03);
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.06);
   }
 }
 
@@ -467,12 +485,11 @@ $bg-light: #f1f5f9;
       inset 0 -1px 2px rgba(0, 0, 0, 0.05),
       0 4px 10px rgba(0, 0, 0, 0.15);
     cursor: grab;
-    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: background 0.2s ease;
   }
   &::-webkit-slider-thumb:active {
     cursor: grabbing;
-    transform: scale(1.08);
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.6);
   }
 }
 .sliderLabels {
@@ -498,6 +515,16 @@ $bg-light: #f1f5f9;
   border-radius: 10px;
   transition: background 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+
+  @media (hover: hover) {
+    &:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+  }
+
+  &:active {
+    background: rgba(0, 0, 0, 0.05);
+  }
 }
 .hiddenCheckbox {
   display: none;
@@ -546,7 +573,19 @@ $bg-light: #f1f5f9;
   cursor: pointer;
   width: 100%;
   margin-top: 10px;
-  transition: all 0.2s;
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
+
+  @media (hover: hover) {
+    &:hover {
+      background: rgba(0, 86, 179, 0.1);
+    }
+  }
+
+  &:active {
+    background: rgba(0, 86, 179, 0.15);
+  }
 }
 
 /* =========================================
@@ -576,13 +615,10 @@ $bg-light: #f1f5f9;
   }
 }
 
-/* 🔥 НОВИЙ КЛАС З АПАРАТНОЮ CSS-АНІМАЦІЄЮ 🔥 */
 .gridAnimated {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-
-  /* Плавна поява всієї сітки без навантаження на процесор */
   animation: fadeGridIn 0.5s ease-out forwards;
 
   @media (max-width: 1200px) {
@@ -594,7 +630,6 @@ $bg-light: #f1f5f9;
   }
 }
 
-/* Старий клас grid залишено про всяк випадок */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -631,12 +666,30 @@ $bg-light: #f1f5f9;
   overflow: hidden;
   cursor: pointer;
   transition:
-    box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 
-  &:hover {
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-    background: rgba(255, 255, 255, 0.95);
+  /* 🔥 ХОВЕР ТІЛЬКИ НА ПК 🔥 */
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.95);
+
+      /* 🔥 ПІДКРЕСЛЕННЯ НАЗВИ ПРИ ХОВЕРІ 🔥 */
+      .title {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-thickness: 1.5px;
+      }
+    }
+  }
+
+  /* 🔥 ТАКТИЛЬНИЙ ВІДГУК НА СЕНСОРАХ 🔥 */
+  &:active {
+    opacity: 0.8;
+    background: rgba(245, 245, 247, 0.95);
   }
 
   @media (max-width: 640px) {
@@ -667,7 +720,7 @@ $bg-light: #f1f5f9;
   mix-blend-mode: darken;
 
   @media (max-width: 640px) {
-    transform: scale(1.15); /* Збільшено товари на мобільному */
+    transform: scale(1.15);
   }
 }
 
@@ -736,6 +789,7 @@ $bg-light: #f1f5f9;
   gap: 4px;
 }
 
+/* 🔥 КЛІКАБЕЛЬНА НАЗВА В КАРТЦІ 🔥 */
 .title {
   font-size: 18px;
   font-weight: 800;
@@ -747,6 +801,16 @@ $bg-light: #f1f5f9;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  cursor: pointer;
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 
   @media (max-width: 640px) {
     font-size: 15px;
@@ -764,7 +828,6 @@ $bg-light: #f1f5f9;
 }
 
 .cardButtons {
-  // display: flex;
   flex-direction: column;
   margin-top: auto;
   padding-top: 16px;
@@ -782,11 +845,19 @@ $bg-light: #f1f5f9;
   font-size: 15px;
   font-weight: 500;
   text-decoration: none;
-  transition: background 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
   border: none;
 
-  &:hover {
-    background: #0077ed;
+  @media (hover: hover) {
+    &:hover {
+      background-color: #005bb5;
+    }
+  }
+
+  &:active {
+    background-color: #004494;
   }
 
   svg {
@@ -825,6 +896,19 @@ $bg-light: #f1f5f9;
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+
+  @media (hover: hover) {
+    &:hover:not(.pageActive) {
+      background: rgba(0, 86, 179, 0.05);
+    }
+  }
+
+  &:active:not(.pageActive) {
+    background: rgba(0, 86, 179, 0.1);
+  }
 
   &.pageActive {
     background: $primary;
