@@ -70,7 +70,6 @@ $text-gray: #64748b;
     backdrop-filter: none;
     box-shadow: none;
 
-    /* 🔥 CSS Grid для розбиття на колонки на планшетах 🔥 */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px 20px;
@@ -90,15 +89,13 @@ $text-gray: #64748b;
   margin-bottom: 32px;
 
   @media (max-width: 1024px) {
-    margin-bottom: 0; /* Відступи контролюються через gap у гріді */
+    margin-bottom: 0;
 
-    /* Перші дві групи (Тип та Послуги) на всю ширину */
     &:nth-of-type(1),
     &:nth-of-type(2) {
       grid-column: 1 / -1;
     }
 
-    /* Третя група (Повзунок) на половину ширини */
     &:nth-of-type(3) {
       grid-column: 1 / 2;
     }
@@ -107,7 +104,7 @@ $text-gray: #64748b;
   @media (max-width: 560px) {
     margin-bottom: 24px;
     &:nth-of-type(3) {
-      grid-column: auto; /* На мобільному знов на всю ширину */
+      grid-column: auto;
     }
   }
 }
@@ -149,7 +146,6 @@ $text-gray: #64748b;
       display: none;
     }
 
-    /* 🔥 Розтягуємо на всю ширину і залишаємо внутрішні відступи 🔥 */
     margin-left: -10px;
     width: calc(100% + 20px);
     padding: 6px 10px;
@@ -223,10 +219,9 @@ $text-gray: #64748b;
       display: none;
     }
 
-    /* 🔥 Розтягуємо на всю ширину і залишаємо внутрішні відступи 🔥 */
     margin-left: -10px;
     width: calc(100% + 20px);
-    padding: 0 10px 8px 10px; /* 10px з боків, щоб кнопки не торкалися екрана */
+    padding: 0 10px 8px 10px;
   }
 
   @media (max-width: 560px) {
@@ -421,7 +416,6 @@ $text-gray: #64748b;
     transform: scale(0.96);
   }
 
-  /* 🔥 ІДЕАЛЬНЕ ВИРІВНЮВАННЯ НА ПЛАНШЕТАХ 🔥 */
   @media (max-width: 1024px) {
     grid-column: 2 / 3;
     align-self: flex-start;
@@ -471,29 +465,11 @@ $text-gray: #64748b;
   min-height: 500px;
 }
 
-/* 🔥 НОВИЙ КЛАС З АПАРАТНОЮ CSS-АНІМАЦІЄЮ 🔥 */
 .gridAnimated {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px;
-
-  /* Плавна поява всієї сітки без навантаження на процесор */
   animation: fadeGridIn 0.5s ease-out forwards;
-
-  @media (max-width: 1280px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 768px) {
-    gap: 8px;
-  }
-}
-
-/* Старий клас grid залишено про всяк випадок */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
 
   @media (max-width: 1280px) {
     grid-template-columns: repeat(2, 1fr);
@@ -555,7 +531,6 @@ $text-gray: #64748b;
   overflow: hidden;
 
   @media (max-width: 768px) {
-    /* 🔥 Зменшуємо висоту фото для 2-колонкової сітки на мобільному 🔥 */
     height: 140px;
   }
 }
@@ -588,7 +563,6 @@ $text-gray: #64748b;
   z-index: 2;
 
   @media (max-width: 768px) {
-    /* 🔥 Компактніші відступи від країв 🔥 */
     top: 8px;
     left: 8px;
     right: 8px;
@@ -605,11 +579,41 @@ $text-gray: #64748b;
   font-size: 13px;
   font-weight: 700;
 
+  /* Додано вирівнювання іконок */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
   @media (max-width: 768px) {
-    /* 🔥 Значно менші бейджі, щоб влазили в 1 рядок 🔥 */
     padding: 4px 8px;
     font-size: 10px;
+    gap: 4px;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
   }
+}
+
+.tagCapacity {
+  @extend .tagPower;
+  background: rgba(
+    88,
+    86,
+    214,
+    0.8
+  ); /* Красивий фіолетовий колір (Apple Indigo) */
+}
+
+.tagService {
+  @extend .tagPower;
+  background: rgba(16, 185, 129, 0.8); /* Зелений колір */
 }
 
 .tagClient {
@@ -626,7 +630,6 @@ $text-gray: #64748b;
   flex-grow: 1;
 
   @media (max-width: 768px) {
-    /* 🔥 Менший внутрішній відступ для тексту 🔥 */
     padding: 12px;
     gap: 8px;
   }
@@ -654,7 +657,6 @@ $text-gray: #64748b;
     overflow: hidden;
 
     @media (max-width: 768px) {
-      /* 🔥 Менший шрифт та дозвіл на 3 рядки тексту замість 2 🔥 */
       font-size: 14px;
       margin: 0 0 6px 0;
       -webkit-line-clamp: 3;
@@ -681,7 +683,6 @@ $text-gray: #64748b;
     }
 
     @media (max-width: 768px) {
-      /* 🔥 Адаптація локації 🔥 */
       font-size: 11px;
       gap: 4px;
 
@@ -711,7 +712,6 @@ $text-gray: #64748b;
   }
 
   @media (max-width: 768px) {
-    /* 🔥 Кнопка стає пропорційною (була занадто велика) 🔥 */
     width: 32px;
     height: 32px;
 

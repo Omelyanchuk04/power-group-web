@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import NextImage from "next/image";
 import gsap from "gsap";
 import { useModal } from "@/context/ModalContext";
@@ -48,6 +47,22 @@ const IconLightning = () => (
     strokeLinejoin="round"
   >
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+  </svg>
+);
+const IconBattery = () => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="7" width="16" height="10" rx="2" ry="2"></rect>
+    <line x1="22" y1="11" x2="22" y2="13"></line>
+    <polyline points="6 11 8 13 12 9"></polyline>
   </svg>
 );
 const IconPin = () => (
@@ -209,30 +224,23 @@ export default function ProjectModal({ project, onClose }) {
   const handleGalleryScroll = (e, isFullscreenMode = false) => {
     const ref = isFullscreenMode ? fullscreenRef : galleryRef;
     if (!ref.current) return;
-
     const newIndex = Math.round(
       ref.current.scrollLeft / ref.current.offsetWidth,
     );
-    if (newIndex !== currentSlide) {
-      setCurrentSlide(newIndex);
-    }
+    if (newIndex !== currentSlide) setCurrentSlide(newIndex);
   };
 
   const scrollToSlide = (index, isFullscreenMode = false) => {
     const ref = isFullscreenMode ? fullscreenRef : galleryRef;
     if (!ref.current) return;
-
     ref.current.scrollTo({
       left: index * ref.current.offsetWidth,
       behavior: "smooth",
     });
-
     setCurrentSlide(index);
   };
 
-  const openFullscreen = () => {
-    setIsFullscreen(true);
-  };
+  const openFullscreen = () => setIsFullscreen(true);
 
   useEffect(() => {
     if (isFullscreen && fullscreenRef.current) {
@@ -349,8 +357,21 @@ export default function ProjectModal({ project, onClose }) {
           <div className={styles.modalBodyContainer}>
             <h2 className={styles.modalTitle}>{project.title}</h2>
 
+            {project.serviceLabels && (
+              <div className={styles.modalHeaderExtra}>
+                {project.serviceLabels.includes(",") && (
+                  <span className={styles.complexBadge}>
+                    Комплексне рішення
+                  </span>
+                )}
+                <span className={styles.servicesList}>
+                  {project.serviceLabels}
+                </span>
+              </div>
+            )}
+
             <div className={styles.statsHorizontalRow}>
-              {/* 🔥 Блок відображається тільки якщо є потужність 🔥 */}
+              {/* 🔥 ОКРЕМО ПОТУЖНІСТЬ 🔥 */}
               {project.powerLabel && (
                 <>
                   <div className={styles.statHItem}>
@@ -363,6 +384,26 @@ export default function ProjectModal({ project, onClose }) {
                         className={`${styles.statHValue} ${styles.highlight}`}
                       >
                         {project.powerLabel}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.statDivider}></div>
+                </>
+              )}
+
+              {/* 🔥 ОКРЕМО ЄМНІСТЬ 🔥 */}
+              {project.capacityLabel && (
+                <>
+                  <div className={styles.statHItem}>
+                    <div className={styles.iconBox}>
+                      <IconBattery />
+                    </div>
+                    <div className={styles.statHText}>
+                      <span className={styles.statHLabel}>Ємність</span>
+                      <span
+                        className={`${styles.statHValue} ${styles.highlight}`}
+                      >
+                        {project.capacityLabel}
                       </span>
                     </div>
                   </div>

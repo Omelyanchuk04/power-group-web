@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import NextImage from "next/image";
 import { useModal } from "@/context/ModalContext";
@@ -69,6 +69,18 @@ const IconBattery = () => (
     <polyline points="6 11 8 13 12 9" />
   </svg>
 );
+const IconLightning = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+  </svg>
+);
 const IconPlug = () => (
   <svg
     viewBox="0 0 24 24"
@@ -115,15 +127,16 @@ const IconPin = () => (
   </svg>
 );
 
+const SERVICE_MAP = {
+  solar: "Будівництво СЕС",
+  backup: "Резервне живлення",
+  storage: "Зберігання енергії",
+  electro: "Електромонтаж",
+};
+
 export default function ProjectsGrid({ initialProjects = [] }) {
   const pathname = usePathname();
   const { openModal } = useModal();
-
-  const formatPower = (kw) => {
-    if (!kw) return null;
-    if (kw >= 1000) return (kw / 1000).toFixed(1).replace(/\.0$/, "") + " МВт";
-    return kw + " кВт";
-  };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "Не вказано";
@@ -136,20 +149,47 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   };
 
   const mappedProjects = initialProjects
-    .map((p) => ({
-      id: p._id,
-      title: p.title,
-      clientType: p.clientType,
-      serviceType: p.serviceType,
-      power: p.power,
-      powerLabel: formatPower(p.power),
-      location: p.client || "Локація не вказана",
-      description: p.shortDescription || "Опис відсутній",
-      image: p.mainImage,
-      gallery: p.gallery || [],
-      date: formatDate(p.date),
-      rawDate: new Date(p.date || 0).getTime(),
-    }))
+    .map((p) => {
+      let services = [];
+      if (Array.isArray(p.serviceType)) {
+        services = p.serviceType;
+      } else if (typeof p.serviceType === "string") {
+        services = [p.serviceType];
+      }
+
+      const serviceLabels = services.map((s) => SERVICE_MAP[s] || s).join(", ");
+      const cardServiceLabel =
+        services.length > 1
+          ? "Комплексне рішення"
+          : SERVICE_MAP[services[0]] || "";
+
+      // 🔥 Розділяємо Потужність та Ємність на два окремих лейбли 🔥
+      const powerLabel = p.power
+        ? p.power >= 1000
+          ? `${(p.power / 1000).toFixed(1).replace(/\.0$/, "")} МВт`
+          : `${p.power} кВт`
+        : null;
+      const capacityLabel = p.capacity ? `${p.capacity} кВт·год` : null;
+
+      return {
+        id: p._id,
+        title: p.title,
+        clientType: p.clientType,
+        serviceType: services,
+        serviceLabels: serviceLabels,
+        cardServiceLabel: cardServiceLabel,
+        power: p.power || 0,
+        capacity: p.capacity || 0,
+        powerLabel: powerLabel,
+        capacityLabel: capacityLabel,
+        location: p.client || "Локація не вказана",
+        description: p.shortDescription || "Опис відсутній",
+        image: p.mainImage,
+        gallery: p.gallery || [],
+        date: formatDate(p.date),
+        rawDate: new Date(p.date || 0).getTime(),
+      };
+    })
     .sort((a, b) => b.rawDate - a.rawDate);
 
   const [activeFilters, setActiveFilters] = useState({
@@ -171,9 +211,11 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       image: project.image,
       gallery: project.gallery,
       powerLabel: project.powerLabel,
+      capacityLabel: project.capacityLabel, // 🔥 Передаємо окремо
       location: project.location,
       date: project.date,
       clientType: project.clientType,
+      serviceLabels: project.serviceLabels,
       description: project.description,
     });
   };
@@ -184,8 +226,9 @@ export default function ProjectsGrid({ initialProjects = [] }) {
       activeFilters.clientType === p.clientType;
     const matchService =
       activeFilters.serviceType.includes("all") ||
-      activeFilters.serviceType.includes(p.serviceType);
+      p.serviceType.some((s) => activeFilters.serviceType.includes(s));
     const matchPower = p.power <= powerLimit;
+
     return matchClient && matchService && matchPower;
   });
 
@@ -229,8 +272,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   };
 
   const sliderFillPercentage = (powerLimitUI / MAX_POWER) * 100;
-
-  // 🔥 Унікальний ключ для плавної анімації CSS 🔥
   const gridKey = `${currentPage}-${activeFilters.clientType}-${activeFilters.serviceType.join("-")}-${powerLimit}`;
 
   return (
@@ -363,7 +404,6 @@ export default function ProjectsGrid({ initialProjects = [] }) {
               </div>
             )}
 
-            {/* 🔥 Додали клас gridAnimated та gridKey 🔥 */}
             <div className={styles.gridAnimated} ref={gridRef} key={gridKey}>
               {currentProjects.map((project) => (
                 <div
@@ -380,10 +420,24 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                     <div className={styles.overlay}></div>
+
+                    {/* 🔥 БЕЙДЖІ (ТЕПЕР ІЗ ІКОНКАМИ) 🔥 */}
                     <div className={styles.tags}>
                       {project.powerLabel && (
                         <span className={styles.tagPower}>
+                          <IconLightning />
                           {project.powerLabel}
+                        </span>
+                      )}
+                      {project.capacityLabel && (
+                        <span className={styles.tagCapacity}>
+                          <IconBattery />
+                          {project.capacityLabel}
+                        </span>
+                      )}
+                      {project.cardServiceLabel && (
+                        <span className={styles.tagService}>
+                          {project.cardServiceLabel}
                         </span>
                       )}
                       <span className={styles.tagClient}>
