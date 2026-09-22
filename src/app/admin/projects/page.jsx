@@ -79,8 +79,6 @@ const IconX = () => (
     <line x1="6" y1="6" x2="18" y2="18"></line>
   </svg>
 );
-
-// 🔥 НОВІ APPLE ІКОНКИ 🔥
 const IconEllipsis = () => (
   <svg
     width="20"
@@ -97,7 +95,6 @@ const IconEllipsis = () => (
     <circle cx="5" cy="12" r="1.5"></circle>
   </svg>
 );
-
 const IconEditApple = () => (
   <svg
     width="16"
@@ -113,7 +110,6 @@ const IconEditApple = () => (
     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
   </svg>
 );
-
 const IconTrashApple = () => (
   <svg
     width="16"
@@ -138,10 +134,18 @@ const initialForm = {
   shortDescription: "",
   client: "",
   clientType: "b2c",
-  serviceType: "solar",
+  serviceType: ["solar"],
   power: "",
+  capacity: "",
   date: "",
 };
+
+const AVAILABLE_SERVICES = [
+  { id: "solar", label: "Будівництво СЕС" },
+  { id: "backup", label: "Резервне живлення" },
+  { id: "storage", label: "Зберігання енергії" },
+  { id: "electro", label: "Електромонтаж" },
+];
 
 let projectsCache = null;
 
@@ -164,11 +168,9 @@ export default function ProjectsPage() {
   const [images, setImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
 
-  // 🔥 СТАНИ ДЛЯ ВИПАДАЮЧОГО МЕНЮ І ЛОКАЛЬНОГО ВИДАЛЕННЯ 🔥
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [itemDeleteConfirm, setItemDeleteConfirm] = useState(null);
 
-  // Закриваємо меню при кліку поза ним
   useEffect(() => {
     const closeAllDropdowns = () => {
       setOpenDropdownId(null);
@@ -194,20 +196,30 @@ export default function ProjectsPage() {
         setIsLoading(false);
       }
     };
-
     fetchProjects();
   }, []);
 
   const handleEditClick = (project) => {
+    let parsedServiceType = [];
+    if (Array.isArray(project.serviceType)) {
+      parsedServiceType = project.serviceType;
+    } else if (typeof project.serviceType === "string") {
+      parsedServiceType = [project.serviceType];
+    }
+
     setFormData({
       title: project.title,
       shortDescription: project.shortDescription,
       client: project.client || "",
       clientType: project.clientType,
-      serviceType: project.serviceType,
+      serviceType: parsedServiceType,
       power:
         project.power !== null && project.power !== undefined
           ? project.power
+          : "",
+      capacity:
+        project.capacity !== null && project.capacity !== undefined
+          ? project.capacity
           : "",
       date: project.date || "",
     });
@@ -251,7 +263,6 @@ export default function ProjectsPage() {
     }
   };
 
-  // Допоміжна функція для зупинки кліків
   const stopPropagation = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -305,6 +316,8 @@ export default function ProjectsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!images.length) return alert("Додайте фотографію!");
+    if (!formData.serviceType.length)
+      return alert("Оберіть хоча б одне рішення!");
     setIsUploading(true);
 
     try {
@@ -334,6 +347,7 @@ export default function ProjectsPage() {
       const projectData = {
         ...formData,
         power: formData.power ? Number(formData.power) : null,
+        capacity: formData.capacity ? Number(formData.capacity) : null,
         mainImage: finalMainImage,
         gallery: finalGallery,
       };
@@ -380,7 +394,6 @@ export default function ProjectsPage() {
               </Link>
               <h1>Реалізовані проєкти</h1>
             </div>
-
             <button
               onClick={() => {
                 setFormData(initialForm);
@@ -410,7 +423,7 @@ export default function ProjectsPage() {
                     <th>Фото</th>
                     <th>Назва</th>
                     <th>Локація</th>
-                    <th>Потужність</th>
+                    <th>Потужність / Ємність</th>
                     <th style={{ textAlign: "right", paddingRight: "30px" }}>
                       Дії
                     </th>
@@ -470,9 +483,8 @@ export default function ProjectsPage() {
                         <td className={styles.cellClient}>{p.client || "—"}</td>
                         <td className={styles.cellPower}>
                           {p.power ? `${p.power} кВт` : "—"}
+                          {p.capacity ? ` / ${p.capacity} кВт·год` : ""}
                         </td>
-
-                        {/* 🔥 ВИПРАВЛЕНА КНОПКА APPLE-STYLE 🔥 */}
                         <td className={styles.cellActions}>
                           <div className={styles.dropdownContainer}>
                             <button
@@ -487,7 +499,6 @@ export default function ProjectsPage() {
                             >
                               <IconEllipsis />
                             </button>
-
                             {openDropdownId === p._id && (
                               <div
                                 className={styles.dropdownMenu}
@@ -532,9 +543,7 @@ export default function ProjectsPage() {
                                       <IconEditApple />
                                       <span>Редагувати</span>
                                     </button>
-
                                     <div className={styles.dropdownDivider} />
-
                                     <button
                                       className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
                                       onClick={(e) => {
@@ -607,6 +616,7 @@ export default function ProjectsPage() {
                   />
                 </div>
               </div>
+
               <div className={styles.grid3}>
                 <div className={styles.inputGroup}>
                   <label>Тип об'єкта</label>
@@ -621,30 +631,84 @@ export default function ProjectsPage() {
                   </select>
                 </div>
                 <div className={styles.inputGroup}>
-                  <label>Рішення</label>
-                  <select
-                    value={formData.serviceType}
-                    onChange={(e) =>
-                      setFormData({ ...formData, serviceType: e.target.value })
-                    }
-                  >
-                    <option value="solar">Будівництво СЕС</option>
-                    <option value="backup">Резервне живлення</option>
-                    <option value="storage">Зберігання енергії</option>
-                    <option value="electro">Електромонтаж</option>
-                  </select>
-                </div>
-                <div className={styles.inputGroup}>
                   <label>Потужність (кВт)</label>
                   <input
                     type="number"
+                    step="any"
                     value={formData.power}
                     onChange={(e) =>
                       setFormData({ ...formData, power: e.target.value })
                     }
                   />
                 </div>
+                <div className={styles.inputGroup}>
+                  <label>Ємність (кВт·год)</label>
+                  <input
+                    type="number"
+                    step="any"
+                    value={formData.capacity}
+                    onChange={(e) =>
+                      setFormData({ ...formData, capacity: e.target.value })
+                    }
+                  />
+                </div>
               </div>
+
+              {/* 🔥 ОНОВЛЕНИЙ БЛОК: ВЕРТИКАЛЬНІ ЧЕКБОКСИ ДЛЯ АДМІНКИ 🔥 */}
+              <div className={styles.inputGroup}>
+                <label>
+                  Рішення (можна обрати декілька) <span>*</span>
+                </label>
+                <div className={styles.checkboxVerticalList}>
+                  {AVAILABLE_SERVICES.map((svc) => {
+                    const isSelected = formData.serviceType.includes(svc.id);
+                    return (
+                      <label
+                        key={svc.id}
+                        className={styles.customCheckboxLabel}
+                      >
+                        <input
+                          type="checkbox"
+                          className={styles.hiddenCheckbox}
+                          checked={isSelected}
+                          onChange={(e) => {
+                            const current = formData.serviceType;
+                            if (e.target.checked) {
+                              setFormData({
+                                ...formData,
+                                serviceType: [...current, svc.id],
+                              });
+                            } else {
+                              setFormData({
+                                ...formData,
+                                serviceType: current.filter(
+                                  (id) => id !== svc.id,
+                                ),
+                              });
+                            }
+                          }}
+                        />
+                        <div
+                          className={`${styles.checkboxBox} ${isSelected ? styles.checked : ""}`}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                          </svg>
+                        </div>
+                        <span className={styles.checkboxText}>{svc.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className={styles.inputGroup}>
                 <label>
                   Короткий опис <span>*</span>

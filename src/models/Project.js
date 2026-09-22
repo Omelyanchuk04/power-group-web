@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
 
-// models/Project.js
 const ProjectSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     shortDescription: { type: String, required: true },
     client: { type: String },
     clientType: { type: String },
-    serviceType: { type: String },
+
+    // 🔥 ТЕПЕР ЦЕ МАСИВ, ЩОБ МОЖНА БУЛО ДОДАТИ ДЕКІЛЬКА РІШЕНЬ
+    serviceType: [{ type: String }],
+
     power: { type: Number },
+
+    // 🔥 НОВЕ ПОЛЕ: ЄМНІСТЬ (необов'язкове)
+    capacity: { type: Number },
+
     mainImage: { type: String, required: true },
     gallery: [{ type: String }],
-
-    // 🔥 ДОДАЄМО ПОЛЕ ДАТИ
     date: { type: String },
   },
   { timestamps: true },
