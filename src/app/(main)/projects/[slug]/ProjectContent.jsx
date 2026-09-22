@@ -180,7 +180,6 @@ const SERVICE_MAP = {
 };
 
 export default function ProjectContent({ project }) {
-  // 🔥 МЕМОІЗАЦІЯ: тепер масив не перестворюється при кожному рендері 🔥
   const allImages = useMemo(() => {
     return [project.mainImage, ...(project.gallery || [])];
   }, [project.mainImage, project.gallery]);
@@ -193,7 +192,10 @@ export default function ProjectContent({ project }) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // 🔥 ОПТИМІЗОВАНИЙ РОЗРАХУНОК ВІДСТУПІВ 🔥
+  // 🔥 ЛОГІКА ДЛЯ СВАЙПІВ 🔥
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
   const calculateSpacers = useCallback(() => {
     if (typeof window === "undefined" || !sliderRef.current) return;
     const slides = Array.from(
@@ -209,9 +211,7 @@ export default function ProjectContent({ project }) {
         const newLeft = `calc(50vw - ${firstWidth / 2}px - ${gap}px)`;
         const newRight = `calc(50vw - ${lastWidth / 2}px - ${gap}px)`;
 
-        // Запобігаємо нескінченному циклу (оновлюємо тільки якщо реально змінилось)
         if (prev.left === newLeft && prev.right === newRight) return prev;
-
         return { left: newLeft, right: newRight };
       });
     }
@@ -303,13 +303,32 @@ export default function ProjectContent({ project }) {
   const closeLightbox = () => setIsLightboxOpen(false);
 
   const lightboxPrev = (e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     setLightboxIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
   };
 
   const lightboxNext = (e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  // 🔥 ОБРОБНИКИ СВАЙПІВ ДЛЯ ЛАЙТБОКСУ 🔥
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEndHandler = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) lightboxNext();
+    if (distance < -minSwipeDistance) lightboxPrev();
   };
 
   const d = new Date(project.date);
@@ -356,7 +375,13 @@ export default function ProjectContent({ project }) {
               <IconChevronLeft />
             </button>
 
-            <div className={styles.lightboxContent}>
+            {/* 🔥 ДОДАНО ОБРОБНИКИ СВАЙПІВ 🔥 */}
+            <div
+              className={styles.lightboxContent}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEndHandler}
+            >
               <img
                 src={allImages[lightboxIndex]}
                 alt="Повноекранне фото"
@@ -420,7 +445,6 @@ export default function ProjectContent({ project }) {
               className={`${styles.slide} ${currentSlide === index ? styles.activeSlide : ""}`}
               onClick={() => scrollToSlide(index)}
             >
-              {/* 🔥 ОБРОБНИК ONLOAD ВИКЛИКАЄ РОЗРАХУНОК ЦЕНТРУВАННЯ 🔥 */}
               <img
                 src={imgUrl}
                 alt="Фото проєкту"
@@ -555,25 +579,6 @@ export default function ProjectContent({ project }) {
             <h2 className={styles.sectionTitle}>Про проєкт</h2>
             <p className={styles.descriptionText}>{project.shortDescription}</p>
           </div>
-
-          {/* <div className={styles.ctaPill}>
-            <div className={styles.ctaPillContent}>
-              <div className={styles.ctaPillIcon}>
-                <IconLightning />
-              </div>
-              <div className={styles.ctaPillText}>
-                <span className={styles.ctaPillTitle}>
-                  Цікавить схоже рішення?
-                </span>
-                <span className={styles.ctaPillSubtitle}>
-                  Наші інженери підготують безкоштовний розрахунок.
-                </span>
-              </div>
-            </div>
-            <Link href="#contact" className={styles.ctaButton}>
-              Отримати консультацію
-            </Link>
-          </div> */}
         </div>
       </div>
     </main>
