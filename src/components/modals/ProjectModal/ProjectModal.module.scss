@@ -87,7 +87,6 @@ $text-gray: #64748b;
 
   &:hover {
     background: #ffffff;
-    transform: scale(1.05);
   }
 }
 
@@ -147,7 +146,6 @@ $text-gray: #64748b;
 
   &:hover {
     background: rgba(0, 0, 0, 0.7);
-    transform: scale(1.05);
   }
 
   svg {
@@ -188,7 +186,6 @@ $text-gray: #64748b;
 
   &:hover:not(.disabled) {
     background: #ffffff;
-    transform: translateY(-50%) scale(1.05);
   }
 
   &.disabled {
