@@ -172,6 +172,7 @@ $text-gray: #64748b;
   border-radius: 100px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-tap-highlight-color: transparent; /* Вимикає синє підсвічування на iOS */
 
   svg {
     width: 16px;
@@ -179,11 +180,17 @@ $text-gray: #64748b;
     flex-shrink: 0;
   }
 
-  &:hover {
-    color: $text-dark;
+  /* 🔥 ХОВЕР ЛИШЕ ДЛЯ ПК 🔥 */
+  @media (hover: hover) {
+    &:hover {
+      color: $text-dark;
+    }
   }
+
+  /* 🔥 ТАКТИЛЬНИЙ ВІДГУК ДЛЯ СЕНСОРА 🔥 */
   &:active {
-    transform: scale(0.96);
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.4);
   }
 
   &.active {
@@ -245,6 +252,7 @@ $text-gray: #64748b;
   width: 100%;
   text-align: left;
   white-space: normal;
+  -webkit-tap-highlight-color: transparent;
 
   .iconWrapper {
     display: flex;
@@ -265,15 +273,20 @@ $text-gray: #64748b;
     }
   }
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.4);
-    .iconWrapper {
-      background: #ffffff;
-      color: $primary;
+  @media (hover: hover) {
+    &:hover {
+      background: rgba(255, 255, 255, 0.4);
+      .iconWrapper {
+        background: #ffffff;
+        color: $primary;
+      }
     }
   }
+
+  /* 🔥 ТАКТИЛЬНИЙ ВІДГУК ДЛЯ СЕНСОРА 🔥 */
   &:active {
     transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.6);
   }
 
   &.active {
@@ -407,13 +420,18 @@ $text-gray: #64748b;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 100%;
+  -webkit-tap-highlight-color: transparent;
 
-  &:hover {
-    background: #ffffff;
-    color: $text-dark;
+  @media (hover: hover) {
+    &:hover {
+      background: #ffffff;
+      color: $text-dark;
+    }
   }
+
   &:active {
     transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.8);
   }
 
   @media (max-width: 1024px) {
@@ -500,10 +518,13 @@ $text-gray: #64748b;
   border: 1px solid rgba(255, 255, 255, 0.8);
   display: flex;
   flex-direction: column;
+  -webkit-tap-highlight-color: transparent; /* Вимикає системний клік-ефект */
   transition:
     box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.4s ease;
+    border-color 0.4s ease,
+    transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Додана плавна трансформація */
 
+  /* 🔥 ХОВЕР ТІЛЬКИ НА ПК 🔥 */
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
@@ -516,6 +537,19 @@ $text-gray: #64748b;
         transform: translateX(4px);
         box-shadow: 0 8px 20px rgba(0, 86, 179, 0.3);
       }
+    }
+  }
+
+  /* 🔥 ІДЕАЛЬНИЙ ТАКТИЛЬНИЙ ВІДГУК ДЛЯ СЕНСОРІВ (КЛІК/ТАП) 🔥 */
+  &:active {
+    transform: scale(0.97); /* Вдавлювання картки */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.04); /* Тінь стає меншою */
+    background: #f8fafc; /* Легка зміна фону */
+    border-color: rgba(0, 86, 179, 0.2);
+
+    .arrowBtn {
+      background: rgba(0, 86, 179, 0.15);
+      transform: scale(0.9); /* Кнопочка зі стрілкою теж вдавлюється */
     }
   }
 
@@ -579,7 +613,6 @@ $text-gray: #64748b;
   font-size: 13px;
   font-weight: 700;
 
-  /* Додано вирівнювання іконок */
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -603,17 +636,12 @@ $text-gray: #64748b;
 
 .tagCapacity {
   @extend .tagPower;
-  background: rgba(
-    88,
-    86,
-    214,
-    0.8
-  ); /* Красивий фіолетовий колір (Apple Indigo) */
+  background: rgba(88, 86, 214, 0.8);
 }
 
 .tagService {
   @extend .tagPower;
-  background: rgba(16, 185, 129, 0.8); /* Зелений колір */
+  background: rgba(16, 185, 129, 0.8);
 }
 
 .tagClient {
@@ -748,15 +776,22 @@ $text-gray: #64748b;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  -webkit-tap-highlight-color: transparent;
 
-  &:hover {
-    background: #ffffff;
-    color: $text-dark;
-    border-color: rgba(0, 86, 179, 0.3);
+  @media (hover: hover) {
+    &:hover:not(.pageActive) {
+      background: #ffffff;
+      color: $text-dark;
+      border-color: rgba(0, 86, 179, 0.3);
+    }
   }
-  &:active {
-    transform: scale(0.96);
+
+  /* 🔥 ТАКТИЛЬНИЙ ВІДГУК 🔥 */
+  &:active:not(.pageActive) {
+    transform: scale(0.92);
+    background: rgba(0, 86, 179, 0.05);
   }
+
   &.pageActive {
     background: $primary;
     color: #ffffff;
