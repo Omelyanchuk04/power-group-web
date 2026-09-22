@@ -59,56 +59,63 @@ function SearchContent() {
         </div>
       ) : results.length > 0 ? (
         <div className={styles.gridAnimated}>
-          {results.map((item) => (
-            <Link
-              href={item.url}
-              key={item._id}
-              style={{ textDecoration: "none" }}
-            >
-              <div className={styles.projectCard}>
-                <div className={styles.imageWrapper}>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className={styles.img}
-                    style={{
-                      objectFit: item.type === "catalog" ? "contain" : "cover",
-                      backgroundColor:
-                        item.type === "catalog" ? "#f8fafc" : "transparent",
-                      mixBlendMode:
-                        item.type === "catalog" ? "darken" : "normal",
-                    }}
-                  />
-                  <div className={styles.overlay}></div>
-                  <div className={styles.tags}>
-                    <span className={styles.tagPower}>
-                      {item.type === "catalog" ? "Товар" : "Проєкт"}
-                    </span>
-                    <span className={styles.tagClient}>{item.category}</span>
-                  </div>
-                </div>
+          {results.map((item) => {
+            // 🔥 ВИПРАВЛЕННЯ: Жорстко формуємо посилання на конкретну сторінку,
+            // використовуючи slug або унікальний _id. Це ігнорує неправильний url з бекенду.
+            const targetUrl = `/${item.type === "catalog" ? "catalog" : "projects"}/${item.slug || item._id}`;
 
-                <div className={styles.cardInfo}>
-                  <div className={styles.cardText}>
-                    <h4>{item.title}</h4>
+            return (
+              <Link
+                href={targetUrl}
+                key={item._id}
+                style={{ textDecoration: "none" }}
+              >
+                <div className={styles.projectCard}>
+                  <div className={styles.imageWrapper}>
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className={styles.img}
+                      style={{
+                        objectFit:
+                          item.type === "catalog" ? "contain" : "cover",
+                        backgroundColor:
+                          item.type === "catalog" ? "#f8fafc" : "transparent",
+                        mixBlendMode:
+                          item.type === "catalog" ? "darken" : "normal",
+                      }}
+                    />
+                    <div className={styles.overlay}></div>
+                    <div className={styles.tags}>
+                      <span className={styles.tagPower}>
+                        {item.type === "catalog" ? "Товар" : "Проєкт"}
+                      </span>
+                      <span className={styles.tagClient}>{item.category}</span>
+                    </div>
                   </div>
-                  <div className={styles.arrowBtn}>
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
+
+                  <div className={styles.cardInfo}>
+                    <div className={styles.cardText}>
+                      <h4>{item.title}</h4>
+                    </div>
+                    <div className={styles.arrowBtn}>
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       ) : (
         <div className={styles.noResults}>
