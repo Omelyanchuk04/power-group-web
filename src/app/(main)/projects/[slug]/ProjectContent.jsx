@@ -556,7 +556,7 @@ export default function ProjectContent({ project }) {
             <p className={styles.descriptionText}>{project.shortDescription}</p>
           </div>
 
-          <div className={styles.ctaPill}>
+          {/* <div className={styles.ctaPill}>
             <div className={styles.ctaPillContent}>
               <div className={styles.ctaPillIcon}>
                 <IconLightning />
@@ -573,7 +573,7 @@ export default function ProjectContent({ project }) {
             <Link href="#contact" className={styles.ctaButton}>
               Отримати консультацію
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </main>

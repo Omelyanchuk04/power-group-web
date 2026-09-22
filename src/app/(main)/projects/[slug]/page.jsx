@@ -76,6 +76,7 @@ export default async function ProjectDetailsPage({ params }) {
   return (
     <>
       <ProjectContent project={project} />
+      <ContactCTA />
     </>
   );
 }
