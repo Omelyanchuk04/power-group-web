@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import NextImage from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import { useModal } from "@/context/ModalContext";
 import styles from "./ProjectModal.module.scss";
@@ -265,6 +266,9 @@ export default function ProjectModal({ project, onClose }) {
 
   if (!project) return null;
 
+  // Формуємо посилання на повну сторінку проєкту
+  const projectUrl = `/projects/${project.linkId || project.slug || project._id || project.id}`;
+
   return (
     <>
       <div
@@ -371,7 +375,6 @@ export default function ProjectModal({ project, onClose }) {
             )}
 
             <div className={styles.statsHorizontalRow}>
-              {/* 🔥 ОКРЕМО ПОТУЖНІСТЬ 🔥 */}
               {project.powerLabel && (
                 <>
                   <div className={styles.statHItem}>
@@ -391,7 +394,6 @@ export default function ProjectModal({ project, onClose }) {
                 </>
               )}
 
-              {/* 🔥 ОКРЕМО ЄМНІСТЬ 🔥 */}
               {project.capacityLabel && (
                 <>
                   <div className={styles.statHItem}>
@@ -448,21 +450,47 @@ export default function ProjectModal({ project, onClose }) {
               </div>
             </div>
 
-            <div className={styles.modalDescBlock}>
-              <h3>Про проєкт</h3>
-              <p>{project.description}</p>
-            </div>
+            <div className={styles.bottomSection}>
+              <div className={styles.descriptionBlock}>
+                <h3 className={styles.sectionTitle}>Про проєкт</h3>
+                <p className={styles.descriptionText}>{project.description}</p>
+              </div>
 
-            <div className={styles.modalFooter}>
-              <button
-                className={styles.ctaButton}
-                onClick={() => {
-                  handleClose();
-                  openModal("contact");
-                }}
-              >
-                Отримати консультацію
-              </button>
+              <div className={styles.ctaPill}>
+                <div className={styles.ctaPillContent}>
+                  <div className={styles.ctaPillIcon}>
+                    <IconLightning />
+                  </div>
+                  <div className={styles.ctaPillText}>
+                    <span className={styles.ctaPillTitle}>
+                      Цікавить схоже рішення?
+                    </span>
+                    <span className={styles.ctaPillSubtitle}>
+                      Наші інженери підготують безкоштовний розрахунок.
+                    </span>
+                  </div>
+                </div>
+
+                {/* 🔥 ОНОВЛЕНИЙ БЛОК ДЛЯ КНОПОК 🔥 */}
+                <div className={styles.ctaPillActions}>
+                  <Link
+                    href={projectUrl}
+                    className={styles.detailsLink}
+                    onClick={handleClose}
+                  >
+                    Детальніше про проєкт
+                  </Link>
+                  <button
+                    className={styles.ctaButton}
+                    onClick={() => {
+                      handleClose();
+                      openModal("contact");
+                    }}
+                  >
+                    Отримати консультацію
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
