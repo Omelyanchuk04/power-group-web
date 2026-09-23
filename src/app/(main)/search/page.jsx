@@ -54,15 +54,12 @@ function SearchContent() {
       </div>
 
       {isLoading ? (
-        <div style={{ textAlign: "center", padding: "60px", color: "#64748b" }}>
-          Шукаємо...
-        </div>
+        <div className={styles.loadingState}>Шукаємо...</div>
       ) : results.length > 0 ? (
-        <div className={styles.gridAnimated}>
+        <div className={styles.simpleGrid}>
           {results.map((item) => {
-            // 🔥 ВИПРАВЛЕННЯ: Жорстко формуємо посилання на конкретну сторінку,
-            // використовуючи slug або унікальний _id. Це ігнорує неправильний url з бекенду.
             const targetUrl = `/${item.type === "catalog" ? "catalog" : "projects"}/${item.slug || item._id}`;
+            const isCatalog = item.type === "catalog";
 
             return (
               <Link
@@ -75,20 +72,14 @@ function SearchContent() {
                     <img
                       src={item.image}
                       alt={item.title}
-                      className={styles.img}
-                      style={{
-                        objectFit:
-                          item.type === "catalog" ? "contain" : "cover",
-                        backgroundColor:
-                          item.type === "catalog" ? "#f8fafc" : "transparent",
-                        mixBlendMode:
-                          item.type === "catalog" ? "darken" : "normal",
-                      }}
+                      // Замість дорогих інлайн-ефектів використовуємо прості класи
+                      className={`${styles.img} ${isCatalog ? styles.imgCatalog : styles.imgProject}`}
                     />
-                    <div className={styles.overlay}></div>
+
+                    {/* Плашки без блюру та без прозорості */}
                     <div className={styles.tags}>
                       <span className={styles.tagPower}>
-                        {item.type === "catalog" ? "Товар" : "Проєкт"}
+                        {isCatalog ? "Товар" : "Проєкт"}
                       </span>
                       <span className={styles.tagClient}>{item.category}</span>
                     </div>
@@ -127,18 +118,14 @@ function SearchContent() {
   );
 }
 
-// 🔥 ГОЛОВНИЙ КОМПОНЕНТ З ОБОВ'ЯЗКОВИМ SUSPENSE ДЛЯ УСУНЕННЯ ЛАГІВ 🔥
+// ГОЛОВНИЙ КОМПОНЕНТ
 export default function SearchPage() {
   return (
     <section className={styles.gridSection}>
       <GlobalBackground />
       <Suspense
         fallback={
-          <div
-            style={{ textAlign: "center", padding: "100px", color: "#64748b" }}
-          >
-            Завантаження пошуку...
-          </div>
+          <div className={styles.loadingState}>Завантаження пошуку...</div>
         }
       >
         <SearchContent />
