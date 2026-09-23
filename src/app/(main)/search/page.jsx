@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image"; // 🔥 ОБОВ'ЯЗКОВО ДЛЯ NEXT.JS 🔥
 import { useSearchParams } from "next/navigation";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 import styles from "./SearchPage.module.scss";
@@ -26,7 +27,8 @@ function SearchContent() {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
         if (res.ok) {
           const data = await res.json();
-          setResults(data.results);
+          // Обмежуємо кількість результатів (наприклад, 48), щоб не вбити пам'ять браузера
+          setResults(data.results.slice(0, 48));
         }
       } catch (error) {
         console.error("Помилка при завантаженні результатів:", error);
@@ -68,11 +70,12 @@ function SearchContent() {
               >
                 <div className={styles.projectCard}>
                   <div className={styles.imageWrapper}>
-                    <img
+                    {/* 🔥 ВИКОРИСТОВУЄМО ОПТИМІЗОВАНИЙ КОМПОНЕНТ IMAGE 🔥 */}
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      loading="lazy"
-                      decoding="async"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                       className={`${styles.img} ${isCatalog ? styles.imgCatalog : styles.imgProject}`}
                     />
 
