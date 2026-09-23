@@ -39,14 +39,18 @@ export default function Projects() {
 
         const formattedProjects = data
           .map((p) => ({
-            id: p._id,
+            id: p.slug?.current || p.slug || p._id || p.id, // 🔥 Гарантовано зберігаємо ID
             title: p.title,
             location: p.client || "Локація не вказана",
             power: p.power,
             powerLabel:
               p.power >= 1000
                 ? `${(p.power / 1000).toFixed(1)} МВт`
-                : `${p.power} кВт`,
+                : p.power
+                  ? `${p.power} кВт`
+                  : null,
+            capacity: p.capacity,
+            capacityLabel: p.capacity ? `${p.capacity} кВт·год` : null,
             img: p.mainImage,
             year: p.date ? new Date(p.date).getFullYear() : "2024",
             date: p.date,
@@ -56,7 +60,6 @@ export default function Projects() {
             gallery: p.gallery || [],
           }))
           .sort((a, b) => {
-            // Найновіші проєкти — спочатку, старіші — далі; без дати — в кінець
             if (!a.date && !b.date) return 0;
             if (!a.date) return 1;
             if (!b.date) return -1;
@@ -184,21 +187,26 @@ export default function Projects() {
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   };
 
-  // 🔥 Залізобетонна функція для обробки кліків/тапів по картці 🔥
+  // 🔥 ВИПРАВЛЕНА ФУНКЦІЯ: ТЕПЕР ПЕРЕДАЄМО ID ТА УСІ ПОТРІБНІ ДАНІ В МОДАЛКУ 🔥
   const handleCardClick = (e, project) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (isSwiping.current) return; // Якщо це був свайп - ігноруємо клік
+    if (isSwiping.current) return;
 
     openModal("project", {
+      id: project.id, // ОСЬ ВАЖЛИВИЙ РЯДОК ЯКОГО НЕ БУЛО
       title: project.title,
       image: project.img,
       gallery: project.gallery,
+      power: project.power,
       powerLabel: project.powerLabel,
+      capacity: project.capacity,
+      capacityLabel: project.capacityLabel,
       location: project.location,
       date: formatDate(project.date),
       clientType: project.clientType,
+      serviceType: project.serviceType,
       description: project.description,
     });
   };
@@ -327,10 +335,9 @@ export default function Projects() {
                           e.touches[0].clientY - touchStartPos.current.y,
                         );
                         if (deltaX > 10 || deltaY > 10)
-                          isSwiping.current = true; // Визначаємо свайп
+                          isSwiping.current = true;
                       }}
                     >
-                      {/* 🔥 АБСОЛЮТНИЙ ПРОЗОРИЙ ШАР ДЛЯ КЛІКУ ПО КАРТЦІ 🔥 */}
                       <div
                         style={{
                           position: "absolute",
@@ -366,7 +373,6 @@ export default function Projects() {
                           </span>
                         </div>
 
-                        {/* Кнопка "Детальніше" має найвищий z-index */}
                         <button
                           className={styles.detailBtn}
                           style={{
@@ -389,7 +395,6 @@ export default function Projects() {
         </div>
       </div>
 
-      {/* Якщо ця лінія лежить поверх кнопок — ми вимикаємо їй перехоплення кліків */}
       <div
         className={styles.progressContainer}
         style={{ pointerEvents: "none" }}

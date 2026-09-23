@@ -157,6 +157,13 @@ const IconX = () => (
   </svg>
 );
 
+const SERVICE_MAP = {
+  solar: "Будівництво СЕС",
+  backup: "Резервне живлення",
+  storage: "Зберігання енергії",
+  electro: "Електромонтаж",
+};
+
 export default function ProjectModal({ project, onClose }) {
   const { openModal } = useModal();
 
@@ -219,7 +226,9 @@ export default function ProjectModal({ project, onClose }) {
   };
 
   const allModalImages = project
-    ? [project.image, ...(project.gallery || [])]
+    ? [project.image || project.mainImage, ...(project.gallery || [])].filter(
+        Boolean,
+      )
     : [];
 
   const handleGalleryScroll = (e, isFullscreenMode = false) => {
@@ -266,8 +275,48 @@ export default function ProjectModal({ project, onClose }) {
 
   if (!project) return null;
 
-  // Формуємо посилання на повну сторінку проєкту
-  const projectUrl = `/projects/${project.linkId || project.slug || project._id || project.id}`;
+  // Формування посилань
+  const baseRoute = project.type === "catalog" ? "/catalog" : "/projects";
+  const allItemsText =
+    project.type === "catalog" ? "Всі товари" : "Всі проєкти";
+
+  const getProjectUrl = () => {
+    let rawId =
+      project.slug?.current ||
+      project.slug ||
+      project.linkId ||
+      project.projectId ||
+      project.productId ||
+      project._id ||
+      project.id;
+    if (rawId && typeof rawId === "object")
+      rawId = rawId.$oid || rawId.toString();
+    const cleanId = String(rawId || "").trim();
+    if (cleanId && cleanId !== "undefined" && cleanId !== "[object Object]") {
+      return `${baseRoute}/${cleanId}`;
+    }
+    return baseRoute;
+  };
+
+  const projectUrl = getProjectUrl();
+
+  let services = [];
+  if (Array.isArray(project.serviceType)) services = project.serviceType;
+  else if (typeof project.serviceType === "string")
+    services = [project.serviceType];
+  const finalServiceLabels =
+    project.serviceLabels ||
+    services.map((s) => SERVICE_MAP[s] || s).join(", ");
+  const isComplex = project.serviceLabels
+    ? project.serviceLabels.includes(",")
+    : services.length > 1;
+
+  const finalDate =
+    project.date && !project.date.includes(" ")
+      ? new Date(project.date)
+          .toLocaleDateString("uk-UA", { month: "long", year: "numeric" })
+          .replace(/^./, (str) => str.toUpperCase())
+      : project.date || "Не вказано";
 
   return (
     <>
@@ -361,21 +410,21 @@ export default function ProjectModal({ project, onClose }) {
           <div className={styles.modalBodyContainer}>
             <h2 className={styles.modalTitle}>{project.title}</h2>
 
-            {project.serviceLabels && (
+            {finalServiceLabels && (
               <div className={styles.modalHeaderExtra}>
-                {project.serviceLabels.includes(",") && (
+                {isComplex && (
                   <span className={styles.complexBadge}>
                     Комплексне рішення
                   </span>
                 )}
                 <span className={styles.servicesList}>
-                  {project.serviceLabels}
+                  {finalServiceLabels}
                 </span>
               </div>
             )}
 
             <div className={styles.statsHorizontalRow}>
-              {project.powerLabel && (
+              {(project.powerLabel || project.power) && (
                 <>
                   <div className={styles.statHItem}>
                     <div className={styles.iconBox}>
@@ -386,7 +435,10 @@ export default function ProjectModal({ project, onClose }) {
                       <span
                         className={`${styles.statHValue} ${styles.highlight}`}
                       >
-                        {project.powerLabel}
+                        {project.powerLabel ||
+                          (project.power >= 1000
+                            ? `${(project.power / 1000).toFixed(1)} МВт`
+                            : `${project.power} кВт`)}
                       </span>
                     </div>
                   </div>
@@ -394,7 +446,7 @@ export default function ProjectModal({ project, onClose }) {
                 </>
               )}
 
-              {project.capacityLabel && (
+              {(project.capacityLabel || project.capacity) && (
                 <>
                   <div className={styles.statHItem}>
                     <div className={styles.iconBox}>
@@ -405,7 +457,7 @@ export default function ProjectModal({ project, onClose }) {
                       <span
                         className={`${styles.statHValue} ${styles.highlight}`}
                       >
-                        {project.capacityLabel}
+                        {project.capacityLabel || `${project.capacity} кВт·год`}
                       </span>
                     </div>
                   </div>
@@ -419,7 +471,9 @@ export default function ProjectModal({ project, onClose }) {
                 </div>
                 <div className={styles.statHText}>
                   <span className={styles.statHLabel}>Локація</span>
-                  <span className={styles.statHValue}>{project.location}</span>
+                  <span className={styles.statHValue}>
+                    {project.location || project.client || "Не вказано"}
+                  </span>
                 </div>
               </div>
               <div className={styles.statDivider}></div>
@@ -429,7 +483,7 @@ export default function ProjectModal({ project, onClose }) {
                 </div>
                 <div className={styles.statHText}>
                   <span className={styles.statHLabel}>Реалізовано</span>
-                  <span className={styles.statHValue}>{project.date}</span>
+                  <span className={styles.statHValue}>{finalDate}</span>
                 </div>
               </div>
               <div className={styles.statDivider}></div>
@@ -452,44 +506,52 @@ export default function ProjectModal({ project, onClose }) {
 
             <div className={styles.bottomSection}>
               <div className={styles.descriptionBlock}>
-                <h3 className={styles.sectionTitle}>Про проєкт</h3>
-                <p className={styles.descriptionText}>{project.description}</p>
+                <h3 className={styles.sectionTitle}>
+                  Про {project.type === "catalog" ? "товар" : "проєкт"}
+                </h3>
+                <p className={styles.descriptionText}>
+                  {project.description || project.shortDescription}
+                </p>
               </div>
 
-              <div className={styles.ctaPill}>
-                <div className={styles.ctaPillContent}>
-                  <div className={styles.ctaPillIcon}>
-                    <IconLightning />
-                  </div>
-                  <div className={styles.ctaPillText}>
-                    <span className={styles.ctaPillTitle}>
-                      Цікавить схоже рішення?
-                    </span>
-                    <span className={styles.ctaPillSubtitle}>
-                      Наші інженери підготують безкоштовний розрахунок.
-                    </span>
-                  </div>
-                </div>
-
-                {/* 🔥 ОНОВЛЕНИЙ БЛОК ДЛЯ КНОПОК 🔥 */}
-                <div className={styles.ctaPillActions}>
+              {/* 🔥 ГРУПА ПОСИЛАНЬ ТА КНОПОК 🔥 */}
+              <div className={styles.modalFooterActions}>
+                <div className={styles.linksGroup}>
                   <Link
                     href={projectUrl}
-                    className={styles.detailsLink}
-                    onClick={handleClose}
-                  >
-                    Детальніше про проєкт
-                  </Link>
-                  <button
-                    className={styles.ctaButton}
+                    className={styles.detailsTextLink}
                     onClick={() => {
-                      handleClose();
-                      openModal("contact");
+                      document.body.style.overflow = "";
+                      onClose();
                     }}
                   >
-                    Отримати консультацію
-                  </button>
+                    Детальніше про{" "}
+                    {project.type === "catalog" ? "товар" : "проєкт"}
+                  </Link>
+
+                  <span className={styles.linksSeparator}>/</span>
+
+                  <Link
+                    href={baseRoute}
+                    className={styles.detailsTextLink}
+                    onClick={() => {
+                      document.body.style.overflow = "";
+                      onClose();
+                    }}
+                  >
+                    {allItemsText}
+                  </Link>
                 </div>
+
+                <button
+                  className={styles.ctaButton}
+                  onClick={() => {
+                    handleClose();
+                    openModal("contact");
+                  }}
+                >
+                  Отримати консультацію
+                </button>
               </div>
             </div>
           </div>
