@@ -731,7 +731,7 @@ $border-color: #d2d2d7;
   @media (hover: hover) {
     &:hover:not(.disabled) {
       background: rgba(255, 255, 255, 0.25);
-      transform: translateY(-50%) scale(1.1);
+      transform: translateY(-50%);
     }
   }
 
