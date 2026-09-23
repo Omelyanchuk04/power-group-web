@@ -59,7 +59,6 @@ $border-color: rgba(0, 0, 0, 0.08);
   font-weight: 500;
 }
 
-/* СТАН "НІЧОГО НЕ ЗНАЙДЕНО" */
 .noResults {
   text-align: center;
   padding: 60px 20px;
@@ -82,7 +81,7 @@ $border-color: rgba(0, 0, 0, 0.08);
   }
 }
 
-/* СІТКА І КАРТКИ */
+/* СІТКА БЕЗ АНІМАЦІЙ ДЛЯ ШВИДКОДІЇ */
 .simpleGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -97,12 +96,12 @@ $border-color: rgba(0, 0, 0, 0.08);
   }
 }
 
-/* 🔥 ЧІТКІ НЕПРОЗОРІ КАРТКИ БЕЗ ПІДНЯТТЯ 🔥 */
+/* 🔥 МАКСИМАЛЬНО ОПТИМІЗОВАНА КАРТКА 🔥 */
 .projectCard {
   background-color: #ffffff;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
   border: 1px solid $border-color;
   cursor: pointer;
   display: flex;
@@ -110,14 +109,21 @@ $border-color: rgba(0, 0, 0, 0.08);
   height: 100%;
   position: relative;
   -webkit-tap-highlight-color: transparent;
+
+  /* АПАРАТНЕ ПРИСКОРЕННЯ (ЛІКУЄ ЗНИКАННЯ ПРИ СКРОЛІ) */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, box-shadow;
+  contain: content; /* Ізолює компонент від ререндера сторінки */
+
   transition:
-    box-shadow 0.3s ease,
+    box-shadow 0.2s ease,
     transform 0.2s ease,
-    border-color 0.3s ease;
+    border-color 0.2s ease;
 
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
       border-color: rgba(0, 86, 179, 0.15);
 
       .arrowBtn {
@@ -128,8 +134,8 @@ $border-color: rgba(0, 0, 0, 0.08);
   }
 
   &:active {
-    transform: scale(0.98);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    transform: translateZ(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   }
 
   @media (max-width: 768px) {
@@ -164,7 +170,6 @@ $border-color: rgba(0, 0, 0, 0.08);
   object-fit: cover;
 }
 
-/* ПЛАШКИ ТЕГІВ */
 .tags {
   position: absolute;
   top: 12px;
@@ -188,7 +193,6 @@ $border-color: rgba(0, 0, 0, 0.08);
   border-radius: 100px;
   font-size: 12px;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
   @media (max-width: 768px) {
     padding: 4px 8px;
@@ -201,7 +205,6 @@ $border-color: rgba(0, 0, 0, 0.08);
   background-color: #ffffff;
   color: $text-dark;
   border: 1px solid $border-color;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .cardInfo {

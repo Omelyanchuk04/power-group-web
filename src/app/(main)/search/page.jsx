@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 import styles from "./SearchPage.module.scss";
 
-// Внутрішній компонент, який використовує useSearchParams
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
@@ -72,11 +71,11 @@ function SearchContent() {
                     <img
                       src={item.image}
                       alt={item.title}
-                      // Замість дорогих інлайн-ефектів використовуємо прості класи
+                      loading="lazy"
+                      decoding="async"
                       className={`${styles.img} ${isCatalog ? styles.imgCatalog : styles.imgProject}`}
                     />
 
-                    {/* Плашки без блюру та без прозорості */}
                     <div className={styles.tags}>
                       <span className={styles.tagPower}>
                         {isCatalog ? "Товар" : "Проєкт"}
@@ -118,7 +117,6 @@ function SearchContent() {
   );
 }
 
-// ГОЛОВНИЙ КОМПОНЕНТ
 export default function SearchPage() {
   return (
     <section className={styles.gridSection}>
