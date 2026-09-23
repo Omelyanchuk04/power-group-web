@@ -4,7 +4,6 @@ import React, { useRef, useEffect, useState } from "react";
 import styles from "./CatalogGrid.module.scss";
 import { CATEGORIES } from "./catalogData";
 
-// --- МАПІНГ КАРТИНОК ЯК В АДМІНЦІ ---
 const CATEGORY_IMAGES = {
   "Сонячні панелі": "/images/admin/equipment/solar-panel-icon.png",
   "Гібридні інвертори": "/images/admin/equipment/Hybrid-inverter-img.png",
@@ -30,7 +29,6 @@ export default function CatalogCategoryTabs({
     opacity: 0,
   });
 
-  // 🔥 ЛОГІКА РУХУ ЛІНІЇ: ТЕПЕР ІДЕАЛЬНО ПРИВ'ЯЗАНА ДО ТЕКСТУ 🔥
   useEffect(() => {
     const updateIndicator = () => {
       if (!trackRef.current) return;
@@ -48,11 +46,11 @@ export default function CatalogCategoryTabs({
           const textHeight = textElement.offsetHeight;
           const textTop = textElement.offsetTop;
 
-          // Центруємо лінію відносно тексту по горизонталі
+          // Центруємо лінію під текстом
           const offsetLeft = tabLeft + (tabWidth - textWidth) / 2;
 
-          // Ставимо лінію рівно під текстом (6 пікселів відступу)
-          const offsetTop = tabTop + textTop + textHeight + 6;
+          // 🔥 ЛІНІЯ БЛИЖЧЕ ДО ТЕКСТУ (відступ 4 пікселі замість 8) 🔥
+          const offsetTop = tabTop + textTop + textHeight + 4;
 
           setIndicatorStyle({
             left: offsetLeft,
@@ -61,7 +59,6 @@ export default function CatalogCategoryTabs({
             opacity: 1,
           });
         } else {
-          // Фолбек
           setIndicatorStyle({
             left: activeTab.offsetLeft,
             top: activeTab.offsetTop + activeTab.offsetHeight - 10,
@@ -105,7 +102,6 @@ export default function CatalogCategoryTabs({
           </button>
         ))}
 
-        {/* 🔥 ЧОРНА ЛІНІЯ-ПІДКРЕСЛЕННЯ 🔥 */}
         <div className={styles.tabIndicator} style={indicatorStyle} />
       </div>
     </div>
