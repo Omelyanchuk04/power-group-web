@@ -9,7 +9,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
-const FRAME_COUNT = 149;
+const FRAME_COUNT = 179;
 const DESKTOP_MIN_WIDTH = "(min-width: 1025px)";
 const MOBILE_MAX_WIDTH = "(max-width: 1024px)";
 
