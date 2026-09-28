@@ -91,7 +91,7 @@ export default function ServicesHero() {
         >
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
             <NextImage
-              src="/images/installation-service-img.jpg"
+              src="/images/Services/services-hero-img.jpg"
               alt="Монтаж"
               fill
               sizes="(max-width: 768px) 150px, 300px"
