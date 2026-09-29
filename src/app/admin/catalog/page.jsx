@@ -183,7 +183,10 @@ export default function CatalogAdminPage() {
         ]);
 
         if (itemsRes.ok) {
-          const fetchedItems = await itemsRes.json();
+          const data = await itemsRes.json();
+          // ✅ Безпечно дістаємо масив items
+          const fetchedItems = data.items || data;
+
           catalogCache = fetchedItems;
           setItems(fetchedItems);
         }

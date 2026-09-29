@@ -216,8 +216,11 @@ export default function CatalogFormPage({ params }) {
         }
 
         if (!isNew && itemsRes && itemsRes.ok) {
-          const items = await itemsRes.json();
-          const item = items.find((i) => i._id === id);
+          const data = await itemsRes.json();
+          // 🔥 ВИПРАВЛЕНО: Дістаємо масив з об'єкта
+          const itemsArray = data.items || data;
+
+          const item = itemsArray.find((i) => i._id === id);
           if (item) {
             setFormData({
               name: item.name || "",
@@ -247,7 +250,7 @@ export default function CatalogFormPage({ params }) {
             }
             setImages(existingImages);
 
-            // 🔥 Завантаження документів (підтримка старого datasheetUrl та нового масиву documents) 🔥
+            // Завантаження документів
             const loadedDocs = [];
             if (item.datasheetUrl) {
               loadedDocs.push({

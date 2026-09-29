@@ -139,11 +139,10 @@ const FILTER_CONFIG = {
 };
 
 let cachedProducts = null;
-let cachedBrands = null;
+// 🔥 cachedBrands більше не потрібні, оскільки бренди формуються динамічно
 
 export default function CatalogGrid() {
   const [products, setProducts] = useState(cachedProducts || []);
-  const [brandsList, setBrandsList] = useState(cachedBrands || []);
   const [isLoading, setIsLoading] = useState(!cachedProducts);
 
   const [activeCategory, setActiveCategory] = useState(CATEGORIES_LIST[0]);
@@ -175,26 +174,25 @@ export default function CatalogGrid() {
   }, [activeCategory, activeFilters, currentPage, isRestored]);
 
   useEffect(() => {
-    if (cachedProducts && cachedBrands) return;
+    if (cachedProducts) return;
 
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [prodRes, settingsRes] = await Promise.all([
-          fetch("/api/catalog"),
-          fetch("/api/settings/catalog"),
-        ]);
+        const prodRes = await fetch("/api/catalog");
+
+        // Зверніть увагу: ми прибрали запит до /api/settings/catalog,
+        // бо бренди тепер беремо прямо з товарів
 
         if (prodRes.ok) {
           const data = await prodRes.json();
-          cachedProducts = data;
-          setProducts(data);
-        }
 
-        if (settingsRes.ok) {
-          const settings = await settingsRes.json();
-          cachedBrands = settings.brands || [];
-          setBrandsList(settings.brands || []);
+          // 🔥 Оскільки нове API повертає { items, brands }, ми беремо лише items
+          // Фолбек data.items || data потрібен на випадок, якщо API ще не оновилося
+          const fetchedItems = data.items || data;
+
+          cachedProducts = fetchedItems;
+          setProducts(fetchedItems);
         }
       } catch (error) {
         console.error("Помилка завантаження даних:", error);
@@ -205,6 +203,21 @@ export default function CatalogGrid() {
 
     fetchData();
   }, []);
+
+  // 🔥 НОВЕ: Динамічне отримання брендів ТІЛЬКИ для активної категорії 🔥
+  const dynamicBrands = useMemo(() => {
+    const brandsSet = new Set();
+
+    products.forEach((p) => {
+      // Якщо товар належить до обраної категорії і має заповнений бренд
+      if (p.category === activeCategory && p.filters?.brand) {
+        brandsSet.add(p.filters.brand);
+      }
+    });
+
+    // Перетворюємо Set на масив і сортуємо за алфавітом
+    return Array.from(brandsSet).sort();
+  }, [products, activeCategory]);
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => p.category === activeCategory);
@@ -273,10 +286,11 @@ export default function CatalogGrid() {
     };
   }, [isMobileFiltersOpen]);
 
+  // 🔥 Замінюємо опції брендів на наш динамічний список 🔥
   const currentSidebarConfig = (FILTER_CONFIG[activeCategory] || []).map(
     (group) => {
-      if (group.key === "brand" && brandsList.length > 0) {
-        return { ...group, options: brandsList };
+      if (group.key === "brand" && dynamicBrands.length > 0) {
+        return { ...group, options: dynamicBrands };
       }
       return group;
     },
@@ -284,8 +298,6 @@ export default function CatalogGrid() {
 
   if (!isRestored) return null;
 
-  // 🔥 Створюємо унікальний ключ для сітки.
-  // При зміні фільтра чи сторінки React знищить стару сітку і створить нову, автоматично запустивши CSS анімацію
   const gridKey = `${activeCategory}-${currentPage}-${JSON.stringify(activeFilters)}`;
 
   return (
@@ -356,7 +368,6 @@ export default function CatalogGrid() {
               </div>
             ) : (
               <>
-                {/* 🔥 Додали ключ та клас анімації 🔥 */}
                 <div key={gridKey} className={styles.gridAnimated}>
                   {currentProducts.map((product) => (
                     <CatalogProductCard key={product._id} product={product} />

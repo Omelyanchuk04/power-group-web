@@ -3,11 +3,32 @@ import { connectToDatabase } from "@/lib/mongodb";
 import CatalogItem from "@/models/CatalogItem";
 import slugify from "slugify";
 
-export async function GET() {
+export async function GET(request) {
   try {
     await connectToDatabase();
-    const items = await CatalogItem.find({}).sort({ createdAt: -1 });
-    return NextResponse.json(items);
+
+    // 1. Отримуємо параметри запиту (наприклад, ?category=Акумулятори)
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category");
+
+    // 2. Будуємо об'єкт запиту для БД
+    const query = {};
+    if (category) {
+      query.category = category;
+    }
+
+    // 3. Отримуємо товари (якщо є категорія — лише її, якщо ні — всі)
+    const items = await CatalogItem.find(query).sort({ createdAt: -1 });
+
+    // 🔥 4. ДИНАМІЧНА ГЕНЕРАЦІЯ БРЕНДІВ 🔥
+    // Шукаємо всі унікальні значення поля 'filters.brand' для нашого запиту
+    const rawBrands = await CatalogItem.distinct("filters.brand", query);
+
+    // Відфільтровуємо можливі пусті значення ("" або null), які могли потрапити в БД
+    const brands = rawBrands.filter((brand) => brand && brand.trim() !== "");
+
+    // Повертаємо об'єкт з товарами та унікальними брендами для цієї вибірки
+    return NextResponse.json({ items, brands });
   } catch (error) {
     console.error("GET Error:", error);
     return NextResponse.json(
