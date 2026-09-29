@@ -8,7 +8,6 @@ const images = [
   "/images/about-page-hero/about-hero-1.jpg",
   "/images/about-page-hero/about-hero-2.jpg",
   "/images/about-page-hero/about-hero-3.jpg",
-  "/images/about-page-hero/about-hero-4.jpg",
   "/images/about-page-hero/about-hero-5.jpg",
 ];
 

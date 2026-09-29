@@ -16,7 +16,6 @@ export default function CompanyStats() {
 
   useGSAP(
     () => {
-      // 1. Полегшена анімація заголовку
       gsap.fromTo(
         `.${styles.statsHeader}`,
         { opacity: 0, y: 20 },
@@ -25,7 +24,7 @@ export default function CompanyStats() {
           y: 0,
           duration: 0.6,
           ease: "power2.out",
-          force3D: true, // Апаратне прискорення GPU
+          force3D: true,
           scrollTrigger: {
             trigger: `.${styles.statsHeader}`,
             start: "top 90%",
@@ -33,17 +32,16 @@ export default function CompanyStats() {
         },
       );
 
-      // 2. Ультралегка анімація сітки (БЕЗ SCALE)
       gsap.fromTo(
         ".animStatWrapper",
-        { opacity: 0, y: 30 }, // Прибрали scale, зменшили дистанцію
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          stagger: 0.1, // Швидший каскад (менше часу навантажує процесор)
-          duration: 0.5, // Швидша поява
+          stagger: 0.1,
+          duration: 0.5,
           ease: "power2.out",
-          force3D: true, // Примусово рендеримо на відеокарті
+          force3D: true,
           scrollTrigger: {
             trigger: `.${styles.statsGrid}`,
             start: "top 85%",
@@ -70,8 +68,8 @@ export default function CompanyStats() {
                   src="/images/experiense-card.jpg"
                   alt="Досвід"
                   fill
-                  priority // Пріоритетне завантаження для LCP
-                  sizes="(max-width: 768px) 100vw, 25vw"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>
@@ -92,8 +90,8 @@ export default function CompanyStats() {
                   src="/images/projects-card.jpg"
                   alt="Проєкти"
                   fill
-                  priority // Другій картинці теж даємо пріоритет, щоб не було ривків
-                  sizes="(max-width: 768px) 100vw, 25vw"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>
@@ -108,13 +106,13 @@ export default function CompanyStats() {
               </div>
             </div>
 
-            <div className="animStatWrapper">
+            {/* <div className="animStatWrapper">
               <div className={styles.statCard}>
                 <NextImage
                   src="/images/employees-card.jpg"
                   alt="Спеціалісти"
                   fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>
@@ -127,7 +125,7 @@ export default function CompanyStats() {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="animStatWrapper">
               <div className={styles.statCard}>
@@ -135,7 +133,7 @@ export default function CompanyStats() {
                   src="/images/power-card.jpg"
                   alt="Потужність"
                   fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.statBgImage}
                 />
                 <div className={styles.statOverlay}></div>
