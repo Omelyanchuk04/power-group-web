@@ -18,6 +18,8 @@ export const useCanvasSequence = ({
   canvasRef,
   overlayRef,
   contentRef,
+  onProgress,
+  onComplete,
 }) => {
   const imagesRef = useRef([]);
   const renderMetrics = useRef({ width: 0, height: 0, x: 0, y: 0 });
@@ -29,13 +31,26 @@ export const useCanvasSequence = ({
       // ДЕСКТОП (Canvas + секвенція з пінінгом)
       mm.add(DESKTOP_MIN_WIDTH, () => {
         const canvas = canvasRef?.current;
-        if (!canvas) return; // Запобіжник
+        if (!canvas) {
+          if (onComplete) onComplete();
+          return;
+        }
 
         const context = canvas.getContext("2d", {
           alpha: false,
           desynchronized: true,
         });
         const animationState = { frame: 0 };
+        let loadedFrames = 0;
+
+        const updateProgress = () => {
+          loadedFrames++;
+          const progress = Math.round((loadedFrames / FRAME_COUNT) * 100);
+          if (onProgress) onProgress(progress);
+          if (loadedFrames === FRAME_COUNT && onComplete) {
+            onComplete();
+          }
+        };
 
         const calculateMetrics = () => {
           const img = imagesRef.current[0];
@@ -104,10 +119,12 @@ export const useCanvasSequence = ({
             img.src = `/frames/frame-001.jpg`;
             img.onload = () => {
               imagesRef.current[0] = img;
+              updateProgress();
               resolve(img);
             };
             img.onerror = () => {
               imagesRef.current[0] = img;
+              updateProgress();
               resolve(img);
             };
           });
@@ -126,10 +143,12 @@ export const useCanvasSequence = ({
                   img.src = `/frames/frame-${(index + 1).toString().padStart(3, "0")}.jpg`;
                   img.onload = () => {
                     imagesRef.current[index] = img;
+                    updateProgress();
                     resolve();
                   };
                   img.onerror = () => {
                     imagesRef.current[index] = img;
+                    updateProgress();
                     resolve();
                   };
                 }),
@@ -194,6 +213,7 @@ export const useCanvasSequence = ({
 
       // МОБАЙЛ
       mm.add(MOBILE_MAX_WIDTH, () => {
+        if (onComplete) onComplete(); // Пропускаємо лоадер на мобільних
         const targets = [
           heroRef?.current,
           canvasRef?.current,
