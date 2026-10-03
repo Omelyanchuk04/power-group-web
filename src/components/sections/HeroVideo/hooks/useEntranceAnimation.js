@@ -22,6 +22,15 @@ export const useEntranceAnimation = ({
       const text = logoRef.current.querySelector(`.${styles.animText}`);
       const line = logoRef.current.querySelector(`.${styles.animLine}`);
       const slogan = logoRef.current.querySelector(`.${styles.animSlogan}`);
+
+      // 🔥 ДОДАНО: Шукаємо фон логотипу
+      const logoBg = logoRef.current.querySelector(`.${styles.logoBackground}`);
+
+      // Шукаємо блок затемнення для головного тексту
+      const contentBg = contentRef.current.querySelector(
+        `.${styles.contentBackground}`,
+      );
+
       const contentTitle = contentRef.current.querySelector(
         `.${styles.animTitle}`,
       );
@@ -43,6 +52,20 @@ export const useEntranceAnimation = ({
       const initialDelay = isMobile ? 0.8 : 0.6;
 
       const entranceTl = gsap.timeline({ delay: initialDelay });
+
+      // 🔥 ДОДАНО: Поява фону логотипу на самому початку
+      if (logoBg) {
+        entranceTl.fromTo(
+          logoBg,
+          { autoAlpha: 0 },
+          {
+            autoAlpha: 1,
+            duration: 1,
+            ease: "power2.out",
+          },
+          0, // Запускаємо на нульовій секунді разом з іконкою
+        );
+      }
 
       if (icon) {
         entranceTl.fromTo(
@@ -101,7 +124,9 @@ export const useEntranceAnimation = ({
         );
       }
 
-      const logoElements = [icon, text, line, slogan].filter(Boolean);
+      // Зникнення логотипу
+      // 🔥 ДОДАНО: logoBg в масив, щоб він зник разом з логотипом
+      const logoElements = [logoBg, icon, text, line, slogan].filter(Boolean);
       if (logoElements.length > 0) {
         entranceTl.to(
           logoElements,
@@ -114,6 +139,20 @@ export const useEntranceAnimation = ({
             force3D: true,
           },
           "+=0.3",
+        );
+      }
+
+      // Анімуємо появу темної плями (затемнення фону для тексту)
+      if (contentBg) {
+        entranceTl.fromTo(
+          contentBg,
+          { autoAlpha: 0 },
+          {
+            autoAlpha: 1,
+            duration: 1,
+            ease: "power2.out",
+          },
+          "-=0.1", // Починаємо трохи раніше появи заголовку
         );
       }
 

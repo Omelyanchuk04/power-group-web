@@ -7,6 +7,7 @@ const HeroLogo = forwardRef((props, ref) => {
   return (
     // Змінив section на div, бо семантично section краще використовувати для великих блоків з власним заголовком
     <div className={styles.logoStep} ref={ref}>
+      <div className={styles.logoBackground}></div>
       <div className={styles.logoContainer}>
         {/* ЛІВА ЧАСТИНА: ІКОНКА */}
         <div className={styles.animIcon}>

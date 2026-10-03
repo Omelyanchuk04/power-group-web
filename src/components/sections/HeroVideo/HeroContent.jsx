@@ -9,6 +9,9 @@ const HeroContent = forwardRef((props, ref) => {
   return (
     <div className={styles.contentWrapper} ref={ref}>
       <div className={styles.mainContent}>
+        {/* Окремий блок для м'якого затемнення */}
+        <div className={styles.contentBackground}></div>
+
         <h1 className={styles.animTitle}>
           Електромонтажні роботи <br />
           <span className={styles.textHighlight}>будь-якої складності</span>
