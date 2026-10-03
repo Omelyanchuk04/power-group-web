@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { createPortal } from "react-dom"; // ВАЖЛИВО: Імпортуємо Portal
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -22,12 +21,14 @@ if (typeof window !== "undefined") {
 }
 
 export default function HeroVideo() {
-  const [isMounted, setIsMounted] = useState(false); // Стан для Portal
   const [rawProgress, setRawProgress] = useState(0);
   const [fakeProgress, setFakeProgress] = useState(0);
 
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Додаємо стан для пропуску лоадера
+  const [skipLoader, setSkipLoader] = useState(false);
 
   const heroRef = useRef(null);
   const canvasRef = useRef(null);
@@ -35,37 +36,52 @@ export default function HeroVideo() {
   const logoRef = useRef(null);
   const contentRef = useRef(null);
 
-  // Ініціалізація для безпечного рендеру в body
+  // 1. ПЕРЕВІРКА СЕСІЇ ПРИ ЗАВАНТАЖЕННІ
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    const hasVisited = sessionStorage.getItem("heroVisited");
 
-  useEffect(() => {
-    const tween = gsap.to(
-      { val: 0 },
-      {
-        val: 100,
-        duration: 2.5,
-        ease: "power2.inOut",
-        onUpdate: function () {
-          setFakeProgress(this.targets()[0].val);
+    if (hasVisited) {
+      // Якщо вже були на сайті — миттєво пропускаємо лоадер
+      setSkipLoader(true);
+      setIsLoaded(true);
+      setIsCanvasReady(true);
+      setFakeProgress(100);
+      setRawProgress(100);
+    } else {
+      // Якщо це перший захід — запускаємо таймер
+      const tween = gsap.to(
+        { val: 0 },
+        {
+          val: 100,
+          duration: 2.5,
+          ease: "power2.inOut",
+          onUpdate: function () {
+            setFakeProgress(this.targets()[0].val);
+          },
         },
-      },
-    );
-    return () => tween.kill();
+      );
+      return () => tween.kill();
+    }
   }, []);
 
   const displayProgress = Math.round(Math.min(rawProgress, fakeProgress));
 
+  // 2. ЛОГІКА ЗАВЕРШЕННЯ ЛОАДЕРА (для першого заходу)
   useEffect(() => {
-    if (displayProgress >= 100 && isCanvasReady) {
-      const hideTimeout = setTimeout(() => setIsLoaded(true), 300);
+    if (!skipLoader && displayProgress >= 100 && isCanvasReady) {
+      const hideTimeout = setTimeout(() => {
+        setIsLoaded(true);
+        // Записуємо в sessionStorage, що лоадер пройдено
+        sessionStorage.setItem("heroVisited", "true");
+      }, 300);
       return () => clearTimeout(hideTimeout);
     }
-  }, [displayProgress, isCanvasReady]);
+  }, [displayProgress, isCanvasReady, skipLoader]);
 
-  // ЖОРСТКЕ БЛОКУВАННЯ СКРОЛУ
+  // 3. БЛОКУВАННЯ СКРОЛУ (Ігнорується, якщо лоадер пропущено)
   useEffect(() => {
+    if (skipLoader) return; // Не блокуємо скрол взагалі, якщо це повторний захід
+
     const preventScroll = (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -80,26 +96,36 @@ export default function HeroVideo() {
     };
 
     if (!isLoaded) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
       document.body.style.touchAction = "none";
+
       window.addEventListener("wheel", preventScroll, { passive: false });
       window.addEventListener("touchmove", preventScroll, { passive: false });
       window.addEventListener("keydown", preventKeyScroll, { passive: false });
+
       window.scrollTo(0, 0);
     } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       document.body.style.touchAction = "";
+
       window.removeEventListener("wheel", preventScroll);
       window.removeEventListener("touchmove", preventScroll);
       window.removeEventListener("keydown", preventKeyScroll);
+
       setTimeout(() => ScrollTrigger.refresh(), 100);
     }
 
     return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
       document.body.style.touchAction = "";
       window.removeEventListener("wheel", preventScroll);
       window.removeEventListener("touchmove", preventScroll);
       window.removeEventListener("keydown", preventKeyScroll);
     };
-  }, [isLoaded]);
+  }, [isLoaded, skipLoader]);
 
   useEntranceAnimation({ heroRef, logoRef, contentRef, isLoaded });
 
@@ -108,26 +134,29 @@ export default function HeroVideo() {
     canvasRef,
     overlayRef,
     contentRef,
-    onProgress: setRawProgress,
+    onProgress: (p) => {
+      if (!skipLoader) setRawProgress(p);
+    },
     onComplete: () => {
-      setRawProgress(100);
-      setIsCanvasReady(true);
+      if (!skipLoader) {
+        setRawProgress(100);
+        setIsCanvasReady(true);
+      }
     },
   });
 
-  // Сам лоадер
-  const preloaderComponent = (
-    <div className={`${styles.preloader} ${isLoaded ? styles.loaded : ""}`}>
-      <div className={styles.loaderWrapper}>
-        <LoadingIcon progress={displayProgress} />
-      </div>
-    </div>
-  );
-
   return (
     <>
-      {/* Рендеримо лоадер у <body> через Portal, щоб Chrome його не ламав */}
-      {isMounted && createPortal(preloaderComponent, document.body)}
+      <div
+        className={`${styles.preloader} ${isLoaded ? styles.loaded : ""}`}
+        // Якщо лоадер пропущено, миттєво приховуємо його через inline-стиль,
+        // щоб уникнути спалаху анімації зникнення
+        style={skipLoader ? { display: "none" } : {}}
+      >
+        <div className={styles.loaderWrapper}>
+          <LoadingIcon progress={displayProgress} />
+        </div>
+      </div>
 
       <div className={styles.heroSection} ref={heroRef}>
         <HeroCanvas ref={canvasRef} overlayRef={overlayRef} />
