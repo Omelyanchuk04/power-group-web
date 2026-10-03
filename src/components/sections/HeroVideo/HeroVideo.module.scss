@@ -465,8 +465,14 @@ $primary: #0056b3;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+
+  /* Фолбек для старих браузерів */
   height: 100vh;
+  /* Сучасний фікс для iOS/Safari, який враховує панель навігації */
+  height: 100dvh;
 
   /* Просто затемнений фон, працює безвідмовно скрізь */
   background: rgba(5, 5, 5, 0.85);
