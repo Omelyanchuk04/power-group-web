@@ -565,3 +565,116 @@ $white: #ffffff;
     transform: translateY(0);
   }
 }
+
+/* ==========================================
+   СТИЛІ ДЛЯ ВАЛІДАЦІЇ ТА СТАНІВ ФОРМИ
+   ========================================== */
+
+.hasError {
+  input {
+    border-bottom-color: #ef4444 !important;
+
+    &:focus {
+      border-bottom-color: #ef4444 !important;
+      box-shadow: 0 1px 0 #ef4444 !important;
+    }
+  }
+
+  label {
+    color: #ef4444 !important;
+    span {
+      color: #ef4444 !important;
+    }
+  }
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #e5e7eb;
+  color: #9ca3af;
+  box-shadow: none;
+}
+
+/* --- Стан Успіху / Помилки всередині Bento-картки --- */
+.formResult {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  min-height: 400px;
+  animation: fadeIn 0.4s ease-out forwards;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: 26px;
+    font-weight: 800;
+    color: $text-dark;
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: $text-gray;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.iconSuccess,
+.iconError {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+
+  svg {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.iconSuccess {
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+}
+
+.iconError {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}

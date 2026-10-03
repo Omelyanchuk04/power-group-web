@@ -148,7 +148,8 @@ export default function Process() {
     window.addEventListener("resize", handleResize);
 
     let ctx = gsap.context(() => {
-      const triggerPoint = "35%";
+      // 🔥 ЗМІНЕНО: тепер анімація стартує, коли елемент досягає 75% висоти екрану (нижня частина), а не 35% (верхня)
+      const triggerPoint = "75%";
 
       // 1. Анімація синьої смуги
       gsap.to(lineRef.current, {
@@ -171,16 +172,14 @@ export default function Process() {
         const dot = row.querySelector(`.${styles.smallDot}`);
 
         if (dotContainer && card) {
-          // Створюємо спільний таймлайн для обох елементів
           const tl = gsap.timeline({
             scrollTrigger: {
-              trigger: dotContainer, // Все залежить від позиції точки (35%)
+              trigger: dotContainer,
               start: `center ${triggerPoint}`,
               toggleActions: "play none none reverse",
             },
           });
 
-          // Точка спалахує
           if (dot) {
             tl.fromTo(
               dot,
@@ -189,12 +188,11 @@ export default function Process() {
             );
           }
 
-          // Картка з'являється плавно слідом за точкою
           tl.fromTo(
             card,
             { opacity: 0, y: 40, scale: 0.95 },
             { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" },
-            "-=0.15", // Невелике перекриття: картка стартує трохи раніше завершення анімації точки
+            "-=0.15",
           );
         }
       });

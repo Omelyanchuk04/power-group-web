@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -11,26 +11,34 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
+// Початковий стан форми з жорстким префіксом телефону
+const initialFormState = {
+  name: "",
+  phone: "+38 (0",
+  email: "",
+  company: "",
+  message: "",
+  _gotcha: "",
+};
+
 export default function ContactsPage() {
   const containerRef = useRef(null);
   const bannerWrapperRef = useRef(null);
   const bannerRef = useRef(null);
 
+  // Стейт для форми
+  const [formData, setFormData] = useState(initialFormState);
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState("idle");
+
   useGSAP(
     () => {
-      // 1. Анімація для тексту на банері
       gsap.fromTo(
         `.${styles.heroContent}`,
         { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-        },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
       );
 
-      // 2. Розширення обгортки банера
       gsap.to(bannerWrapperRef.current, {
         maxWidth: "100%",
         paddingLeft: "0px",
@@ -45,7 +53,6 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
-      // 3. Прибирання заокруглень банера
       gsap.to(bannerRef.current, {
         borderRadius: "0px",
         borderWidth: "0px",
@@ -59,7 +66,6 @@ export default function ContactsPage() {
         immediateRender: false,
       });
 
-      // 4. Ідеально плавна анімація карток (ТОЧНО як у AboutExperience)
       gsap.fromTo(
         `.${styles.animBento}`,
         { opacity: 0, scale: 0.95, y: 40 },
@@ -79,6 +85,90 @@ export default function ContactsPage() {
     },
     { scope: containerRef },
   );
+
+  // === ЛОГІКА ФОРМИ ===
+
+  const formatPhoneInput = (value) => {
+    let digits = value.replace(/\D/g, "");
+
+    if (digits.length < 3) {
+      digits = "380";
+    } else if (!digits.startsWith("380")) {
+      digits = "380" + digits.replace(/^38?0?/, "");
+    }
+
+    digits = digits.substring(0, 12);
+
+    if (digits.length <= 3) return "+38 (0";
+    if (digits.length <= 5) return `+38 (0${digits.substring(3, 5)}`;
+    if (digits.length <= 8)
+      return `+38 (0${digits.substring(3, 5)}) ${digits.substring(5, 8)}`;
+    if (digits.length <= 10)
+      return `+38 (0${digits.substring(3, 5)}) ${digits.substring(5, 8)}-${digits.substring(8, 10)}`;
+
+    return `+38 (0${digits.substring(3, 5)}) ${digits.substring(5, 8)}-${digits.substring(8, 10)}-${digits.substring(10, 12)}`;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "phone") {
+      setFormData((prev) => ({ ...prev, [name]: formatPhoneInput(value) }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: null }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) newErrors.name = "Введіть ваше ім'я";
+
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+    if (phoneDigits.length < 12)
+      newErrors.phone = "Введіть повний номер телефону";
+
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email))
+        newErrors.email = "Введіть коректний email";
+    }
+
+    if (!formData.message.trim())
+      newErrors.message = "Будь ласка, опишіть ваш запит";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setStatus("loading");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setFormData(initialFormState);
+        setTimeout(() => setStatus("idle"), 4000);
+      } else {
+        setStatus("error");
+        setTimeout(() => setStatus("idle"), 4000);
+      }
+    } catch (error) {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
+    }
+  };
 
   return (
     <main className={styles.contactsPage} ref={containerRef}>
@@ -124,9 +214,7 @@ export default function ContactsPage() {
 
           <div className={styles.container}>
             <div className={styles.bentoGrid}>
-              {/* РЯД 1: ТРИ КАРТКИ */}
-
-              {/* 1. Телефони та Пошта */}
+              {/* --- 1. Телефони --- */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -154,6 +242,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
+              {/* --- 2. Соцмережі --- */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -265,6 +354,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
+              {/* --- 3. Графік --- */}
               <div
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
@@ -293,8 +383,7 @@ export default function ContactsPage() {
                 </div>
               </div>
 
-              {/* РЯД 2: КАРТА ТА ФОРМА */}
-
+              {/* --- 4. Карта --- */}
               <div
                 className={`${styles.bentoItem} ${styles.mapSpan} ${styles.animBento}`}
               >
@@ -318,51 +407,192 @@ export default function ContactsPage() {
                 </div>
               </div>
 
+              {/* --- 5. ФОРМА (З валідацією та станами) --- */}
               <div
                 className={`${styles.bentoItem} ${styles.formSpan} ${styles.animBento}`}
               >
                 <div className={styles.innerGlow}></div>
-                <div className={styles.formHeader}>
-                  <h2>Залиште заявку</h2>
-                  <p>І ми допоможемо підібрати найкраще рішення для вас</p>
-                </div>
 
-                <form className={styles.contactForm}>
-                  <div className={styles.inputGroup}>
-                    <label>
-                      Ваше ім'я <span>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Введіть ваше ім'я"
-                    />
+                {status === "success" || status === "error" ? (
+                  <div className={styles.formResult}>
+                    {status === "success" ? (
+                      <>
+                        <div className={styles.iconSuccess}>
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                          </svg>
+                        </div>
+                        <h3>Дякуємо!</h3>
+                        <p>
+                          Вашу заявку успішно відправлено. Ми зв'яжемося з вами
+                          найближчим часом.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <div className={styles.iconError}>
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="15" y1="9" x2="9" y2="15"></line>
+                            <line x1="9" y1="9" x2="15" y2="15"></line>
+                          </svg>
+                        </div>
+                        <h3>Ой, помилка</h3>
+                        <p>
+                          Щось пішло не так при відправці. Будь ласка, спробуйте
+                          пізніше або зателефонуйте нам.
+                        </p>
+                      </>
+                    )}
                   </div>
-                  <div className={styles.inputGroup}>
-                    <label>
-                      Номер телефону <span>*</span>
-                    </label>
-                    <input type="tel" required placeholder="380________" />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Ваш Email</label>
-                    <input type="email" placeholder="example@mail.com" />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Компанія</label>
-                    <input
-                      type="text"
-                      placeholder="Назва вашого підприємства"
-                    />
-                  </div>
-                  <div className={styles.inputGroup}>
-                    <label>Що вас цікавить?</label>
-                    <input type="text" placeholder="Опишіть ваш запит" />
-                  </div>
-                  <button type="submit" className={styles.submitBtn}>
-                    Отримати консультацію
-                  </button>
-                </form>
+                ) : (
+                  <>
+                    <div className={styles.formHeader}>
+                      <h2>Залиште заявку</h2>
+                      <p>І ми допоможемо підібрати найкраще рішення для вас</p>
+                    </div>
+
+                    <form
+                      className={styles.contactForm}
+                      onSubmit={handleSubmit}
+                      noValidate
+                    >
+                      <input
+                        type="text"
+                        name="_gotcha"
+                        value={formData._gotcha}
+                        onChange={handleChange}
+                        tabIndex="-1"
+                        autoComplete="new-password"
+                        style={{
+                          position: "absolute",
+                          opacity: 0,
+                          top: "-9999px",
+                          left: "-9999px",
+                        }}
+                      />
+
+                      <div
+                        className={`${styles.inputGroup} ${errors.name ? styles.hasError : ""}`}
+                      >
+                        <label htmlFor="name">
+                          Ваше ім'я <span>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          placeholder="Введіть ваше ім'я"
+                        />
+                        {errors.name && (
+                          <span className={styles.errorText}>
+                            {errors.name}
+                          </span>
+                        )}
+                      </div>
+
+                      <div
+                        className={`${styles.inputGroup} ${errors.phone ? styles.hasError : ""}`}
+                      >
+                        <label htmlFor="phone">
+                          Номер телефону <span>*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          placeholder="+38 (0__) ___-__-__"
+                        />
+                        {errors.phone && (
+                          <span className={styles.errorText}>
+                            {errors.phone}
+                          </span>
+                        )}
+                      </div>
+
+                      <div
+                        className={`${styles.inputGroup} ${errors.email ? styles.hasError : ""}`}
+                      >
+                        <label htmlFor="email">Ваш Email</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          placeholder="example@mail.com"
+                        />
+                        {errors.email && (
+                          <span className={styles.errorText}>
+                            {errors.email}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className={styles.inputGroup}>
+                        <label htmlFor="company">Компанія</label>
+                        <input
+                          type="text"
+                          id="company"
+                          name="company"
+                          value={formData.company}
+                          onChange={handleChange}
+                          placeholder="Назва вашого підприємства"
+                        />
+                      </div>
+
+                      <div
+                        className={`${styles.inputGroup} ${errors.message ? styles.hasError : ""}`}
+                      >
+                        <label htmlFor="message">
+                          Що вас цікавить? <span>*</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="message"
+                          name="message"
+                          value={formData.message}
+                          onChange={handleChange}
+                          placeholder="Опишіть ваш запит"
+                        />
+                        {errors.message && (
+                          <span className={styles.errorText}>
+                            {errors.message}
+                          </span>
+                        )}
+                      </div>
+
+                      <button
+                        type="submit"
+                        className={styles.submitBtn}
+                        disabled={status === "loading"}
+                      >
+                        {status === "loading"
+                          ? "Відправка..."
+                          : "Отримати консультацію"}
+                      </button>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
           </div>
