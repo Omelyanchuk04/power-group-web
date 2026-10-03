@@ -1,9 +1,12 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom"; // ВАЖЛИВО: Імпортуємо Portal
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+
+import { LoadingIcon } from "@/components/ui/loader";
 
 import HeroLogo from "./HeroLogo";
 import HeroContent from "./HeroContent";
@@ -19,107 +22,112 @@ if (typeof window !== "undefined") {
 }
 
 export default function HeroVideo() {
-  const [progress, setProgress] = useState(0);
+  const [isMounted, setIsMounted] = useState(false); // Стан для Portal
+  const [rawProgress, setRawProgress] = useState(0);
+  const [fakeProgress, setFakeProgress] = useState(0);
+
+  const [isCanvasReady, setIsCanvasReady] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // 1. Створюємо всі необхідні refs
   const heroRef = useRef(null);
   const canvasRef = useRef(null);
   const overlayRef = useRef(null);
   const logoRef = useRef(null);
   const contentRef = useRef(null);
 
-  // Блокування скролу під час завантаження
+  // Ініціалізація для безпечного рендеру в body
   useEffect(() => {
-    if (!isLoaded) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const tween = gsap.to(
+      { val: 0 },
+      {
+        val: 100,
+        duration: 2.5,
+        ease: "power2.inOut",
+        onUpdate: function () {
+          setFakeProgress(this.targets()[0].val);
+        },
+      },
+    );
+    return () => tween.kill();
+  }, []);
+
+  const displayProgress = Math.round(Math.min(rawProgress, fakeProgress));
+
+  useEffect(() => {
+    if (displayProgress >= 100 && isCanvasReady) {
+      const hideTimeout = setTimeout(() => setIsLoaded(true), 300);
+      return () => clearTimeout(hideTimeout);
     }
+  }, [displayProgress, isCanvasReady]);
+
+  // ЖОРСТКЕ БЛОКУВАННЯ СКРОЛУ
+  useEffect(() => {
+    const preventScroll = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    };
+
+    const preventKeyScroll = (e) => {
+      const keys = ["Space", "ArrowUp", "ArrowDown", "PageUp", "PageDown"];
+      if (keys.includes(e.code)) {
+        e.preventDefault();
+      }
+    };
+
+    if (!isLoaded) {
+      document.body.style.touchAction = "none";
+      window.addEventListener("wheel", preventScroll, { passive: false });
+      window.addEventListener("touchmove", preventScroll, { passive: false });
+      window.addEventListener("keydown", preventKeyScroll, { passive: false });
+      window.scrollTo(0, 0);
+    } else {
+      document.body.style.touchAction = "";
+      window.removeEventListener("wheel", preventScroll);
+      window.removeEventListener("touchmove", preventScroll);
+      window.removeEventListener("keydown", preventKeyScroll);
+      setTimeout(() => ScrollTrigger.refresh(), 100);
+    }
+
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+      window.removeEventListener("wheel", preventScroll);
+      window.removeEventListener("touchmove", preventScroll);
+      window.removeEventListener("keydown", preventKeyScroll);
     };
   }, [isLoaded]);
 
-  // 2. Запускаємо логіку через кастомні хуки
-  useEntranceAnimation({ heroRef, logoRef, contentRef });
+  useEntranceAnimation({ heroRef, logoRef, contentRef, isLoaded });
+
   useCanvasSequence({
     heroRef,
     canvasRef,
     overlayRef,
     contentRef,
-    onProgress: setProgress,
-    onComplete: () => setIsLoaded(true),
+    onProgress: setRawProgress,
+    onComplete: () => {
+      setRawProgress(100);
+      setIsCanvasReady(true);
+    },
   });
 
-  // 3. Рендеримо чисту структуру
-  // 3. Рендеримо чисту структуру
-  // 3. Рендеримо чисту структуру
+  // Сам лоадер
+  const preloaderComponent = (
+    <div className={`${styles.preloader} ${isLoaded ? styles.loaded : ""}`}>
+      <div className={styles.loaderWrapper}>
+        <LoadingIcon progress={displayProgress} />
+      </div>
+    </div>
+  );
+
   return (
     <>
-      {/* Динамічний прелоадер: Енергетичний кабель */}
-      <div className={`${styles.preloader} ${isLoaded ? styles.loaded : ""}`}>
-        <div className={styles.energyCore}>
-          <svg className={styles.energySvg} viewBox="0 0 100 100">
-            <defs>
-              <linearGradient
-                id="electricGradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="#00e5ff" />
-                <stop offset="100%" stopColor="#0055ff" />
-              </linearGradient>
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* Базовий темний кабель */}
-            <circle cx="50" cy="50" r="45" className={styles.wireTrack} />
-
-            {/* Кільце загального прогресу (заповнюється разом з відсотками) */}
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              className={styles.progressRing}
-              style={{ strokeDashoffset: 283 - (283 * progress) / 100 }}
-            />
-
-            {/* Іскра / струм (гіпнотично крутиться по колу) */}
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              className={styles.energySpark}
-              filter="url(#glow)"
-            />
-          </svg>
-
-          {/* Контент у центрі */}
-          <div className={styles.progressValue}>
-            <svg
-              className={styles.boltIcon}
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-            </svg>
-            <div className={styles.progressTextWrapper}>
-              <span className={styles.progressNumber}>{progress}</span>
-              <span className={styles.progressPercent}>%</span>
-            </div>
-          </div>
-        </div>
-        <div className={styles.loadingText}>Подача напруги...</div>
-      </div>
+      {/* Рендеримо лоадер у <body> через Portal, щоб Chrome його не ламав */}
+      {isMounted && createPortal(preloaderComponent, document.body)}
 
       <div className={styles.heroSection} ref={heroRef}>
         <HeroCanvas ref={canvasRef} overlayRef={overlayRef} />

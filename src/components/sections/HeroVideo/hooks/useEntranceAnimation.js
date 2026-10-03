@@ -4,9 +4,18 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import styles from "../HeroVideo.module.scss";
 
-export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
+// Додано isLoaded у параметри
+export const useEntranceAnimation = ({
+  heroRef,
+  logoRef,
+  contentRef,
+  isLoaded,
+}) => {
   useGSAP(
     () => {
+      // Блокуємо запуск анімації, поки лоадер не зникне повністю
+      if (!isLoaded) return;
+
       if (!logoRef?.current || !contentRef?.current) return;
 
       const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
@@ -23,12 +32,10 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
         `.${styles.animButtonWrapper}`,
       );
 
-      // 🔥 Виправлено: використовуємо styles.animCardWrapper
       const contentCards = contentRef.current.querySelectorAll(
         `.${styles.animCardWrapper}`,
       );
 
-      // 🔥 Виправлено: безпечна перевірка об'єкта window для Next.js
       const isMobile =
         typeof window !== "undefined"
           ? window.matchMedia("(max-width: 768px)").matches
@@ -37,7 +44,6 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
 
       const entranceTl = gsap.timeline({ delay: initialDelay });
 
-      // 🔥 Виправлено: анімуємо тільки ті елементи, які реально знайдені
       if (icon) {
         entranceTl.fromTo(
           icon,
@@ -95,7 +101,6 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
         );
       }
 
-      // Масив для зникнення логотипу
       const logoElements = [icon, text, line, slogan].filter(Boolean);
       if (logoElements.length > 0) {
         entranceTl.to(
@@ -155,7 +160,6 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
         );
       }
 
-      // 🔥 Запобіжник: якщо карток немає, не запускаємо анімацію NodeList, щоб уникнути помилки
       if (contentCards && contentCards.length > 0) {
         entranceTl.fromTo(
           contentCards,
@@ -172,6 +176,10 @@ export const useEntranceAnimation = ({ heroRef, logoRef, contentRef }) => {
         );
       }
     },
-    { scope: heroRef },
+    {
+      // Додано isLoaded у залежності, щоб хук перезапустився, коли стан зміниться на true
+      dependencies: [isLoaded],
+      scope: heroRef,
+    },
   );
 };
