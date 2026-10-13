@@ -8,7 +8,7 @@ const HeroCanvas = forwardRef(({ overlayRef }, canvasRef) => {
   return (
     <>
       <Image
-        src="/hero-mobile.jpg"
+        src="/hero-mobile.webp"
         alt="Сонячні станції та електромонтажні роботи ВІН ПАУЕР ГРУП"
         fill
         priority
