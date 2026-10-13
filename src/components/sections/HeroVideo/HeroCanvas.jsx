@@ -7,14 +7,16 @@ import styles from "./HeroVideo.module.scss";
 const HeroCanvas = forwardRef(({ overlayRef }, canvasRef) => {
   return (
     <>
-      {/* 🔥 ЗМІНЕНО: Картинка для мобільних пристроїв (шлях відносно public) */}
       <Image
         src="/hero-mobile.jpg"
         alt="Сонячні станції та електромонтажні роботи ВІН ПАУЕР ГРУП"
         fill
-        priority // Вказує браузеру качати це найпершим!
+        priority
         sizes="100vw"
-        className={styles.mobileHeroImage} // 🔥 ДОДАНО КЛАС
+        quality={
+          100
+        } /* 🔥 ДОДАНО: Змушує Next.js рендерити картинку без втрати якості (100%) */
+        className={styles.mobileHeroImage}
         style={{
           objectFit: "cover",
           zIndex: -1,
