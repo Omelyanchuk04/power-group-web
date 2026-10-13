@@ -84,6 +84,25 @@ export default function Services() {
     },
   ];
 
+  // 🔥 ДОДАНО: Генерація JSON-LD схеми для послуг (SEO)
+  const servicesSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: services.map((service, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Service",
+        name: service.title,
+        description: service.fullText, // Передаємо прихований текст напряму в Google
+        provider: {
+          "@type": "LocalBusiness",
+          name: "ВІН ПАУЕР ГРУП",
+        },
+      },
+    })),
+  };
+
   const stopAutoScroll = () => {
     if (autoScrollTimer.current) {
       clearInterval(autoScrollTimer.current);
@@ -361,7 +380,17 @@ export default function Services() {
 
   return (
     <div ref={wrapperRef}>
-      <section className={styles.servicesSection} ref={sectionRef}>
+      {/* Ін'єкція мікророзмітки в DOM */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesSchema) }}
+      />
+
+      <section
+        aria-label="Послуги компанії"
+        className={styles.servicesSection}
+        ref={sectionRef}
+      >
         <div className={styles.staticHeader}>
           <div className={styles.headerCenter}>
             <span className={styles.badge}>Послуги</span>
@@ -373,14 +402,17 @@ export default function Services() {
           <div className={styles.spacer}></div>
 
           {services.map((service, index) => (
-            <div className={styles.servicePanel} key={index}>
+            <article className={styles.servicePanel} key={index}>
               <div
                 className={styles.cardInner}
                 onClick={() => openModal(service)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Детальніше про послугу: ${service.title}`}
               >
                 <NextImage
                   src={service.img}
-                  alt={service.title}
+                  alt={`Послуга: ${service.title}`}
                   fill
                   className={styles.bgImage}
                   sizes="(max-width: 1024px) 100vw, 800px"
@@ -394,7 +426,11 @@ export default function Services() {
                   <p className={styles.cardDesc}>{service.desc}</p>
                 </div>
 
-                <button className={styles.plusBtn} aria-label="Детальніше">
+                <button
+                  className={styles.plusBtn}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                >
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -408,7 +444,7 @@ export default function Services() {
                   </svg>
                 </button>
               </div>
-            </div>
+            </article>
           ))}
 
           <div className={styles.spacerEnd}></div>
@@ -424,6 +460,7 @@ export default function Services() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
             >
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
@@ -433,7 +470,7 @@ export default function Services() {
             <button
               className={styles.navBtn}
               onClick={() => handleScroll("prev")}
-              aria-label="Назад"
+              aria-label="Попередня послуга"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -442,6 +479,7 @@ export default function Services() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                aria-hidden="true"
               >
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -450,7 +488,7 @@ export default function Services() {
             <button
               className={styles.navBtn}
               onClick={() => handleScroll("next")}
-              aria-label="Вперед"
+              aria-label="Наступна послуга"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -459,6 +497,7 @@ export default function Services() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                aria-hidden="true"
               >
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -475,7 +514,6 @@ export default function Services() {
           >
             <div className={styles.progressBarFill}>
               <div className={styles.progressIcon}>
-                {/* 🔥 Оновлена іконка блискавки 🔥 */}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -483,6 +521,7 @@ export default function Services() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  aria-hidden="true"
                 >
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
                 </svg>
@@ -507,7 +546,11 @@ export default function Services() {
               data-lenis-prevent="true"
             >
               <div className={styles.fixedCloseWrapper} ref={closeBtnRef}>
-                <button className={styles.closeBtn} onClick={closeModal}>
+                <button
+                  className={styles.closeBtn}
+                  onClick={closeModal}
+                  aria-label="Закрити вікно"
+                >
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -530,7 +573,9 @@ export default function Services() {
                   <span className={styles.modalNum}>
                     Послуга {selectedService.num}
                   </span>
-                  <h2 className={styles.modalTitle}>{selectedService.title}</h2>
+                  <div className={styles.modalTitle}>
+                    {selectedService.title}
+                  </div>
                 </div>
 
                 <div className={styles.modalRichContent}>

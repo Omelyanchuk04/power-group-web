@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { useModal } from "@/context/ModalContext";
 import styles from "./ProjectModal.module.scss";
 
-// --- SVG ІКОНКИ ---
+// --- SVG ІКОНКИ (Додано aria-hidden="true" та focusable="false") ---
 const IconHouse = () => (
   <svg
     viewBox="0 0 24 24"
@@ -16,6 +16,8 @@ const IconHouse = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" />
     <polyline points="9 22 9 12 15 12 15 22" />
@@ -29,6 +31,8 @@ const IconFactory = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4H2v16Z" />
     <path d="M17 18h1" />
@@ -46,6 +50,8 @@ const IconLightning = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
   </svg>
@@ -60,6 +66,8 @@ const IconBattery = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="2" y="7" width="16" height="10" rx="2" ry="2"></rect>
     <line x1="22" y1="11" x2="22" y2="13"></line>
@@ -76,6 +84,8 @@ const IconPin = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
     <circle cx="12" cy="10" r="3"></circle>
@@ -89,6 +99,8 @@ const IconCalendar = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
     <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -106,6 +118,8 @@ const IconChevronLeft = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="15 18 9 12 15 6"></polyline>
   </svg>
@@ -120,6 +134,8 @@ const IconChevronRight = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="9 18 15 12 9 6"></polyline>
   </svg>
@@ -134,6 +150,8 @@ const IconExpand = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="15 3 21 3 21 9"></polyline>
     <polyline points="9 21 3 21 3 15"></polyline>
@@ -151,6 +169,8 @@ const IconX = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <line x1="18" y1="6" x2="6" y2="18"></line>
     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -275,7 +295,6 @@ export default function ProjectModal({ project, onClose }) {
 
   if (!project) return null;
 
-  // Формування посилань
   const baseRoute = project.type === "catalog" ? "/catalog" : "/projects";
   const allItemsText =
     project.type === "catalog" ? "Всі товари" : "Всі проєкти";
@@ -324,6 +343,7 @@ export default function ProjectModal({ project, onClose }) {
         className={styles.backdropLayer}
         ref={backdropRef}
         onClick={handleClose}
+        aria-hidden="true"
       ></div>
       <div
         className={styles.modalScrollWrapper}
@@ -334,9 +354,16 @@ export default function ProjectModal({ project, onClose }) {
           className={styles.modalContent}
           ref={modalCardRef}
           onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="project-modal-title"
         >
           <div className={styles.absoluteCloseWrapper} ref={closeBtnRef}>
-            <button className={styles.closeBtn} onClick={handleClose}>
+            <button
+              className={styles.closeBtn}
+              onClick={handleClose}
+              aria-label="Закрити вікно"
+            >
               <IconX />
             </button>
           </div>
@@ -346,6 +373,7 @@ export default function ProjectModal({ project, onClose }) {
               className={styles.modalGallery}
               ref={galleryRef}
               onScroll={(e) => handleGalleryScroll(e, false)}
+              aria-live="polite"
             >
               {allModalImages.map((imgUrl, index) => (
                 <div key={index} className={styles.gallerySlide}>
@@ -355,6 +383,7 @@ export default function ProjectModal({ project, onClose }) {
                     fill
                     className={styles.modalImg}
                     sizes="(max-width: 1280px) 100vw, 1280px"
+                    priority={index === 0} // Пришвидшує завантаження першого фото
                   />
                 </div>
               ))}
@@ -363,6 +392,7 @@ export default function ProjectModal({ project, onClose }) {
               className={styles.expandBtn}
               onClick={openFullscreen}
               title="На весь екран"
+              aria-label="Відкрити фотографії на весь екран"
             >
               <IconExpand />
             </button>
@@ -376,6 +406,7 @@ export default function ProjectModal({ project, onClose }) {
                     e.stopPropagation();
                     scrollToSlide(currentSlide - 1, false);
                   }}
+                  aria-label="Попереднє фото"
                 >
                   <IconChevronLeft />
                 </button>
@@ -386,20 +417,23 @@ export default function ProjectModal({ project, onClose }) {
                     e.stopPropagation();
                     scrollToSlide(currentSlide + 1, false);
                   }}
+                  aria-label="Наступне фото"
                 >
                   <IconChevronRight />
                 </button>
-                <div className={styles.sliderDots}>
+                <div className={styles.sliderDots} role="tablist">
                   {allModalImages.map((_, idx) => (
                     <button
                       key={idx}
+                      role="tab"
+                      aria-selected={currentSlide === idx}
                       className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ""}`}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         scrollToSlide(idx, false);
                       }}
-                      aria-label={`Слайд ${idx + 1}`}
+                      aria-label={`Перейти до слайду ${idx + 1}`}
                     />
                   ))}
                 </div>
@@ -408,7 +442,9 @@ export default function ProjectModal({ project, onClose }) {
           </div>
 
           <div className={styles.modalBodyContainer}>
-            <h2 className={styles.modalTitle}>{project.title}</h2>
+            <h2 id="project-modal-title" className={styles.modalTitle}>
+              {project.title}
+            </h2>
 
             {finalServiceLabels && (
               <div className={styles.modalHeaderExtra}>
@@ -427,7 +463,7 @@ export default function ProjectModal({ project, onClose }) {
               {(project.powerLabel || project.power) && (
                 <>
                   <div className={styles.statHItem}>
-                    <div className={styles.iconBox}>
+                    <div className={styles.iconBox} aria-hidden="true">
                       <IconLightning />
                     </div>
                     <div className={styles.statHText}>
@@ -442,14 +478,14 @@ export default function ProjectModal({ project, onClose }) {
                       </span>
                     </div>
                   </div>
-                  <div className={styles.statDivider}></div>
+                  <div className={styles.statDivider} aria-hidden="true"></div>
                 </>
               )}
 
               {(project.capacityLabel || project.capacity) && (
                 <>
                   <div className={styles.statHItem}>
-                    <div className={styles.iconBox}>
+                    <div className={styles.iconBox} aria-hidden="true">
                       <IconBattery />
                     </div>
                     <div className={styles.statHText}>
@@ -461,12 +497,12 @@ export default function ProjectModal({ project, onClose }) {
                       </span>
                     </div>
                   </div>
-                  <div className={styles.statDivider}></div>
+                  <div className={styles.statDivider} aria-hidden="true"></div>
                 </>
               )}
 
               <div className={styles.statHItem}>
-                <div className={styles.iconBox}>
+                <div className={styles.iconBox} aria-hidden="true">
                   <IconPin />
                 </div>
                 <div className={styles.statHText}>
@@ -476,9 +512,9 @@ export default function ProjectModal({ project, onClose }) {
                   </span>
                 </div>
               </div>
-              <div className={styles.statDivider}></div>
+              <div className={styles.statDivider} aria-hidden="true"></div>
               <div className={styles.statHItem}>
-                <div className={styles.iconBox}>
+                <div className={styles.iconBox} aria-hidden="true">
                   <IconCalendar />
                 </div>
                 <div className={styles.statHText}>
@@ -486,9 +522,9 @@ export default function ProjectModal({ project, onClose }) {
                   <span className={styles.statHValue}>{finalDate}</span>
                 </div>
               </div>
-              <div className={styles.statDivider}></div>
+              <div className={styles.statDivider} aria-hidden="true"></div>
               <div className={styles.statHItem}>
-                <div className={styles.iconBox}>
+                <div className={styles.iconBox} aria-hidden="true">
                   {project.clientType === "b2c" ? (
                     <IconHouse />
                   ) : (
@@ -514,7 +550,6 @@ export default function ProjectModal({ project, onClose }) {
                 </p>
               </div>
 
-              {/* 🔥 ГРУПА ПОСИЛАНЬ ТА КНОПОК 🔥 */}
               <div className={styles.modalFooterActions}>
                 <div className={styles.linksGroup}>
                   <Link
@@ -529,7 +564,9 @@ export default function ProjectModal({ project, onClose }) {
                     {project.type === "catalog" ? "товар" : "проєкт"}
                   </Link>
 
-                  <span className={styles.linksSeparator}>/</span>
+                  <span className={styles.linksSeparator} aria-hidden="true">
+                    /
+                  </span>
 
                   <Link
                     href={baseRoute}
@@ -559,14 +596,21 @@ export default function ProjectModal({ project, onClose }) {
       </div>
 
       {isFullscreen && (
-        <div className={styles.fullscreenOverlay} onClick={closeFullscreen}>
+        <div
+          className={styles.fullscreenOverlay}
+          onClick={closeFullscreen}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Повноекранна галерея"
+        >
           <div className={styles.fullscreenHeader}>
-            <div className={styles.imageCounter}>
+            <div className={styles.imageCounter} aria-live="polite">
               {currentSlide + 1} / {allModalImages.length}
             </div>
             <button
               className={styles.fullscreenClose}
               onClick={closeFullscreen}
+              aria-label="Закрити повноекранний режим"
             >
               <IconX />
             </button>
@@ -601,6 +645,7 @@ export default function ProjectModal({ project, onClose }) {
                   e.stopPropagation();
                   scrollToSlide(currentSlide - 1, true);
                 }}
+                aria-label="Попереднє фото"
               >
                 <IconChevronLeft />
               </button>
@@ -611,6 +656,7 @@ export default function ProjectModal({ project, onClose }) {
                   e.stopPropagation();
                   scrollToSlide(currentSlide + 1, true);
                 }}
+                aria-label="Наступне фото"
               >
                 <IconChevronRight />
               </button>

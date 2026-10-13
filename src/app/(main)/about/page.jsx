@@ -9,35 +9,41 @@ import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 
 export default function AboutPage() {
+  // 🔥 ДОДАНО: Мікророзмітка компанії для Google
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "ВІН ПАУЕР ГРУП",
+    url: "https://vinpowergroup.com",
+    logo: "https://vinpowergroup.com/logo.svg", // Або ваш актуальний шлях до лого
+    description:
+      "Надійний партнер у сфері енергетики. Проєктуємо, будуємо та обслуговуємо сонячні електростанції та виконуємо електромонтажні роботи.",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+380672671477",
+      contactType: "customer service",
+      areaServed: "UA",
+      availableLanguage: "Ukrainian",
+    },
+  };
+
   return (
     <main className={styles.aboutPage}>
+      {/* Ін'єкція SEO-розмітки */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+
       <AboutHero />
 
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          width: "100%",
-        }}
-      >
-        {/* Повертаємо класичний варіант, який заходить під футер */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: "-800px",
-            zIndex: 0,
-            pointerEvents: "none",
-            overflow: "hidden",
-            backgroundColor: "#f9fafb",
-          }}
-        >
+      {/* Всі inline-стилі винесено у класи */}
+      <div className={styles.contentWrapper}>
+        <div className={styles.bgWrapper}>
           <GlobalBackground isLayout={false} />
         </div>
 
-        <div style={{ position: "relative", zIndex: 2 }}>
+        <div className={styles.innerContent}>
           <CompanyStats />
           <AboutExperience />
           <ContactCTA />

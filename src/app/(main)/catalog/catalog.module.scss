@@ -19,7 +19,7 @@ $bg-light: #f9fafb;
   margin: 0 auto;
   padding: 0 20px;
 
-  /* 🔥 ОНОВЛЕНО: Точні відступи, як у футері та на сторінці товару 🔥 */
+  /* ОНОВЛЕНО: Точні відступи, як у футері та на сторінці товару */
   @media (max-width: 768px) {
     padding: 0 24px;
   }
@@ -450,4 +450,31 @@ $bg-light: #f9fafb;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   z-index: 999;
+}
+
+/* =========================================
+   🔥 ДОДАНО: КЛАСИ ДЛЯ ГОЛОВНОЇ СТОРІНКИ КАТАЛОГУ
+   ========================================= */
+.catalogPageMain {
+  position: relative;
+  width: 100%;
+  background-color: transparent;
+}
+
+.catalogContentWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.catalogBgWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -1200px;
+  z-index: -1;
+  pointer-events: none;
 }

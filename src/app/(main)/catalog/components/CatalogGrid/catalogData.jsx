@@ -9,6 +9,8 @@ export const IconPanel = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
     <line x1="3" y1="9" x2="21" y2="9" />
@@ -25,6 +27,8 @@ export const IconInverter = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="4" y="4" width="16" height="16" rx="2" ry="2" />
     <rect x="9" y="9" width="6" height="6" />
@@ -46,6 +50,8 @@ export const IconStorage = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="2" y="6" width="20" height="12" rx="2" ry="2" />
     <path d="M6 12h4" />
@@ -60,6 +66,8 @@ export const IconPower = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
   </svg>
@@ -72,6 +80,8 @@ export const IconTool = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
   </svg>
@@ -84,6 +94,8 @@ export const IconBattery = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="2" y="7" width="16" height="10" rx="2" ry="2" />
     <line x1="22" y1="11" x2="22" y2="13" />
@@ -98,6 +110,8 @@ export const IconCheck = () => (
     strokeWidth="3.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="20 6 9 17 4 12" />
   </svg>

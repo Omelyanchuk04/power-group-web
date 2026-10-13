@@ -11,11 +11,6 @@ $border-color: #d2d2d7;
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
-
-  //   @media (max-width: 768px) {
-  //     padding-top: 80px;
-  //     padding-bottom: 60px;
-  //   }
 }
 
 .bgWrapper {
@@ -111,7 +106,6 @@ $border-color: #d2d2d7;
   letter-spacing: 0.5px;
   border: 1px solid rgba(0, 86, 179, 0.2);
 
-  /* 🔥 ЩЕ МЕНШІ БЕЙДЖІ ДЛЯ МОБІЛКИ 🔥 */
   @media (max-width: 768px) {
     font-size: 10px;
     padding: 4px 10px;
@@ -129,7 +123,6 @@ $border-color: #d2d2d7;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 
-  /* 🔥 ЩЕ МЕНШІ БЕЙДЖІ ДЛЯ МОБІЛКИ 🔥 */
   @media (max-width: 768px) {
     font-size: 10px;
     padding: 4px 10px;
@@ -208,7 +201,6 @@ $border-color: #d2d2d7;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   background: transparent;
 
-  /* 🔥 ФІКС ПРОЗОРОЇ МЕЖІ: Змушує браузер ідеально обрізати краї без артефактів 🔥 */
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -233,7 +225,7 @@ $border-color: #d2d2d7;
   width: auto;
   max-width: 85vw;
   object-fit: cover;
-  margin-bottom: -1px; /* Додаткова підстраховка від білої лінії */
+  margin-bottom: -1px;
 }
 
 .expandBtn {
@@ -269,7 +261,7 @@ $border-color: #d2d2d7;
 
   &:active {
     transform: scale(0.9);
-    background: rgba(0, 0, 0, 0.8); /* Залишається темною при натисканні */
+    background: rgba(0, 0, 0, 0.8);
   }
 
   @media (max-width: 768px) {
@@ -806,4 +798,15 @@ $border-color: #d2d2d7;
   @media (max-width: 768px) {
     width: 100%;
   }
+}
+
+/* =========================================
+   СТАНИ ПОМИЛОК ТА ЗАВАНТАЖЕННЯ
+   ========================================= */
+.notFoundWrapper {
+  padding-top: 150px;
+  text-align: center;
+  color: #64748b;
+  min-height: 100vh;
+  font-size: 20px;
 }

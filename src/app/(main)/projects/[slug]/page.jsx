@@ -5,6 +5,8 @@ import Project from "@/models/Project";
 import ProjectContent from "./ProjectContent";
 import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 
+import styles from "./ProjectDetails.module.scss";
+
 const getProjectQuery = (slugOrId) => {
   if (!slugOrId || slugOrId === "undefined") return null;
   if (mongoose.Types.ObjectId.isValid(slugOrId)) {
@@ -17,18 +19,40 @@ export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const paramValue = resolvedParams.id || resolvedParams.slug;
   if (!paramValue || paramValue === "undefined")
-    return { title: "Проєкт не знайдено" };
+    return { title: "Проєкт не знайдено | ВІН ПАУЕР ГРУП" };
 
   await connectToDatabase();
   const query = getProjectQuery(paramValue);
   const project = query ? await Project.findOne(query) : null;
 
-  if (!project) return { title: "Проєкт не знайдено" };
+  if (!project) return { title: "Проєкт не знайдено | ВІН ПАУЕР ГРУП" };
+
+  const projectUrl = `https://vinpowergroup.com/projects/${paramValue}`;
+  const shortDescription = project.shortDescription
+    ? project.shortDescription.substring(0, 150) + "..."
+    : `Реалізований проєкт: ${project.title}. Дізнайтеся більше про рішення від ВІН ПАУЕР ГРУП.`;
 
   return {
-    title: `${project.title} | Реалізовані проєкти Vin Power Group`,
-    description: project.shortDescription?.substring(0, 150) + "...",
-    openGraph: { images: [project.mainImage] },
+    title: `${project.title} | Реалізовані проєкти ВІН ПАУЕР ГРУП`,
+    description: shortDescription,
+    alternates: {
+      canonical: projectUrl,
+    },
+    openGraph: {
+      title: `${project.title} | ВІН ПАУЕР ГРУП`,
+      description: shortDescription,
+      url: projectUrl,
+      type: "article",
+      images: project.mainImage
+        ? [{ url: project.mainImage, alt: project.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description: shortDescription,
+      images: project.mainImage ? [project.mainImage] : [],
+    },
   };
 }
 
@@ -38,14 +62,7 @@ export default async function ProjectDetailsPage({ params }) {
 
   if (!paramValue || paramValue === "undefined") {
     return (
-      <div
-        style={{
-          paddingTop: "150px",
-          textAlign: "center",
-          color: "#64748b",
-          minHeight: "100vh",
-        }}
-      >
+      <div className={styles.notFoundWrapper} role="alert">
         Невірне посилання 😕
       </div>
     );
@@ -57,24 +74,63 @@ export default async function ProjectDetailsPage({ params }) {
 
   if (!projectDoc) {
     return (
-      <div
-        style={{
-          paddingTop: "150px",
-          textAlign: "center",
-          color: "#64748b",
-          minHeight: "100vh",
-        }}
-      >
+      <div className={styles.notFoundWrapper} role="alert">
         Проєкт не знайдено 😕
       </div>
     );
   }
 
-  // Передаємо чистий JSON у клієнтський компонент
   const project = JSON.parse(JSON.stringify(projectDoc));
+
+  const schemaMarkup = [
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      name: project.title,
+      description: project.shortDescription || project.description,
+      image: project.mainImage,
+      url: `https://vinpowergroup.com/projects/${paramValue}`,
+      author: {
+        "@type": "Organization",
+        name: "ВІН ПАУЕР ГРУП",
+      },
+      datePublished: project.date || project.createdAt,
+      contentLocation: {
+        "@type": "Place",
+        name: project.client || "Україна",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Головна",
+          item: "https://vinpowergroup.com/",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Реалізовані проєкти",
+          item: "https://vinpowergroup.com/projects",
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: project.title,
+        },
+      ],
+    },
+  ];
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
       <ProjectContent project={project} />
       <ContactCTA />
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { usePathname } from "next/navigation";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -15,6 +15,8 @@ const IconHouse = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" />
     <polyline points="9 22 9 12 15 12 15 22" />
@@ -28,6 +30,8 @@ const IconFactory = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4H2v16Z" />
     <path d="M17 18h1" />
@@ -43,6 +47,8 @@ const IconSolar = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <circle cx="12" cy="12" r="4" />
     <path d="M12 2v2" />
@@ -63,6 +69,8 @@ const IconBattery = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="2" y="7" width="16" height="10" rx="2" ry="2" />
     <line x1="22" y1="11" x2="22" y2="13" />
@@ -77,6 +85,8 @@ const IconLightning = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
   </svg>
@@ -89,6 +99,8 @@ const IconPlug = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M12 22v-5" />
     <path d="M9 8V2" />
@@ -104,6 +116,8 @@ const IconAll = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="3" y="3" width="7" height="7" />
     <rect x="14" y="3" width="7" height="7" />
@@ -121,6 +135,8 @@ const IconPin = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
     <circle cx="12" cy="10" r="3"></circle>
@@ -147,51 +163,53 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   };
 
-  const mappedProjects = initialProjects
-    .map((p) => {
-      let services = [];
-      if (Array.isArray(p.serviceType)) {
-        services = p.serviceType;
-      } else if (typeof p.serviceType === "string") {
-        services = [p.serviceType];
-      }
+  const mappedProjects = useMemo(() => {
+    return initialProjects
+      .map((p) => {
+        let services = [];
+        if (Array.isArray(p.serviceType)) {
+          services = p.serviceType;
+        } else if (typeof p.serviceType === "string") {
+          services = [p.serviceType];
+        }
 
-      const serviceLabels = services.map((s) => SERVICE_MAP[s] || s).join(", ");
-      const cardServiceLabel =
-        services.length > 1
-          ? "Комплексне рішення"
-          : SERVICE_MAP[services[0]] || "";
+        const serviceLabels = services
+          .map((s) => SERVICE_MAP[s] || s)
+          .join(", ");
+        const cardServiceLabel =
+          services.length > 1
+            ? "Комплексне рішення"
+            : SERVICE_MAP[services[0]] || "";
 
-      // 🔥 Розділяємо Потужність та Ємність на два окремих лейбли 🔥
-      const powerLabel = p.power
-        ? p.power >= 1000
-          ? `${(p.power / 1000).toFixed(1).replace(/\.0$/, "")} МВт`
-          : `${p.power} кВт`
-        : null;
-      const capacityLabel = p.capacity ? `${p.capacity} кВт·год` : null;
+        const powerLabel = p.power
+          ? p.power >= 1000
+            ? `${(p.power / 1000).toFixed(1).replace(/\.0$/, "")} МВт`
+            : `${p.power} кВт`
+          : null;
+        const capacityLabel = p.capacity ? `${p.capacity} кВт·год` : null;
 
-      return {
-        // 🔥 ВИПРАВЛЕННЯ: Гарантовано формуємо коректний ID як рядок 🔥
-        linkId: p.slug || p._id?.toString() || p.id,
-        id: p._id?.toString() || p.id,
-        title: p.title,
-        clientType: p.clientType,
-        serviceType: services,
-        serviceLabels: serviceLabels,
-        cardServiceLabel: cardServiceLabel,
-        power: p.power || 0,
-        capacity: p.capacity || 0,
-        powerLabel: powerLabel,
-        capacityLabel: capacityLabel,
-        location: p.client || "Локація не вказана",
-        description: p.shortDescription || "Опис відсутній",
-        image: p.mainImage,
-        gallery: p.gallery || [],
-        date: formatDate(p.date),
-        rawDate: new Date(p.date || 0).getTime(),
-      };
-    })
-    .sort((a, b) => b.rawDate - a.rawDate);
+        return {
+          linkId: p.slug || p._id?.toString() || p.id,
+          id: p._id?.toString() || p.id,
+          title: p.title,
+          clientType: p.clientType,
+          serviceType: services,
+          serviceLabels: serviceLabels,
+          cardServiceLabel: cardServiceLabel,
+          power: p.power || 0,
+          capacity: p.capacity || 0,
+          powerLabel: powerLabel,
+          capacityLabel: capacityLabel,
+          location: p.client || "Локація не вказана",
+          description: p.shortDescription || "Опис відсутній",
+          image: p.mainImage,
+          gallery: p.gallery || [],
+          date: formatDate(p.date),
+          rawDate: new Date(p.date || 0).getTime(),
+        };
+      })
+      .sort((a, b) => b.rawDate - a.rawDate);
+  }, [initialProjects]);
 
   const [activeFilters, setActiveFilters] = useState({
     clientType: "all",
@@ -206,17 +224,19 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 12;
 
-  const filteredProjects = mappedProjects.filter((p) => {
-    const matchClient =
-      activeFilters.clientType === "all" ||
-      activeFilters.clientType === p.clientType;
-    const matchService =
-      activeFilters.serviceType.includes("all") ||
-      p.serviceType.some((s) => activeFilters.serviceType.includes(s));
-    const matchPower = p.power <= powerLimit;
+  const filteredProjects = useMemo(() => {
+    return mappedProjects.filter((p) => {
+      const matchClient =
+        activeFilters.clientType === "all" ||
+        activeFilters.clientType === p.clientType;
+      const matchService =
+        activeFilters.serviceType.includes("all") ||
+        p.serviceType.some((s) => activeFilters.serviceType.includes(s));
+      const matchPower = p.power <= powerLimit;
 
-    return matchClient && matchService && matchPower;
-  });
+      return matchClient && matchService && matchPower;
+    });
+  }, [mappedProjects, activeFilters, powerLimit]);
 
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage);
   const indexOfLastProject = currentPage * projectsPerPage;
@@ -225,6 +245,29 @@ export default function ProjectsGrid({ initialProjects = [] }) {
     indexOfFirstProject,
     indexOfLastProject,
   );
+
+  const currentProjectsSchema = useMemo(() => {
+    if (currentProjects.length === 0) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: currentProjects.map((p, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "CreativeWork",
+          name: p.title,
+          description: p.description,
+          image: p.image,
+          url: `https://vinpowergroup.com/projects/${p.linkId}`,
+          contentLocation: {
+            "@type": "Place",
+            name: p.location,
+          },
+        },
+      })),
+    };
+  }, [currentProjects]);
 
   const handleFilterClick = (groupKey, filterId) => {
     setCurrentPage(1);
@@ -258,27 +301,52 @@ export default function ProjectsGrid({ initialProjects = [] }) {
   };
 
   const sliderFillPercentage = (powerLimitUI / MAX_POWER) * 100;
-  const gridKey = `${currentPage}-${activeFilters.clientType}-${activeFilters.serviceType.join("-")}-${powerLimit}`;
 
   return (
-    <section className={styles.gridSection}>
+    <section
+      className={styles.gridSection}
+      aria-labelledby="portfolio-grid-heading"
+    >
+      <h2
+        id="portfolio-grid-heading"
+        className="visually-hidden"
+        style={{ display: "none" }}
+      >
+        Список проєктів
+      </h2>
+
+      {currentProjectsSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(currentProjectsSchema),
+          }}
+        />
+      )}
+
       <div className={styles.container}>
         <div className={styles.mainLayout}>
-          <aside className={styles.sidebar}>
+          <aside className={styles.sidebar} aria-label="Фільтри портфоліо">
             <div className={styles.sidebarSticky}>
               <div className={styles.filterGroup}>
                 <h4 className={styles.groupTitle}>Тип об'єкта</h4>
-                <div className={styles.segmentedWrapper}>
+                <div
+                  className={styles.segmentedWrapper}
+                  role="group"
+                  aria-label="Фільтр за типом клієнта"
+                >
                   <div className={styles.segmentedControl}>
                     <button
                       className={`${styles.segmentBtn} ${activeFilters.clientType === "all" ? styles.active : ""}`}
                       onClick={() => handleFilterClick("clientType", "all")}
+                      aria-pressed={activeFilters.clientType === "all"}
                     >
                       Усі
                     </button>
                     <button
                       className={`${styles.segmentBtn} ${activeFilters.clientType === "b2c" ? styles.active : ""}`}
                       onClick={() => handleFilterClick("clientType", "b2c")}
+                      aria-pressed={activeFilters.clientType === "b2c"}
                     >
                       <IconHouse /> Для
                       <br />
@@ -287,6 +355,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     <button
                       className={`${styles.segmentBtn} ${activeFilters.clientType === "b2b" ? styles.active : ""}`}
                       onClick={() => handleFilterClick("clientType", "b2b")}
+                      aria-pressed={activeFilters.clientType === "b2b"}
                     >
                       <IconFactory /> Для
                       <br />
@@ -298,7 +367,11 @@ export default function ProjectsGrid({ initialProjects = [] }) {
 
               <div className={styles.filterGroup}>
                 <h4 className={styles.groupTitle}>Послуги та рішення</h4>
-                <div className={styles.iconList}>
+                <div
+                  className={styles.iconList}
+                  role="group"
+                  aria-label="Фільтр за типом послуги"
+                >
                   {[
                     { id: "all", label: "Усі рішення", icon: <IconAll /> },
                     {
@@ -328,6 +401,9 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                       onClick={() =>
                         handleFilterClick("serviceType", service.id)
                       }
+                      aria-pressed={activeFilters.serviceType.includes(
+                        service.id,
+                      )}
                     >
                       <span className={styles.iconWrapper}>{service.icon}</span>
                       {service.label}
@@ -339,7 +415,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
               <div className={styles.filterGroup}>
                 <div className={styles.sliderHeader}>
                   <h4 className={styles.groupTitle}>Потужність СЕС</h4>
-                  <span className={styles.powerValue}>
+                  <span className={styles.powerValue} aria-live="polite">
                     {powerLimitUI === MAX_POWER
                       ? "Макс."
                       : `до ${powerLimitUI} кВт`}
@@ -352,6 +428,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                     max={MAX_POWER}
                     step="5"
                     value={powerLimitUI}
+                    aria-label="Вибір максимальної потужності СЕС"
                     onChange={(e) => setPowerLimitUI(Number(e.target.value))}
                     onPointerUp={() => {
                       if (powerLimit !== powerLimitUI) {
@@ -370,7 +447,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                       background: `linear-gradient(to right, #0056b3 ${sliderFillPercentage}%, rgba(0,86,179,0.15) ${sliderFillPercentage}%)`,
                     }}
                   />
-                  <div className={styles.sliderLabels}>
+                  <div className={styles.sliderLabels} aria-hidden="true">
                     <span>0</span>
                     <span>{MAX_POWER} кВт+</span>
                   </div>
@@ -382,33 +459,40 @@ export default function ProjectsGrid({ initialProjects = [] }) {
             </div>
           </aside>
 
-          <div className={styles.content}>
+          <div className={styles.content} aria-live="polite">
             {filteredProjects.length === 0 && (
-              <div className={styles.noResults}>
-                <h3>Немає таких проектів</h3>
+              <div className={styles.noResults} role="status">
+                <h3>Немає таких проєктів</h3>
                 <p>Змініть критерії пошуку або скиньте фільтри.</p>
               </div>
             )}
 
-            <div className={styles.gridAnimated} ref={gridRef} key={gridKey}>
+            {/* 🔥 ВИПРАВЛЕНО 1: Прибрано атрибут key={gridKey}, який знищував DOM при кожному фільтрі */}
+            <div className={styles.gridAnimated} ref={gridRef}>
               {currentProjects.map((project) => (
+                /* 🔥 ВИПРАВЛЕНО 2: Прибрано <article style="display: contents">, роль перенесена на Link */
                 <Link
                   href={`/projects/${project.linkId}`}
                   key={project.id}
                   className={styles.projectCard}
                   style={{ textDecoration: "none" }}
+                  role="article"
+                  aria-label={`Переглянути проєкт: ${project.title}`}
                 >
-                  <div className={styles.imageWrapper}>
+                  {/* 🔥 ВИПРАВЛЕНО 3: Додано backgroundColor як заглушку-скелетон під час завантаження */}
+                  <div
+                    className={styles.imageWrapper}
+                    style={{ backgroundColor: "#f1f5f9" }}
+                  >
                     <NextImage
                       src={project.image}
-                      alt={project.title}
+                      alt={`Проєкт: ${project.title} у ${project.location}`}
                       fill
                       className={styles.img}
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
-                    <div className={styles.overlay}></div>
+                    <div className={styles.overlay} aria-hidden="true"></div>
 
-                    {/* 🔥 БЕЙДЖІ: ОКРЕМІ ІКОНКИ БЕЗ СЛЕШІВ 🔥 */}
                     <div className={styles.tags}>
                       {project.powerLabel && (
                         <span className={styles.tagPower}>
@@ -442,7 +526,7 @@ export default function ProjectsGrid({ initialProjects = [] }) {
                         {project.location}
                       </p>
                     </div>
-                    <div className={styles.arrowBtn}>
+                    <div className={styles.arrowBtn} aria-hidden="true">
                       <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -461,17 +545,21 @@ export default function ProjectsGrid({ initialProjects = [] }) {
             </div>
 
             {totalPages > 1 && (
-              <div className={styles.pagination}>
+              <nav
+                aria-label="Пагінація портфоліо"
+                className={styles.pagination}
+              >
                 {Array.from({ length: totalPages }).map((_, i) => (
                   <button
                     key={i + 1}
                     className={`${styles.pageBtn} ${currentPage === i + 1 ? styles.pageActive : ""}`}
                     onClick={() => handlePageChange(i + 1)}
+                    aria-current={currentPage === i + 1 ? "page" : undefined}
                   >
                     {i + 1}
                   </button>
                 ))}
-              </div>
+              </nav>
             )}
           </div>
         </div>

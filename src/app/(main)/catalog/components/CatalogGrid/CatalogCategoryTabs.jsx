@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import Image from "next/image"; // 🔥 ДОДАНО: Правильний імпорт картинок
 import styles from "./CatalogGrid.module.scss";
 import { CATEGORIES } from "./catalogData";
 
@@ -46,10 +47,7 @@ export default function CatalogCategoryTabs({
           const textHeight = textElement.offsetHeight;
           const textTop = textElement.offsetTop;
 
-          // Центруємо лінію під текстом
           const offsetLeft = tabLeft + (tabWidth - textWidth) / 2;
-
-          // 🔥 ЛІНІЯ БЛИЖЧЕ ДО ТЕКСТУ (відступ 4 пікселі замість 8) 🔥
           const offsetTop = tabTop + textTop + textHeight + 4;
 
           setIndicatorStyle({
@@ -80,21 +78,36 @@ export default function CatalogCategoryTabs({
   }, [activeCategory]);
 
   return (
-    <div className={styles.categoriesScrollWrapper}>
+    // 🔥 ДОДАНО: role="tablist" для розпізнавання пошуковиками
+    <div
+      className={styles.categoriesScrollWrapper}
+      role="tablist"
+      aria-label="Категорії обладнання"
+    >
       <div className={styles.segmentedTrack} ref={trackRef}>
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             className={`${styles.categoryTab} ${activeCategory === cat.id ? styles.activeTab : ""}`}
             onClick={() => onCategoryChange(cat.id)}
+            role="tab" // 🔥 ДОДАНО: семантика таба
+            aria-selected={activeCategory === cat.id} // 🔥 ДОДАНО: стан таба
+            aria-controls={`panel-${cat.id}`}
           >
-            <div className={styles.tabImageWrapper}>
-              <img
+            <div
+              className={styles.tabImageWrapper}
+              style={{ position: "relative", width: "40px", height: "40px" }}
+            >
+              {/* 🔥 ЗМІНЕНО: <img> на <Image> для кращої продуктивності */}
+              <Image
                 src={
                   CATEGORY_IMAGES[cat.label] ||
                   "/images/admin/equipment/solar-panel-icon.png"
                 }
-                alt={cat.label}
+                alt={`Категорія: ${cat.label}`}
+                fill
+                sizes="40px"
+                style={{ objectFit: "contain" }}
                 className={styles.tabImage}
               />
             </div>
@@ -102,7 +115,11 @@ export default function CatalogCategoryTabs({
           </button>
         ))}
 
-        <div className={styles.tabIndicator} style={indicatorStyle} />
+        <div
+          className={styles.tabIndicator}
+          style={indicatorStyle}
+          aria-hidden="true"
+        />
       </div>
     </div>
   );

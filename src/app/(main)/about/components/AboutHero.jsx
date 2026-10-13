@@ -1,14 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image"; // 🔥 ДОДАНО: Імпортуємо Image для SEO
 import styles from "../about.module.scss";
 
-// Масив з твоїми картинками
+// 🔥 ЗМІНЕНО: Масив тепер містить не тільки шлях, але й SEO-опис (alt) для кожної картинки
 const images = [
-  "/images/about-page-hero/about-hero-1.jpg",
-  "/images/about-page-hero/about-hero-2.jpg",
-  "/images/about-page-hero/about-hero-3.jpg",
-  "/images/about-page-hero/about-hero-5.jpg",
+  {
+    src: "/images/about-page-hero/about-hero-1.jpg",
+    alt: "Електромонтажні роботи на промисловому об'єкті - ВІН ПАУЕР ГРУП",
+  },
+  {
+    src: "/images/about-page-hero/about-hero-2.jpg",
+    alt: "Встановлення сонячних електростанцій (СЕС) для бізнесу",
+  },
+  {
+    src: "/images/about-page-hero/about-hero-3.jpg",
+    alt: "Проєктування та монтаж систем резервного живлення",
+  },
+  {
+    src: "/images/about-page-hero/about-hero-4.jpg",
+    alt: "Команда спеціалістів-енергетиків ВІН ПАУЕР ГРУП за роботою",
+  },
 ];
 
 const AboutHero = () => {
@@ -16,7 +29,6 @@ const AboutHero = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Запускаємо анімацію тексту одразу після завантаження сторінки
     setIsMounted(true);
 
     const interval = setInterval(() => {
@@ -26,14 +38,25 @@ const AboutHero = () => {
   }, []);
 
   return (
-    // Додаємо клас mounted для активації анімацій появи
-    <section className={`${styles.hero} ${isMounted ? styles.mounted : ""}`}>
-      {images.map((src, index) => (
+    <section
+      className={`${styles.hero} ${isMounted ? styles.mounted : ""}`}
+      aria-labelledby="about-hero-title"
+    >
+      {/* 🔥 ЗМІНЕНО: Використовуємо Next.js Image замість CSS background-image */}
+      {images.map((img, index) => (
         <div
-          key={src}
+          key={img.src}
           className={`${styles.bgImage} ${index === currentIndex ? styles.active : ""}`}
-          style={{ backgroundImage: `url(${src})` }}
-        />
+        >
+          <Image
+            src={img.src}
+            alt={img.alt}
+            fill
+            priority={index === 0} // 🔥 ПЕРШЕ зображення вантажиться миттєво для ідеального LCP
+            sizes="100vw"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
       ))}
 
       <div className={styles.overlay} />
@@ -44,13 +67,14 @@ const AboutHero = () => {
         </div>
 
         <div className={styles.textContent}>
-          <h1 className={styles.title}>
+          <h1 id="about-hero-title" className={styles.title}>
             Ваш надійний партнер <br /> у сфері електроенергетики
           </h1>
           <p className={styles.description}>
-            Компанія ВІН ПАУЕР ГРУП реалізує проєкти будь-якої складності: від
-            приватних домоволодінь до великих промислових об'єктів. Ми створюємо
-            рішення, що забезпечують вашу енергетичну незалежність.
+            Компанія <strong>ВІН ПАУЕР ГРУП</strong> реалізує проєкти будь-якої
+            складності: від приватних домоволодінь до великих промислових
+            об'єктів. Ми створюємо рішення, що забезпечують вашу енергетичну
+            незалежність та стабільність.
           </p>
         </div>
       </div>

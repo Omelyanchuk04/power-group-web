@@ -17,7 +17,6 @@ export default function About() {
 
   useGSAP(
     () => {
-      // Запобіжник: зупиняємо виконання, якщо DOM-елемент ще не готовий
       if (!sectionRef.current) return;
 
       gsap.fromTo(
@@ -79,7 +78,6 @@ export default function About() {
         },
       );
 
-      // Явно вказуємо sectionRef.current як контекст пошуку, щоб уникнути "target not found"
       const parallaxWrappers = gsap.utils.toArray(
         `.${styles.imgParallaxWrapper}`,
         sectionRef.current,
@@ -106,15 +104,21 @@ export default function About() {
   );
 
   return (
-    <section className={styles.lightSection} ref={sectionRef}>
+    <section
+      id="about"
+      aria-labelledby="about-heading"
+      className={styles.lightSection}
+      ref={sectionRef}
+    >
       <div className={styles.container}>
         <div className={styles.sectionHeader}>
           <span className={styles.badge}>Про компанію</span>
-          <h2>Створюємо вашу енергетичну стабільність</h2>
+          <h2 id="about-heading">Створюємо вашу енергетичну стабільність</h2>
           <p>
-            <strong>ВІН ПАУЕР ГРУП</strong> — ваш надійний партнер. Ми
-            проєктуємо, будуємо та обслуговуємо об'єкти будь-якої складності,
-            забезпечуючи надійний результат.
+            <strong>ВІН ПАУЕР ГРУП</strong> — ваш надійний партнер у сфері
+            енергетики. Ми проєктуємо, будуємо та обслуговуємо сонячні
+            електростанції та виконуємо електромонтажні роботи будь-якої
+            складності, забезпечуючи стабільний результат.
           </p>
         </div>
       </div>
@@ -124,19 +128,19 @@ export default function About() {
           <div className={styles.offerHeader}>
             <h3>Що ми пропонуємо</h3>
             <p>
-              Комплексні рішення для забезпечення енергонезалежності як
-              приватних клієнтів, так і великого бізнесу.
+              Комплексні рішення для забезпечення повної енергонезалежності як
+              приватних будинків, так і великого комерційного бізнесу.
             </p>
           </div>
         </div>
 
         <div className={styles.targetGridWrapper}>
           <div className={styles.targetGrid}>
-            <div className={styles.targetCard}>
+            <article className={styles.targetCard}>
               <div className={styles.imgParallaxWrapper}>
                 <NextImage
                   src="/images/about-b2c.jpg"
-                  alt="Приватні будинки"
+                  alt="Встановлення сонячних електростанцій та систем резервного живлення для приватних будинків"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className={styles.bgImage}
@@ -152,6 +156,7 @@ export default function About() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    aria-hidden="true"
                   >
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
@@ -162,13 +167,13 @@ export default function About() {
                   <p>Повна автономія для вашого дому</p>
                 </div>
               </div>
-            </div>
+            </article>
 
-            <div className={styles.targetCard}>
+            <article className={styles.targetCard}>
               <div className={styles.imgParallaxWrapper}>
                 <NextImage
                   src="/images/about-b2b.jpg"
-                  alt="Підприємства"
+                  alt="Промислові сонячні станції та масштабні електромонтажні роботи для комерційних підприємств"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className={styles.bgImage}
@@ -184,6 +189,7 @@ export default function About() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    aria-hidden="true"
                   >
                     <path d="M4 14v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"></path>
                     <rect
@@ -202,25 +208,24 @@ export default function About() {
                   <p>Енергоефективність та вигода для бізнесу</p>
                 </div>
               </div>
-            </div>
+            </article>
           </div>
         </div>
       </div>
 
-      {/* Container specifically for transitionBlock */}
       <div className={styles.container}>
         <div className={styles.transitionBlock}>
-          <h3>Надійність на кожному етапі</h3>
+          <h3>Надійність на кожному етапі монтажу</h3>
           <p>
-            Від розробки проєкту до введення об'єкта в експлуатацію — ми беремо
-            на себе всі технічні виклики. Використання сучасних матеріалів та
-            суворе дотримання стандартів гарантують успішну реалізацію проєкту
-            та довготривалий термін експлуатації.
+            Від розробки індивідуального проєкту до введення енергетичного
+            об'єкта в експлуатацію — ми беремо на себе всі технічні виклики.
+            Використання сучасних матеріалів та суворе дотримання стандартів
+            гарантують безперебійну роботу системи та довготривалий термін
+            експлуатації.
           </p>
         </div>
       </div>
 
-      {/* CompanyStats moved outside the container to manage its own width */}
       <CompanyStats />
     </section>
   );

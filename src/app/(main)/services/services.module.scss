@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $primary: #0056b3;
 $primary-light: #00d4ff;
 $text-dark: #1e293b;
@@ -96,12 +98,12 @@ $text-gray: #52637a;
     width: 260px;
     height: 340px;
     left: 10%;
-  } /* Було 5%, стало 10% (ближче до центру) */
+  }
   @media (min-width: 1600px) {
     width: 300px;
     height: 380px;
     left: 14%;
-  } /* Було 6%, стало 14% */
+  }
   @media (max-width: 1200px) {
     width: 160px;
     height: 200px;
@@ -129,13 +131,13 @@ $text-gray: #52637a;
     height: 220px;
     right: 10%;
     border-radius: 50px;
-  } /* Було 5%, стало 10% */
+  }
   @media (min-width: 1600px) {
     width: 260px;
     height: 260px;
     right: 14%;
     border-radius: 60px;
-  } /* Було 6%, стало 14% */
+  }
   @media (max-width: 1200px) {
     width: 140px;
     height: 140px;
@@ -162,12 +164,12 @@ $text-gray: #52637a;
     width: 300px;
     height: 210px;
     left: 12%;
-  } /* Було 8%, стало 12% */
+  }
   @media (min-width: 1600px) {
     width: 340px;
     height: 240px;
     left: 16%;
-  } /* Було 10%, стало 16% */
+  }
   @media (max-width: 1200px) {
     width: 180px;
     height: 120px;
@@ -193,12 +195,12 @@ $text-gray: #52637a;
     width: 240px;
     height: 320px;
     right: 12%;
-  } /* Було 8%, стало 12% */
+  }
   @media (min-width: 1600px) {
     width: 280px;
     height: 360px;
     right: 16%;
-  } /* Було 10%, стало 16% */
+  }
   @media (max-width: 1200px) {
     width: 150px;
     height: 200px;
@@ -224,7 +226,7 @@ $text-gray: #52637a;
     width: 120px;
     height: 120px;
     left: 4%;
-  } /* Злегка посунули */
+  }
   @media (min-width: 1600px) {
     width: 140px;
     height: 140px;
@@ -383,4 +385,34 @@ $text-gray: #52637a;
   50% {
     transform: translateY(-15px) rotate(9deg);
   }
+}
+
+/* =========================================
+   🔥 ДОДАНО: КЛАСИ ЛЕЙАУТУ ДЛЯ ГОЛОВНОЇ СТОРІНКИ
+   ========================================= */
+.servicesPageMain {
+  position: relative;
+  width: 100%;
+  overflow-y: visible;
+  overflow-x: clip;
+  background-color: transparent;
+}
+
+.servicesContentWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
+.servicesBgWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -1200px;
+  z-index: -1;
+  pointer-events: none;
 }

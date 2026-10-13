@@ -277,7 +277,7 @@ export default function Header() {
 
   const clientNavList = [
     { name: "ПОСЛУГИ", link: "/services" },
-    { name: "КАТАЛОГ", link: "/catalog" },
+    { name: "ОБЛАДНАННЯ", link: "/catalog" },
     { name: "РЕАЛІЗОВАНІ ПРОЄКТИ", link: "/projects" },
     { name: "ПРО НАС", link: "/about" },
     { name: "КОНТАКТИ", link: "/contacts" },

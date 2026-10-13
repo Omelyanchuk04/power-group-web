@@ -53,26 +53,37 @@ export default function CompanyStats() {
   );
 
   return (
-    <section className={styles.statsSection} ref={containerRef}>
+    <section
+      className={styles.statsSection}
+      ref={containerRef}
+      aria-labelledby="company-stats-heading"
+    >
       <div className={styles.container}>
         <div className={styles.statsWrapper}>
-          <div className={styles.statsHeader}>
-            <h3>Наш практичний досвід у цифрах та фактах</h3>
-            <div className={styles.headerLine}></div>
-          </div>
+          {/* 🔥 ЗМІНЕНО: <h3> на <h2> для правильної SEO-ієрархії сторінки */}
+          <header className={styles.statsHeader}>
+            <h2 id="company-stats-heading">
+              Наш практичний досвід у цифрах та фактах
+            </h2>
+            <div className={styles.headerLine} aria-hidden="true"></div>
+          </header>
 
-          <div className={styles.statsGrid}>
-            <div className="animStatWrapper">
-              <div className={styles.statCard}>
+          {/* 🔥 ЗМІНЕНО: Сітка тепер є маркованим списком (<ul>), щоб скрінрідери читали це як "Список з 3 елементів" */}
+          <ul
+            className={styles.statsGrid}
+            style={{ listStyle: "none", padding: 0, margin: 0 }}
+          >
+            <li className="animStatWrapper">
+              <article className={styles.statCard}>
+                {/* 🔥 ЗМІНЕНО: Розширені alt-тексти з ключовими словами. Прибрано priority, бо блок зазвичай нижче першого екрана */}
                 <NextImage
                   src="/images/experiense-card.jpg"
-                  alt="Досвід"
+                  alt="8 років практичного досвіду у сфері сонячної енергетики"
                   fill
-                  priority
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.statBgImage}
                 />
-                <div className={styles.statOverlay}></div>
+                <div className={styles.statOverlay} aria-hidden="true"></div>
                 <div className={styles.statContent}>
                   <div className={styles.statNum}>8+</div>
                   <div className={styles.statLabel}>
@@ -81,20 +92,19 @@ export default function CompanyStats() {
                     досвіду
                   </div>
                 </div>
-              </div>
-            </div>
+              </article>
+            </li>
 
-            <div className="animStatWrapper">
-              <div className={styles.statCard}>
+            <li className="animStatWrapper">
+              <article className={styles.statCard}>
                 <NextImage
                   src="/images/projects-card.jpg"
-                  alt="Проєкти"
+                  alt="Більше 150 успішно реалізованих проєктів СЕС під ключ"
                   fill
-                  priority
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.statBgImage}
                 />
-                <div className={styles.statOverlay}></div>
+                <div className={styles.statOverlay} aria-hidden="true"></div>
                 <div className={styles.statContent}>
                   <div className={styles.statNum}>150+</div>
                   <div className={styles.statLabel}>
@@ -103,40 +113,19 @@ export default function CompanyStats() {
                     проєктів
                   </div>
                 </div>
-              </div>
-            </div>
+              </article>
+            </li>
 
-            {/* <div className="animStatWrapper">
-              <div className={styles.statCard}>
-                <NextImage
-                  src="/images/employees-card.jpg"
-                  alt="Спеціалісти"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className={styles.statBgImage}
-                />
-                <div className={styles.statOverlay}></div>
-                <div className={styles.statContent}>
-                  <div className={styles.statNum}>10+</div>
-                  <div className={styles.statLabel}>
-                    Кваліфікованих
-                    <br />
-                    спеціалістів
-                  </div>
-                </div>
-              </div>
-            </div> */}
-
-            <div className="animStatWrapper">
-              <div className={styles.statCard}>
+            <li className="animStatWrapper">
+              <article className={styles.statCard}>
                 <NextImage
                   src="/images/power-card.jpg"
-                  alt="Потужність"
+                  alt="37 мегават загальної встановленої потужності електростанцій"
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.statBgImage}
                 />
-                <div className={styles.statOverlay}></div>
+                <div className={styles.statOverlay} aria-hidden="true"></div>
                 <div className={styles.statContent}>
                   <div className={styles.statNum}>37+</div>
                   <div className={styles.statLabel}>
@@ -145,9 +134,9 @@ export default function CompanyStats() {
                     потужності
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              </article>
+            </li>
+          </ul>
         </div>
       </div>
     </section>

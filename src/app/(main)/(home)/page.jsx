@@ -6,38 +6,30 @@ import Process from "@/components/sections/Process/Process";
 
 // 🔥 Змінили назву імпорту, щоб не було конфлікту:
 import GlobalBackground from "@/components/layout/GlobalBackground";
-
 import Footer from "@/components/layout/Footer";
+
+// Підключаємо файл стилів
+import styles from "./page.module.css"; // Або .css, залежно від вашого розширення
 
 export default function Home() {
   return (
-    <>
+    <main className={styles.main}>
       <HeroVideo />
 
       {/* МЕГА-КОНТЕЙНЕР */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          marginTop: "-40px",
-          backgroundColor: "#f5f5f5",
-          borderRadius: "40px 40px 0 0",
-          boxShadow: "0 -15px 25px rgba(0, 0, 0, 0.15)",
-          overflow: "hidden",
-        }}
-      >
+      <div className={styles.megaContainer}>
         <GlobalBackground />
 
-        <div style={{ position: "relative", zIndex: 2 }}>
+        <div className={styles.contentWrapper}>
           <About />
           <Services />
           <Projects />
           <Process />
 
-          {/* 🔥 Тут має бути ЄДИНИЙ виклик футера на цій сторінці */}
+          {/* ЄДИНИЙ виклик футера на цій сторінці */}
           <Footer />
         </div>
       </div>
-    </>
+    </main>
   );
 }

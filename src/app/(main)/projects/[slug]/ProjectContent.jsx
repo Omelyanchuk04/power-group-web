@@ -12,7 +12,7 @@ import Link from "next/link";
 import GlobalBackground from "@/components/layout/GlobalBackground";
 import styles from "./ProjectDetails.module.scss";
 
-// --- SVG ІКОНКИ ---
+// --- SVG ІКОНКИ (додано aria-hidden="true" та focusable="false") ---
 const IconHouse = () => (
   <svg
     viewBox="0 0 24 24"
@@ -21,6 +21,8 @@ const IconHouse = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z" />
     <polyline points="9 22 9 12 15 12 15 22" />
@@ -34,6 +36,8 @@ const IconFactory = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4H2v16Z" />
     <path d="M17 18h1" />
@@ -51,6 +55,8 @@ const IconLightning = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
   </svg>
@@ -65,6 +71,8 @@ const IconBattery = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="2" y="7" width="16" height="10" rx="2" ry="2"></rect>
     <line x1="22" y1="11" x2="22" y2="13"></line>
@@ -81,6 +89,8 @@ const IconPin = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
     <circle cx="12" cy="10" r="3"></circle>
@@ -94,6 +104,8 @@ const IconCalendar = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
     <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -111,6 +123,8 @@ const IconArrowLeft = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="14 18 8 12 14 6"></polyline>
   </svg>
@@ -125,6 +139,8 @@ const IconChevronLeft = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="15 18 9 12 15 6"></polyline>
   </svg>
@@ -139,6 +155,8 @@ const IconChevronRight = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="9 18 15 12 9 6"></polyline>
   </svg>
@@ -151,6 +169,8 @@ const IconExpand = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <polyline points="15 3 21 3 21 9"></polyline>
     <polyline points="9 21 3 21 3 15"></polyline>
@@ -166,6 +186,8 @@ const IconClose = () => (
     strokeWidth="2.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <line x1="18" y1="6" x2="6" y2="18"></line>
     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -192,7 +214,6 @@ export default function ProjectContent({ project }) {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // 🔥 ЛОГІКА ДЛЯ СВАЙПІВ 🔥
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
 
@@ -312,7 +333,6 @@ export default function ProjectContent({ project }) {
     setLightboxIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
   };
 
-  // 🔥 ОБРОБНИКИ СВАЙПІВ ДЛЯ ЛАЙТБОКСУ 🔥
   const onTouchStart = (e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -358,12 +378,22 @@ export default function ProjectContent({ project }) {
       {isLightboxOpen &&
         typeof document !== "undefined" &&
         createPortal(
-          <div className={styles.lightbox} onClick={closeLightbox}>
+          <div
+            className={styles.lightbox}
+            onClick={closeLightbox}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Перегляд зображень на весь екран"
+          >
             <div className={styles.lightboxTopBar}>
-              <div className={styles.lightboxCounter}>
+              <div className={styles.lightboxCounter} aria-live="polite">
                 {lightboxIndex + 1} / {allImages.length}
               </div>
-              <button className={styles.lightboxClose} onClick={closeLightbox}>
+              <button
+                className={styles.lightboxClose}
+                onClick={closeLightbox}
+                aria-label="Закрити перегляд"
+              >
                 <IconClose />
               </button>
             </div>
@@ -371,11 +401,11 @@ export default function ProjectContent({ project }) {
             <button
               className={`${styles.lightboxArrow} ${styles.lightboxLeft}`}
               onClick={lightboxPrev}
+              aria-label="Попереднє фото"
             >
               <IconChevronLeft />
             </button>
 
-            {/* 🔥 ДОДАНО ОБРОБНИКИ СВАЙПІВ 🔥 */}
             <div
               className={styles.lightboxContent}
               onTouchStart={onTouchStart}
@@ -384,7 +414,7 @@ export default function ProjectContent({ project }) {
             >
               <img
                 src={allImages[lightboxIndex]}
-                alt="Повноекранне фото"
+                alt={`Збільшене фото проєкту: ${project.title} (${lightboxIndex + 1})`}
                 className={styles.lightboxImageFull}
                 onClick={(e) => e.stopPropagation()}
               />
@@ -393,6 +423,7 @@ export default function ProjectContent({ project }) {
             <button
               className={`${styles.lightboxArrow} ${styles.lightboxRight}`}
               onClick={lightboxNext}
+              aria-label="Наступне фото"
             >
               <IconChevronRight />
             </button>
@@ -400,19 +431,19 @@ export default function ProjectContent({ project }) {
           document.body,
         )}
 
-      <div className={styles.bgWrapper}>
+      <div className={styles.bgWrapper} aria-hidden="true">
         <div className={styles.bgFade}>
           <GlobalBackground />
         </div>
       </div>
 
-      <div className={styles.contentWrapper}>
+      <article className={styles.contentWrapper}>
         <div className={styles.topSection}>
           <Link href="/projects" className={styles.backLink}>
             <IconArrowLeft /> Повернутися до проєктів
           </Link>
 
-          <div className={styles.headerBlock}>
+          <header className={styles.headerBlock}>
             {serviceLabels && (
               <div className={styles.badgesWrapper}>
                 {isComplex && (
@@ -424,91 +455,104 @@ export default function ProjectContent({ project }) {
               </div>
             )}
             <h1 className={styles.title}>{project.title}</h1>
-          </div>
+          </header>
         </div>
-      </div>
 
-      <div className={styles.appleSliderSection}>
-        <div
-          className={styles.sliderTrack}
-          ref={sliderRef}
-          onScroll={handleScroll}
+        <section
+          className={styles.appleSliderSection}
+          aria-roledescription="carousel"
+          aria-label="Галерея проєкту"
         >
           <div
-            className={styles.sliderSpacer}
-            style={{ flex: `0 0 ${spacers.left}` }}
-          ></div>
-
-          {allImages.map((imgUrl, index) => (
+            className={styles.sliderTrack}
+            ref={sliderRef}
+            onScroll={handleScroll}
+            aria-live="polite"
+          >
             <div
-              key={index}
-              className={`${styles.slide} ${currentSlide === index ? styles.activeSlide : ""}`}
-              onClick={() => scrollToSlide(index)}
-            >
-              <img
-                src={imgUrl}
-                alt="Фото проєкту"
-                className={styles.slideImage}
-                draggable="false"
-                onLoad={calculateSpacers}
-              />
-              <button
-                className={styles.expandBtn}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openLightbox(index);
-                }}
+              className={styles.sliderSpacer}
+              style={{ flex: `0 0 ${spacers.left}` }}
+              aria-hidden="true"
+            ></div>
+
+            {allImages.map((imgUrl, index) => (
+              <div
+                key={index}
+                className={`${styles.slide} ${currentSlide === index ? styles.activeSlide : ""}`}
+                onClick={() => scrollToSlide(index)}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`Фото ${index + 1} з ${allImages.length}`}
               >
-                <IconExpand />
-              </button>
-            </div>
-          ))}
-
-          <div
-            className={styles.sliderSpacer}
-            style={{ flex: `0 0 ${spacers.right}` }}
-          ></div>
-        </div>
-
-        {allImages.length > 1 && (
-          <>
-            <button
-              className={`${styles.sliderArrow} ${styles.arrowLeft}`}
-              onClick={handlePrev}
-              aria-label="Попереднє фото"
-            >
-              <IconChevronLeft />
-            </button>
-            <button
-              className={`${styles.sliderArrow} ${styles.arrowRight}`}
-              onClick={handleNext}
-              aria-label="Наступне фото"
-            >
-              <IconChevronRight />
-            </button>
-
-            <div className={styles.appleNavPill}>
-              <div className={styles.dotsContainer}>
-                {allImages.map((_, idx) => (
-                  <button
-                    key={idx}
-                    className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ""}`}
-                    onClick={() => scrollToSlide(idx)}
-                    aria-label={`Слайд ${idx + 1}`}
-                  />
-                ))}
+                {/* 🔥 ПОВЕРНУТО: Стандартний img, але перше фото завантажується пріоритетно (eager) */}
+                <img
+                  src={imgUrl}
+                  alt={`Фото проєкту ${project.title} - частина ${index + 1}`}
+                  className={styles.slideImage}
+                  draggable="false"
+                  onLoad={calculateSpacers}
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
+                <button
+                  className={styles.expandBtn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openLightbox(index);
+                  }}
+                  aria-label="Відкрити фото на весь екран"
+                >
+                  <IconExpand />
+                </button>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            ))}
 
-      <div className={styles.contentWrapper}>
+            <div
+              className={styles.sliderSpacer}
+              style={{ flex: `0 0 ${spacers.right}` }}
+              aria-hidden="true"
+            ></div>
+          </div>
+
+          {allImages.length > 1 && (
+            <>
+              <button
+                className={`${styles.sliderArrow} ${styles.arrowLeft}`}
+                onClick={handlePrev}
+                aria-label="Попереднє фото"
+              >
+                <IconChevronLeft />
+              </button>
+              <button
+                className={`${styles.sliderArrow} ${styles.arrowRight}`}
+                onClick={handleNext}
+                aria-label="Наступне фото"
+              >
+                <IconChevronRight />
+              </button>
+
+              <div className={styles.appleNavPill}>
+                <div className={styles.dotsContainer} role="tablist">
+                  {allImages.map((_, idx) => (
+                    <button
+                      key={idx}
+                      role="tab"
+                      aria-selected={currentSlide === idx}
+                      aria-label={`Перейти до слайду ${idx + 1}`}
+                      className={`${styles.dot} ${currentSlide === idx ? styles.activeDot : ""}`}
+                      onClick={() => scrollToSlide(idx)}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </section>
+
         <div className={styles.statsHorizontalRow}>
           {powerLabel && (
             <>
               <div className={styles.statHItem}>
-                <div className={styles.iconBox}>
+                <div className={styles.iconBox} aria-hidden="true">
                   <IconLightning />
                 </div>
                 <div className={styles.statHText}>
@@ -518,14 +562,14 @@ export default function ProjectContent({ project }) {
                   </span>
                 </div>
               </div>
-              <div className={styles.statDivider}></div>
+              <div className={styles.statDivider} aria-hidden="true"></div>
             </>
           )}
 
           {capacityLabel && (
             <>
               <div className={styles.statHItem}>
-                <div className={styles.iconBox}>
+                <div className={styles.iconBox} aria-hidden="true">
                   <IconBattery />
                 </div>
                 <div className={styles.statHText}>
@@ -535,12 +579,12 @@ export default function ProjectContent({ project }) {
                   </span>
                 </div>
               </div>
-              <div className={styles.statDivider}></div>
+              <div className={styles.statDivider} aria-hidden="true"></div>
             </>
           )}
 
           <div className={styles.statHItem}>
-            <div className={styles.iconBox}>
+            <div className={styles.iconBox} aria-hidden="true">
               <IconPin />
             </div>
             <div className={styles.statHText}>
@@ -550,9 +594,9 @@ export default function ProjectContent({ project }) {
               </span>
             </div>
           </div>
-          <div className={styles.statDivider}></div>
+          <div className={styles.statDivider} aria-hidden="true"></div>
           <div className={styles.statHItem}>
-            <div className={styles.iconBox}>
+            <div className={styles.iconBox} aria-hidden="true">
               <IconCalendar />
             </div>
             <div className={styles.statHText}>
@@ -560,9 +604,9 @@ export default function ProjectContent({ project }) {
               <span className={styles.statHValue}>{formattedDate}</span>
             </div>
           </div>
-          <div className={styles.statDivider}></div>
+          <div className={styles.statDivider} aria-hidden="true"></div>
           <div className={styles.statHItem}>
-            <div className={styles.iconBox}>
+            <div className={styles.iconBox} aria-hidden="true">
               {project.clientType === "b2c" ? <IconHouse /> : <IconFactory />}
             </div>
             <div className={styles.statHText}>
@@ -575,12 +619,17 @@ export default function ProjectContent({ project }) {
         </div>
 
         <div className={styles.bottomSection}>
-          <div className={styles.descriptionBlock}>
-            <h2 className={styles.sectionTitle}>Про проєкт</h2>
+          <section
+            className={styles.descriptionBlock}
+            aria-labelledby="project-desc-heading"
+          >
+            <h2 id="project-desc-heading" className={styles.sectionTitle}>
+              Про проєкт
+            </h2>
             <p className={styles.descriptionText}>{project.shortDescription}</p>
-          </div>
+          </section>
         </div>
-      </div>
+      </article>
     </main>
   );
 }

@@ -1,0 +1,28 @@
+/* projects.module.scss */
+
+.projectsPageMain {
+  position: relative;
+  width: 100%;
+  overflow-y: visible;
+  overflow-x: clip;
+  background-color: transparent;
+}
+
+.projectsContentWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
+.projectsBgWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -1200px;
+  z-index: -1;
+  pointer-events: none;
+}

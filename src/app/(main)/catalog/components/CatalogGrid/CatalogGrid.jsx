@@ -139,7 +139,6 @@ const FILTER_CONFIG = {
 };
 
 let cachedProducts = null;
-// 🔥 cachedBrands більше не потрібні, оскільки бренди формуються динамічно
 
 export default function CatalogGrid() {
   const [products, setProducts] = useState(cachedProducts || []);
@@ -151,7 +150,7 @@ export default function CatalogGrid() {
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [isRestored, setIsRestored] = useState(false);
 
-  const itemsPerPage = 9;
+  const itemsPerPage = 12;
 
   useEffect(() => {
     const savedCat = sessionStorage.getItem("catalogCat");
@@ -181,16 +180,9 @@ export default function CatalogGrid() {
       try {
         const prodRes = await fetch("/api/catalog");
 
-        // Зверніть увагу: ми прибрали запит до /api/settings/catalog,
-        // бо бренди тепер беремо прямо з товарів
-
         if (prodRes.ok) {
           const data = await prodRes.json();
-
-          // 🔥 Оскільки нове API повертає { items, brands }, ми беремо лише items
-          // Фолбек data.items || data потрібен на випадок, якщо API ще не оновилося
           const fetchedItems = data.items || data;
-
           cachedProducts = fetchedItems;
           setProducts(fetchedItems);
         }
@@ -204,18 +196,13 @@ export default function CatalogGrid() {
     fetchData();
   }, []);
 
-  // 🔥 НОВЕ: Динамічне отримання брендів ТІЛЬКИ для активної категорії 🔥
   const dynamicBrands = useMemo(() => {
     const brandsSet = new Set();
-
     products.forEach((p) => {
-      // Якщо товар належить до обраної категорії і має заповнений бренд
       if (p.category === activeCategory && p.filters?.brand) {
         brandsSet.add(p.filters.brand);
       }
     });
-
-    // Перетворюємо Set на масив і сортуємо за алфавітом
     return Array.from(brandsSet).sort();
   }, [products, activeCategory]);
 
@@ -243,6 +230,27 @@ export default function CatalogGrid() {
       currentPage * itemsPerPage,
     );
   }, [filteredProducts, currentPage]);
+
+  const productListSchema = useMemo(() => {
+    if (currentProducts.length === 0) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: currentProducts.map((p, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          name: p.title || p.name,
+          category: p.category,
+          brand: {
+            "@type": "Brand",
+            name: p.filters?.brand || "ВІН ПАУЕР ГРУП",
+          },
+        },
+      })),
+    };
+  }, [currentProducts]);
 
   const handleFilterToggle = (filterKey, option) => {
     setCurrentPage(1);
@@ -286,7 +294,6 @@ export default function CatalogGrid() {
     };
   }, [isMobileFiltersOpen]);
 
-  // 🔥 Замінюємо опції брендів на наш динамічний список 🔥
   const currentSidebarConfig = (FILTER_CONFIG[activeCategory] || []).map(
     (group) => {
       if (group.key === "brand" && dynamicBrands.length > 0) {
@@ -298,23 +305,32 @@ export default function CatalogGrid() {
 
   if (!isRestored) return null;
 
-  const gridKey = `${activeCategory}-${currentPage}-${JSON.stringify(activeFilters)}`;
-
   return (
-    <section className={styles.gridSection}>
+    <section className={styles.gridSection} aria-labelledby="catalog-heading">
+      {productListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(productListSchema),
+          }}
+        />
+      )}
+
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h1>Каталог обладнання</h1>
+        <header className={styles.header}>
+          <h1 id="catalog-heading">Каталог обладнання</h1>
           <p>
             Високоякісне обладнання для сонячних електростанцій та систем
             накопичення
           </p>
-        </div>
+        </header>
 
         <div className={styles.mobileControls}>
           <button
             className={styles.filterToggleBtn}
             onClick={() => setIsMobileFiltersOpen(true)}
+            aria-expanded={isMobileFiltersOpen}
+            aria-controls="catalog-sidebar"
           >
             <svg
               viewBox="0 0 24 24"
@@ -323,6 +339,7 @@ export default function CatalogGrid() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
             >
               <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
             </svg>
@@ -338,6 +355,7 @@ export default function CatalogGrid() {
 
         <div className={styles.mainLayout}>
           <CatalogSidebar
+            id="catalog-sidebar"
             activeCategory={activeCategory}
             activeFilters={activeFilters}
             onFilterToggle={handleFilterToggle}
@@ -350,6 +368,8 @@ export default function CatalogGrid() {
           <div
             className={styles.content}
             style={{ minHeight: "100vh", alignContent: "flex-start" }}
+            aria-live="polite"
+            aria-atomic="true"
           >
             {isLoading ? (
               <div
@@ -358,34 +378,42 @@ export default function CatalogGrid() {
                   textAlign: "center",
                   color: "#64748b",
                 }}
+                role="status"
               >
                 Завантаження товарів...
               </div>
             ) : filteredProducts.length === 0 ? (
-              <div className={styles.noResults}>
+              <div className={styles.noResults} role="status">
                 <h3>Товарів не знайдено</h3>
                 <p>Змініть критерії пошуку або скиньте фільтри.</p>
               </div>
             ) : (
               <>
-                <div key={gridKey} className={styles.gridAnimated}>
+                {/* 🔥 ВИПРАВЛЕНО: Прибрано key={gridKey}, який знищував DOM */}
+                <div className={styles.gridAnimated}>
                   {currentProducts.map((product) => (
                     <CatalogProductCard key={product._id} product={product} />
                   ))}
                 </div>
 
                 {totalPages > 1 && (
-                  <div className={styles.pagination}>
+                  <nav
+                    aria-label="Пагінація каталогу"
+                    className={styles.pagination}
+                  >
                     {Array.from({ length: totalPages }).map((_, i) => (
                       <button
                         key={i + 1}
                         className={`${styles.pageBtn} ${currentPage === i + 1 ? styles.pageActive : ""}`}
                         onClick={() => handlePageChange(i + 1)}
+                        aria-current={
+                          currentPage === i + 1 ? "page" : undefined
+                        }
                       >
                         {i + 1}
                       </button>
                     ))}
-                  </div>
+                  </nav>
                 )}
               </>
             )}

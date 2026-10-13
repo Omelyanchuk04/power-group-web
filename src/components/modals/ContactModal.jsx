@@ -144,14 +144,19 @@ const ContactModal = ({ isOpen, onClose }) => {
   // Екран успіху/помилки
   if (status === "success" || status === "error") {
     return createPortal(
-      <div className={styles.modalOverlay}>
+      <div
+        className={styles.modalOverlay}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-status-heading"
+      >
         <div className={styles.modalWrapper}>
-          <div className={styles.blobBlue}></div>
-          <div className={styles.blobYellow}></div>
-          <div className={styles.toastModalContent}>
+          <div className={styles.blobBlue} aria-hidden="true"></div>
+          <div className={styles.blobYellow} aria-hidden="true"></div>
+          <div className={styles.toastModalContent} aria-live="assertive">
             {status === "success" ? (
               <>
-                <div className={styles.iconSuccess}>
+                <div className={styles.iconSuccess} aria-hidden="true">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -159,12 +164,13 @@ const ContactModal = ({ isOpen, onClose }) => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    focusable="false"
                   >
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
                 </div>
-                <h3>Дякуємо!</h3>
+                <h3 id="modal-status-heading">Дякуємо!</h3>
                 <p>
                   Вашу заявку успішно відправлено. Ми зв'яжемося з вами
                   найближчим часом.
@@ -172,7 +178,7 @@ const ContactModal = ({ isOpen, onClose }) => {
               </>
             ) : (
               <>
-                <div className={styles.iconError}>
+                <div className={styles.iconError} aria-hidden="true">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -180,13 +186,14 @@ const ContactModal = ({ isOpen, onClose }) => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    focusable="false"
                   >
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="15" y1="9" x2="9" y2="15"></line>
                     <line x1="9" y1="9" x2="15" y2="15"></line>
                   </svg>
                 </div>
-                <h3>Ой, помилка</h3>
+                <h3 id="modal-status-heading">Ой, помилка</h3>
                 <p>
                   Щось пішло не так при відправці. Будь ласка, спробуйте пізніше
                   або зателефонуйте нам.
@@ -202,10 +209,16 @@ const ContactModal = ({ isOpen, onClose }) => {
 
   // Головний екран форми
   return createPortal(
-    <div className={styles.modalOverlay} onPointerDown={onClose}>
+    <div
+      className={styles.modalOverlay}
+      onPointerDown={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-form-heading"
+    >
       <div className={styles.modalWrapper}>
-        <div className={styles.blobBlue}></div>
-        <div className={styles.blobYellow}></div>
+        <div className={styles.blobBlue} aria-hidden="true"></div>
+        <div className={styles.blobYellow} aria-hidden="true"></div>
         <div
           className={styles.modalContent}
           onPointerDown={(e) => e.stopPropagation()}
@@ -213,7 +226,7 @@ const ContactModal = ({ isOpen, onClose }) => {
           <button
             className={styles.closeButton}
             onClick={onClose}
-            aria-label="Закрити"
+            aria-label="Закрити форму зворотного зв'язку"
           >
             <svg
               viewBox="0 0 24 24"
@@ -222,16 +235,18 @@ const ContactModal = ({ isOpen, onClose }) => {
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              aria-hidden="true"
+              focusable="false"
             >
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
 
-          <div className={styles.modalHeader}>
-            <h3>Залиште заявку</h3>
+          <header className={styles.modalHeader}>
+            <h3 id="modal-form-heading">Залиште заявку</h3>
             <p>І ми допоможемо підібрати найкраще рішення для вас</p>
-          </div>
+          </header>
 
           <form
             className={styles.contactForm}
@@ -245,6 +260,7 @@ const ContactModal = ({ isOpen, onClose }) => {
               value={formData._gotcha}
               onChange={handleChange}
               tabIndex="-1"
+              aria-hidden="true"
               autoComplete="new-password"
               style={{
                 position: "absolute",
@@ -257,59 +273,68 @@ const ContactModal = ({ isOpen, onClose }) => {
             <div
               className={`${styles.inputGroup} ${errors.name ? styles.hasError : ""}`}
             >
-              <label htmlFor="name">Ваше ім'я *</label>
+              <label htmlFor="modal-name">Ваше ім'я *</label>
               <input
                 type="text"
-                id="name"
+                id="modal-name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Введіть ваше ім'я"
+                aria-invalid={!!errors.name}
               />
               {errors.name && (
-                <span className={styles.errorText}>{errors.name}</span>
+                <span className={styles.errorText} role="alert">
+                  {errors.name}
+                </span>
               )}
             </div>
 
             <div
               className={`${styles.inputGroup} ${errors.phone ? styles.hasError : ""}`}
             >
-              <label htmlFor="phone">Номер телефону *</label>
+              <label htmlFor="modal-phone">Номер телефону *</label>
               <input
                 type="tel"
-                id="phone"
+                id="modal-phone"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="+38 (0__) ___-__-__"
+                aria-invalid={!!errors.phone}
               />
               {errors.phone && (
-                <span className={styles.errorText}>{errors.phone}</span>
+                <span className={styles.errorText} role="alert">
+                  {errors.phone}
+                </span>
               )}
             </div>
 
             <div
               className={`${styles.inputGroup} ${errors.email ? styles.hasError : ""}`}
             >
-              <label htmlFor="email">Ваш Email</label>
+              <label htmlFor="modal-email">Ваш Email</label>
               <input
                 type="email"
-                id="email"
+                id="modal-email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="example@mail.com"
+                aria-invalid={!!errors.email}
               />
               {errors.email && (
-                <span className={styles.errorText}>{errors.email}</span>
+                <span className={styles.errorText} role="alert">
+                  {errors.email}
+                </span>
               )}
             </div>
 
             <div className={styles.inputGroup}>
-              <label htmlFor="company">Компанія</label>
+              <label htmlFor="modal-company">Компанія</label>
               <input
                 type="text"
-                id="company"
+                id="modal-company"
                 name="company"
                 value={formData.company}
                 onChange={handleChange}
@@ -320,17 +345,20 @@ const ContactModal = ({ isOpen, onClose }) => {
             <div
               className={`${styles.inputGroup} ${errors.message ? styles.hasError : ""}`}
             >
-              <label htmlFor="message">Що вас цікавить? *</label>
+              <label htmlFor="modal-message">Що вас цікавить? *</label>
               <input
                 type="text"
-                id="message"
+                id="modal-message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Опишіть ваш запит"
+                aria-invalid={!!errors.message}
               />
               {errors.message && (
-                <span className={styles.errorText}>{errors.message}</span>
+                <span className={styles.errorText} role="alert">
+                  {errors.message}
+                </span>
               )}
             </div>
 

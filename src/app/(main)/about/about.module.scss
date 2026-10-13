@@ -88,10 +88,10 @@ $bg-light: #f9fafb;
 .container {
   position: relative;
   z-index: 3;
-  max-width: 1220px; /* 🔥 1200px для контенту + 20px (по 10px з боків) 🔥 */
+  max-width: 1220px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 10px; /* 🔥 Відступи до краю вікна 10px, як у шапці 🔥 */
+  padding: 0 10px;
   display: flex;
   flex-direction: column;
 }
@@ -360,7 +360,6 @@ $bg-light: #f9fafb;
     transition: opacity 0.4s ease;
   }
 
-  /* ХОВЕР ЕФЕКТ */
   @media (hover: hover) and (pointer: fine) {
     &:hover {
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
@@ -456,4 +455,30 @@ $bg-light: #f9fafb;
       height: 20px;
     }
   }
+}
+
+/* =========================================
+   🔥 ДОДАНО: КЛАСИ ДЛЯ ГОЛОВНОГО КОНТЕЙНЕРА 
+   ========================================= */
+.contentWrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.bgWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -800px;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: #f9fafb;
+}
+
+.innerContent {
+  position: relative;
+  z-index: 2;
 }

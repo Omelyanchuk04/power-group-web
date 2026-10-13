@@ -25,6 +25,7 @@ const PROCESS_STEPS = [
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        aria-hidden="true"
       >
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -44,6 +45,7 @@ const PROCESS_STEPS = [
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        aria-hidden="true"
       >
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
         <polyline points="14 2 14 8 20 8"></polyline>
@@ -66,6 +68,7 @@ const PROCESS_STEPS = [
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        aria-hidden="true"
       >
         <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
       </svg>
@@ -84,6 +87,7 @@ const PROCESS_STEPS = [
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        aria-hidden="true"
       >
         <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
       </svg>
@@ -102,6 +106,7 @@ const PROCESS_STEPS = [
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        aria-hidden="true"
       >
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
         <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
@@ -118,6 +123,21 @@ export default function Process() {
   const lineRef = useRef(null);
   const lastDotRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // 🔥 ДОДАНО: Генерація HowTo Schema для SEO
+  const processSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: "Етапи співпраці з ВІН ПАУЕР ГРУП",
+    description:
+      "Прозорий та контрольований процес від першого дослідження об'єкту до сервісного обслуговування сонячних станцій та електромереж.",
+    step: PROCESS_STEPS.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.title,
+      text: step.description,
+    })),
+  };
 
   useEffect(() => {
     const updateLineHeight = () => {
@@ -148,10 +168,8 @@ export default function Process() {
     window.addEventListener("resize", handleResize);
 
     let ctx = gsap.context(() => {
-      // 🔥 ЗМІНЕНО: тепер анімація стартує, коли елемент досягає 75% висоти екрану (нижня частина), а не 35% (верхня)
       const triggerPoint = "75%";
 
-      // 1. Анімація синьої смуги
       gsap.to(lineRef.current, {
         height: "100%",
         ease: "none",
@@ -163,7 +181,6 @@ export default function Process() {
         },
       });
 
-      // 2. Анімація точки та картки (ОДНОЧАСНО)
       const rows = gsap.utils.toArray(`.${styles.stepRow}`);
 
       rows.forEach((row) => {
@@ -205,19 +222,32 @@ export default function Process() {
   }, []);
 
   return (
-    <section className={styles.processSection} ref={containerRef} id="process">
+    <section
+      className={styles.processSection}
+      ref={containerRef}
+      id="process"
+      aria-labelledby="process-heading"
+    >
+      {/* 🔥 ДОДАНО: Ін'єкція мікророзмітки */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(processSchema) }}
+      />
+
       <div className={styles.container}>
-        <div className={styles.header}>
+        <header className={styles.header}>
           <span className={styles.badge}>Алгоритм роботи</span>
-          <h2 className={styles.title}>Етапи співпраці</h2>
+          <h2 id="process-heading" className={styles.title}>
+            Етапи співпраці
+          </h2>
           <p className={styles.subtitle}>
             Прозорий та контрольований процес від першого дослідження до
             сервісного обслуговування.
           </p>
-        </div>
+        </header>
 
         <div className={styles.timelineWrapper} ref={timelineWrapperRef}>
-          <div className={styles.mainLine} ref={mainLineRef}>
+          <div className={styles.mainLine} ref={mainLineRef} aria-hidden="true">
             <div className={styles.lineProgress} ref={lineRef}></div>
           </div>
 
@@ -227,13 +257,16 @@ export default function Process() {
                 key={step.id}
                 className={`${styles.stepRow} ${index % 2 === 0 ? styles.left : styles.right}`}
               >
-                <div className={styles.dotContainer}>
+                <div className={styles.dotContainer} aria-hidden="true">
                   <div className={styles.smallDot}></div>
                 </div>
 
-                <div className={styles.card}>
+                {/* 🔥 ЗМІНЕНО: div на article */}
+                <article className={styles.card}>
                   <div className={styles.innerGlow}></div>
-                  <div className={styles.stepDigit}>{step.id}</div>
+                  <div className={styles.stepDigit} aria-hidden="true">
+                    {step.id}
+                  </div>
                   <div className={styles.cardContentWrapper}>
                     <div className={styles.iconCircle}>{step.icon}</div>
                     <div className={styles.textContent}>
@@ -241,16 +274,21 @@ export default function Process() {
                       <p>{step.description}</p>
                     </div>
                   </div>
-                </div>
+                </article>
               </div>
             ))}
 
             <div className={`${styles.stepRow} ${styles.ctaRow}`}>
-              <div className={styles.dotContainer} ref={lastDotRef}>
+              <div
+                className={styles.dotContainer}
+                ref={lastDotRef}
+                aria-hidden="true"
+              >
                 <div className={styles.smallDot}></div>
               </div>
 
-              <div className={`${styles.card} ${styles.ctaCard}`}>
+              {/* 🔥 ЗМІНЕНО: div на section для CTA */}
+              <section className={`${styles.card} ${styles.ctaCard}`}>
                 <span className={styles.ctaBadge}>Швидка відповідь</span>
 
                 <div className={styles.cardContentWrapper}>
@@ -262,6 +300,7 @@ export default function Process() {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
+                      aria-hidden="true"
                     >
                       <path d="M22 2L11 13"></path>
                       <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
@@ -284,7 +323,7 @@ export default function Process() {
                     <span>Заповнити форму</span>
                   </button>
                 </div>
-              </div>
+              </section>
             </div>
           </div>
         </div>

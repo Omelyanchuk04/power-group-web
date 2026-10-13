@@ -16,16 +16,11 @@ $primary: #0056b3;
   /* Повертаємо суцільний фон */
   background-color: #f5f5f5;
 
-  /* Перший кадр як статичний фон до запуску Canvas/GSAP */
-  background-image: url("/frames/frame-001.jpg");
+  /* 🔥 ВИДАЛЕНО background-image: url("/frames/frame-001.jpg");
+     Тепер за LCP-фон відповідає компонент <Image priority> у HeroCanvas.js */
 
   overflow: hidden;
   z-index: 1;
-
-  /* Налаштування фону */
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
 
   /* Готуємо браузер до можливих анімацій фону */
   will-change: background-position;
@@ -49,7 +44,7 @@ $primary: #0056b3;
   z-index: 1;
   display: block;
 
-  /* ХОВАЄМО CANVAS НА МОБІЛЬНОМУ */
+  /* 🔥 ЦЕ ВРЯТУЄ МОБІЛЬНИЙ PAGESPEED: ХОВАЄМО CANVAS НА МОБІЛЬНОМУ */
   @media (max-width: 1024px) {
     display: none !important;
   }
@@ -74,6 +69,7 @@ $primary: #0056b3;
   pointer-events: none;
   z-index: 2;
 }
+
 // ==========================================
 // ЛОГОТИП
 // ==========================================
@@ -239,10 +235,6 @@ $primary: #0056b3;
 // ГОЛОВНИЙ КОНТЕНТ (Текст)
 // ==========================================
 
-// ==========================================
-// ГОЛОВНИЙ КОНТЕНТ
-// ==========================================
-
 .animTitle {
   font-size: 58px;
   font-weight: 800;
@@ -366,7 +358,7 @@ $primary: #0056b3;
 
 @media (max-width: 1024px) {
   .heroSection {
-    background-image: url("/hero-mobile.jpg");
+    /* 🔥 ВИДАЛЕНО background-image: url("/hero-mobile.jpg"); */
     position: relative;
     height: calc(100vh + 100px);
     height: calc(100lvh + 100px);

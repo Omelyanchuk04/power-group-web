@@ -2,43 +2,49 @@ import React from "react";
 import CatalogGrid from "./components/CatalogGrid/CatalogGrid";
 import ContactCTA from "@/components/shared/ContactCTA/ContactCTA";
 import GlobalBackground from "@/components/layout/GlobalBackground";
+import styles from "./catalog.module.scss";
 
 export const metadata = {
   title: "Каталог обладнання | ВІН ПАУЕР ГРУП",
   description:
-    "Мережеві інвертори, системи накопичення, акумулятори та силове обладнання.",
+    "Професійне силове обладнання: мережеві інвертори, системи накопичення енергії (ESS) та акумулятори для сонячних електростанцій.",
+  alternates: {
+    canonical: "/catalog", // Вказує пошуковикам, що це головна сторінка каталогу
+  },
+  openGraph: {
+    title: "Каталог обладнання | ВІН ПАУЕР ГРУП",
+    description:
+      "Мережеві інвертори, системи накопичення, акумулятори та силове обладнання.",
+    url: "https://vinpowergroup.com/catalog",
+    type: "website",
+  },
 };
 
 export default function CatalogPage() {
+  // 🔥 ДОДАНО: Мікророзмітка типу "Сторінка-колекція" (Каталог)
+  const catalogSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Каталог обладнання | ВІН ПАУЕР ГРУП",
+    description:
+      "Мережеві інвертори, системи накопичення, акумулятори та силове обладнання.",
+    url: "https://vinpowergroup.com/catalog",
+    publisher: {
+      "@type": "Organization",
+      name: "ВІН ПАУЕР ГРУП",
+    },
+  };
+
   return (
-    <main
-      style={{
-        position: "relative",
-        width: "100%",
-        // 🔥 Прибрали overflowX: "clip", щоб запрацювало залипання сайдбару
-        backgroundColor: "transparent",
-      }}
-    >
-      <div
-        style={{
-          position: "relative",
-          zIndex: 1,
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: "-1200px",
-            zIndex: -1,
-            pointerEvents: "none",
-          }}
-        >
+    <main className={styles.catalogPageMain}>
+      {/* Ін'єкція SEO-розмітки */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogSchema) }}
+      />
+
+      <div className={styles.catalogContentWrapper}>
+        <div className={styles.catalogBgWrapper}>
           <GlobalBackground isLayout={false} />
         </div>
 

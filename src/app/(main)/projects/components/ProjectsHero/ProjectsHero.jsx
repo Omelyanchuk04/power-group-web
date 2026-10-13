@@ -13,14 +13,12 @@ export default function ProjectsHero() {
     () => {
       const tl = gsap.timeline();
 
-      // Анімація появи тексту
       tl.fromTo(
         `.${styles.badge}, .${styles.title}, .${styles.desc}`,
         { opacity: 0, y: 30 },
         { opacity: 1, y: 0, stagger: 0.15, duration: 0.8, ease: "power3.out" },
       );
 
-      // Анімація появи блоків статистики
       tl.fromTo(
         `.${styles.statBlock}`,
         { opacity: 0, y: 20 },
@@ -28,14 +26,15 @@ export default function ProjectsHero() {
         "-=0.4",
       );
 
-      // Анімація лічильників (цифри біжать від 0 до потрібного значення)
       countersRef.current.forEach((counter) => {
         if (!counter) return;
         const targetValue = parseInt(
           counter.getAttribute("data-target") || "0",
           10,
         );
+        const suffix = counter.getAttribute("data-suffix") || "";
 
+        // Починаємо анімацію з 0, незважаючи на те, що в HTML вже лежить фінальна цифра
         gsap.fromTo(
           counter,
           { innerHTML: 0 },
@@ -43,10 +42,8 @@ export default function ProjectsHero() {
             innerHTML: targetValue,
             duration: 2,
             ease: "power3.out",
-            snap: { innerHTML: 1 }, // Округлення до цілих чисел
+            snap: { innerHTML: 1 },
             onUpdate: function () {
-              // Додаємо "+" або " МВт" після оновлення цифри
-              const suffix = counter.getAttribute("data-suffix") || "";
               counter.innerHTML =
                 Math.round(Number(this.targets()[0].innerHTML)) + suffix;
             },
@@ -58,17 +55,24 @@ export default function ProjectsHero() {
   );
 
   return (
-    <section className={styles.heroSection} ref={containerRef}>
+    <section
+      className={styles.heroSection}
+      ref={containerRef}
+      aria-labelledby="portfolio-hero-title"
+    >
       <div className={styles.container}>
         <div className={styles.content}>
           <span className={styles.badge}>Наше портфоліо</span>
-          <h1 className={styles.title}>
+
+          {/* Прив'язуємо секцію до головного заголовка сторінки */}
+          <h1 id="portfolio-hero-title" className={styles.title}>
             Енергонезалежність, яку ми вже створили
           </h1>
+
           <p className={styles.desc}>
             Від приватних будинків до великих промислових підприємств. Ми
-            пишаємося кожним проектом, забезпечуючи стабільну енергію там, де
-            вона потрібна найбільше.
+            пишаємося кожним <strong>проєктом</strong>, забезпечуючи стабільну
+            енергію там, де вона потрібна найбільше.
           </p>
 
           <div className={styles.statsRow}>
@@ -80,10 +84,12 @@ export default function ProjectsHero() {
                 data-target="150"
                 data-suffix="+"
               >
-                0
+                {/* 🔥 ЗМІНЕНО: Віддаємо пошуковику реальну цифру замість 0 */}
+                150+
               </h3>
               <p>Реалізованих об'єктів</p>
             </div>
+
             <div className={styles.statBlock}>
               <h3
                 ref={(el) => {
@@ -92,10 +98,11 @@ export default function ProjectsHero() {
                 data-target="15"
                 data-suffix=" МВт"
               >
-                0
+                15 МВт
               </h3>
               <p>Загальна потужність</p>
             </div>
+
             <div className={styles.statBlock}>
               <h3
                 ref={(el) => {
@@ -104,7 +111,7 @@ export default function ProjectsHero() {
                 data-target="5"
                 data-suffix=" років"
               >
-                0
+                5 років
               </h3>
               <p>Досвіду на ринку</p>
             </div>

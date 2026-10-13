@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -11,7 +12,6 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
-// Початковий стан форми з жорстким префіксом телефону
 const initialFormState = {
   name: "",
   phone: "+38 (0",
@@ -26,10 +26,33 @@ export default function ContactsPage() {
   const bannerWrapperRef = useRef(null);
   const bannerRef = useRef(null);
 
-  // Стейт для форми
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState("idle");
+
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "ВІН ПАУЕР ГРУП",
+    image: "https://vinpowergroup.com/images/contacts/contacts-img.jpg",
+    url: "https://vinpowergroup.com",
+    telephone: "+380672671477",
+    email: "powergroup.vin@gmail.com",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "вул. Київська, 14",
+      addressLocality: "Вінниця",
+      addressCountry: "UA",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "08:30",
+        closes: "17:30",
+      },
+    ],
+  };
 
   useGSAP(
     () => {
@@ -85,8 +108,6 @@ export default function ContactsPage() {
     },
     { scope: containerRef },
   );
-
-  // === ЛОГІКА ФОРМИ ===
 
   const formatPhoneInput = (value) => {
     let digits = value.replace(/\D/g, "");
@@ -172,6 +193,13 @@ export default function ContactsPage() {
 
   return (
     <main className={styles.contactsPage} ref={containerRef}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(localBusinessSchema),
+        }}
+      />
+
       <div style={{ position: "relative", zIndex: 1, width: "100%" }}>
         <div
           style={{
@@ -185,6 +213,7 @@ export default function ContactsPage() {
             overflow: "hidden",
             backgroundColor: "#f9fafb",
           }}
+          aria-hidden="true"
         >
           <GlobalBackground isLayout={false} />
         </div>
@@ -193,13 +222,16 @@ export default function ContactsPage() {
           <div className={styles.pageTopPadding}>
             <div className={styles.bannerWrapper} ref={bannerWrapperRef}>
               <div className={styles.heroBanner} ref={bannerRef}>
-                <img
+                <Image
                   src="/images/contacts/contacts-img.jpg"
-                  alt="Контакти"
+                  alt="Офіс та команда ВІН ПАУЕР ГРУП"
+                  fill
+                  priority
+                  sizes="100vw"
+                  style={{ objectFit: "cover" }}
                   className={styles.heroImg}
-                  fetchPriority="high"
                 />
-                <div className={styles.heroOverlay}></div>
+                <div className={styles.heroOverlay} aria-hidden="true"></div>
 
                 <div className={styles.heroContent}>
                   <h1 className={styles.title}>Контакти</h1>
@@ -214,22 +246,24 @@ export default function ContactsPage() {
 
           <div className={styles.container}>
             <div className={styles.bentoGrid}>
-              {/* --- 1. Телефони --- */}
-              <div
+              <article
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
-                <div className={styles.innerGlow}></div>
-                <div className={styles.cardHeader}>
-                  <div className={styles.iconCircle}>
+                <div className={styles.innerGlow} aria-hidden="true"></div>
+                <header className={styles.cardHeader}>
+                  <div className={styles.iconCircle} aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
                   </div>
-                  <h3>Зв'язок</h3>
-                </div>
-                <div className={styles.cardDivider}></div>
+                  <h2>Зв'язок</h2>
+                </header>
+                <div className={styles.cardDivider} aria-hidden="true"></div>
                 <div className={styles.cardBody}>
-                  <div className={styles.linksGroup}>
+                  <address
+                    className={styles.linksGroup}
+                    style={{ fontStyle: "normal" }}
+                  >
                     <a href="tel:+380672671477">067 267 14 77</a>
                     <a href="tel:+380992671477">099 267 14 77</a>
                     <a
@@ -238,17 +272,16 @@ export default function ContactsPage() {
                     >
                       powergroup.vin@gmail.com
                     </a>
-                  </div>
+                  </address>
                 </div>
-              </div>
+              </article>
 
-              {/* --- 2. Соцмережі --- */}
-              <div
+              <article
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
-                <div className={styles.innerGlow}></div>
-                <div className={styles.cardHeader}>
-                  <div className={styles.iconCircle}>
+                <div className={styles.innerGlow} aria-hidden="true"></div>
+                <header className={styles.cardHeader}>
+                  <div className={styles.iconCircle} aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <rect
                         x="2"
@@ -262,9 +295,9 @@ export default function ContactsPage() {
                       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                     </svg>
                   </div>
-                  <h3>Соцмережі</h3>
-                </div>
-                <div className={styles.cardDivider}></div>
+                  <h2>Соцмережі</h2>
+                </header>
+                <div className={styles.cardDivider} aria-hidden="true"></div>
                 <div className={styles.cardBody}>
                   <div className={styles.socialRow}>
                     <a
@@ -272,6 +305,7 @@ export default function ContactsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.socialBtn}
+                      aria-label="Перейти на нашу сторінку в Instagram"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -280,6 +314,7 @@ export default function ContactsPage() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        aria-hidden="true"
                       >
                         <rect
                           x="2"
@@ -299,6 +334,7 @@ export default function ContactsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.socialBtn}
+                      aria-label="Написати нам у WhatsApp"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -307,6 +343,7 @@ export default function ContactsPage() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        aria-hidden="true"
                       >
                         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
                       </svg>
@@ -317,6 +354,7 @@ export default function ContactsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.socialBtn}
+                      aria-label="Написати нам у Telegram (номер 067)"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -325,6 +363,7 @@ export default function ContactsPage() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        aria-hidden="true"
                       >
                         <line x1="22" y1="2" x2="11" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -336,6 +375,7 @@ export default function ContactsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={styles.socialBtn}
+                      aria-label="Написати нам у Telegram (номер 099)"
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -344,6 +384,7 @@ export default function ContactsPage() {
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        aria-hidden="true"
                       >
                         <line x1="22" y1="2" x2="11" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -352,23 +393,22 @@ export default function ContactsPage() {
                     </a>
                   </div>
                 </div>
-              </div>
+              </article>
 
-              {/* --- 3. Графік --- */}
-              <div
+              <article
                 className={`${styles.bentoItem} ${styles.topCardSpan} ${styles.animBento}`}
               >
-                <div className={styles.innerGlow}></div>
-                <div className={styles.cardHeader}>
-                  <div className={styles.iconCircle}>
+                <div className={styles.innerGlow} aria-hidden="true"></div>
+                <header className={styles.cardHeader}>
+                  <div className={styles.iconCircle} aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <circle cx="12" cy="12" r="10"></circle>
                       <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
                   </div>
-                  <h3>Графік роботи</h3>
-                </div>
-                <div className={styles.cardDivider}></div>
+                  <h2>Графік роботи</h2>
+                </header>
+                <div className={styles.cardDivider} aria-hidden="true"></div>
                 <div className={styles.cardBody}>
                   <div className={styles.scheduleBox}>
                     <div className={styles.scheduleRow}>
@@ -381,19 +421,19 @@ export default function ContactsPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </article>
 
-              {/* --- 4. Карта --- */}
-              <div
+              <article
                 className={`${styles.bentoItem} ${styles.mapSpan} ${styles.animBento}`}
               >
                 <iframe
+                  title="Google Карта - Офіс ВІН ПАУЕР ГРУП у Вінниці"
                   src="https://maps.google.com/maps?width=100%25&amp;height=100%25&amp;hl=uk&amp;q=м.%20Вінниця,%20вул.%20Київська,%2014&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
                   allowFullScreen=""
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
-                <div className={styles.mapOverlay}>
+                <div className={styles.mapOverlay} aria-hidden="true">
                   <div className={styles.iconCircleMap}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -405,19 +445,19 @@ export default function ContactsPage() {
                     <p>м. Вінниця, вул. Київська, 14</p>
                   </div>
                 </div>
-              </div>
+              </article>
 
-              {/* --- 5. ФОРМА (З валідацією та станами) --- */}
-              <div
+              <article
                 className={`${styles.bentoItem} ${styles.formSpan} ${styles.animBento}`}
               >
-                <div className={styles.innerGlow}></div>
+                <div className={styles.innerGlow} aria-hidden="true"></div>
 
+                {/* 🔥 ВИПРАВЛЕНО: Прибрано зайвий div, який ламав Flexbox */}
                 {status === "success" || status === "error" ? (
-                  <div className={styles.formResult}>
+                  <div className={styles.formResult} aria-live="polite">
                     {status === "success" ? (
                       <>
-                        <div className={styles.iconSuccess}>
+                        <div className={styles.iconSuccess} aria-hidden="true">
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"
@@ -438,7 +478,7 @@ export default function ContactsPage() {
                       </>
                     ) : (
                       <>
-                        <div className={styles.iconError}>
+                        <div className={styles.iconError} aria-hidden="true">
                           <svg
                             viewBox="0 0 24 24"
                             fill="none"
@@ -462,10 +502,10 @@ export default function ContactsPage() {
                   </div>
                 ) : (
                   <>
-                    <div className={styles.formHeader}>
+                    <header className={styles.formHeader}>
                       <h2>Залиште заявку</h2>
                       <p>І ми допоможемо підібрати найкраще рішення для вас</p>
-                    </div>
+                    </header>
 
                     <form
                       className={styles.contactForm}
@@ -478,6 +518,7 @@ export default function ContactsPage() {
                         value={formData._gotcha}
                         onChange={handleChange}
                         tabIndex="-1"
+                        aria-hidden="true"
                         autoComplete="new-password"
                         style={{
                           position: "absolute",
@@ -500,9 +541,10 @@ export default function ContactsPage() {
                           value={formData.name}
                           onChange={handleChange}
                           placeholder="Введіть ваше ім'я"
+                          aria-invalid={!!errors.name}
                         />
                         {errors.name && (
-                          <span className={styles.errorText}>
+                          <span className={styles.errorText} role="alert">
                             {errors.name}
                           </span>
                         )}
@@ -521,9 +563,10 @@ export default function ContactsPage() {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="+38 (0__) ___-__-__"
+                          aria-invalid={!!errors.phone}
                         />
                         {errors.phone && (
-                          <span className={styles.errorText}>
+                          <span className={styles.errorText} role="alert">
                             {errors.phone}
                           </span>
                         )}
@@ -540,9 +583,10 @@ export default function ContactsPage() {
                           value={formData.email}
                           onChange={handleChange}
                           placeholder="example@mail.com"
+                          aria-invalid={!!errors.email}
                         />
                         {errors.email && (
-                          <span className={styles.errorText}>
+                          <span className={styles.errorText} role="alert">
                             {errors.email}
                           </span>
                         )}
@@ -573,9 +617,10 @@ export default function ContactsPage() {
                           value={formData.message}
                           onChange={handleChange}
                           placeholder="Опишіть ваш запит"
+                          aria-invalid={!!errors.message}
                         />
                         {errors.message && (
-                          <span className={styles.errorText}>
+                          <span className={styles.errorText} role="alert">
                             {errors.message}
                           </span>
                         )}
@@ -593,7 +638,7 @@ export default function ContactsPage() {
                     </form>
                   </>
                 )}
-              </div>
+              </article>
             </div>
           </div>
         </div>

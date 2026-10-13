@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import styles from "./CatalogGrid.module.scss";
 import { IconCheck } from "./catalogData";
 
-// 🔥 ГЛОБАЛЬНА ЗМІННА: пам'ятає, чи ми вже відкривали сайдбар у цій сесії
 let isGlobalFirstSidebarMount = true;
 
-// Іконка для розгортання/згортання (шеврон)
+// 🔥 ДОДАНО: aria-hidden="true" для іконки шеврона
 const IconChevronDown = ({ isOpen }) => (
   <svg
     viewBox="0 0 24 24"
@@ -14,6 +13,8 @@ const IconChevronDown = ({ isOpen }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
     style={{
       width: "16px",
       height: "16px",
@@ -37,7 +38,6 @@ export default function CatalogSidebar({
   isOpen,
   onClose,
 }) {
-  // 🔥 СИНХРОННА ІНІЦІАЛІЗАЦІЯ: Одразу відкриваємо всі групи, щоб уникнути "кліпання"
   const [expandedGroups, setExpandedGroups] = useState(() => {
     const initial = {};
     if (config) {
@@ -48,18 +48,13 @@ export default function CatalogSidebar({
     return initial;
   });
 
-  // Відстежуємо, які групи користувач відкривав/закривав вручну
   const [interacted, setInteracted] = useState({});
-
-  // Перевіряємо, чи це найперший вхід
   const isFirstMount = useRef(isGlobalFirstSidebarMount);
 
   useEffect(() => {
-    // Одразу після першого рендеру опускаємо глобальний прапорець
     isGlobalFirstSidebarMount = false;
   }, []);
 
-  // Синхронізуємо групи, коли змінюється категорія
   useEffect(() => {
     if (config) {
       setExpandedGroups((prev) => {
@@ -77,7 +72,6 @@ export default function CatalogSidebar({
   }, [config, activeCategory]);
 
   const toggleGroup = (key) => {
-    // Запам'ятовуємо, що з цією групою взаємодіяли
     setInteracted((prev) => ({ ...prev, [key]: true }));
     setExpandedGroups((prev) => ({
       ...prev,
@@ -90,13 +84,21 @@ export default function CatalogSidebar({
       <div
         className={[styles.sidebarOverlay, isOpen ? styles.open : ""].join(" ")}
         onClick={onClose}
+        aria-hidden="true"
       />
 
-      <aside className={[styles.sidebar, isOpen ? styles.open : ""].join(" ")}>
+      <aside
+        className={[styles.sidebar, isOpen ? styles.open : ""].join(" ")}
+        aria-label="Фільтри каталогу"
+      >
         <div className={styles.sidebarSticky}>
           <div className={styles.mobileSidebarHeader}>
             <h3>Фільтри</h3>
-            <button className={styles.closeSidebarBtn} onClick={onClose}>
+            <button
+              className={styles.closeSidebarBtn}
+              onClick={onClose}
+              aria-label="Закрити фільтри"
+            >
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -104,6 +106,7 @@ export default function CatalogSidebar({
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                aria-hidden="true"
               >
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -114,9 +117,6 @@ export default function CatalogSidebar({
           {config?.map((filterGroup) => {
             const isGroupOpen = expandedGroups[filterGroup.key];
             const hasInteracted = interacted[filterGroup.key];
-
-            // 🔥 ВИМИКАЄМО АНІМАЦІЮ ПРИ ПОВЕРНЕННІ ЗІ СТОРІНКИ ТОВАРУ 🔥
-            // Анімація спрацює тільки при першому вході, або якщо ти сам клікнув на фільтр
             const shouldAnimate = isFirstMount.current || hasInteracted;
             const animStyle = shouldAnimate ? {} : { animation: "none" };
 
@@ -130,16 +130,25 @@ export default function CatalogSidebar({
 
               return (
                 <div key={filterGroup.key} className={styles.filterGroup}>
+                  {/* 🔥 ВИПРАВЛЕНО: Повернули div для збереження стилів, додавши роль кнопки */}
                   <div
                     className={styles.groupTitleRow}
                     onClick={() => toggleGroup(filterGroup.key)}
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={isGroupOpen}
+                    aria-controls={`filter-content-${filterGroup.key}`}
                   >
                     <h4 className={styles.groupTitle}>{filterGroup.title}</h4>
                     <IconChevronDown isOpen={isGroupOpen} />
                   </div>
 
                   {isGroupOpen && (
-                    <div className={styles.filterContentArea} style={animStyle}>
+                    <div
+                      id={`filter-content-${filterGroup.key}`}
+                      className={styles.filterContentArea}
+                      style={animStyle}
+                    >
                       <div className={styles.sliderHeader}>
                         <span className={styles.powerValue}>
                           {powerLimitUI === maxVal
@@ -160,12 +169,13 @@ export default function CatalogSidebar({
                           onPointerUp={onPowerRelease}
                           onTouchEnd={onPowerRelease}
                           className={styles.glassSlider}
+                          aria-label={`Вибір ${filterGroup.title.toLowerCase()}`}
                           style={{
                             background: `linear-gradient(to right, #0066cc ${fillPercentage}%, rgba(255, 255, 255, 0.4) ${fillPercentage}%)`,
                             boxShadow: `inset 0 3px 6px rgba(0, 0, 0, 0.15), 0 0 10px rgba(0, 102, 204, 0.2)`,
                           }}
                         />
-                        <div className={styles.sliderLabels}>
+                        <div className={styles.sliderLabels} aria-hidden="true">
                           <span>{minVal}</span>
                           <span>
                             {maxVal} {unit}+
@@ -184,16 +194,25 @@ export default function CatalogSidebar({
 
             return (
               <div key={filterGroup.key} className={styles.filterGroup}>
+                {/* 🔥 ВИПРАВЛЕНО: Повернули div для збереження стилів, додавши роль кнопки */}
                 <div
                   className={styles.groupTitleRow}
                   onClick={() => toggleGroup(filterGroup.key)}
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={isGroupOpen}
+                  aria-controls={`filter-content-${filterGroup.key}`}
                 >
                   <h4 className={styles.groupTitle}>{filterGroup.title}</h4>
                   <IconChevronDown isOpen={isGroupOpen} />
                 </div>
 
                 {isGroupOpen && (
-                  <div className={styles.filterContentArea} style={animStyle}>
+                  <div
+                    id={`filter-content-${filterGroup.key}`}
+                    className={styles.filterContentArea}
+                    style={animStyle}
+                  >
                     <div className={styles.checkboxList}>
                       <label className={styles.checkboxLabel}>
                         <input
@@ -209,6 +228,7 @@ export default function CatalogSidebar({
                             styles.customCheckbox,
                             isAllSelected ? styles.checked : "",
                           ].join(" ")}
+                          aria-hidden="true"
                         >
                           <IconCheck />
                         </div>
@@ -232,6 +252,7 @@ export default function CatalogSidebar({
                                 styles.customCheckbox,
                                 isActive ? styles.checked : "",
                               ].join(" ")}
+                              aria-hidden="true"
                             >
                               <IconCheck />
                             </div>
@@ -249,6 +270,7 @@ export default function CatalogSidebar({
           })}
 
           <button
+            type="button"
             className={styles.sidebarResetBtn}
             onClick={() => {
               onReset();

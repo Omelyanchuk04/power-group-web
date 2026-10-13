@@ -135,3 +135,22 @@ a.secondary {
     --button-secondary-border: #1a1a1a;
   }
 }
+
+/* ==========================================
+   🔥 ДОДАНО: КЛАСИ ДЛЯ ГОЛОВНОЇ СТОРІНКИ
+========================================== */
+
+.megaContainer {
+  position: relative;
+  z-index: 10;
+  margin-top: -40px;
+  background-color: #f5f5f5;
+  border-radius: 40px 40px 0 0;
+  box-shadow: 0 -15px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.contentWrapper {
+  position: relative;
+  z-index: 2;
+}

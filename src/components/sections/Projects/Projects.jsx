@@ -27,7 +27,6 @@ export default function Projects() {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 🔥 Захист від помилкових кліків під час свайпу 🔥
   const isSwiping = useRef(false);
   const touchStartPos = useRef({ x: 0, y: 0 });
 
@@ -39,7 +38,7 @@ export default function Projects() {
 
         const formattedProjects = data
           .map((p) => ({
-            id: p.slug?.current || p.slug || p._id || p.id, // 🔥 Гарантовано зберігаємо ID
+            id: p.slug?.current || p.slug || p._id || p.id,
             title: p.title,
             location: p.client || "Локація не вказана",
             power: p.power,
@@ -187,7 +186,6 @@ export default function Projects() {
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   };
 
-  // 🔥 ВИПРАВЛЕНА ФУНКЦІЯ: ТЕПЕР ПЕРЕДАЄМО ID ТА УСІ ПОТРІБНІ ДАНІ В МОДАЛКУ 🔥
   const handleCardClick = (e, project) => {
     e.preventDefault();
     e.stopPropagation();
@@ -195,7 +193,7 @@ export default function Projects() {
     if (isSwiping.current) return;
 
     openModal("project", {
-      id: project.id, // ОСЬ ВАЖЛИВИЙ РЯДОК ЯКОГО НЕ БУЛО
+      id: project.id,
       title: project.title,
       image: project.img,
       gallery: project.gallery,
@@ -211,17 +209,53 @@ export default function Projects() {
     });
   };
 
+  // 🔥 Динамічна генерація Schema.org для портфоліо після завантаження даних
+  const projectsSchema =
+    projects.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: projects.slice(0, 5).map((project, index) => ({
+            // Беремо перші 5 для базового контексту
+            "@type": "ListItem",
+            position: index + 1,
+            item: {
+              "@type": "CreativeWork",
+              name: project.title,
+              description: project.description,
+              image: project.img,
+              datePublished: project.date,
+              contentLocation: {
+                "@type": "Place",
+                name: project.location,
+              },
+            },
+          })),
+        }
+      : null;
+
   return (
     <section
       className={styles.projectsSection}
       ref={containerRef}
       id="projects"
+      aria-labelledby="projects-heading"
     >
+      {/* Ін'єкція мікророзмітки */}
+      {projectsSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsSchema) }}
+        />
+      )}
+
       <div className={styles.container}>
-        <div className={styles.header}>
+        <header className={styles.header}>
           <div className={styles.headerTop}>
             <span className={styles.badge}>Досвід</span>
-            <h2 className={styles.title}>Реалізовані проєкти</h2>
+            <h2 id="projects-heading" className={styles.title}>
+              Реалізовані проєкти
+            </h2>
             <p className={styles.subtitle}>
               Переглядайте наші об'єкти за допомогою стрілок або свайпу
             </p>
@@ -240,6 +274,7 @@ export default function Projects() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 style={{ marginLeft: "8px" }}
+                aria-hidden="true"
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
@@ -250,7 +285,7 @@ export default function Projects() {
                 ref={prevBtnRef}
                 className={styles.controlBtn}
                 onClick={() => scrollByAmount("prev")}
-                aria-label="Попередній"
+                aria-label="Попередні проєкти"
               >
                 <svg
                   width="24"
@@ -261,6 +296,7 @@ export default function Projects() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  aria-hidden="true"
                 >
                   <path d="M15 18l-6-6 6-6" />
                 </svg>
@@ -269,7 +305,7 @@ export default function Projects() {
                 ref={nextBtnRef}
                 className={styles.controlBtn}
                 onClick={() => scrollByAmount("next")}
-                aria-label="Наступний"
+                aria-label="Наступні проєкти"
               >
                 <svg
                   width="24"
@@ -280,13 +316,14 @@ export default function Projects() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  aria-hidden="true"
                 >
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
             </div>
           </div>
-        </div>
+        </header>
 
         <div
           className={styles.sliderContainer}
@@ -310,7 +347,11 @@ export default function Projects() {
                   index === 0 || project.year !== projects[index - 1].year;
 
                 return (
-                  <div key={project.id} className={styles.projectCardWrapper}>
+                  // 🔥 ЗМІНЕНО: div на article
+                  <article
+                    key={project.id}
+                    className={styles.projectCardWrapper}
+                  >
                     <div
                       className={`${styles.yearLabel} ${!showYear ? styles.hiddenYear : ""}`}
                     >
@@ -347,12 +388,16 @@ export default function Projects() {
                           touchAction: "manipulation",
                         }}
                         onClick={(e) => handleCardClick(e, project)}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Відкрити деталі проєкту: ${project.title}`}
                       />
 
                       <div className={styles.imagePanel}>
                         <NextImage
                           src={project.img}
-                          alt={project.title}
+                          // 🔥 ЗМІНЕНО: Більш контекстний alt
+                          alt={`Проєкт: ${project.title} у ${project.location}`}
                           fill
                           className={styles.image}
                           sizes="(max-width: 768px) 100vw, 400px"
@@ -382,12 +427,14 @@ export default function Projects() {
                             pointerEvents: "auto",
                           }}
                           onClick={(e) => handleCardClick(e, project)}
+                          tabIndex={-1}
+                          aria-hidden="true"
                         >
                           Детальніше
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </article>
                 );
               })}
             </div>
@@ -398,6 +445,7 @@ export default function Projects() {
       <div
         className={styles.progressContainer}
         style={{ pointerEvents: "none" }}
+        aria-hidden="true"
       >
         <div className={styles.progressBar} ref={progressBarRef}></div>
       </div>

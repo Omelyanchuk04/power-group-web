@@ -20,6 +20,8 @@ const IconFileText = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
     <polyline points="14 2 14 8 20 8"></polyline>
@@ -36,6 +38,7 @@ const getProductQuery = (slugOrId) => {
   return { slug: slugOrId };
 };
 
+// 🔥 ОНОВЛЕНО: Розширена мета-інформація для SEO та соцмереж
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const slugParam = resolvedParams.slug;
@@ -43,16 +46,36 @@ export async function generateMetadata({ params }) {
   await connectToDatabase();
 
   const product = await CatalogItem.findOne(getProductQuery(slugParam));
-  if (!product) return { title: "Товар не знайдено" };
+  if (!product) return { title: "Товар не знайдено | ВІН ПАУЕР ГРУП" };
+
+  const productUrl = `https://vinpowergroup.com/catalog/${slugParam}`;
+  const shortDescription = product.description
+    ? product.description.substring(0, 150) + "..."
+    : `Замовити ${product.name} від ВІН ПАУЕР ГРУП. Обладнання для сонячних електростанцій.`;
 
   return {
-    title: `${product.name} | Vin Power Group`,
-    description: product.description?.substring(0, 150) + "...",
-    openGraph: { images: [product.image] },
+    title: `${product.name} | ВІН ПАУЕР ГРУП`,
+    description: shortDescription,
+    alternates: {
+      canonical: productUrl,
+    },
+    openGraph: {
+      title: product.name,
+      description: shortDescription,
+      url: productUrl,
+      // 🔥 ВИПРАВЛЕНО: Next.js офіційно підтримує "website" або "article". "product" викликає помилку.
+      type: "website",
+      images: product.image ? [{ url: product.image, alt: product.name }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description: shortDescription,
+      images: product.image ? [product.image] : [],
+    },
   };
 }
 
-// Словник перекладів для характеристик
 const FILTER_LABELS = {
   brand: "Виробник (бренд)",
   power: "Потужність",
@@ -64,7 +87,6 @@ const FILTER_LABELS = {
   batteryType: "Тип батареї",
 };
 
-// Конфігурація характеристик для кожної категорії (як в адмінці)
 const CATEGORY_CONFIG = {
   "Сонячні панелі": ["brand", "power", "dimensions"],
   "Гібридні інвертори": ["brand", "phase", "type", "power"],
@@ -93,6 +115,7 @@ export default async function ProductPage({ params }) {
           color: "#64748b",
           minHeight: "100vh",
         }}
+        role="alert"
       >
         Товар не знайдено 😕
       </div>
@@ -110,47 +133,93 @@ export default async function ProductPage({ params }) {
   }
   if (imagesList.length === 0) imagesList.push("/placeholder.jpg");
 
-  // Формуємо список тільки з тих полів, які належать категорії
   const activeSpecs = [];
   const categoryKeys = CATEGORY_CONFIG[product.category] || [];
 
   categoryKeys.forEach((key) => {
     const val = product.filters?.[key];
-    // Якщо значення є і воно не "Не обрано", показуємо його. Якщо порожнє — ставимо красивий прочерк
     const displayValue =
       val && val.trim() !== "" && val !== "Не обрано" ? val : "—";
-
     activeSpecs.push({
       label: FILTER_LABELS[key] || key,
       value: displayValue,
     });
   });
 
+  const brandName = product.filters?.brand || "ВІН ПАУЕР ГРУП";
+
+  // 🔥 ДОДАНО: JSON-LD розмітка товару (Product) та структури (BreadcrumbList)
+  const schemaMarkup = [
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      name: product.name,
+      image: imagesList,
+      description: product.description || `Замовити ${product.name}`,
+      brand: {
+        "@type": "Brand",
+        name: brandName,
+      },
+      category: product.category,
+      url: `https://vinpowergroup.com/catalog/${slugParam}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Головна",
+          item: "https://vinpowergroup.com/",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Каталог",
+          item: "https://vinpowergroup.com/catalog",
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: product.name,
+        },
+      ],
+    },
+  ];
+
   return (
     <main className={styles.pageContainer}>
-      <div className={styles.bgWrapper}>
+      {/* Ін'єкція мікророзмітки */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
+
+      <div className={styles.bgWrapper} aria-hidden="true">
         <div className={styles.bgFade}>
           <GlobalBackground />
         </div>
       </div>
 
-      <div className={styles.contentWrapper}>
+      <article className={styles.contentWrapper}>
         <BackButton />
 
         <div className={styles.layoutFlex}>
           <div className={styles.leftStickyCol}>
+            {/* Alt-текст буде передано всередину галереї */}
             <ProductImageGallery
               images={imagesList}
-              altText={product.name}
+              altText={`Фото товару: ${product.name}`}
               wrapperClass={styles.imageCard}
             />
           </div>
 
           <div className={styles.rightContentCol}>
-            <div className={styles.headerBlock}>
+            <header className={styles.headerBlock}>
               <span className={styles.categoryText}>{product.category}</span>
               <h1 className={styles.title}>{product.name}</h1>
-            </div>
+            </header>
 
             <div className={styles.ctaWrapper}>
               <ConsultButton />
@@ -158,8 +227,13 @@ export default async function ProductPage({ params }) {
 
             <div className={styles.appleInfoContainer}>
               {activeSpecs.length > 0 && (
-                <div className={styles.appleSection}>
-                  <h3 className={styles.appleSectionTitle}>Характеристики</h3>
+                <section
+                  className={styles.appleSection}
+                  aria-labelledby="specs-heading"
+                >
+                  <h2 id="specs-heading" className={styles.appleSectionTitle}>
+                    Характеристики
+                  </h2>
                   <div className={styles.appleSectionContent}>
                     <div className={styles.appleSpecsList}>
                       {activeSpecs.map((spec, index) => (
@@ -174,39 +248,48 @@ export default async function ProductPage({ params }) {
                       ))}
                     </div>
                   </div>
-                </div>
+                </section>
               )}
 
               {product.description && (
-                <div className={styles.appleSection}>
-                  <h3 className={styles.appleSectionTitle}>Опис</h3>
+                <section
+                  className={styles.appleSection}
+                  aria-labelledby="desc-heading"
+                >
+                  <h2 id="desc-heading" className={styles.appleSectionTitle}>
+                    Опис
+                  </h2>
                   <div className={styles.appleSectionContent}>
                     <p className={styles.appleText}>{product.description}</p>
                   </div>
-                </div>
+                </section>
               )}
 
-              {/* 🔥 ДОКУМЕНТАЦІЯ ТА ФАЙЛИ 🔥 */}
+              {/* ДОКУМЕНТАЦІЯ */}
               {(product.datasheetUrl ||
                 (product.documents && product.documents.length > 0)) && (
-                <div className={styles.appleSection}>
-                  <h3 className={styles.appleSectionTitle}>Документація</h3>
+                <section
+                  className={styles.appleSection}
+                  aria-labelledby="docs-heading"
+                >
+                  <h2 id="docs-heading" className={styles.appleSectionTitle}>
+                    Документація
+                  </h2>
                   <div className={styles.appleSectionContent}>
                     <div className={styles.docsWrapper}>
-                      {/* Вивід старого одиночного файлу (якщо є) */}
                       {product.datasheetUrl && (
                         <a
                           href={product.datasheetUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={styles.appleDocLink}
+                          aria-label={`Завантажити Datasheet для ${product.name} у форматі PDF`}
                         >
                           <IconFileText />
                           <span>Завантажити Datasheet (PDF)</span>
                         </a>
                       )}
 
-                      {/* Вивід нового масиву файлів */}
                       {product.documents &&
                         product.documents.map((doc, idx) => (
                           <a
@@ -215,6 +298,7 @@ export default async function ProductPage({ params }) {
                             target="_blank"
                             rel="noopener noreferrer"
                             className={styles.appleDocLink}
+                            aria-label={`Завантажити ${doc.title} у форматі PDF`}
                           >
                             <IconFileText />
                             <span>{doc.title} (PDF)</span>
@@ -222,12 +306,12 @@ export default async function ProductPage({ params }) {
                         ))}
                     </div>
                   </div>
-                </div>
+                </section>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </article>
 
       <ContactCTA />
     </main>
