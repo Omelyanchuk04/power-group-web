@@ -12,10 +12,7 @@ const HeroCanvas = forwardRef(({ overlayRef }, canvasRef) => {
         alt="Сонячні станції та електромонтажні роботи ВІН ПАУЕР ГРУП"
         fill
         priority
-        sizes="100vw"
-        quality={
-          100
-        } /* 🔥 ДОДАНО: Змушує Next.js рендерити картинку без втрати якості (100%) */
+        unoptimized /* 🔥 ДОДАНО: Повністю вимикає стиснення і ресайз від Next.js */
         className={styles.mobileHeroImage}
         style={{
           objectFit: "cover",
