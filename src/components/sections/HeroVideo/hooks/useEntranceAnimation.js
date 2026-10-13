@@ -4,7 +4,6 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import styles from "../HeroVideo.module.scss";
 
-// Додано isLoaded у параметри
 export const useEntranceAnimation = ({
   heroRef,
   logoRef,
@@ -13,24 +12,17 @@ export const useEntranceAnimation = ({
 }) => {
   useGSAP(
     () => {
-      // Блокуємо запуск анімації, поки лоадер не зникне повністю
       if (!isLoaded) return;
-
       if (!logoRef?.current || !contentRef?.current) return;
 
       const icon = logoRef.current.querySelector(`.${styles.animIcon}`);
       const text = logoRef.current.querySelector(`.${styles.animText}`);
       const line = logoRef.current.querySelector(`.${styles.animLine}`);
       const slogan = logoRef.current.querySelector(`.${styles.animSlogan}`);
-
-      // 🔥 ДОДАНО: Шукаємо фон логотипу
       const logoBg = logoRef.current.querySelector(`.${styles.logoBackground}`);
-
-      // Шукаємо блок затемнення для головного тексту
       const contentBg = contentRef.current.querySelector(
         `.${styles.contentBackground}`,
       );
-
       const contentTitle = contentRef.current.querySelector(
         `.${styles.animTitle}`,
       );
@@ -40,7 +32,6 @@ export const useEntranceAnimation = ({
       const contentButtonWrapper = contentRef.current.querySelector(
         `.${styles.animButtonWrapper}`,
       );
-
       const contentCards = contentRef.current.querySelectorAll(
         `.${styles.animCardWrapper}`,
       );
@@ -49,21 +40,17 @@ export const useEntranceAnimation = ({
         typeof window !== "undefined"
           ? window.matchMedia("(max-width: 768px)").matches
           : false;
-      const initialDelay = isMobile ? 0.8 : 0.6;
+
+      const initialDelay = isMobile ? 0.1 : 0.6;
 
       const entranceTl = gsap.timeline({ delay: initialDelay });
 
-      // 🔥 ДОДАНО: Поява фону логотипу на самому початку
       if (logoBg) {
         entranceTl.fromTo(
           logoBg,
           { autoAlpha: 0 },
-          {
-            autoAlpha: 1,
-            duration: 1,
-            ease: "power2.out",
-          },
-          0, // Запускаємо на нульовій секунді разом з іконкою
+          { autoAlpha: 1, duration: 1, ease: "power2.out" },
+          0,
         );
       }
 
@@ -81,6 +68,7 @@ export const useEntranceAnimation = ({
           0,
         );
       }
+
       if (text) {
         entranceTl.fromTo(
           text,
@@ -95,6 +83,7 @@ export const useEntranceAnimation = ({
           0.1,
         );
       }
+
       if (line) {
         entranceTl.fromTo(
           line,
@@ -109,6 +98,7 @@ export const useEntranceAnimation = ({
           0.4,
         );
       }
+
       if (slogan) {
         entranceTl.fromTo(
           slogan,
@@ -124,9 +114,8 @@ export const useEntranceAnimation = ({
         );
       }
 
-      // Зникнення логотипу
-      // 🔥 ДОДАНО: logoBg в масив, щоб він зник разом з логотипом
       const logoElements = [logoBg, icon, text, line, slogan].filter(Boolean);
+
       if (logoElements.length > 0) {
         entranceTl.to(
           logoElements,
@@ -142,17 +131,12 @@ export const useEntranceAnimation = ({
         );
       }
 
-      // Анімуємо появу темної плями (затемнення фону для тексту)
       if (contentBg) {
         entranceTl.fromTo(
           contentBg,
           { autoAlpha: 0 },
-          {
-            autoAlpha: 1,
-            duration: 1,
-            ease: "power2.out",
-          },
-          "-=0.1", // Починаємо трохи раніше появи заголовку
+          { autoAlpha: 1, duration: 1, ease: "power2.out" },
+          "-=0.1",
         );
       }
 
@@ -170,6 +154,7 @@ export const useEntranceAnimation = ({
           "-=0.1",
         );
       }
+
       if (contentSubtitle) {
         entranceTl.fromTo(
           contentSubtitle,
@@ -184,6 +169,7 @@ export const useEntranceAnimation = ({
           "-=0.4",
         );
       }
+
       if (contentButtonWrapper) {
         entranceTl.fromTo(
           contentButtonWrapper,
@@ -216,7 +202,6 @@ export const useEntranceAnimation = ({
       }
     },
     {
-      // Додано isLoaded у залежності, щоб хук перезапустився, коли стан зміниться на true
       dependencies: [isLoaded],
       scope: heroRef,
     },
