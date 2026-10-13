@@ -38,7 +38,8 @@ $white: #ffffff;
   gap: 20px;
   margin-bottom: 40px;
 
-  h3 {
+  /* 🔥 ЗМІНЕНО: h3 на h2 через зміну тегу для SEO */
+  h2 {
     font-size: 24px;
     font-weight: 700;
     color: $text-dark;
@@ -149,8 +150,8 @@ $white: #ffffff;
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
 
-    /* РОБИМО ТАК, ЩОБ ТРЕТЯ КАРТКА ЗАЙМАЛА ВСЮ ШИРИНУ РЯДУ */
-    > div:last-child {
+    /* 🔥 ВИПРАВЛЕНО: div змінено на li, бо тепер ми використовуємо семантичний список */
+    > li:last-child {
       grid-column: 1 / -1;
     }
   }
@@ -161,7 +162,7 @@ $white: #ffffff;
 
 @media (max-width: 768px) {
   .statsHeader {
-    h3 {
+    h2 {
       font-size: 19px;
       white-space: normal;
     }
@@ -175,7 +176,7 @@ $white: #ffffff;
   }
   .statsHeader {
     gap: 12px;
-    h3 {
+    h2 {
       font-size: 18px;
       white-space: normal;
     }

@@ -7,21 +7,21 @@ import styles from "./HeroVideo.module.scss";
 const HeroCanvas = forwardRef(({ overlayRef }, canvasRef) => {
   return (
     <>
-      {/* 🔥 ДОДАНО: Статичне зображення для SEO (LCP) та моментального завантаження */}
+      {/* 🔥 ЗМІНЕНО: Картинка для мобільних пристроїв (шлях відносно public) */}
       <Image
-        src="/frames/frame-001.jpg" // Перевірте, чи правильний шлях до першого кадру
+        src="/hero-mobile.jpg"
         alt="Сонячні станції та електромонтажні роботи ВІН ПАУЕР ГРУП"
         fill
         priority // Вказує браузеру качати це найпершим!
         sizes="100vw"
+        className={styles.mobileHeroImage} // 🔥 ДОДАНО КЛАС
         style={{
           objectFit: "cover",
-          zIndex: -1, // Ховаємо під canvas
+          zIndex: -1,
           pointerEvents: "none",
         }}
       />
 
-      {/* ДОДАНО: role та aria-label, щоб Canvas не був "сліпою зоною" для SEO */}
       <canvas
         ref={canvasRef}
         className={styles.canvas}
